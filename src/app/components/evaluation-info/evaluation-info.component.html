@@ -1,0 +1,60 @@
+<!--
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+-->
+
+<div class="evaluation-info">
+  <div class="evaluation-selector-div mat-elevation-z8 background text" *ngIf="evaluationList && evaluationList.length > 0">
+    <mat-select placeholder="Select an active incident" [value]="selectedEvaluationId" (selectionChange)="selectEvaluation($event.value)">
+      <mat-option *ngFor="let evaluation of activeEvaluations()" [value]="evaluation.id">
+        {{ evaluation.description }}
+      </mat-option>
+    </mat-select>
+  </div>
+  <div class="move-div" *ngIf="selectedEvaluationId && displayedMoveNumber >= 0">
+    <h1 class="nowrap">Move:&nbsp;</h1>
+    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="displayedMoveNumber <= 0" (click)="decrementDisplayedMove()" *ngIf="showMoveArrows">
+      <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
+    </button>
+    <h1 class="nowrap" [ngStyle]='displayedMoveStyle'>{{ displayedMoveNumber }}</h1>
+    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="selectedEvaluationId && displayedMoveNumber >= getCurrentMoveNumber()" (click)="incrementDisplayedMove()" *ngIf="showMoveArrows">
+      <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
+    </button>
+    <h1 class="space-right">&nbsp;of&nbsp;{{ maxMoveNumber }}</h1>
+    <h1 [ngStyle]='displayedMoveStyle'>{{ displayedMoveDescription }}</h1>
+  </div>
+  <div class="move-div" *ngIf="!selectedEvaluationId || displayedMoveNumber < 0">
+    &nbsp;
+  </div>
+  <div class="right-buttons">
+    <button
+      mat-icon-button
+      style="outline: none;"
+      title="Dashboard"
+      (click)="setSection('dashboard')"
+      *ngIf="selectedSection === scoresheetSection"
+    >
+      <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard"></mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      style="outline: none;"
+      title="Scoresheet"
+      (click)="setSection('scoresheet')"
+      *ngIf="selectedSection !== scoresheetSection"
+    >
+      <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>
+    </button>
+    <button
+      aria-label="Show Administration Page"
+      mat-icon-button
+      *ngIf="showAdminButton"
+      [routerLink]="['/admin']"
+      [queryParams]="{evaluation: selectedEvaluationId, move: getCurrentMoveNumber(), team: currentTeamId, section: 'Actions'}"
+      style="outline: none;"
+      title="Administration"
+    >
+      <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
+    </button>
+  </div>
+</div>

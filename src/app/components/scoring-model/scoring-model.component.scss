@@ -1,0 +1,144 @@
+// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+
+@use '~@angular/material' as mat;
+@import '../../../styles/styles.scss';
+
+.form-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.description-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.value-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: right;
+}
+
+.mat-cell {
+  border: none !important;
+}
+
+.mat-row {
+  border: none !important;
+}
+
+.mat-column-value {
+  flex: 0 0 5% !important;
+  width: 5% !important;
+  justify-content: center;
+}
+
+.mat-column-description {
+  flex: 0 0 95% !important;
+  width: 95% !important;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mat-header-row {
+  position: sticky;
+  top: -.5px;
+  z-index: 100;
+}
+
+.comment-list {
+  margin-left: 25px;
+  margin-bottom: 10px;
+  font-style: italic;
+  font-size: smaller;
+}
+
+.indent-div {
+  margin-left: 25px;
+}
+
+.value-div {
+  width: 100%;
+  text-align: right;
+}
+
+.scoring-category-description {
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.small-icon {
+  width: 22px !important;
+  height: 22px !important;
+  display: inline;
+}
+
+.small-button {
+  width: 22px !important;
+  height: 22px !important;
+  line-height: unset;
+}
+
+.title-font {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.navigation-font {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.move-button {
+  transform: scale(0.8);
+  min-width: 50px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.black {
+  background-color: black;
+  color: white;
+}
+.red {
+  background-color: darkred;
+  color: white;
+}
+.orange {
+  background-color: darkorange;
+  color: black;
+}
+.yellow {
+  background-color: yellow;
+  color: black;
+}
+.green {
+  background-color: lightgreen;
+  color: black;
+}
+.white {
+  background-color: white;
+  color: black;
+}
+

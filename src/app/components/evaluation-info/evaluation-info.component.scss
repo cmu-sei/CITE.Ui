@@ -1,0 +1,51 @@
+// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+
+.cite-icon {
+  transform: scale(0.8);
+  width: 60px;
+  margin-bottom: 10px;
+}
+
+.evaluation-info {
+  padding-left: 24px;
+  padding-right: 24px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1%;
+}
+
+.evaluation-selector-div {
+  display: flex;
+  flex: 3;
+  flex-direction: row;
+  align-items: center;
+}
+
+.mat-select {
+  font-size: 18px !important;
+}
+
+.move-div {
+  display: flex;
+  flex: 7;
+  flex-direction: row;
+  align-items: center;
+}
+
+.right-buttons {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.not-current {
+  color: darkgray;
+}
+
+.space-right {
+  margin-right: 50px;
+}

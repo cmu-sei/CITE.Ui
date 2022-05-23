@@ -1,0 +1,71 @@
+<!--
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+-->
+
+<div fxLayout="row" fxLayoutAlign="start center">
+  <h3>Moves</h3>
+</div>
+
+<mat-accordion displayMode="flat" class="mat-table">
+  <section
+    class="mat-elevation-z2 mat-header-row"
+  >
+    <span class="mat-header-cell cell-one" mat-header="moveNumber">Move Number</span>
+    <span class="mat-header-cell cell-six" mat-header="description">Description</span>
+    <span class="mat-header-cell cell-one" mat-header="id">
+      <button mat-stroked-button (click)="addMove()">Add Move</button>
+    </span>
+  </section>
+
+  <mat-expansion-panel
+    *ngFor="let move of moveList"
+    [disabled]="true"
+  >
+    <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading">
+      <span class="mat-cell cell-one">
+        {{ move.moveNumber }}
+      </span>
+      <span class="mat-cell cell-six">
+        <button
+          mat-icon-button
+          ngxClipboard
+          [cbContent]="move.id"
+          (click)="$event.stopPropagation()"
+          title="Copy ID:  {{ move.id }}"
+        >
+          <mat-icon class="mdi-24px" fontIcon="mdi-content-copy"></mat-icon>
+        </button>
+        <span *ngIf="editMove.id !== move.id">
+          <button mat-button (click)="editMoveDescription(move)" title="Edit MoveDescription">
+            {{ move.description }}
+          </button>
+        </span>
+        <span *ngIf="editMove.id === move.id">
+          <input type="text" class="description-width" [(ngModel)]="editMove.description" (keydown)="handleInput($event)" (blur)="saveMoveDescription()" />
+        </span>
+      </span>
+      <span class="mat-cell cell-one">
+        <button
+          mat-icon-button
+          class="button-end"
+          (click)="deleteMoveRequest(move); $event.stopPropagation()"
+          title="Delete Move"
+        >
+          <mat-icon
+            class="mdi-24px"
+            fontIcon="mdi-delete-forever-outline"
+          ></mat-icon>
+        </button>
+      </span>
+    </mat-expansion-panel-header>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<mat-card
+  *ngIf="isLoading"
+  style="display: flex; justify-content: center; align-items: center;"
+>
+  <mat-progress-spinner color="primary" mode="indeterminate">
+  </mat-progress-spinner>
+</mat-card>

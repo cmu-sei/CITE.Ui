@@ -1,0 +1,119 @@
+<!--
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+-->
+
+<div fxLayout="row" fxLayoutAlign="start center">
+  <div class="sp-icon">
+    <mat-icon
+      class="mdi-36px"
+      fontIcon="mdi-briefcase-outline"
+      [ngStyle]="{'color': topbarColor}"
+    ></mat-icon>
+  </div>
+  <button
+    mat-icon-button
+    (click)="addOrEditEvaluation(null)"
+    style="outline: none; margin-left: 20px;"
+    title="Add Evaluation"
+  >
+    <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+  </button>
+  <mat-form-field style="width: 300px; margin-left: 10px;">
+    <input matInput [formControl]="filterControl" placeholder="Search" />
+  </mat-form-field>
+  <div style="width: 30px;">
+    <button
+      fxLayoutAlign="start center"
+      mat-icon-button
+      (click)="applyFilter('')"
+      style="outline: none;"
+      title="Clear Search"
+    >
+      <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+    </button>
+  </div>
+  <div *ngIf="!addingNewEvaluation">
+    <mat-paginator
+      #paginator
+      [length]="evaluationList?.length"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"
+      (page)="paginatorEvent($event)"
+    ></mat-paginator>
+  </div>
+</div>
+
+<mat-accordion displayMode="flat">
+  <section
+    matSort
+    (matSortChange)="sortChanged($event)"
+    class="mat-elevation-z2 mat-header-row"
+  >
+    <span class="mat-header-cell" mat-sort-header="description"><span style="margin-left: 80px;">Evaluation Description</span></span>
+    <span class="mat-header-cell" mat-sort-header="currentMoveNumber">Current Move</span>
+    <span class="mat-header-cell" mat-sort-header="status">Status</span>
+  </section>
+
+  <mat-expansion-panel
+    *ngFor="let evaluation of paginateEvaluations(evaluationList, pageIndex, pageSize)"
+    [expanded]="editEvaluation.id === evaluation.id"
+  >
+    <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading" (click)="togglePanel(evaluation); $event.stopPropagation()">
+      <span class="mat-cell three-cell">
+        <button
+          mat-icon-button
+          (click)="addOrEditEvaluation(evaluation); $event.stopPropagation()"
+          style="outline: none;"
+          title="Edit Evaluation"
+        >
+          <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          (click)="deleteEvaluationRequest(evaluation); $event.stopPropagation()"
+          style="outline: none;"
+          title="Delete Evaluation"
+        >
+          <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can"></mat-icon>
+        </button>
+        <span>
+          {{ evaluation.description }}
+        </span>
+      </span>
+      <span class="mat-cell pad-top">
+        <button aria-label="Decrement Current Move" mat-icon-button [disabled]="evaluation.currentMoveNumber <= 0" (click)="decrementCurrentMoveNumber(evaluation); $event.stopPropagation()">
+          <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
+        </button>
+        {{ evaluation.currentMoveNumber }}
+        <button aria-label="Increment Current Move" mat-icon-button (click)="incrementCurrentMoveNumber(evaluation); $event.stopPropagation()">
+          <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
+        </button>
+      </span>
+      <span class="mat-cell pad-top">
+        {{ evaluation.status }}
+      </span>
+    </mat-expansion-panel-header>
+    <div class="move-container" *ngIf="editEvaluation.id === evaluation.id">
+      <app-admin-moves
+        [evaluationId]="evaluation.id"
+      ></app-admin-moves>
+    </div>
+    <div class="move-container" *ngIf="editEvaluation.id === evaluation.id">
+      <h2>Teams</h2>
+      <app-admin-evaluation-teams
+        [evaluationId]="evaluation.id"
+        [teamList]="teamList"
+      ></app-admin-evaluation-teams>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<mat-card
+  *ngIf="isLoading"
+  style="display: flex; justify-content: center; align-items: center;"
+>
+  <mat-progress-spinner color="primary" mode="indeterminate">
+  </mat-progress-spinner>
+</mat-card>

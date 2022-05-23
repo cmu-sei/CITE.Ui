@@ -1,0 +1,49 @@
+// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+
+.teams-container {
+  width: 800px;
+  min-height: 900px;
+  max-height: 900px;
+}
+
+.team-list-container {
+  display: inline-block;
+  flex-direction: column;
+  min-width: 300px;
+  margin-top: 10px;
+  width: 300px;
+  min-height: 600px;
+}
+
+.evaluation-list-container {
+  display: inline-block;
+  flex-direction: column;
+  min-width: 500px;
+  margin-top: 10px;
+  width: 500px;
+  min-height: 600px;
+}
+
+.mat-table-all-teams {
+  overflow: auto;
+  max-height: 400px;
+}
+
+.mat-table-evaluation-teams {
+  overflow: auto;
+  max-height: 600px;
+}
+
+.mat-button-focus-overlay {
+  background-color: transparent;
+}
+
+.mat-cell {
+  padding-right: 0;
+}
+
+.sp-icon {
+  margin-left: 10px;
+  margin-right: 20px;
+}

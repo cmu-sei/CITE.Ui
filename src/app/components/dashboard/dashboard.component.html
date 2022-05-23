@@ -1,0 +1,38 @@
+<!--
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+-->
+<div class="top-level-container">
+  <div class="row-container">
+    <div class="item-container">
+      <h4>Exercise Time: {{ selectedEvaluation.situationTime.toLocaleString('en-US', {timeZone: 'America/New_York'}) | date : 'EEEE, MMMM d, y  h:mm:ss a' }} ET</h4>
+      {{ selectedEvaluation.situationDescription }}
+    </div>
+  </div>
+  <div class="row-container" *ngIf="unreadArticles && +unreadArticles.count > 0">
+    <div class="item-container mat-elevation-z8 one-cell">
+      <b>You have {{ unreadArticles.count }} unread Gallery inject<span *ngIf="+unreadArticles.count > 1">s</span>, please access the Gallery to review them.</b>
+    </div>
+  </div>
+  <div class="row-container">
+    <div class="item-container four-cell mat-elevation-z8">
+      <b>Actions to consider:</b>
+      <mat-checkbox [checked]="action.isChecked" (change)="checkAction(action.id, $event.checked)" *ngFor="let action of actionList">{{ action.description }}</mat-checkbox>
+    </div>
+  </div>
+  <div class="row-container">
+    <div class="item-container mat-elevation-z8 one-cell">
+      <b>Roles:</b>
+      <div class="role-container" *ngFor="let role of roleList">
+        <div class="role-cell five-cell">
+          <label>{{ role.name }}</label>
+        </div>
+        <div class="role-cell five-cell">
+          <mat-select placeholder="Assign Users" [value]="role.users" multiple (selectionChange)="updateRoleUsers(role, $event)">
+            <mat-option *ngFor="let user of teamUsers" [value]="user">{{ user.name }}</mat-option>
+          </mat-select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

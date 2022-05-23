@@ -1,0 +1,249 @@
+// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+
+@use '~@angular/material' as mat;
+@import '../../../styles/styles.scss';
+
+.top-level-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+  height: 100%;
+}
+
+.row-container {
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.item-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: "Open Sans", sans-serif;
+}
+
+.role-container {
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.role-cell {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  font-family: "Open Sans", sans-serif;
+}
+
+.right-buttons {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.mat-cell {
+  border: none !important;
+  font-size: 16px;
+}
+
+.mat-row {
+  border: none !important;
+}
+
+.mat-column-value {
+  flex: 0 0 5% !important;
+  width: 5% !important;
+  justify-content: center;
+}
+
+.mat-column-description {
+  flex: 0 0 95% !important;
+  width: 95% !important;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mat-header-row {
+  position: sticky;
+  top: -.5px;
+  z-index: 100;
+}
+
+.comment-list {
+  margin-left: 25px;
+  margin-bottom: 10px;
+  font-style: italic;
+  font-size: smaller;
+}
+
+.indent-div {
+  margin-left: 25px;
+}
+
+.value-div {
+  width: 100%;
+  text-align: right;
+}
+
+.dashboard-category-description {
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.small-icon {
+  transform: scale(0.5);
+  display: inline;
+}
+
+.small-button {
+  width: 16px !important;
+  height: 16px !important;
+  line-height: unset;
+}
+
+.title-font {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.navigation-font {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.move-button {
+  transform: scale(0.8);
+  min-width: 50px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.team-table {
+  background-color: inherit;
+  color: inherit;
+}
+
+.team-element-row td {
+  border-bottom-width: 0;
+}
+
+.team-element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.team-element-diagram {
+  min-width: 80px;
+  border: 2px solid black;
+  padding: 8px;
+  font-weight: lighter;
+  margin: 8px 0;
+  height: 104px;
+}
+
+.team-element-symbol {
+  font-weight: bold;
+  font-size: 40px;
+  line-height: normal;
+}
+
+.team-element-description {
+  padding: 16px;
+}
+
+.team-element-description-attribution {
+  opacity: 0.5;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.user-div {
+  display: flex;
+  flex: 1;
+  margin-right: 10px;
+}
+
+.black {
+  background-color: black;
+  color: white;
+}
+.red {
+  background-color: darkred;
+  color: white;
+}
+.orange {
+  background-color: darkorange;
+  color: black;
+}
+.yellow {
+  background-color: yellow;
+  color: black;
+}
+.green {
+  background-color: lightgreen;
+  color: black;
+}
+.white {
+  background-color: white;
+  color: black;
+}
+
+.five-cell {
+  flex: 5;
+}
+
+.four-cell {
+  flex: 4;
+}
+
+.three-cell {
+  flex: 3;
+}
+
+.two-cell {
+  flex: 2;
+}
+
+.one-cell {
+  flex: 1;
+}
+
+.center-self {
+  align-self: center;
+}

@@ -1,0 +1,141 @@
+<!--
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+-->
+
+<div fxLayout="row" fxLayoutAlign="center">
+  <div class="user-list-container mat-elevation-z8">
+    <div class="sp-icon">
+      <img height="35" src="./assets/svg-icons/account-multiple.svg" alt="Users" />
+      All Users
+    </div>
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <mat-icon
+        style="transform: scale(0.85); margin-right: 5px; margin-left: 10px;"
+        svgIcon="ic_magnify_search"
+      ></mat-icon>
+      <mat-form-field style="width: 220px;">
+        <input
+          matInput
+          [(ngModel)]="filterString"
+          (keyup)="applyFilter($event.target.value)"
+          placeholder="Search"
+        />
+      </mat-form-field>
+      <button
+        *ngIf="filterString != ''"
+        fxLayoutAlign="start center"
+        mat-icon-button
+        (click)="clearFilter()"
+        style="outline: none;"
+        title="Clear Search"
+      >
+        <mat-icon
+          style="transform: scale(0.85);"
+          svgIcon="ic_cancel_circle"
+        ></mat-icon>
+      </button>
+    </div>
+
+    <mat-card
+      *ngIf="false"
+      style="display: flex; justify-content: center; align-items: center;"
+    >
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </mat-card>
+
+    <mat-table
+      class="mat-table-all-users"
+      #table
+      [dataSource]="userDataSource"
+      matSort
+    >
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >User Name</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          <div *ngIf="element.name !== null">{{ element.name }}</div>
+          <div *ngIf="element.name === null">{{ element.id }}</div>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div>
+            <button mat-stroked-button (click)="addUserToTeam(element)">
+              Add User
+            </button>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedUserColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedUserColumns"></mat-row>
+    </mat-table>
+
+    <div *ngIf="userDataSource.filteredData.length === 0">No results found</div>
+    <mat-paginator
+      #paginator
+      [pageSize]="defaultPageSize"
+      [showFirstLastButtons]="true"
+      (page)="pageEvent = $event"
+    >
+    </mat-paginator>
+  </div>
+
+  <div style="margin-left: 20px;">
+    <div class="team-list-container mat-elevation-z8">
+      <div class="sp-icon">
+        <img
+          height="35"
+          src="./assets/svg-icons/account-group.svg"
+          alt="Users"
+        />
+        Team Users
+      </div>
+
+      <mat-card
+        *ngIf="false"
+        style="display: flex; justify-content: center; align-items: center;"
+      >
+        <mat-progress-spinner color="primary" mode="indeterminate">
+        </mat-progress-spinner>
+      </mat-card>
+
+      <mat-table
+        class="mat-table-all-users"
+        #table
+        [dataSource]="teamUserDataSource"
+        matSort
+      >
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header
+            >User Name</mat-header-cell
+          >
+          <mat-cell *matCellDef="let element">
+            <div *ngIf="element.name !== null">{{ element.name }}</div>
+            <div *ngIf="element.name === null">{{ element.id }}</div>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="id">
+          <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <div>
+              <button mat-stroked-button (click)="removeUserFromTeam(element)">
+                Remove
+              </button>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedUserColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedUserColumns"></mat-row>
+      </mat-table>
+
+    </div>
+  </div>
+</div>

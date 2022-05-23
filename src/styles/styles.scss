@@ -1,0 +1,42 @@
+// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+
+/* VENDER IMPORTS */
+@use '~@angular/material' as mat;
+@import '~@angular/material/theming';
+@include mat.core();
+$mdi-font-path: '~@mdi/font/fonts';
+@import '~@mdi/font/scss/materialdesignicons';
+
+/* END VENDER IMPORTS */
+
+/* LOCAL IMPORTS */
+@import 'theme';
+/* END LOCAL IMPORTS */
+
+.light-theme {
+  @include mat.all-component-themes($light-theme);
+  @include globals($light-theme);
+}
+
+.dark-theme {
+  @include mat.all-component-themes($dark-theme);
+  @include globals($dark-theme);
+}
+
+/* The following overrides transparent select options after upgrading to Angular 7 */
+.mat-select-panel {
+  background: #fff;
+}
+.mat-select-panel:not([class*='mat-elevation-z']) {
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+    0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.timepicker-overlay {
+  z-index: 10000000 !important;
+}
+
+.timepicker-backdrop-overlay {
+  z-index: 10000000 !important;
+}
