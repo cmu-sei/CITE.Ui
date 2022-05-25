@@ -1,28 +1,30 @@
-FROM node as builder
+FROM node:16-alpine as builder
 
 COPY package.json package-lock.json ./
 
-## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
-RUN npm i && mkdir ./ng-app && cp -R ./node_modules ./ng-app
+# Storing node modules on a separate layer will prevent unnecessary npm install at each build
+RUN npm i && mkdir -p /ng-app/dist && cp -R ./node_modules ./ng-app
 
 WORKDIR /ng-app
 
 COPY . .
 
-## Build the angular app in production mode and store the artifacts in dist folder
-RUN $(npm bin)/ng build --configuration production
+RUN $(npm bin)/ng build --resources-output-path=assets/fonts --aot --configuration production
 
-### STAGE 2: Setup ###
+### Stage 2: Setup ###
 
-FROM nginx
+FROM nginxinc/nginx-unprivileged:stable-alpine
 
-## Copy our default nginx config
-COPY default.conf /etc/nginx/conf.d/
-
-## Remove default nginx website
+USER root
 RUN rm -rf /usr/share/nginx/html/*
+COPY default.conf /etc/nginx/conf.d/default.conf
+COPY nginx-basehref.sh /docker-entrypoint.d/90-basehref.sh
+COPY --from=builder /ng-app/dist /usr/share/nginx/html
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+  chmod +x /docker-entrypoint.d/90-basehref.sh
+USER nginx
 
-## From ‘builder’ stage copy over the artifacts in dist folder to default nginx public folder
-COPY --from=builder ./ng-app/dist/cite-ui /usr/share/nginx/html
+EXPOSE 8080
 
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
