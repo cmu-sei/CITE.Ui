@@ -9,6 +9,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  AfterViewInit,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -36,9 +37,14 @@ import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admi
   styleUrls: ['./admin-actions.component.scss'],
 })
 export class AdminActionsComponent
-  implements OnDestroy, OnInit
+  implements OnDestroy, OnInit, AfterViewInit
 {
   @Input() showSelectionControls: boolean;
+  @Input() pageSize: number;
+  @Input() pageIndex: number;
+  @Output() sortChange = new EventEmitter<Sort>();
+  @Output() pageChange = new EventEmitter<PageEvent>();
+
   isLoading = false;
   topbarColor = '#ef3a47';
   actionList: Action[] = [];
@@ -50,6 +56,8 @@ export class AdminActionsComponent
   selectedMoveNumber = -1;
   moveList: Move[] = [];
   userList$: User[] = [];
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = [
     'description',
     'teamId',
@@ -118,6 +126,12 @@ export class AdminActionsComponent
         this.teamDataService.loadMine();
       }
     }
+  }
+
+  ngAfterViewInit() {
+
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   selectEvaluation(evaluationId: string) {
@@ -200,6 +214,10 @@ export class AdminActionsComponent
     }
   }
 
+  sortChanged(sort: Sort) {
+    this.sortChange.emit(sort);
+  }
+
   getTeamName(teamId: string) {
     let teamName = '';
     if (teamId) {
@@ -209,6 +227,10 @@ export class AdminActionsComponent
       }
     }
     return teamName;
+  }
+
+  paginatorEvent(page: PageEvent) {
+    this.pageChange.emit(page);
   }
 
   ngOnDestroy() {
