@@ -46,6 +46,16 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
       </mat-option>
     </mat-select>
   </mat-form-field>
+    <div>
+    <mat-paginator
+      #paginator
+      [length]="dataSource.filteredData.length"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"
+      (page)="paginatorEvent($event)"
+    ></mat-paginator>
+  </div>
 </div>
 
 <!-- Table -->
@@ -53,10 +63,12 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
   <table
     mat-table
     [dataSource]="dataSource"
+    matSort
+    (matSortChange)="sortChanged($event)"
   >
     <!-- Description Column -->
     <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef><span style="margin-left: 80px;">Description</span></th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header><span style="margin-left: 80px;">Description</span></th>
       <td mat-cell *matCellDef="let row">
         <button
           mat-icon-button
@@ -87,7 +99,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 
     <!-- Team Column -->
     <ng-container matColumnDef="teamId">
-      <th mat-header-cell *matHeaderCellDef>Team</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Team</th>
       <td mat-cell *matCellDef="let row">
         {{ getTeamName(row.teamId) }}
       </td>
@@ -95,7 +107,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 
     <!-- isChecked Column -->
     <ng-container matColumnDef="isChecked">
-      <th mat-header-cell *matHeaderCellDef>Checked</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Checked</th>
       <td mat-cell *matCellDef="let row">
         <mat-checkbox [(ngModel)]="row.isChecked" disabled="true"></mat-checkbox>
       </td>
