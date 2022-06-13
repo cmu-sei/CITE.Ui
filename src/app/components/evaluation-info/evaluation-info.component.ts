@@ -48,7 +48,7 @@ export class EvaluationInfoComponent {
     (this.moveQuery.selectAll() as Observable<Move[]>).pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
       this.moveList = moves;
       if (moves && moves.length > 0) {
-        var currentMove = moves.find(m => m.moveNumber == this.displayedMoveNumber);
+        const currentMove = moves.find(m => +m.moveNumber === this.displayedMoveNumber);
         this.displayedMoveDescription =  currentMove ? currentMove.description : '';
         this.maxMoveNumber = moves.sort((a, b) => +b.moveNumber - a.moveNumber)[0].moveNumber;
       } else {
@@ -62,9 +62,10 @@ export class EvaluationInfoComponent {
       active = active ? active : { id: '', moveNumber: -1 } as Submission;
       if (active.id === activeId) {
         this.displayedMoveNumber = active.moveNumber;
-        var currentMove = this.moveList.find(m => m.moveNumber == active.moveNumber);
+        const currentMove = this.moveList.find(m => +m.moveNumber === +active.moveNumber);
         this.displayedMoveDescription =  currentMove ? currentMove.description : '';
-        this.displayedMoveStyle = !this.selectedEvaluationId || (this.displayedMoveNumber == this.getCurrentMoveNumber()) ? {  } : { color: 'darkgray' };
+        this.displayedMoveStyle = !this.selectedEvaluationId ||
+            (+this.displayedMoveNumber === +this.getCurrentMoveNumber()) ? {  } : { color: 'darkgray' };
         this.currentTeamId = active.teamId;
       }
     });
@@ -90,8 +91,8 @@ export class EvaluationInfoComponent {
     const newMoveNumber = +this.displayedMoveNumber + 1;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const submissions = this.submissionQuery.getAll();
-    var newSubmission = submissions.find(s =>
-      s.moveNumber == newMoveNumber  &&
+    let newSubmission = submissions.find(s =>
+      +s.moveNumber === +newMoveNumber  &&
       s.userId === displayedSubmission.userId  &&
       s.teamId === displayedSubmission.teamId  &&
       s.groupId === displayedSubmission.groupId  &&
@@ -102,7 +103,7 @@ export class EvaluationInfoComponent {
     } else {
       // the new submission would not be allowed, so select the user's submission
       newSubmission = submissions.find(s =>
-        s.moveNumber == newMoveNumber  &&
+        +s.moveNumber === +newMoveNumber  &&
         s.userId  &&
         s.teamId &&
         !s.groupId  &&
@@ -118,7 +119,7 @@ export class EvaluationInfoComponent {
     const newMoveNumber = +this.displayedMoveNumber - 1;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const newSubmission = this.submissionQuery.getAll()
-      .find(s => s.moveNumber == newMoveNumber
+      .find(s => +s.moveNumber === +newMoveNumber
         && s.userId === displayedSubmission.userId
         && s.teamId === displayedSubmission.teamId
         && s.groupId === displayedSubmission.groupId
@@ -137,7 +138,7 @@ export class EvaluationInfoComponent {
   }
 
   selectEvaluation(evaluationId: string) {
-    if (evaluationId !== this.selectedEvaluationId){
+    if (evaluationId !== this.selectedEvaluationId) {
       this.submissionDataService.unload();
       this.router.navigate([], {
         queryParams: { evaluation: evaluationId },

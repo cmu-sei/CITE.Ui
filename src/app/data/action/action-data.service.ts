@@ -133,7 +133,7 @@ export class ActionDataService {
         (actions) => {
           actions.forEach(e => {
             this.setAsDates(e);
-          })
+          });
           this.actionStore.set(actions);
         },
         (error) => {
@@ -156,7 +156,7 @@ export class ActionDataService {
         (actions) => {
           actions.forEach(e => {
             this.setAsDates(e);
-          })
+          });
           this.actionStore.set(actions);
         },
         (error) => {
@@ -179,7 +179,7 @@ export class ActionDataService {
         (actions) => {
           actions.forEach(e => {
             this.setAsDates(e);
-          })
+          });
           this.actionStore.set(actions);
         },
         (error) => {

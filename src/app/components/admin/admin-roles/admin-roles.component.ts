@@ -35,8 +35,7 @@ import { AdminRoleEditDialogComponent } from '../admin-role-edit-dialog/admin-ro
   styleUrls: ['./admin-roles.component.scss'],
 })
 export class AdminRolesComponent
-  implements OnDestroy, OnInit
-{
+  implements OnDestroy, OnInit, AfterViewInit {
   @Input() showSelectionControls: boolean;
   @Input() pageSize: number;
   @Input() pageIndex: number;
@@ -163,7 +162,7 @@ export class AdminRolesComponent
         this.teamList.forEach(team => {
           role.teamId = team.id;
           this.roleDataService.add(role);
-        })
+        });
       }
     }
   }
@@ -173,7 +172,7 @@ export class AdminRolesComponent
       'Delete this role?',
       'Are you sure that you want to delete this role?'
     ).subscribe((result) => {
-      if (result["confirm"]) {
+      if (result['confirm']) {
         this.roleDataService.delete(role.id);
       }
     });
