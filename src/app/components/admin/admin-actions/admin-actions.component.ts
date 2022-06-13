@@ -37,8 +37,7 @@ import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admi
   styleUrls: ['./admin-actions.component.scss'],
 })
 export class AdminActionsComponent
-  implements OnDestroy, OnInit, AfterViewInit
-{
+  implements OnDestroy, OnInit, AfterViewInit {
   @Input() showSelectionControls: boolean;
   @Input() pageSize: number;
   @Input() pageIndex: number;
@@ -121,7 +120,7 @@ export class AdminActionsComponent
         }
       }
     } else {
-      if (this.selectedEvaluationId && this.selectedMoveNumber && this.selectedTeamId) {
+      if (this.selectedEvaluationId && (this.selectedMoveNumber >= 0) && this.selectedTeamId) {
         this.actionDataService.loadByEvaluationMoveTeam(this.selectedEvaluationId, +this.selectedMoveNumber, this.selectedTeamId);
         this.teamDataService.loadMine();
       }
@@ -129,7 +128,6 @@ export class AdminActionsComponent
   }
 
   ngAfterViewInit() {
-
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
@@ -190,7 +188,7 @@ export class AdminActionsComponent
         this.teamList.forEach(team => {
           action.teamId = team.id;
           this.actionDataService.add(action);
-        })
+        });
       }
     }
   }
@@ -200,7 +198,7 @@ export class AdminActionsComponent
       'Delete this action?',
       'Are you sure that you want to delete this action?'
     ).subscribe((result) => {
-      if (result["confirm"]) {
+      if (result['confirm']) {
         this.actionDataService.delete(action.id);
       }
     });
