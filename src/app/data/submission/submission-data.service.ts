@@ -331,10 +331,10 @@ export class SubmissionDataService {
         s.evaluationId === submission.evaluationId &&
         +s.moveNumber === +submission.moveNumber &&
         s.scoreIsAnAverage);
-      if(matchingSubmission) {
+      if (matchingSubmission) {
         submission.id = matchingSubmission.id;
       } else {
-        console.info('submission not found. user=' + submission.userId + ', team=' + submission.teamId + ', group=' + submission.groupId + ', evaluation=' + submission.evaluationId);
+        console.log('submission not found. user=' + submission.userId + ', team=' + submission.teamId + ', group=' + submission.groupId + ', evaluation=' + submission.evaluationId);
       }
     }
     this.submissionStore.upsert(submission.id, submission);

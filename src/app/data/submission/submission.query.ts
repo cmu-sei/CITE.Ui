@@ -55,8 +55,7 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
             }
             populatedSubmission.submissionType = SubmissionType.user;
             populatedSubmissions.push(populatedSubmission);
-          }
-          else if (submission.teamId) {
+          } else if (submission.teamId) {
             if (!submission.scoreIsAnAverage) {
               // team submission
               const populatedSubmission = {
