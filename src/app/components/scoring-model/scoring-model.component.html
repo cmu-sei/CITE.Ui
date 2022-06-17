@@ -248,6 +248,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
                     "
                   >
                     {{ comment.comment }}
+                    <span *ngIf="displaying === 'team'">{{ getUserName(comment.createdBy) }}</span>
                     <button
                       aria-label="Edit Comment"
                       mat-icon-button
@@ -296,16 +297,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
                     ? ' '
                     : scoringOption.value
                 }}
-              </div>
-              <div
-                *ngFor="
-                  let comment of optionComments(
-                    scoringCategory.id,
-                    scoringOption.id
-                  )
-                "
-              >
-                &nbsp;<br />
               </div>
             </mat-cell>
           </ng-container>

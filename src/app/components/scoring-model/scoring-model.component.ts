@@ -150,11 +150,13 @@ export class ScoringModelComponent {
         }
     });
 
-    //observe the submission list
-    this.submissionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(submissions =>{
+    // observe the submission list
+    this.submissionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
       this.submissionList = submissions;
-      this.showGroupAvgScore = this.submissionList.some(s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && s.groupId && s.scoreIsAnAverage);
-      this.showOfficialScore = this.submissionList.some(s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && !s.groupId);
+      this.showGroupAvgScore = this.submissionList.some(
+        s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && s.groupId && s.scoreIsAnAverage);
+      this.showOfficialScore = this.submissionList.some(
+        s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && !s.groupId);
     });
 
     // observe the permissions
@@ -234,7 +236,7 @@ export class ScoringModelComponent {
       .submissionOptions.find(so => so.scoringOptionId === scoringOption.id);
     this.currentComment = '';
     this.commentOptionDescription = scoringOption.description;
-    let dialogRef = this.matDialog.open(templateRef, {
+    const dialogRef = this.matDialog.open(templateRef, {
       width: '70%'
     });
     dialogRef.disableClose = true;
@@ -250,7 +252,7 @@ export class ScoringModelComponent {
   editComment(templateRef, scoringOption: ScoringOption, submissionComment: SubmissionComment) {
     this.currentComment = submissionComment.comment;
     this.commentOptionDescription = scoringOption.description;
-    let dialogRef = this.matDialog.open(templateRef, {
+    const dialogRef = this.matDialog.open(templateRef, {
       width: '70%'
     });
     dialogRef.disableClose = true;
@@ -270,7 +272,7 @@ export class ScoringModelComponent {
       'Delete this comment?',
       submissionComment.comment
     ).subscribe((result) => {
-      if (result["confirm"]) {
+      if (result['confirm']) {
         this.submissionDataService.deleteSubmissionComment(submissionComment.id);
       }
     });
@@ -329,7 +331,7 @@ export class ScoringModelComponent {
         'WARNING:  You will not be able to reopen this score!',
         'Move ' + this.displayedMoveNumber + ' has ended. You will not be able to reopen this score. Are you sure that you wish to submit this score?'
       ).subscribe((result) => {
-        if (result["confirm"]) {
+        if (result['confirm']) {
           this.verifyAndSubmit();
         }
       });
@@ -350,7 +352,7 @@ export class ScoringModelComponent {
         'Submit this score?',
         errorMessage + '    Are you sure that you want to submit this score?'
       ).subscribe((result) => {
-        if (result["confirm"]) {
+        if (result['confirm']) {
           this.submit();
         }
       });
@@ -364,8 +366,8 @@ export class ScoringModelComponent {
   }
 
   verifySubmission() {
-    let noCategoryOption = [];
-    let noCategoryModifier = [];
+    const noCategoryOption = [];
+    const noCategoryModifier = [];
     this.displayedSubmission.submissionCategories.forEach(sc => {
       const scoringCategory = this.selectedScoringModel.scoringCategories.find(x => x.id === sc.scoringCategoryId);
       const scoringOptions = scoringCategory.scoringOptions;
@@ -446,11 +448,11 @@ export class ScoringModelComponent {
   setFormatting() {
     this.setDisplayedSelection();
     // set proper permissions for this selection
-     var canModify =
+    const canModify =
       (this.displaying === 'user') ||
       (this.displaying === 'team' && (this.hasCanModifyPermission || this.hasCanSubmitPermission)) ||
       this.canIncrementMove;
-    var canSubmit =
+    const canSubmit =
       (this.displaying === 'user') ||
       (this.displaying === 'team' && this.hasCanSubmitPermission) ||
       this.canIncrementMove;
@@ -469,7 +471,7 @@ export class ScoringModelComponent {
   }
 
   setDisplayedSelection() {
-    var selection = '';
+    let selection = '';
     if (!this.displayedSubmission.userId
       && !this.displayedSubmission.teamId
       && !this.displayedSubmission.groupId
