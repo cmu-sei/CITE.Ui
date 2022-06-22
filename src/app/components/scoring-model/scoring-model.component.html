@@ -211,6 +211,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
                     *ngIf="!displayedSubmission.scoreIsAnAverage"
                     [checked]="isSelected(scoringCategory.id, scoringOption.id)"
                     [disabled]="!showModifyControls"
+                    [matTooltip]="selectedBy(scoringCategory.id, scoringOption.id)"
                     (change)="
                       toggleOption($event, scoringCategory.id, scoringOption.id)
                     "
