@@ -248,7 +248,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
                     "
                   >
                     {{ comment.comment }}
-                    <span *ngIf="displaying === 'team'">{{ getUserName(comment.createdBy) }}</span>
+                    <span *ngIf="displaying === 'team'"> - {{ getUserName(comment.createdBy) }}</span>
                     <button
                       aria-label="Edit Comment"
                       mat-icon-button
