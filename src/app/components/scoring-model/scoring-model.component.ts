@@ -18,9 +18,11 @@ import { ItemStatus,
          ScoringOption,
          Submission,
          SubmissionComment,
-         Team
+         Team,
+         User
        } from 'src/app/generated/cite.api/model/models';
 import { DialogService } from "src/app/services/dialog/dialog.service";
+import { AdminScoringOptionEditDialogComponent } from '../admin/admin-scoring-option-edit-dialog/admin-scoring-option-edit-dialog.component';
 
 @Component({
   selector: 'app-scoring-model',
@@ -31,6 +33,7 @@ export class ScoringModelComponent {
   loggedInUserId = '';
   userId = '';
   teamId = '';
+  teamUsers: User[];
   currentMoveNumber = -1;
   displayedMoveNumber = -1;
   selectedEvaluation: Evaluation = {};
@@ -133,6 +136,7 @@ export class ScoringModelComponent {
       active = active ? active : { id: '' } as Team;
       if (active.id === activeId) {
         this.teamId = active.id;
+        this.teamUsers = active.users;
       }
     });
 
@@ -288,6 +292,34 @@ export class ScoringModelComponent {
         }
       }
     return [];
+  }
+
+  selectedBy(scoringCategoryId: string, scoringOptionId: string) {
+    if (this.displaying !== 'team') {
+      return;
+    }
+    let selectedBy = null;
+    let isSelected = null;
+    const submissionCategories = this.displayedSubmission.submissionCategories;
+    if (submissionCategories && submissionCategories.length > 0) {
+      const sc = submissionCategories.find(sc => sc.scoringCategoryId === scoringCategoryId);
+      if (sc) {
+        const so = sc.submissionOptions.find(so => so.scoringOptionId === scoringOptionId);
+        isSelected = so && so.isSelected;
+        selectedBy = so && so.modifiedBy;
+      }
+      if (isSelected && selectedBy) {
+        return 'Selected by ' + this.getUserName(selectedBy);
+      } else if (!isSelected && selectedBy) {
+        return 'Unselected by ' + this.getUserName(selectedBy);
+      }
+    }
+     return;
+  }
+
+  getUserName(id) {
+    const theUser = this.teamUsers?.find(tu => tu.id === id);
+    return theUser.name;
   }
 
   completeSubmission() {
