@@ -1,7 +1,8 @@
 import os
+import datetime
 
 header_test = 'Released under a MIT (SEI)-style license'
-header = 'Copyright 2022 Carnegie Mellon University. All Rights Reserved. \n Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.'
+header = 'Copyright ' + str(datetime.date.today().year) + ' Carnegie Mellon University. All Rights Reserved. \n Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.'
 
 print('header not in:')
 # iterate over all files in directory
@@ -17,10 +18,10 @@ for root, dirs, files in os.walk("."):
     # add header to file
     if file.endswith(('.cs', '.ts', '.js', '.css', '.go', '.scss', '.php')):
      # comment type ' /* __ */
-     with open(os.path.join(root,file), 'w') as modified: modified.write('/*\n' + header + '\n*/\n\n' + data)
+     with open(os.path.join(root,file), 'w') as modified: modified.write('/*\n ' + header + '\n*/\n\n' + data)
     elif file.endswith(('.xml', '.html')):
      # comment type ' <!-- __ --> '
-     with open(os.path.join(root,file), 'w') as modified: modified.write('<!--\n' + header + '\n-->\n\n' + data)
+     with open(os.path.join(root,file), 'w') as modified: modified.write('<!--\n ' + header + '\n-->\n\n' + data)
     elif file.endswith('py'):
      # comment type ' """ ___ """ '
-     with open(os.path.join(root,file), 'w') as modified: modified.write('"""\n' + header + '\n"""\n\n' + data)
+     with open(os.path.join(root,file), 'w') as modified: modified.write('"""\n ' + header + '\n"""\n\n' + data)
