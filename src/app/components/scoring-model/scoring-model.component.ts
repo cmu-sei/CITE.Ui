@@ -23,6 +23,7 @@ import { ItemStatus,
        } from 'src/app/generated/cite.api/model/models';
 import { DialogService } from "src/app/services/dialog/dialog.service";
 import { AdminScoringOptionEditDialogComponent } from '../admin/admin-scoring-option-edit-dialog/admin-scoring-option-edit-dialog.component';
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-scoring-model',
@@ -67,8 +68,11 @@ export class ScoringModelComponent {
     private teamQuery: TeamQuery,
     private dialogService: DialogService,
     public matDialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private titleService:Title
+
   ) {
+    this.titleService.setTitle("CITE Scoresheet");
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       const activeId = this.evaluationQuery.getActiveId();

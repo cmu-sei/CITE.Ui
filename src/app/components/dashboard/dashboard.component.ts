@@ -30,6 +30,7 @@ import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { RoleQuery } from 'src/app/data/role/role.query';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-dashboard',
@@ -61,8 +62,11 @@ export class DashboardComponent implements OnDestroy {
     private roleDataService: RoleDataService,
     private roleQuery: RoleQuery,
     private unreadArticlesDataService: UnreadArticlesDataService,
-    private router: Router
+    private router: Router,
+    private titleService:Title
   ) {
+    this.titleService.setTitle("CITE Dashboard");
+
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       const activeId = this.evaluationQuery.getActiveId();
