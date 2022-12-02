@@ -282,12 +282,14 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
       <span *ngIf="canAccessAdminSection && ((showSection | async) === actionsText)">
         <app-admin-actions
           [showSelectionControls]="canSwitchEvaluations | async"
+          [pageSize]="pageSize | async"
         >
         </app-admin-actions>
       </span>
       <span *ngIf="canAccessAdminSection && ((showSection | async) === rolesText)">
         <app-admin-roles
           [showSelectionControls]="canSwitchEvaluations | async"
+          [pageSize]="pageSize | async"
         >
         </app-admin-roles>
       </span>
