@@ -69,10 +69,10 @@ export class ScoringModelComponent {
     private dialogService: DialogService,
     public matDialog: MatDialog,
     private router: Router,
-    private titleService:Title
+    private titleService: Title
 
   ) {
-    this.titleService.setTitle("CITE Scoresheet");
+    this.titleService.setTitle('CITE Scoresheet');
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       const activeId = this.evaluationQuery.getActiveId();
@@ -148,7 +148,7 @@ export class ScoringModelComponent {
     this.userDataService.loggedInUser
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user) => {
-        if (user && user.profile && user.profile.sub != this.loggedInUserId) {
+        if (user && user.profile && user.profile.sub !== this.loggedInUserId) {
           this.loggedInUserId = user.profile.sub;
           this.userId = this.loggedInUserId;
         }
@@ -196,7 +196,7 @@ export class ScoringModelComponent {
       }
       if (isSelected) {
         const scoringCategory = this.selectedScoringModel.scoringCategories.find(sc => sc.id === scoringCategoryId);
-        const scoringOption = scoringCategory.scoringOptions.find(so => so.id == scoringOptionId);
+        const scoringOption = scoringCategory.scoringOptions.find(so => so.id === scoringOptionId);
       }
     }
     return isSelected;
@@ -379,7 +379,7 @@ export class ScoringModelComponent {
       const modifierIds = scoringOptions.filter(x => x.isModifier).map(function(x) { return x.id });
       const optionSelected = sc.submissionOptions.filter(so => optionIds.includes(so.scoringOptionId)).some(so => so.isSelected);
       if (!optionSelected) {
-        noCategoryOption.push(scoringCategory.displayOrder)
+        noCategoryOption.push(scoringCategory.displayOrder);
       }
       if (modifierIds.length > 1) {
         const modifierSelected = sc.submissionOptions.filter(so => modifierIds.includes(so.scoringOptionId)).some(so => so.isSelected);
@@ -390,10 +390,10 @@ export class ScoringModelComponent {
     });
     let errorMessage = '';
     if (noCategoryOption.length > 0) {
-      errorMessage = 'No options selected for categories (' + noCategoryOption.sort((a, b) => a - b).toString() + ').    '
+      errorMessage = 'No options selected for categories (' + noCategoryOption.sort((a, b) => a - b).toString() + ').    ';
     }
     if (noCategoryModifier.length > 0) {
-      errorMessage = errorMessage + 'No modifier selected for categories (' + noCategoryModifier.sort((a, b) => a - b).toString() + ').    '
+      errorMessage = errorMessage + 'No modifier selected for categories (' + noCategoryModifier.sort((a, b) => a - b).toString() + ').    ';
     }
     return errorMessage;
   }
