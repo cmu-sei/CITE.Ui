@@ -30,7 +30,7 @@ import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { RoleQuery } from 'src/app/data/role/role.query';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
-import {Title} from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-dashboard',

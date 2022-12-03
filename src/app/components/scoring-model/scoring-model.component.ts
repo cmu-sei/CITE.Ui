@@ -21,9 +21,9 @@ import { ItemStatus,
          Team,
          User
        } from 'src/app/generated/cite.api/model/models';
-import { DialogService } from "src/app/services/dialog/dialog.service";
+import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminScoringOptionEditDialogComponent } from '../admin/admin-scoring-option-edit-dialog/admin-scoring-option-edit-dialog.component';
-import {Title} from "@angular/platform-browser";
+import { Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-scoring-model',
@@ -375,8 +375,8 @@ export class ScoringModelComponent {
     this.displayedSubmission.submissionCategories.forEach(sc => {
       const scoringCategory = this.selectedScoringModel.scoringCategories.find(x => x.id === sc.scoringCategoryId);
       const scoringOptions = scoringCategory.scoringOptions;
-      const optionIds = scoringOptions.filter(x => !x.isModifier).map(function(x) { return x.id });
-      const modifierIds = scoringOptions.filter(x => x.isModifier).map(function(x) { return x.id });
+      const optionIds = scoringOptions.filter(x => !x.isModifier).map(function(x) { return x.id; });
+      const modifierIds = scoringOptions.filter(x => x.isModifier).map(function(x) { return x.id; });
       const optionSelected = sc.submissionOptions.filter(so => optionIds.includes(so.scoringOptionId)).some(so => so.isSelected);
       if (!optionSelected) {
         noCategoryOption.push(scoringCategory.displayOrder);
@@ -393,7 +393,9 @@ export class ScoringModelComponent {
       errorMessage = 'No options selected for categories (' + noCategoryOption.sort((a, b) => a - b).toString() + ').    ';
     }
     if (noCategoryModifier.length > 0) {
-      errorMessage = errorMessage + 'No modifier selected for categories (' + noCategoryModifier.sort((a, b) => a - b).toString() + ').    ';
+      errorMessage = errorMessage
+        + 'No modifier selected for categories ('
+        + noCategoryModifier.sort((a, b) => a - b).toString() + ').    ';
     }
     return errorMessage;
   }
