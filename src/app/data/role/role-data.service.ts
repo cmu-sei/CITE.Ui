@@ -133,7 +133,7 @@ export class RoleDataService {
         (roles) => {
           roles.forEach(e => {
             this.setAsDates(e);
-          })
+          });
           this.roleStore.set(roles);
         },
         (error) => {
@@ -156,7 +156,7 @@ export class RoleDataService {
         (roles) => {
           roles.forEach(e => {
             this.setAsDates(e);
-          })
+          });
           this.roleStore.set(roles);
         },
         (error) => {

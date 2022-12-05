@@ -4,15 +4,13 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 -->
 
 <div
-  class="app-events-container background text"
+  class="app-events-container background text app-container"
   fxLayout="column"
-  fxLayoutAlign="center stretch"
-  fxFlexFill
 >
   <app-topbar
     *ngIf="!hideTopbar"
     [title]="topbarText"
-    [topbarView]="TopbarView.STEAMFITTER_HOME"
+    [topbarView]="TopbarView.CITE_HOME"
     [topbarColor]="topbarColor"
     [topbarTextColor]="topbarTextColor"
     [imageFilePath]="topbarImage"
@@ -28,6 +26,14 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
     <h2>If the problem persists, please contact the site administrator.</h2>
   </div>
 
+  <div *ngIf="!apiIsSick" class="app-header-container mat-elevation-z8" autosize>
+    <app-evaluation-info
+      [evaluationList]="evaluationList"
+      [showAdminButton]="canAccessAdminSection$ | async"
+      [showMoveArrows]="selectedSection === section.scoresheet"
+    ></app-evaluation-info>
+  </div>
+
   <div
     *ngIf="!apiIsSick && expectingMyEvaluations && evaluationList && evaluationList.length === 0"
     class="app-header-container mat-elevation-z8"
@@ -37,16 +43,9 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
     <h2>Please contact the site administrator or your event facilator.</h2>
   </div>
 
-  <span
+  <div
     *ngIf="!apiIsSick && isAuthorizedUser"
   >
-    <div class="app-header-container mat-elevation-z8" autosize>
-      <app-evaluation-info
-        [evaluationList]="evaluationList"
-        [showAdminButton]="canAccessAdminSection$ | async"
-        [showMoveArrows]="selectedSection === section.scoresheet"
-      ></app-evaluation-info>
-    </div>
     <span
       *ngIf="isReady"
     >
@@ -73,8 +72,5 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <h2>No Incident Selected</h2>
       </div>
     </span>
-  </span>
-</div>
-<div *ngIf="!apiIsSick && !isReady && selectedEvaluationId">
-  <mat-progress-bar color="primary" mode="indeterminate" style="width: 90%; margin: 20px;"></mat-progress-bar>
+  </div>
 </div>
