@@ -131,6 +131,9 @@ export class MoveDataService {
       )
       .subscribe(
         (moves) => {
+          moves.forEach(m => {
+            this.setAsDates(m);
+          });
           this.moveStore.set(moves);
         },
         (error) => {
@@ -150,6 +153,7 @@ export class MoveDataService {
         take(1)
       )
       .subscribe((s) => {
+        this.setAsDates(s);
         this.moveStore.upsert(s.id, { ...s });
       });
   }
@@ -202,10 +206,19 @@ export class MoveDataService {
   }
 
   updateStore(move: Move) {
+    this.setAsDates(move);
     this.moveStore.upsert(move.id, move);
   }
 
   deleteFromStore(id: string) {
     this.moveStore.remove(id);
   }
+
+  setAsDates(move: Move) {
+    // set to a date object.
+    move.dateCreated = new Date(move.dateCreated);
+    move.dateModified = new Date(move.dateModified);
+    move.situationTime = new Date(move.situationTime);
+  }
+
 }

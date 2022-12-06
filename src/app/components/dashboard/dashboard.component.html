@@ -5,8 +5,8 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 <div class="top-level-container">
   <div class="row-container">
     <div class="item-container">
-      <h4>Exercise Time: {{ selectedEvaluation.situationTime.toLocaleString('en-US', {timeZone: 'America/New_York'}) | date : 'EEEE, MMMM d, y  h:mm:ss a' }} ET</h4>
-      {{ selectedEvaluation.situationDescription }}
+      <h4>Exercise Time: {{ currentMove.situationTime.toLocaleString('en-US', {timeZone: 'America/New_York'}) | date : 'EEEE, MMMM d, y  h:mm:ss a' }} ET</h4>
+      {{ currentMove.situationDescription }}
     </div>
   </div>
   <div class="row-container" *ngIf="unreadArticles && +unreadArticles.count > 0">

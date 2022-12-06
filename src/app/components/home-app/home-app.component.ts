@@ -20,10 +20,12 @@ import {
   Evaluation,
   HealthCheckService,
   ItemStatus,
+  Move,
   Submission,
   Team
 } from 'src/app/generated/cite.api';
 import { MoveDataService } from 'src/app/data/move/move-data.service';
+import { MoveQuery } from 'src/app/data/move/move.query';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
@@ -31,11 +33,9 @@ import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { ApplicationArea, SignalRService } from 'src/app/services/signalr.service';
-import { GallerySignalRService } from 'src/app/services/gallery-signalr.service'
+import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
-import { ActionQuery } from 'src/app/data/action/action.query';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
-import { RoleQuery } from 'src/app/data/role/role.query';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 
 export enum Section {
@@ -77,8 +77,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   isReady = false;
   currentMoveNumber = -1;
   userCurrentSubmission: Submission;
-  unreadArticles = this.unreadArticlesQuery.selectActive();
+  unreadArticles$ = this.unreadArticlesQuery.selectActive();
   loadedSubmissionsForEvaluation: Evaluation;
+  moveList$ = this.moveQuery.selectAll() as Observable<Move[]>;
+
 
   constructor(
     activatedRoute: ActivatedRoute,
@@ -87,7 +89,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private settingsService: ComnSettingsService,
     private authQuery: ComnAuthQuery,
     private evaluationDataService: EvaluationDataService,
-    private evaluationTeamDataService: EvaluationTeamDataService,
     private evaluationQuery: EvaluationQuery,
     private moveDataService: MoveDataService,
     private scoringModelDataService: ScoringModelDataService,
@@ -100,15 +101,14 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private gallerySignalRService: GallerySignalRService,
     private healthCheckService: HealthCheckService,
     private actionDataService: ActionDataService,
-    private actionQuery: ActionQuery,
+    private moveQuery: MoveQuery,
     private roleDataService: RoleDataService,
-    private roleQuery: RoleQuery,
     private unreadArticlesQuery: UnreadArticlesQuery,
     titleService: Title
   ) {
     this.healthCheck();
 
-    var appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
+    const appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
     titleService.setTitle(appTitle);
     this.topbarTextBase = this.settingsService.settings.AppTopBarText || this.topbarTextBase;
     this.topbarText = this.topbarTextBase;

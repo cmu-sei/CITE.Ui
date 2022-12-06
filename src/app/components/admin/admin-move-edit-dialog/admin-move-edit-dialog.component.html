@@ -15,56 +15,59 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the project r
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
   </button>
 </div>
-<div mat-dialog-content *ngIf="data && data.evaluation">
-  <div fxLayout="row" class="add-margin">
-    <div fxFlex fxFlexOffset="10">
-      <mat-form-field class="description-field full-width">
-        <mat-label>Evaluation Description</mat-label>
-        <input matInput [(ngModel)]="data.evaluation.description" />
-      </mat-form-field>
-    </div>
-  </div>
-  <div fxLayout="row" class="add-margin">
-    <div fxFlex fxFlexOffset="10">
-      <mat-form-field class="description-field full-width">
-        <mat-label>Scoring Model</mat-label>
-        <mat-select placeholder="Select a Scoring Model" [(value)]="data.evaluation.scoringModelId" (click)="$event.stopPropagation()">
-          <mat-option *ngFor="let scoringModel of data.scoringModels" [value]="scoringModel.id">
-            {{ scoringModel.description }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </div>
-  <div fxLayout="row" class="add-margin">
-    <div fxFlex fxFlexOffset="10">
-      <mat-form-field class="description-field full-width">
-        <mat-label>Evaluation Status</mat-label>
-        <mat-select placeholder="Select a Status" [(value)]="data.evaluation.status" (click)="$event.stopPropagation()">
-          <mat-option *ngFor="let status of data.itemStatuses" [value]="status">
-            {{ status }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </div>
-
-
-  <div fxLayout="row" class="add-margin">
-    <div fxFlex fxFlexOffset="10">
-      <mat-form-field class="description-field full-width">
-        <mat-label>Gallery Exhibit ID</mat-label>
-        <input matInput [(ngModel)]="data.evaluation.galleryExhibitId" />
-      </mat-form-field>
-    </div>
-  </div>
-
-
+<div mat-dialog-content *ngIf="data && data.move">
   <div fxLayout="row" class="add-margin">
     <div fxFlex fxFlexOffset="10">
       <mat-form-field class="description-field">
-        <mat-label>Current Move</mat-label>
-        <input matInput [(ngModel)]="data.evaluation.currentMoveNumber" />
+        <mat-label>Move Number</mat-label>
+        <input matInput [(ngModel)]="data.move.moveNumber" />
+      </mat-form-field>
+    </div>
+  </div>
+  <div fxLayout="row" class="add-margin">
+    <div fxFlex fxFlexOffset="10">
+      <mat-form-field class="description-field full-width">
+        <mat-label>Move Description</mat-label>
+        <input matInput [(ngModel)]="data.move.description" />
+      </mat-form-field>
+    </div>
+  </div>
+  <div fxLayout="row" class="add-margin">
+    <div fxFlex fxFlexOffset="10">
+      <mat-form-field class="description-field full-width">
+        <mat-label>Situation Description</mat-label>
+        <textarea matInput [(ngModel)]="data.move.situationDescription"></textarea>
+      </mat-form-field>
+    </div>
+  </div>
+  <div fxLayout="row" class="add-margin">
+    <div fxFlex fxFlexOffset="10">
+      <mat-form-field>
+        <input
+          matInput
+          [matDatepicker]="situationDatePicker"
+          placeholder="Situation Date / Time"
+          (inputChange)="saveMove('situationDate')"
+          (dateChange)="saveMove('situationDate')"
+          [formControl]="situationDateFormControl"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="situationDatePicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker
+          #situationDatePicker
+        ></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field fxFlexOffset="5" style="margin-top: -15px">
+        <input matInput hidden />
+        <ngx-timepicker-field
+          [formControl]="situationTimeFormControl"
+          [format]="24"
+          [defaultTime]="situationTimeFormControl.value"
+          (timeChanged)="saveMove('situationTime')"
+        >
+        </ngx-timepicker-field>
       </mat-form-field>
     </div>
   </div>

@@ -26,10 +26,20 @@
   flex: 1;
   overflow: hidden;
   word-wrap: break-word;
+  text-align: left;
+  align-self: center;
 }
 
 .cell-one {
   flex: 1;
+}
+
+.cell-two {
+  flex: 2;
+}
+
+.cell-five {
+  flex: 5;
 }
 
 .cell-six {

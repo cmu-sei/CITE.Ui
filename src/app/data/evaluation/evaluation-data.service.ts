@@ -141,7 +141,7 @@ export class EvaluationDataService {
         (evaluations) => {
           evaluations.forEach(e => {
             this.setAsDates(e);
-          })
+          });
           this.evaluationStore.set(evaluations);
         },
         (error) => {
@@ -184,6 +184,7 @@ export class EvaluationDataService {
         take(1)
       )
       .subscribe((s) => {
+        this.setAsDates(s);
         this.evaluationStore.upsert(s.id, { ...s });
       });
   }
@@ -257,7 +258,6 @@ export class EvaluationDataService {
     // set to a date object.
     evaluation.dateCreated = new Date(evaluation.dateCreated);
     evaluation.dateModified = new Date(evaluation.dateModified);
-    evaluation.situationTime = new Date(evaluation.situationTime);
   }
 
 }

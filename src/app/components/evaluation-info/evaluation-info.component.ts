@@ -9,10 +9,10 @@ import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
-import { Observable, Subject } from "rxjs";
-import { map, takeUntil } from "rxjs/operators";
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { UserDataService } from 'src/app/data/user/user-data.service';
-import { Section } from 'src/app/components/home-app/home-app.component'
+import { Section } from 'src/app/components/home-app/home-app.component';
 
 @Component({
   selector: 'app-evaluation-info',
