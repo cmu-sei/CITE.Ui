@@ -26,6 +26,7 @@ import { RoleQuery } from 'src/app/data/role/role.query';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-dashboard',
@@ -61,8 +62,11 @@ export class DashboardComponent implements OnDestroy {
     private roleQuery: RoleQuery,
     private submissionQuery: SubmissionQuery,
     private unreadArticlesDataService: UnreadArticlesDataService,
-    private router: Router
+    private router: Router,
+    private titleService: Title
   ) {
+    this.titleService.setTitle('CITE Dashboard');
+
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       const activeId = this.evaluationQuery.getActiveId();
@@ -127,6 +131,30 @@ export class DashboardComponent implements OnDestroy {
       this.actionDataService.uncheckAction(actionId);
     }
   }
+
+  changedBy(actionId: string) {
+    let changedBy = null;
+    let isChecked = null;
+    const action = this.actionList.find(action => action.id === actionId);
+
+    if (action) {
+      isChecked = action && action.isChecked;
+      changedBy = action && action.changedBy;
+      if (isChecked && changedBy) {
+        return 'Selected by ' + this.getUserName(changedBy);
+      } else if (!isChecked && changedBy) {
+        return 'Unselected by ' + this.getUserName(changedBy);
+      }
+    }
+
+    return;
+  }
+
+  getUserName(id) {
+    const theUser = this.teamUsers?.find(tu => tu.id === id);
+    return theUser.name;
+  }
+
 
   updateRoleUsers(role: Role, event: any) {
     const newRoleUsers = event.value;

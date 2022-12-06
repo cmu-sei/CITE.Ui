@@ -55,6 +55,7 @@ $cmu-light-theme-background: (
   disabled-button-toggle: map_get(mat.$grey-palette, 200),
   unselected-chip: map_get(mat.$grey-palette, 300),
   disabled-list-option: #f1f1f2,
+  official-background: #d62518,
 );
 
 // Foreground palette for light themes.
@@ -100,6 +101,7 @@ $cmu-dark-theme-background: (
   disabled-button-toggle: black,
   unselected-chip: map_get(mat.$grey-palette, 700),
   disabled-list-option: map_get(mat.$grey-palette, 900),
+  official-background: #e13023,
 );
 
 // Foreground palette for dark themes.
@@ -300,7 +302,7 @@ $custom-typography: mat.define-typography-config(
   }
 
   .mat-official {
-    background-color: map-get($foreground, 'official-text');
+    background-color: map-get($background, 'official-background');
   }
 
   .official-text {

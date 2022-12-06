@@ -15,13 +15,19 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
     </div>
   </div>
   <div class="row-container">
-    <div class="item-container four-cell mat-elevation-z8">
-      <b>Actions to consider:</b>
-      <mat-checkbox [checked]="action.isChecked" (change)="checkAction(action.id, $event.checked)" *ngFor="let action of actionList">{{ action.description }}</mat-checkbox>
+    <div class="item-container mat-elevation-z8 four-cell">
+      <b>Actions:</b>
+      <mat-checkbox 
+	      [checked]="action.isChecked" 
+	      (change)="checkAction(action.id, $event.checked)" 
+	      *ngFor="let action of actionList"
+              [matTooltip]="changedBy(action.id)"
+      >
+	      {{ action.description }}</mat-checkbox>
     </div>
   </div>
   <div class="row-container">
-    <div class="item-container mat-elevation-z8 one-cell">
+    <div class="item-container mat-elevation-z8 four-cell">
       <b>Roles:</b>
       <div class="role-container" *ngFor="let role of roleList">
         <div class="role-cell five-cell">
