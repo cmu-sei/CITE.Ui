@@ -30,6 +30,8 @@ export interface Evaluation {
     description?: string;
     status?: ItemStatus;
     currentMoveNumber?: number;
+    situationTime?: Date;
+    situationDescription?: string;
     scoringModelId?: string;
     scoringModel?: ScoringModel;
     galleryExhibitId?: string;

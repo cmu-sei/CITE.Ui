@@ -46,7 +46,8 @@ export class DashboardComponent implements OnDestroy {
   teamUsers: User[];
   selectedEvaluation: Evaluation = {};
   isLoading = false;
-  actionList: Action[];
+  actionList: Action[] = [];
+  allActions: Action[] = [];
   roleList: Role[];
   currentMove: Move = {};
   private unsubscribe$ = new Subject();
@@ -81,8 +82,12 @@ export class DashboardComponent implements OnDestroy {
       this.moveList = moves;
       if (moves && moves.length > 0) {
         this.currentMove = moves.find(m => +m.moveNumber === +this.selectedEvaluation.currentMoveNumber);
+        this.actionList = this.allActions
+          .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
+          .sort((a, b) => a.description < b.description ? -1 : 1);
       } else {
         this.currentMove = {};
+        this.actionList = [];
       }
     });
     // observe the active submission
@@ -91,8 +96,12 @@ export class DashboardComponent implements OnDestroy {
       active = active ? active : { id: '', moveNumber: -1, submissionCategories: []} as Submission;
       if (this.moveList && this.moveList.length > 0) {
         this.currentMove = this.moveList.find(m => +m.moveNumber === +active.moveNumber);
+        this.actionList = this.allActions
+          .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
+          .sort((a, b) => a.description < b.description ? -1 : 1);
       } else {
         this.currentMove = {};
+        this.actionList = [];
       }
     });
 
@@ -106,7 +115,10 @@ export class DashboardComponent implements OnDestroy {
     });
     // observe the Action list
     this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(actions => {
-      this.actionList = actions.sort((a, b) => a.description < b.description ? -1 : 1);
+      this.allActions = actions;
+      this.actionList = actions
+        .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
+        .sort((a, b) => a.description < b.description ? -1 : 1);
     });
     // observe the Role list
     this.roleQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(roles => {
