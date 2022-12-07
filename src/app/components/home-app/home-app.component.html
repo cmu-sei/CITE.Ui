@@ -26,14 +26,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
     <h2>If the problem persists, please contact the site administrator.</h2>
   </div>
 
-  <div *ngIf="!apiIsSick" class="app-header-container mat-elevation-z8" autosize>
-    <app-evaluation-info
-      [evaluationList]="evaluationList"
-      [showAdminButton]="canAccessAdminSection$ | async"
-      [showMoveArrows]="selectedSection === section.scoresheet"
-    ></app-evaluation-info>
-  </div>
-
   <div
     *ngIf="!apiIsSick && expectingMyEvaluations && evaluationList && evaluationList.length === 0"
     class="app-header-container mat-elevation-z8"
@@ -51,7 +43,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         [evaluationList]="evaluationList"
         [showAdminButton]="canAccessAdminSection$ | async"
         [showMoveArrows]="selectedSection === section.scoresheet"
-        [moveList$]="moveList$"
         ></app-evaluation-info>
     </div>
     <span
@@ -62,7 +53,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
           <app-dashboard
             *ngIf="unreadArticles$ && moveList$"
             [unreadArticles]="unreadArticles$ | async"
-            [moveList$]="moveList$ | async"
           ></app-dashboard>
         </div>
         <div class="app-model-container mat-elevation-z8" autosize *ngIf="selectedSection === section.scoresheet">
@@ -71,7 +61,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <div class="app-score-container mat-elevation-z8" autosize>
           <app-score-card
             *ngIf="unreadArticles$ && moveList$"
-            [selectedEvaluation]="selectedEvaluation | async"
             [selectedScoringModel]="selectedScoringModel | async"
             [submissionList]="submissionList | async"
           ></app-score-card>
