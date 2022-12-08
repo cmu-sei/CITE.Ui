@@ -34,13 +34,12 @@ import { DialogService } from "src/app/services/dialog/dialog.service";
 export class AdminSubmissionsComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
-  @Input() filterControl: FormControl;
-  @Input() filterString: string;
   @Input() pageSize: number;
   @Input() pageIndex: number;
   @Output() sortChange = new EventEmitter<Sort>();
   @Output() pageChange = new EventEmitter<PageEvent>();
-
+  filterControl: FormControl = this.submissionDataService.filterControl;
+  filterString = '';
   isLoading = false;
   topbarColor = '#ef3a47';
   populatedSubmissions: PopulatedSubmission[] = [];

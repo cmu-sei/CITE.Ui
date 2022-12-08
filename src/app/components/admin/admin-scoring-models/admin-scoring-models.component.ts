@@ -22,12 +22,12 @@ import { AdminScoringModelEditDialogComponent } from '../admin-scoring-model-edi
 })
 export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   @Input() scoringModelList: ScoringModel[];
-  @Input() filterControl: FormControl;
-  @Input() filterString: string;
   @Input() pageSize: number;
   @Input() pageIndex: number;
   @Output() sortChange = new EventEmitter<Sort>();
   @Output() pageChange = new EventEmitter<PageEvent>();
+  filterControl: FormControl = this.scoringModelDataService.filterControl;
+  filterString = '';
   newScoringModel: ScoringModel = { id: '', description: '' };
   isLoading = false;
   topbarColor = '#ef3a47';

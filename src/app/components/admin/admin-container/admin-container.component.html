@@ -257,10 +257,8 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
       <span *ngIf="isSuperUser && ((showSection | async) === scoringModelsText)">
         <app-admin-scoring-models
           [scoringModelList]="scoringModelList | async"
-          [filterControl]="filterControl"
           [pageSize]="pageSize | async"
           [pageIndex]="pageIndex | async"
-          [filterString]="filterString | async"
           (sortChange)="sortChangeHandler($event)"
           (pageChange)="pageChangeHandler($event)"
         >
@@ -270,10 +268,8 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <app-admin-evaluations
           [evaluationList]="evaluationList | async"
           [teamList]="teamList | async"
-          [filterControl]="filterControl"
           [pageSize]="pageSize | async"
           [pageIndex]="pageIndex | async"
-          [filterString]="filterString | async"
           (sortChange)="sortChangeHandler($event)"
           (pageChange)="pageChangeHandler($event)"
         >
@@ -295,10 +291,8 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
       </span>
       <span *ngIf="isSuperUser && ((showSection | async) === submissionsText)">
         <app-admin-submissions
-          [filterControl]="filterControl"
           [pageSize]="pageSize | async"
           [pageIndex]="pageIndex | async"
-          [filterString]="filterString | async"
           (sortChange)="sortChangeHandler($event)"
           (pageChange)="pageChangeHandler($event)"
         >
@@ -307,10 +301,8 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
       <span *ngIf="isSuperUser && ((showSection | async) === groupsText)">
         <app-admin-groups
           [teamList]="teamList | async"
-          [filterControl]="filterControl"
           [pageSize]="pageSize | async"
           [pageIndex]="pageIndex | async"
-          [filterString]="filterString | async"
           (sortChange)="sortChangeHandler($event)"
           (pageChange)="pageChangeHandler($event)"
         >
@@ -320,10 +312,8 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <app-admin-teams
           [teamList]="teamList | async"
           [userList]="userList | async"
-          [filterControl]="filterControl"
           [pageSize]="pageSize | async"
           [pageIndex]="pageIndex | async"
-          [filterString]="filterString | async"
           (sortChange)="sortChangeHandler($event)"
           (pageChange)="pageChangeHandler($event)"
         >
@@ -333,10 +323,8 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <app-admin-users
           [userList]="userList | async"
           [permissionList]="permissionList | async"
-          [filterControl]="filterControl"
           [pageSize]="pageSize | async"
           [pageIndex]="pageIndex | async"
-          [filterString]="filterString | async"
           (removeUserPermission)="removeUserPermissionHandler($event)"
           (addUserPermission)="addUserPermissionHandler($event)"
           (addUser)="addUserHandler($event)"

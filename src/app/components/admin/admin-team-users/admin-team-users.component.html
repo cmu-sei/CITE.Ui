@@ -15,12 +15,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         svgIcon="ic_magnify_search"
       ></mat-icon>
       <mat-form-field style="width: 220px;">
-        <input
-          matInput
-          [(ngModel)]="filterString"
-          (keyup)="applyFilter($event.target.value)"
-          placeholder="Search"
-        />
+        <input matInput [formControl]="filterControl" placeholder="Search" />
       </mat-form-field>
       <button
         *ngIf="filterString != ''"
