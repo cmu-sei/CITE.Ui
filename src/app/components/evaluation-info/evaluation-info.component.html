@@ -13,11 +13,11 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
   </div>
   <div class="move-div" *ngIf="selectedEvaluationId && displayedMoveNumber >= 0">
     <h1 class="nowrap">Move:&nbsp;</h1>
-    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="displayedMoveNumber <= 0" (click)="decrementDisplayedMove()" *ngIf="showMoveArrows">
+    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="displayedMoveNumber <= 0" (click)="decrementDisplayedMove()">
       <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
     </button>
     <h1 class="nowrap" [ngStyle]='displayedMoveStyle'>{{ displayedMoveNumber }}</h1>
-    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="selectedEvaluationId && displayedMoveNumber >= getCurrentMoveNumber()" (click)="incrementDisplayedMove()" *ngIf="showMoveArrows">
+    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="selectedEvaluationId && displayedMoveNumber >= getCurrentMoveNumber()" (click)="incrementDisplayedMove()">
       <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
     </button>
     <h1 class="space-right">&nbsp;of&nbsp;{{ maxMoveNumber }}</h1>

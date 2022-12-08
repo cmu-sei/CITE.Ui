@@ -11,10 +11,10 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
   <section
     class="mat-elevation-z2 mat-header-row"
   >
-    <span class="mat-header-cell cell-one" mat-header="moveNumber">Move Number</span>
-    <span class="mat-header-cell cell-six" mat-header="description">Description</span>
+    <span class="mat-header-cell cell-two" mat-header="moveNumber">Move Number</span>
+    <span class="mat-header-cell cell-five" mat-header="description">Description</span>
     <span class="mat-header-cell cell-one" mat-header="id">
-      <button mat-stroked-button (click)="addMove()">Add Move</button>
+      <button mat-stroked-button (click)="addOrEditMove(null)">Add Move</button>
     </span>
   </section>
 
@@ -23,40 +23,29 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
     [disabled]="true"
   >
     <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading">
-      <span class="mat-cell cell-one">
-        {{ move.moveNumber }}
-      </span>
-      <span class="mat-cell cell-six">
+      <span class="mat-cell cell-two">
         <button
           mat-icon-button
-          ngxClipboard
-          [cbContent]="move.id"
-          (click)="$event.stopPropagation()"
-          title="Copy ID:  {{ move.id }}"
+          (click)="addOrEditMove(move); $event.stopPropagation()"
+          style="outline: none;"
+          title="Edit Evaluation"
         >
-          <mat-icon class="mdi-24px" fontIcon="mdi-content-copy"></mat-icon>
+          <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
         </button>
-        <span *ngIf="editMove.id !== move.id">
-          <button mat-button (click)="editMoveDescription(move)" title="Edit MoveDescription">
-            {{ move.description }}
-          </button>
-        </span>
-        <span *ngIf="editMove.id === move.id">
-          <input type="text" class="description-width" [(ngModel)]="editMove.description" (keydown)="handleInput($event)" (blur)="saveMoveDescription()" />
-        </span>
-      </span>
-      <span class="mat-cell cell-one">
         <button
           mat-icon-button
-          class="button-end"
           (click)="deleteMoveRequest(move); $event.stopPropagation()"
           title="Delete Move"
         >
           <mat-icon
             class="mdi-24px"
-            fontIcon="mdi-delete-forever-outline"
+            fontIcon="mdi-trash-can"
           ></mat-icon>
         </button>
+        {{ move.moveNumber }}
+      </span>
+      <span class="mat-cell cell-six">
+        {{ move.description }}
       </span>
     </mat-expansion-panel-header>
   </mat-expansion-panel>

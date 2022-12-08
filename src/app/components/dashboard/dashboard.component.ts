@@ -3,31 +3,27 @@
 
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger} from '@angular/animations';
-import { DatePipe } from '@angular/common';
-import { PageEvent, MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortable } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
-import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
-import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
-import { ItemStatus,
+import {
          Action,
          Evaluation,
+         Move,
          Role,
          Submission,
-         SubmissionComment,
          Team,
          User
        } from 'src/app/generated/cite.api/model/models';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { ActionQuery } from 'src/app/data/action/action.query';
+import { MoveQuery } from 'src/app/data/move/move.query';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { RoleQuery } from 'src/app/data/role/role.query';
+import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { Title } from '@angular/platform-browser';
@@ -46,11 +42,14 @@ import { Title } from '@angular/platform-browser';
 })
 export class DashboardComponent implements OnDestroy {
   @Input() unreadArticles: UnreadArticles;
+  @Input() moveList: Move[];
   teamUsers: User[];
   selectedEvaluation: Evaluation = {};
   isLoading = false;
-  actionList: Action[];
+  actionList: Action[] = [];
+  allActions: Action[] = [];
   roleList: Role[];
+  currentMove: Move = {};
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -59,8 +58,10 @@ export class DashboardComponent implements OnDestroy {
     private teamQuery: TeamQuery,
     private actionDataService: ActionDataService,
     private actionQuery: ActionQuery,
+    private moveQuery: MoveQuery,
     private roleDataService: RoleDataService,
     private roleQuery: RoleQuery,
+    private submissionQuery: SubmissionQuery,
     private unreadArticlesDataService: UnreadArticlesDataService,
     private router: Router,
     private titleService: Title
@@ -76,6 +77,33 @@ export class DashboardComponent implements OnDestroy {
         this.unreadArticlesDataService.loadById(activeId);
       }
     });
+    // observe the move list
+    (this.moveQuery.selectAll() as Observable<Move[]>).pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
+      this.moveList = moves;
+      if (moves && moves.length > 0) {
+        this.currentMove = moves.find(m => +m.moveNumber === +this.selectedEvaluation.currentMoveNumber);
+        this.actionList = this.allActions
+          .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
+          .sort((a, b) => a.description < b.description ? -1 : 1);
+      } else {
+        this.currentMove = {};
+        this.actionList = [];
+      }
+    });
+    // observe the active submission
+    (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
+      const activeId = this.submissionQuery.getActiveId();
+      active = active ? active : { id: '', moveNumber: -1, submissionCategories: []} as Submission;
+      if (this.moveList && this.moveList.length > 0) {
+        this.currentMove = this.moveList.find(m => +m.moveNumber === +active.moveNumber);
+        this.actionList = this.allActions
+          .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
+          .sort((a, b) => a.description < b.description ? -1 : 1);
+      } else {
+        this.currentMove = {};
+        this.actionList = [];
+      }
+    });
 
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
@@ -85,12 +113,13 @@ export class DashboardComponent implements OnDestroy {
         this.teamUsers = active.users;
       }
     });
-
     // observe the Action list
     this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(actions => {
-      this.actionList = actions.sort((a, b) => a.description < b.description ? -1 : 1);
+      this.allActions = actions;
+      this.actionList = actions
+        .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
+        .sort((a, b) => a.description < b.description ? -1 : 1);
     });
-
     // observe the Role list
     this.roleQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(roles => {
       this.roleList = [];

@@ -7404,14 +7404,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "situationTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "situationDescription": {
-            "type": "string",
-            "nullable": true
-          },
           "scoringModelId": {
             "type": "string",
             "format": "uuid"
@@ -7613,6 +7605,14 @@
           "moveNumber": {
             "type": "integer",
             "format": "int32"
+          },
+          "situationTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "situationDescription": {
+            "type": "string",
+            "nullable": true
           },
           "evaluationId": {
             "type": "string",

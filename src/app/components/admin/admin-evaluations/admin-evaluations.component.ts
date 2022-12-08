@@ -78,9 +78,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
         description: '',
         currentMoveNumber: 0,
         status: ItemStatus.Pending,
-        scoringModelId: this.selectedScoringModelId,
-        situationDescription: '',
-        situationTime: new Date()
+        scoringModelId: this.selectedScoringModelId
       };
     } else {
       evaluation = {... evaluation};

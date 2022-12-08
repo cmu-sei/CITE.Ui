@@ -54,17 +54,17 @@ export class ScoreCardComponent implements OnDestroy {
     const score = (Math.round((submission.score + Number.EPSILON) * 100) / 100);
     if (score >= +level.scoremin && score <= +level.scoremax) {
       if (submission.userId != null) {
-        displayText = ' (user)'
+        displayText = ' (user)';
       } else if (submission.teamId != null) {
         if (submission.scoreIsAnAverage) {
-          displayText = ' (team-avg)'
+          displayText = ' (team-avg)';
         } else {
-          displayText = ' (team)'
+          displayText = ' (team)';
         }
       } else if (submission.groupId != null) {
         displayText = ' (group-avg)';
       } else {
-        displayText = ' (official)'
+        displayText = ' (official)';
       }
       return score + displayText;
     }
