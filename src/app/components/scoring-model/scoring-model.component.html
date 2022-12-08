@@ -142,6 +142,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
               class="move-button background-button"
               *ngIf="showSubmitButton"
               (click)="completeSubmission()"
+              title="Submit completed score"
             >
               Submit
             </button>
@@ -151,6 +152,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
               class="move-button background-button"
               *ngIf="showReopenButton"
               (click)="activateSubmission()"
+              title="Reopen to change score"
             >
               Reopen
             </button>
@@ -160,6 +162,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
               class="move-button background-button"
               *ngIf="showModifyControls"
               (click)="clearSelections()"
+              title="Clear all selections"
             >
               Clear
             </button>
@@ -169,6 +172,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
               class="move-button background-button"
               *ngIf="showModifyControls"
               (click)="presetSelections()"
+              title="Preset selections to the previous move"
             >
               Preset
             </button>
