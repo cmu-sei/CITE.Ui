@@ -78,7 +78,9 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
         description: '',
         currentMoveNumber: 0,
         status: ItemStatus.Pending,
-        scoringModelId: this.selectedScoringModelId
+        scoringModelId: this.selectedScoringModelId,
+        situationDescription: '',
+        situationTime: new Date()
       };
     } else {
       evaluation = {... evaluation};
@@ -114,14 +116,14 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   incrementCurrentMoveNumber(evaluation: Evaluation) {
     const updateEvaluation = { ...evaluation };
     updateEvaluation.currentMoveNumber ++;
-    this.evaluationDataService.updateEvaluation(updateEvaluation);
+    this.evaluationDataService.changeCurrentMove(updateEvaluation);
   }
 
   decrementCurrentMoveNumber(evaluation: Evaluation) {
     if (evaluation.currentMoveNumber > 0) {
       const updateEvaluation = { ...evaluation };
       updateEvaluation.currentMoveNumber --;
-      this.evaluationDataService.updateEvaluation(updateEvaluation);
+      this.evaluationDataService.changeCurrentMove(updateEvaluation);
     }
   }
 

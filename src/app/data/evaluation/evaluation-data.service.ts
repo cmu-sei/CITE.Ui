@@ -225,6 +225,21 @@ export class EvaluationDataService {
       });
   }
 
+  changeCurrentMove(evaluation: Evaluation) {
+    this.evaluationStore.setLoading(true);
+    this.evaluationService
+      .setEvaluationCurrentMove(evaluation.id, evaluation.currentMoveNumber)
+      .pipe(
+        tap(() => {
+          this.evaluationStore.setLoading(false);
+        }),
+        take(1)
+      )
+      .subscribe((n) => {
+        this.updateStore(n);
+      });
+  }
+
   delete(id: string) {
     this.evaluationService
       .deleteEvaluation(id)
@@ -258,6 +273,7 @@ export class EvaluationDataService {
     // set to a date object.
     evaluation.dateCreated = new Date(evaluation.dateCreated);
     evaluation.dateModified = new Date(evaluation.dateModified);
+    evaluation.situationTime = new Date(evaluation.situationTime);
   }
 
 }
