@@ -25,12 +25,12 @@ import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dia
 export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   @Input() evaluationList: Evaluation[];
   @Input() teamList: Team[];
-  @Input() filterControl: FormControl;
-  @Input() filterString: string;
   @Input() pageSize: number;
   @Input() pageIndex: number;
   @Output() sortChange = new EventEmitter<Sort>();
   @Output() pageChange = new EventEmitter<PageEvent>();
+  filterControl: FormControl = this.evaluationDataService.filterControl;
+  filterString = '';
   newEvaluation: Evaluation = { id: '', description: '' };
   isLoading = false;
   topbarColor = '#ef3a47';

@@ -12,6 +12,7 @@ import {
 } from 'src/app/generated/cite.api/model/models';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
+import { UserDataService } from 'src/app/data/user/user-data.service';
 
 @Component({
   selector: 'app-admin-users',
@@ -19,8 +20,6 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
   styleUrls: ['./admin-users.component.scss'],
 })
 export class AdminUsersComponent implements OnInit {
-  @Input() filterControl: FormControl;
-  @Input() filterString: string;
   @Input() userList: User[];
   @Input() permissionList: Permission[];
   @Input() pageSize: number;
@@ -31,6 +30,7 @@ export class AdminUsersComponent implements OnInit {
   @Output() deleteUser = new EventEmitter<User>();
   @Output() sortChange = new EventEmitter<Sort>();
   @Output() pageChange = new EventEmitter<PageEvent>();
+  filterControl = this.userDataService.filterControl;
   addingNewUser = false;
   newUser: User = { id: '', name: '' };
   isLoading = false;
@@ -38,6 +38,7 @@ export class AdminUsersComponent implements OnInit {
 
   constructor(
     public dialogService: DialogService,
+    private userDataService: UserDataService,
     private settingsService: ComnSettingsService
   ) {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
@@ -46,7 +47,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.filterControl.setValue(this.filterString);
+    this.filterControl.setValue('');
   }
 
   hasPermission(permissionId: string, user: User) {
@@ -87,7 +88,6 @@ export class AdminUsersComponent implements OnInit {
       });
   }
 
-
   applyFilter(filterValue: string) {
     this.filterControl.setValue(filterValue);
   }
@@ -108,4 +108,5 @@ export class AdminUsersComponent implements OnInit {
     const copy = users.slice();
     return copy.splice(startIndex, pageSize);
   }
+
 }

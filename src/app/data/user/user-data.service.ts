@@ -75,7 +75,7 @@ export class UserDataService implements OnDestroy {
       });
 
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('filter') || '')
+      map((params) => params.get('userterm') || '')
     );
     this.sortColumn = activatedRoute.queryParamMap.pipe(
       map((params) => params.get('sorton') || 'name')
@@ -91,7 +91,7 @@ export class UserDataService implements OnDestroy {
     );
     this.filterControl.valueChanges.subscribe((term) => {
       router.navigate([], {
-        queryParams: { filter: term },
+        queryParams: { userterm: term },
         queryParamsHandling: 'merge',
       });
     });
@@ -111,8 +111,8 @@ export class UserDataService implements OnDestroy {
           sortIsAscending,
           pageSize,
           pageIndex,
-        ]) =>
-          users
+        ]) => {
+          const results = users
             ? (users as User[])
                 .sort((a: User, b: User) =>
                   this.sortUsers(a, b, sortColumn, sortIsAscending)
@@ -121,10 +121,11 @@ export class UserDataService implements OnDestroy {
                   (user) =>
                     user.name
                       .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
-                    user.id.toLowerCase().includes(filterTerm.toLowerCase())
+                      .includes(filterTerm.toLowerCase())
                 )
-            : []
+            : [];
+          return results;
+        }
       )
     );
     this.requestedUserId = activatedRoute.queryParamMap.pipe(

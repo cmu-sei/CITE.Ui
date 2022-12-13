@@ -55,8 +55,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   scoringModelList = this.scoringModelDataService.scoringModelList;
   teamList = this.teamDataService.teamList;
   userList = this.userDataService.userList;
-  filterControl: FormControl = this.userDataService.filterControl;
-  filterString: Observable<string>;
   permissionList: Observable<Permission[]>;
   pageSize: Observable<number>;
   pageIndex: Observable<number>;
@@ -106,10 +104,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
         if (this.canAccessAdminSection && !this.isSuperUser) {
           this.evaluationDataService.loadMine();
         }
-      });
-    this.filterString = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('filter') || '')
-    );
+    });
     this.pageSize = activatedRoute.queryParamMap.pipe(
       map((params) => parseInt(params.get('pagesize') || '20', 10))
     );
@@ -131,7 +126,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.topbarTextColor = this.settingsService.settings.AppTopBarHexTextColor
       ? this.settingsService.settings.AppTopBarHexTextColor
       : this.topbarTextColor;
-    var appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
+    const appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
     titleService.setTitle(appTitle);
     this.topbarText = this.settingsService.settings.AppTopBarText || this.topbarText;
   }

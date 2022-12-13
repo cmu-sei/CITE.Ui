@@ -41,11 +41,11 @@ export class ScoringModelDataService {
     private activatedRoute: ActivatedRoute
   ) {
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('filter') || '')
+      map((params) => params.get('modelterm') || '')
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
-        queryParams: { scoringModelmask: term },
+        queryParams: { modelterm: term },
         queryParamsHandling: 'merge',
       });
     });

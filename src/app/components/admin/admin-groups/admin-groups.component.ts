@@ -18,13 +18,13 @@ import { map, takeUntil } from 'rxjs/operators';
   styleUrls: ['./admin-groups.component.scss'],
 })
 export class AdminGroupsComponent implements OnInit, OnDestroy {
-  @Input() filterControl: FormControl;
-  @Input() filterString: string;
   @Input() pageSize: number;
   @Input() pageIndex: number;
   @Input() teamList: Team[];
   @Output() sortChange = new EventEmitter<Sort>();
   @Output() pageChange = new EventEmitter<PageEvent>();
+  filterControl: FormControl = this.groupDataService.filterControl;
+  filterString = '';
   newGroup: Group = { id: '', name: '' };
   groupList: Group[];
   isLoading = false;

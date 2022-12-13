@@ -21,14 +21,14 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
   styleUrls: ['./admin-teams.component.scss'],
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
-  @Input() filterControl: FormControl;
-  @Input() filterString: string;
   @Input() pageSize: number;
   @Input() pageIndex: number;
   @Input() teamList: Team[];
   @Input() userList: User[];
   @Output() sortChange = new EventEmitter<Sort>();
   @Output() pageChange = new EventEmitter<PageEvent>();
+  filterControl: FormControl = this.teamDataService.filterControl;
+  filterString = '';
   newTeam: Team = { id: '', name: '' };
   isLoading = false;
   topbarColor = '#ef3a47';

@@ -41,11 +41,11 @@ export class EvaluationDataService {
     private activatedRoute: ActivatedRoute
   ) {
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('filter') || '')
+      map((params) => params.get('evalterm') || '')
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
-        queryParams: { evaluationmask: term },
+        queryParams: { evalterm: term },
         queryParamsHandling: 'merge',
       });
     });
