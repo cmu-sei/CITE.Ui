@@ -48,8 +48,6 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the project r
       </mat-form-field>
     </div>
   </div>
-
-
   <div fxLayout="row" class="add-margin">
     <div fxFlex fxFlexOffset="10">
       <mat-form-field class="description-field full-width">
@@ -58,13 +56,50 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the project r
       </mat-form-field>
     </div>
   </div>
-
-
   <div fxLayout="row" class="add-margin">
     <div fxFlex fxFlexOffset="10">
       <mat-form-field class="description-field">
         <mat-label>Current Move</mat-label>
         <input matInput [(ngModel)]="data.evaluation.currentMoveNumber" />
+      </mat-form-field>
+    </div>
+  </div>
+  <div fxLayout="row" class="add-margin">
+    <div fxFlex fxFlexOffset="10">
+      <mat-form-field class="description-field full-width">
+        <mat-label>Situation Description</mat-label>
+        <textarea matInput [(ngModel)]="data.evaluation.situationDescription"></textarea>
+      </mat-form-field>
+    </div>
+  </div>
+  <div fxLayout="row" class="add-margin">
+    <div fxFlex fxFlexOffset="10">
+      <mat-form-field>
+        <input
+          matInput
+          [matDatepicker]="situationDatePicker"
+          placeholder="Situation Date / Time"
+          (inputChange)="saveEvaluation('situationDate')"
+          (dateChange)="saveEvaluation('situationDate')"
+          [formControl]="situationDateFormControl"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="situationDatePicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker
+          #situationDatePicker
+        ></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field fxFlexOffset="5" style="margin-top: -15px">
+        <input matInput hidden />
+        <ngx-timepicker-field
+          [formControl]="situationTimeFormControl"
+          [format]="24"
+          [defaultTime]="situationTimeFormControl.value"
+          (timeChanged)="saveEvaluation('situationTime')"
+        >
+        </ngx-timepicker-field>
       </mat-form-field>
     </div>
   </div>
