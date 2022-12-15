@@ -325,7 +325,7 @@ export class ScoringModelComponent {
 
   getUserName(id) {
     const theUser = this.teamUsers?.find(tu => tu.id === id);
-    return theUser.name;
+    return theUser ? theUser.name : '';
   }
 
   completeSubmission() {

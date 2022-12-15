@@ -147,7 +147,7 @@ export class DashboardComponent implements OnDestroy {
   changedBy(actionId: string) {
     let changedBy = null;
     let isChecked = null;
-    const action = this.actionList.find(action => action.id === actionId);
+    const action = this.actionList.find(a => a.id === actionId);
 
     if (action) {
       isChecked = action && action.isChecked;
@@ -164,7 +164,7 @@ export class DashboardComponent implements OnDestroy {
 
   getUserName(id) {
     const theUser = this.teamUsers?.find(tu => tu.id === id);
-    return theUser.name;
+    return theUser ? theUser.name : '';
   }
 
 
