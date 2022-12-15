@@ -1,10 +1,7 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
+import { Component, EventEmitter, Input, Output, OnDestroy, OnInit } from '@angular/core';
 import { ScoringOption, ItemStatus, Team, User} from 'src/app/generated/cite.api/model/models';
 import { ScoringOptionDataService } from 'src/app/data/scoring-option/scoring-option-data.service';
 import { ScoringOptionQuery } from 'src/app/data/scoring-option/scoring-option.query';
@@ -28,9 +25,7 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
   topbarColor = '#ef3a47';
   addingNewScoringOption = false;
   newScoringOptionDescription = '';
-  editScoringOption: ScoringOption = {};
   scoringOptions = [];
-  selectedScoringOptionId = '';
   itemStatuses = [
     ItemStatus.Pending,
     ItemStatus.Active,
@@ -85,10 +80,6 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
       }
       dialogRef.close();
     });
-  }
-
-  togglePanel(scoringOption: ScoringOption) {
-    this.editScoringOption = this.editScoringOption.id === scoringOption.id ? this.editScoringOption = {} : this.editScoringOption = { ...scoringOption};
   }
 
   saveScoringOption(scoringOption: ScoringOption) {

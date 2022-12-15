@@ -36,6 +36,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   editScoringModel: ScoringModel = {};
   scoringModels = [];
   selectedScoringModelId = '';
+  scoringCategoryId = '';
   itemStatuses = [
     ItemStatus.Pending,
     ItemStatus.Active,

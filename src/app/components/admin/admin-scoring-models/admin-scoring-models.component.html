@@ -88,7 +88,9 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
     <div class="sub-container" *ngIf="editScoringModel.id === scoringModel.id">
       <app-admin-scoring-categories
         [scoringModelId]="scoringModel.id"
-      ></app-admin-scoring-categories>
+        [editScoringCategoryId]="scoringCategoryId"
+        (scoringCategoryClick)="scoringCategoryId = $event.toString()"
+    ></app-admin-scoring-categories>
     </div>
   </mat-expansion-panel>
 </mat-accordion>

@@ -7,7 +7,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
   <h2>Scoring Options</h2>
   <button
     mat-icon-button
-    (click)="addOrEditScoringOption(null)"
+    (click)="addOrEditScoringOption(null); $event.stopPropagation()"
     style="outline: none; margin-left: 20px;"
     title="Add Scoring Option"
   >
@@ -27,8 +27,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 
   <div
     *ngFor="let scoringOption of scoringOptionList"
-    [expanded]="false"
-    [disabled]="true"
   >
     <div class="mat-row" *ngIf="!isLoading">
       <div class="mat-cell eight-cell">
@@ -61,11 +59,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
       <div class="one-cell  center-text">
         <mat-checkbox [(ngModel)]="scoringOption.isModifier" [disabled]="true"></mat-checkbox>
       </div>
-    </div>
-    <div class="sub-container" *ngIf="editScoringOption.id === scoringOption.id">
-      <!-- <app-admin-scoring-options
-        [scoringOptionId]="scoringOption.id"
-      ></app-admin-scoring-options> -->
     </div>
   </div>
 </div>
