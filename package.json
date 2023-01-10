@@ -38,7 +38,7 @@
     "@microsoft/signalr": "^5.0.7",
     "ajv": "^8.6.0",
     "core-js": "^3.14.0",
-    "luxon": "^1.27.0",
+    "luxon": "^1.28.1",
     "ngx-material-timepicker": "^5.5.3",
     "oidc-client": "^1.11.5",
     "rxjs": "^6.6.7",
