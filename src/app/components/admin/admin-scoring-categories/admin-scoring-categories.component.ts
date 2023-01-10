@@ -1,10 +1,7 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
+import { Component, EventEmitter, Input, Output, OnDestroy, OnInit } from '@angular/core';
 import { ScoringCategory, ItemStatus, Team, User} from 'src/app/generated/cite.api/model/models';
 import { ScoringCategoryDataService } from 'src/app/data/scoring-category/scoring-category-data.service';
 import { ScoringCategoryQuery } from 'src/app/data/scoring-category/scoring-category.query';
@@ -22,13 +19,14 @@ import { AdminScoringCategoryEditDialogComponent } from '../admin-scoring-catego
 })
 export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   @Input() scoringModelId: string;
+  @Input() editScoringCategoryId: string;
+  @Output() scoringCategoryClick = new EventEmitter<string>();
   newScoringCategory: ScoringCategory = { id: '', description: '' };
   scoringCategoryList: ScoringCategory[];
   isLoading = false;
   topbarColor = '#ef3a47';
   addingNewScoringCategory = false;
   newScoringCategoryDescription = '';
-  editScoringCategory: ScoringCategory = {};
   scoringCategories = [];
   selectedScoringCategoryId = '';
   itemStatuses = [
@@ -89,8 +87,9 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
     });
   }
 
-  togglePanel(scoringCategory: ScoringCategory) {
-    this.editScoringCategory = this.editScoringCategory.id === scoringCategory.id ? this.editScoringCategory = {} : this.editScoringCategory = { ...scoringCategory};
+  togglePanel(scoringCategoryId: string) {
+    this.editScoringCategoryId = this.editScoringCategoryId === scoringCategoryId ? this.editScoringCategoryId = '' : this.editScoringCategoryId = scoringCategoryId;
+    this.scoringCategoryClick.emit(this.editScoringCategoryId);
   }
 
   saveScoringCategory(scoringCategory: ScoringCategory) {

@@ -14,7 +14,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
 </div>
-<div class="mat-elevation-z2">
+<div class="mat-elevation-z2" *ngIf="!isLoading">
   <mat-accordion displayMode="flat">
     <section
       class="mat-header-row"
@@ -25,9 +25,9 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 
     <mat-expansion-panel
       *ngFor="let scoringCategory of scoringCategoryList"
-      [expanded]="editScoringCategory.id === scoringCategory.id"
+      [expanded]="editScoringCategoryId === scoringCategory.id"
     >
-      <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading" (click)="togglePanel(scoringCategory); $event.stopPropagation()">
+      <mat-expansion-panel-header class="mat-row" (click)="togglePanel(scoringCategory.id); $event.stopPropagation()">
         <div class="mat-cell nine-cell">
           <button
             mat-icon-button
@@ -53,7 +53,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
           {{ scoringCategory.displayOrder }}
         </div>
       </mat-expansion-panel-header>
-      <div class="sub-container" *ngIf="editScoringCategory.id === scoringCategory.id">
+      <div class="sub-container" *ngIf="editScoringCategoryId === scoringCategory.id">
         <app-admin-scoring-options
           [scoringCategoryId]="scoringCategory.id"
         ></app-admin-scoring-options>
