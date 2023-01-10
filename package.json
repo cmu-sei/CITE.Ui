@@ -38,7 +38,7 @@
     "@microsoft/signalr": "^5.0.7",
     "ajv": "^8.6.0",
     "core-js": "^3.14.0",
-    "glob-parent": "^5.1.2",
+    "glob-parent": "^6.0.1",
     "luxon": "^1.28.1",
     "minimatch": "^3.1.2",
     "ngx-material-timepicker": "^5.5.3",
