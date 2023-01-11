@@ -19,17 +19,17 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~12.0.3",
+    "@angular/animations": "~13.3.12",
     "@angular/cdk": "~12.0.4",
-    "@angular/common": "~12.0.3",
-    "@angular/compiler": "~12.0.3",
-    "@angular/core": "~12.0.3",
+    "@angular/common": "~13.3.12",
+    "@angular/compiler": "~13.3.12",
+    "@angular/core": "~13.3.12",
     "@angular/flex-layout": "12.0.0-beta.34",
-    "@angular/forms": "~12.0.3",
+    "@angular/forms": "~13.3.12",
     "@angular/material": "~12.0.4",
-    "@angular/platform-browser": "~12.0.3",
-    "@angular/platform-browser-dynamic": "~12.0.3",
-    "@angular/router": "~12.0.3",
+    "@angular/platform-browser": "~13.3.12",
+    "@angular/platform-browser-dynamic": "~13.3.12",
+    "@angular/router": "~13.3.12",
     "@cmusei/crucible-common": "0.1.2",
     "@datorama/akita": "^6.2.0",
     "@datorama/akita-ng-router-store": "^6.0.0",
@@ -50,10 +50,10 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~12.2.18",
-    "@angular/cli": "~12.0.3",
-    "@angular/compiler-cli": "~12.0.3",
-    "@angular/language-service": "~12.0.3",
+    "@angular-devkit/build-angular": "~13.3.10",
+    "@angular/cli": "~13.3.10",
+    "@angular/compiler-cli": "~13.3.12",
+    "@angular/language-service": "~13.3.12",
     "@openapitools/openapi-generator-cli": "1.0.18-3.2.0",
     "@types/jasmine": "~3.7.7",
     "@types/jasminewd2": "~2.0.9",
@@ -66,6 +66,6 @@
     "protractor": "~7.0.0",
     "ts-node": "~10.0.0",
     "tslint": "~6.1.3",
-    "typescript": "~4.2.4"
+    "typescript": "~4.6.4"
   }
 }
