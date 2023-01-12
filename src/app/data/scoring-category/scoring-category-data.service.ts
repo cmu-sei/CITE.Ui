@@ -4,7 +4,7 @@
 import { ScoringCategoryStore } from './scoring-category.store';
 import { ScoringCategoryQuery } from './scoring-category.query';
 import { Injectable } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
@@ -24,7 +24,7 @@ export class ScoringCategoryDataService {
   // );
   readonly scoringCategoryList: Observable<ScoringCategory[]>;
   readonly selected: Observable<ScoringCategory>;
-  readonly filterControl = new FormControl();
+  readonly filterControl = new UntypedFormControl();
   private filterTerm: Observable<string>;
   private sortColumn: Observable<string>;
   private sortIsAscending: Observable<boolean>;

@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { Team, TeamType, User, ItemStatus} from 'src/app/generated/cite.api/model/models';
@@ -27,7 +27,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   @Input() userList: User[];
   @Output() sortChange = new EventEmitter<Sort>();
   @Output() pageChange = new EventEmitter<PageEvent>();
-  filterControl: FormControl = this.teamDataService.filterControl;
+  filterControl: UntypedFormControl = this.teamDataService.filterControl;
   filterString = '';
   newTeam: Team = { id: '', name: '' };
   isLoading = false;

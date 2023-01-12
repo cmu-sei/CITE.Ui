@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { ScoringModel, ItemStatus, Team, User} from 'src/app/generated/cite.api/model/models';
@@ -26,7 +26,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   @Input() pageIndex: number;
   @Output() sortChange = new EventEmitter<Sort>();
   @Output() pageChange = new EventEmitter<PageEvent>();
-  filterControl: FormControl = this.scoringModelDataService.filterControl;
+  filterControl: UntypedFormControl = this.scoringModelDataService.filterControl;
   filterString = '';
   newScoringModel: ScoringModel = { id: '', description: '' };
   isLoading = false;

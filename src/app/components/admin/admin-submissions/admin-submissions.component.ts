@@ -11,7 +11,7 @@ import {
   ViewChild,
   AfterViewInit,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { Evaluation, Submission, User } from 'src/app/generated/cite.api/model/models';
@@ -38,7 +38,7 @@ export class AdminSubmissionsComponent
   @Input() pageIndex: number;
   @Output() sortChange = new EventEmitter<Sort>();
   @Output() pageChange = new EventEmitter<PageEvent>();
-  filterControl: FormControl = this.submissionDataService.filterControl;
+  filterControl: UntypedFormControl = this.submissionDataService.filterControl;
   filterString = '';
   isLoading = false;
   topbarColor = '#ef3a47';

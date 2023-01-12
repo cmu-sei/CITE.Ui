@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Injectable, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ComnAuthQuery, ComnAuthService } from '@cmusei/crucible-common';
 import { User as AuthUser } from 'oidc-client';
@@ -17,7 +17,7 @@ import { Team } from 'src/app/generated/cite.api/model/models';
 export class GroupTeamDataService implements OnDestroy {
   private _groupTeams: Team[] = [];
   readonly groupTeams = new BehaviorSubject<Team[]>(this._groupTeams);
-  readonly filterControl = new FormControl();
+  readonly filterControl = new UntypedFormControl();
   private filterTerm: Observable<string>;
   private sortColumn: Observable<string>;
   private sortIsAscending: Observable<boolean>;

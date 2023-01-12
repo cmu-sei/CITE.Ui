@@ -4,7 +4,7 @@
 import { GroupStore } from './group.store';
 import { GroupQuery } from './group.query';
 import { Injectable } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
@@ -19,7 +19,7 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 })
 export class GroupDataService {
   readonly groupList: Observable<Group[]>;
-  readonly filterControl = new FormControl();
+  readonly filterControl = new UntypedFormControl();
   private filterTerm: Observable<string>;
   private sortColumn: Observable<string>;
   private sortIsAscending: Observable<boolean>;
