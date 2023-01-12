@@ -6,7 +6,7 @@
 @import '@angular/material/theming';
 @include mat.core();
 $mdi-font-path: '~@mdi/font/fonts';
-@import '~@mdi/font/scss/materialdesignicons';
+@import '@mdi/font/scss/materialdesignicons';
 
 /* END VENDER IMPORTS */
 
