@@ -5,10 +5,17 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 
 <div fxLayout="row" fxLayoutAlign="center">
   <div class="user-list-container mat-elevation-z8">
+
     <div class="sp-icon">
-      <img height="35" src="./assets/svg-icons/account-multiple.svg" alt="Users" />
+      <mat-icon
+        class="mdi-24px"
+        fontIcon="mdi-account-multiple"
+      ></mat-icon>
+    <span style="margin-left: 10px">
       All Users
+    </span>
     </div>
+
     <div fxLayout="row" fxLayoutAlign="start center">
       <mat-icon
         style="transform: scale(0.85); margin-right: 5px; margin-left: 10px;"
@@ -83,13 +90,15 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 
   <div style="margin-left: 20px;">
     <div class="team-list-container mat-elevation-z8">
+
       <div class="sp-icon">
-        <img
-          height="35"
-          src="./assets/svg-icons/account-group.svg"
-          alt="Users"
-        />
-        Team Users
+        <mat-icon
+            class="mdi-24px"
+            fontIcon="mdi-account-group"
+        ></mat-icon>
+        <span style="margin-left: 10px">
+          Team Users
+        </span>
       </div>
 
       <mat-card
