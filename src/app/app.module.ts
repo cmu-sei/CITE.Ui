@@ -51,7 +51,6 @@ import {
 } from '@cmusei/crucible-common';
 import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
-import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AdminActionsComponent } from './components/admin/admin-actions/admin-actions.component';
@@ -92,6 +91,7 @@ import { SystemMessageService } from './services/system-message/system-message.s
 import { BASE_PATH } from './generated/cite.api';
 import { ApiModule as SwaggerCodegenApiModule } from './generated/cite.api/api.module';
 import { DisplayOrderPipe, SortByPipe } from 'src/app/utilities/sort-by-pipe';
+import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 
 const settings: ComnSettingsConfig = {
   url: 'assets/config/settings.json',
@@ -187,9 +187,12 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     CdkTableModule,
     MatTreeModule,
     CdkTreeModule,
-    NgxMaterialTimepickerModule,
     ComnAuthModule.forRoot(),
     ComnSettingsModule.forRoot(),
+    MatDatepickerModule,
+    NgxMatTimepickerModule,
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
   ],
   exports: [MatSortModule],
   providers: [

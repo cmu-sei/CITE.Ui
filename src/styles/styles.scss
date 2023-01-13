@@ -33,10 +33,10 @@ $mdi-font-path: '~@mdi/font/fonts';
     0 1px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
-.timepicker-overlay {
-  z-index: 10000000 !important;
+.ngx-mat-timepicker form .ngx-mat-timepicker-table .ngx-mat-timepicker-tbody tr td .mat-icon-button .mat-icon {
+  font-family: 'Material Icons';
 }
 
-.timepicker-backdrop-overlay {
-  z-index: 10000000 !important;
+.mat-datepicker-content .mat-stroked-button {
+  font-family: 'Material Icons';
 }

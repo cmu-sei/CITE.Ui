@@ -77,30 +77,28 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the project r
       <mat-form-field>
         <input
           matInput
-          [matDatepicker]="situationDatePicker"
+          [ngxMatDatetimePicker]="picker"
           placeholder="Situation Date / Time"
+          [formControl]="situationDateFormControl"
           (inputChange)="saveEvaluation('situationDate')"
           (dateChange)="saveEvaluation('situationDate')"
-          [formControl]="situationDateFormControl"
-        />
+        >
         <mat-datepicker-toggle
           matSuffix
-          [for]="situationDatePicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker
-          #situationDatePicker
-        ></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field fxFlexOffset="5" style="margin-top: -15px">
-        <input matInput hidden />
-        <ngx-timepicker-field
-          [formControl]="situationTimeFormControl"
-          [format]="24"
-          [defaultTime]="situationTimeFormControl.value"
-          (timeChanged)="saveEvaluation('situationTime')"
-        >
-        </ngx-timepicker-field>
-      </mat-form-field>
+          [for]="$any(picker)">
+        </mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #picker
+           [showSpinners]=true
+           [showSeconds]=true
+           [stepHour]=1
+           [stepMinute]=1
+           [stepSecond]=1
+           [touchUi]=false
+           [enableMeridian]=true
+           [disableMinute]=false
+           [hideTime]=false>
+        </ngx-mat-datetime-picker>
+     </mat-form-field>
     </div>
   </div>
   <div fxLayout="row" class="bottom-button">
