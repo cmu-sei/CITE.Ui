@@ -4,9 +4,6 @@
 import { UnreadArticlesStore } from './unread-articles.store';
 import { UnreadArticlesQuery } from './unread-articles.query';
 import { Injectable } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
-import { Router, ActivatedRoute } from '@angular/router';
 import { UnreadArticles } from './unread-articles';
 import { GalleryService } from 'src/app/generated/cite.api'
 import { map, take, tap } from 'rxjs/operators';
@@ -21,11 +18,8 @@ export class UnreadArticlesDataService {
 
   constructor(
     private unreadArticlesStore: UnreadArticlesStore,
-    private unreadArticlesQuery: UnreadArticlesQuery,
     private galleryService: GalleryService,
     private evaluationQuery: EvaluationQuery,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
   ) {}
 
   loadById(evaluationId: string) {
