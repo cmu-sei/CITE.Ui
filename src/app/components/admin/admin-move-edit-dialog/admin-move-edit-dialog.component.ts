@@ -6,7 +6,6 @@ import {
   UntypedFormControl,
   FormGroupDirective,
   NgForm,
-  Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -34,12 +33,6 @@ export class AdminMoveEditDialogComponent {
 
   public situationDateFormControl = new UntypedFormControl(
     this.data.move.situationTime ? this.data.move.situationTime : '',
-    []
-  );
-  public situationTimeFormControl = new UntypedFormControl(
-    this.data.move.situationTime
-      ? this.data.move.situationTime.toTimeString().substr(0, 5)
-      : '',
     []
   );
 
@@ -82,20 +75,6 @@ export class AdminMoveEditDialogComponent {
         newSituation.setHours(oldSituation.getHours());
         newSituation.setMinutes(oldSituation.getMinutes());
         this.data.move.situationTime = newSituation;
-        break;
-      case 'situationTime':
-        if (
-          this.situationTimeFormControl.value.length === 5 &&
-          (this.data.move.situationTime.getHours() !==
-            this.situationTimeFormControl.value.substr(0, 2) ||
-            this.data.move.situationTime.getMinutes() !==
-              this.situationTimeFormControl.value.substr(2, 2))
-        ) {
-          const timeParts = this.situationTimeFormControl.value.split(':');
-          const oldDate = new Date(this.data.move.situationTime);
-          this.data.move.situationTime.setHours(timeParts[0]);
-          this.data.move.situationTime.setMinutes(timeParts[1]);
-        }
         break;
       default:
         break;
