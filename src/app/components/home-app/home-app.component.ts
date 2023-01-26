@@ -20,8 +20,10 @@ import {
   HealthCheckService,
   ItemStatus,
   Move,
+  ScoringModel,
   Submission,
-  Team
+  Team,
+  UnreadArticles
 } from 'src/app/generated/cite.api';
 import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
@@ -68,7 +70,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   theme$: Observable<Theme>;
   selectedEvaluationId = '';
   selectedEvaluation = this.evaluationQuery.selectActive();
-  selectedScoringModel = this.scoringModelQuery.selectActive();
+  selectedScoringModel = this.scoringModelQuery.selectActive() as Observable<ScoringModel>;
   evaluationList: Evaluation[];
   submissionList = this.submissionQuery.selectAll();
   teamList: Team[] = [];
@@ -76,7 +78,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   isReady = false;
   currentMoveNumber = -1;
   userCurrentSubmission: Submission;
-  unreadArticles$ = this.unreadArticlesQuery.selectActive();
+  unreadArticles$ = this.unreadArticlesQuery.selectActive() as Observable<UnreadArticles>;
   loadedSubmissionsForEvaluation: Evaluation;
   moveList$ = this.moveQuery.selectAll() as Observable<Move[]>;
 
