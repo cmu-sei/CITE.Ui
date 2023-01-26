@@ -4,8 +4,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 -->
 
 <div
-  class="app-events-container background text app-container"
-  fxLayout="column"
+  class="app-events-container background text"
 >
   <app-topbar
     *ngIf="!hideTopbar"
@@ -18,7 +17,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 
   <div
     *ngIf="apiIsSick"
-    class="app-header-container mat-elevation-z8"
+    class="app-header-container background text"
     autosize
   >
     <h1>{{ apiMessage }}</h1>
@@ -28,8 +27,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 
   <div
     *ngIf="!apiIsSick && expectingMyEvaluations && evaluationList && evaluationList.length === 0"
-    class="app-header-container mat-elevation-z8"
-    autosize
+    class="app-header-container"
   >
     <h1>You are not a team member for an active evaluation.</h1>
     <h2>Please contact the site administrator or your event facilator.</h2>
@@ -37,18 +35,18 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 
   <div
     *ngIf="!apiIsSick && isAuthorizedUser"
+    style="height: inherit"
   >
-    <div class="app-header-container mat-elevation-z8" autosize>
+    <div class="app-header-container">
       <app-evaluation-info
         [evaluationList]="evaluationList"
         [showAdminButton]="canAccessAdminSection$ | async"
         [showMoveArrows]="selectedSection === section.scoresheet"
         ></app-evaluation-info>
     </div>
-    <span
-      *ngIf="isReady"
-    >
-      <div class="app-content-container mat-elevation-z8" autosize>
+      <div class="app-content-container"
+        *ngIf="isReady"
+      >
         <div class="app-model-container mat-elevation-z8" autosize *ngIf="selectedSection === section.dashboard">
           <app-dashboard
             *ngIf="unreadArticles$ && moveList$"
@@ -66,9 +64,8 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
           ></app-score-card>
         </div>
       </div>
-    </span>
     <span *ngIf="!isReady">
-      <div class="app-content-container mat-elevation-z8 empty-container" autosize>
+      <div class="app-content-container">
         <h2>No Incident Selected</h2>
       </div>
     </span>

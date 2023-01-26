@@ -1,10 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
-.app-container {
-  min-height: 98vh;
-}
-
 .nolink {
   text-decoration: none;
 }
@@ -12,6 +8,15 @@
 .icon-text {
   margin-left: 10px;
   font-family: open_sansbold;
+}
+
+.app-events-container {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+  height: 100%;
 }
 
 .app-header-container {
@@ -34,14 +39,14 @@
   flex-flow: column;
   justify-content: left;
   text-align: left;
-  flex: 70;
-  width: 1px;  // without a width setting, the flex container does not size correctly.  The number can be anything.
+  flex: 65;
+  overflow: auto;
 }
 
 .app-score-container {
   flex-flow: column;
   text-align: center;
-  flex: 30;
+  flex: 35;
 }
 
 .cite-logo {
@@ -68,7 +73,4 @@
 .cite-icon {
   transform: scale(2);
   width: 60px;
-}
-
-.empty-container {
 }
