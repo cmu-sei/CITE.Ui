@@ -36,7 +36,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
     <ng-container *ngIf="teams && team && teams.length > 0">
       <div class="team-text">Team:</div>
       <b class="team-text">{{ team.name }}</b>
-      <div *ngIf="teams.length > 1" fxLayout="row" fxLayoutAlign="start center">
+      <div *ngIf="teams.length > 1">
         <button
           mat-button
           [matMenuTriggerFor]="teamMenu"
@@ -57,9 +57,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
     </ng-container>
     <span class="spacer"></span>
     <div
-      fxFlex
       class="options-text"
-      fxLayoutAlign="end center"
       *ngIf="currentUser$ | async as currentUser"
     >
       <button

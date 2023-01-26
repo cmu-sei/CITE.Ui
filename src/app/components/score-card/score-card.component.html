@@ -14,7 +14,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <mat-header-cell *matHeaderCellDef class="title-font"> Scores </mat-header-cell>
         <mat-cell *matCellDef="let row"
           [ngClass]="row.color">
-          <div fxLayout="column" fxLayoutAlign="space-between center">
+          <div>
             <div *ngFor="let submission of currentSubmissions()">{{ showScore(row, submission) }}</div>
           </div>
         </mat-cell>
@@ -34,7 +34,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <mat-header-cell *matHeaderCellDef class="title-font"> Level </mat-header-cell>
         <mat-cell *matCellDef="let row"
           [ngClass]="row.color">
-          <div fxLayout="column" fxLayoutAlign="space-between center">
+          <div>
             <div>Level {{ row.level }}</div>
             <div>{{ row.name }}</div>
             <div>({{ row.color }})</div>

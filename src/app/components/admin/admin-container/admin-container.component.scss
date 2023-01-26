@@ -11,12 +11,20 @@
 }
 
 .app-admin-container {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   position: fixed;
-  padding-right: 16px;
+  height: 100%;
 }
 
 .appbarmenu-container {
   min-width: 50px;
+}
+
+.tall {
+  height: calc(100% - 44px);
 }
 
 .cmu-logo {
