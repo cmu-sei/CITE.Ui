@@ -21,7 +21,7 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the project r
     <div fxFlex fxFlexOffset="10">
       <mat-form-field class="full-width">
         <input type="text" matInput [formControl]="teamNameFormControl" placeholder="Name (required)" (blur)="saveTeam('name')"
-          value="{{data.team.name}}" [errorStateMatcher]="matcher">
+          value="{{data.team.name}}">
         <mat-error *ngIf="teamNameFormControl.hasError('minlength') && !teamNameFormControl.hasError('required')">
           Must contain {{ MIN_NAME_LENGTH }} or more characters
         </mat-error>
@@ -36,7 +36,7 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the project r
     <div fxFlex fxFlexOffset="10">
       <mat-form-field class="full-width">
         <input type="text" matInput [formControl]="teamShortNameFormControl" placeholder="Short Name (required)" (blur)="saveTeam('shortName')"
-          value="{{data.team.shortName}}" [errorStateMatcher]="matcher">
+          value="{{data.team.shortName}}">
         <mat-error *ngIf="teamShortNameFormControl.hasError('minlength') && !teamShortNameFormControl.hasError('required')">
           Must contain {{ MIN_NAME_LENGTH }} or more characters
         </mat-error>

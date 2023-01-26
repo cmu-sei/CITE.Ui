@@ -15,7 +15,6 @@ import { UserDataService } from 'src/app/data/user/user-data.service';
 import { TopbarView } from './../shared/top-bar/topbar.models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
-import { EvaluationTeamDataService } from 'src/app/data/evaluation-team-data.service';
 import {
   Evaluation,
   HealthCheckService,

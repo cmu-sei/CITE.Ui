@@ -76,7 +76,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <button
           mat-icon-button
           ngxClipboard
-          [cbContent]="group.id"
           (click)="$event.stopPropagation()"
           title="Copy ID:  {{ group.id }}"
         >
