@@ -82,6 +82,14 @@ $mdi-font-path: '~@mdi/font/fonts';
   align-content: center;
 }
 
+.cssLayoutRowSpaceBetween {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+}
+
 .cssLayoutRowCenterCenter {
   display: flex;
   flex-direction: row;

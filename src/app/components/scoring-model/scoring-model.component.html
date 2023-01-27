@@ -16,18 +16,16 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
   >
     <!-- Description Definition -->
     <ng-container matColumnDef="scoringCategoryDescription">
-      <mat-header-cell *matHeaderCellDef>
+      <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
         <div
           class="navigation-font"
-          fxLayout="row"
-          fxLayoutAlign="space-between center"
         >
           <span style="transform: scale(0.8)">
             <!-- User -->
             <button
               mat-flat-button
               color="user"
-              class="background-button"
+              class="background-button move-button"
               (click)="selectDisplayedSubmission('user')"
               *ngIf="displaying === 'user'"
               title="Your personal score"
@@ -36,7 +34,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             </button>
             <button
               mat-stroked-button
-              class="plain-button"
+              class="plain-button move-button"
               (click)="selectDisplayedSubmission('user')"
               *ngIf="displaying !== 'user'"
               title="Your private personal score"
@@ -47,7 +45,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             <button
               mat-flat-button
               color="team"
-              class="background-button"
+              class="background-button move-button"
               (click)="selectDisplayedSubmission('team')"
               *ngIf="displaying === 'team'"
               title="Your team's score"
@@ -56,7 +54,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             </button>
             <button
               mat-stroked-button
-              class="plain-button"
+              class="plain-button move-button"
               (click)="selectDisplayedSubmission('team')"
               *ngIf="displaying !== 'team'"
               title="Your team's score"
@@ -67,7 +65,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             <button
               mat-flat-button
               color="team-avg"
-              class="background-button"
+              class="background-button move-button"
               (click)="selectDisplayedSubmission('team-avg')"
               *ngIf="displaying === 'team-avg'"
               title="The average of all user scores for your team"
@@ -76,7 +74,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             </button>
             <button
               mat-stroked-button
-              class="plain-button"
+              class="plain-button move-button"
               (click)="selectDisplayedSubmission('team-avg')"
               *ngIf="displaying !== 'team-avg'"
               title="The average of all user scores for your team"
@@ -87,7 +85,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             <button
               mat-flat-button
               color="group-avg"
-              class="background-button"
+              class="background-button move-button"
               (click)="selectDisplayedSubmission('group-avg')"
               *ngIf="displaying === 'group-avg'"
               title="The average of all team scores for your group"
@@ -96,7 +94,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             </button>
             <button
               mat-stroked-button
-              class="plain-button"
+              class="plain-button move-button"
               (click)="selectDisplayedSubmission('group-avg')"
               *ngIf="displaying !== 'group-avg' && showGroupAvgScore"
               title="The average of all team scores for your group"
@@ -107,7 +105,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             <button
               mat-flat-button
               color="official"
-              class="background-button"
+              class="background-button move-button"
               (click)="selectDisplayedSubmission('official')"
               *ngIf="displaying === 'official'"
               title="The official score for this move"
@@ -116,7 +114,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             </button>
             <button
               mat-stroked-button
-              class="plain-button"
+              class="plain-button move-button"
               (click)="selectDisplayedSubmission('official')"
               *ngIf="displaying !== 'official' && showOfficialScore"
               title="The official score for this move"
@@ -125,13 +123,12 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             </button>
           </span>
         </div>
-        <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}"
-          >{{ displayedSubmission.score | number: '1.2-2' }}</span
-        >
+        <div>
+          <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}"
+            >{{ displayedSubmission.score | number: '1.2-2' }}</span>
+        </div>
         <div
           class="title-font"
-          fxLayout="row"
-          fxLayoutAlign="space-between center"
         >
           <span
             class="move-buttons"

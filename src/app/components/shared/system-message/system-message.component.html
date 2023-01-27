@@ -4,19 +4,19 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 -->
 
 <div>
-  <div fxLayout="row" fxFlexFill flex="2" style="overflow: hidden;">
-    <div fxFlex="15" flex="1" class="icon">
-      <img width="90" src="assets/img/SP_Icon_Alert.png" />
+  <div class="cssLayoutRowStartCenter bottom-button" style="overflow: hidden;">
+    <div class="icon">
+      <img width="50" src="assets/img/SP_Icon_Alert.png" />
     </div>
-    <div fxFlex="82" fxLayout="column" flex="2">
-      <div fxLayout="row">
+    <div>
+      <div>
         <h2>{{ displayTitle }}</h2>
       </div>
-      <div fxLayout="row" flex="1" class="messagebody">
+      <div class="messagebody">
         {{ displayMessage }}
       </div>
     </div>
-    <div fxFlex="3">
+    <div>
       <button (click)="close()" mat-icon-button alt class="no-outline">
         <mat-icon
           title="Close"
