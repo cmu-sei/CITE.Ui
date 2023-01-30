@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Injectable, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ComnAuthQuery, ComnAuthService } from '@cmusei/crucible-common';
 import { User as AuthUser } from 'oidc-client';
@@ -18,7 +18,7 @@ export class TeamUserDataService implements OnDestroy {
   private _teamUsers: User[] = [];
   private _teamId = '';
   readonly teamUsers = new BehaviorSubject<User[]>(this._teamUsers);
-  readonly filterControl = new FormControl();
+  readonly filterControl = new UntypedFormControl();
   private filterTerm: Observable<string>;
   private sortColumn: Observable<string>;
   private sortIsAscending: Observable<boolean>;

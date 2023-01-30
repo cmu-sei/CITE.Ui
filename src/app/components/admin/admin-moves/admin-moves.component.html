@@ -3,7 +3,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div fxLayout="row" fxLayoutAlign="start center">
+<div class="cssLayoutRowStartCenter">
   <h3>Moves</h3>
 </div>
 
@@ -11,9 +11,9 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
   <section
     class="mat-elevation-z2 mat-header-row"
   >
-    <span class="mat-header-cell cell-two" mat-header="moveNumber">Move Number</span>
-    <span class="mat-header-cell cell-five" mat-header="description">Description</span>
-    <span class="mat-header-cell cell-one" mat-header="id">
+  <span class="mat-header-cell cell-two" mat-header="moveNumber">Move Number</span>
+  <span class="mat-header-cell cell-five" mat-header="description">Description</span>
+    <span class="mat-header-cell cell-two">
       <button mat-stroked-button (click)="addOrEditMove(null)">Add Move</button>
     </span>
   </section>
@@ -28,7 +28,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
           mat-icon-button
           (click)="addOrEditMove(move); $event.stopPropagation()"
           style="outline: none;"
-          title="Edit Evaluation"
+          title="Edit Move"
         >
           <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
         </button>

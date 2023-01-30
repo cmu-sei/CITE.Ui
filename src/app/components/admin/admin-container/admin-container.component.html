@@ -4,10 +4,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 -->
 
 <div
-  class="app-admin-container mat-elevation-z8"
-  fxLayout="column"
-  fxLayoutAlign="center stretch"
-  fxFlexFill
+  class="app-admin-container background"
 >
   <app-topbar
     *ngIf="!hideTopbar"
@@ -18,9 +15,9 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
     [imageFilePath]="topbarImage"
   ></app-topbar>
 
-  <mat-sidenav-container fxFlex autosize>
+  <mat-sidenav-container class="tall">
     <mat-sidenav
-      class="appbarmenu-container"
+      class="appbarmenu-container background"
       #sidenav
       mode="side"
       [(opened)]="isSidebarOpen"
@@ -29,7 +26,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <mat-list-item class="appslist" title="Exit Administration">
           <button
             aria-label="Exit Administration"
-            fxLayoutAlign="start center"
             mat-icon-button
             [routerLink]="['/']"
             [queryParams]="{evaluation: (evaluationId | async)}"
@@ -41,7 +37,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
             ></mat-icon>
           </button>
           <a class="nolink" [routerLink]="['/']">
-            <div fxLayout="row" fxLayoutAlign="middle center">
+            <div>
               <h2 class="icon-text">Administration</h2>
             </div>
           </a>
@@ -56,7 +52,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         >
           <div class="lefticon">
             <mat-icon
-              class="mdi-36px"
+              class="mdi-24px"
               fontIcon="mdi-briefcase-outline"
               [ngStyle]="{ color: topbarColor }"
             ></mat-icon>
@@ -84,7 +80,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         >
           <div class="lefticon">
             <mat-icon
-              class="mdi-36px"
+              class="mdi-24px"
               fontIcon="mdi-grid"
               [ngStyle]="{ color: topbarColor }"
             ></mat-icon>
@@ -112,7 +108,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         >
           <div class="lefticon">
             <mat-icon
-              class="mdi-36px"
+              class="mdi-24px"
               fontIcon="mdi-clipboard-list-outline"
               [ngStyle]="{ color: topbarColor }"
             ></mat-icon>
@@ -140,7 +136,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         >
           <div class="lefticon">
             <mat-icon
-              class="mdi-36px"
+              class="mdi-24px"
               fontIcon="mdi-clipboard-account-outline"
               [ngStyle]="{ color: topbarColor }"
             ></mat-icon>
@@ -168,7 +164,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         >
           <div class="lefticon">
             <mat-icon
-              class="mdi-36px"
+              class="mdi-24px"
               fontIcon="mdi-playlist-play"
               [ngStyle]="{ color: topbarColor }"
             ></mat-icon>
@@ -196,7 +192,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         >
           <div class="lefticon">
             <mat-icon
-              class="mdi-36px"
+              class="mdi-24px"
               fontIcon="mdi-account-multiple"
               [ngStyle]="{ color: topbarColor }"
             ></mat-icon>
@@ -224,7 +220,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         >
           <div class="lefticon">
             <mat-icon
-              class="mdi-36px"
+              class="mdi-24px"
               fontIcon="mdi-account"
               [ngStyle]="{ color: topbarColor }"
             ></mat-icon>
@@ -245,6 +241,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         </mat-list-item>
       </mat-list>
       <img
+        *ngIf="!hideTopbar"
         class="cmu-logo"
         [src]="
           (theme$ | async) === 'light-theme'
@@ -253,7 +250,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         "
       />
     </mat-sidenav>
-    <mat-sidenav-content>
+    <mat-sidenav-content style="margin-left: 265px">
       <span *ngIf="isSuperUser && ((showSection | async) === scoringModelsText)">
         <app-admin-scoring-models
           [scoringModelList]="scoringModelList | async"

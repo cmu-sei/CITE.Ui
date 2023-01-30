@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Carnegie Mellon University. All Rights Reserved. 
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
@@ -8,7 +8,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 
 export class UnreadArticles {
   public id?: string;  // we load the CITE evaluation ID as the value
-  public exhibitId: string;
-  public userId: string;
-  public count: string;
+  public exhibitId?: string;
+  public userId?: string;
+  public count?: string;
 }

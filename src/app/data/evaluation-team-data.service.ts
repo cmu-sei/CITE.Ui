@@ -1,7 +1,7 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 import { Injectable, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ComnAuthQuery, ComnAuthService } from '@cmusei/crucible-common';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
@@ -15,7 +15,7 @@ import { EvaluationTeam, Team } from 'src/app/generated/cite.api/model/models';
 export class EvaluationTeamDataService implements OnDestroy {
   private _evaluationTeams: EvaluationTeam[] = [];
   readonly evaluationTeams = new BehaviorSubject<EvaluationTeam[]>(this._evaluationTeams);
-  readonly filterControl = new FormControl();
+  readonly filterControl = new UntypedFormControl();
   private filterTerm: Observable<string>;
   private sortColumn: Observable<string>;
   private sortIsAscending: Observable<boolean>;

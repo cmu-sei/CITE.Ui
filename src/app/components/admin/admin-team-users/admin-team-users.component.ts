@@ -9,9 +9,9 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
-import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { LegacyPageEvent as PageEvent, MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatSort, MatSortable } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { User, Team } from 'src/app/generated/cite.api';
 import { TeamUserDataService } from 'src/app/data/user/team-user-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';

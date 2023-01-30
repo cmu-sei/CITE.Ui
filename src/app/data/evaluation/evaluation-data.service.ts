@@ -4,8 +4,8 @@
 import { EvaluationStore } from './evaluation.store';
 import { EvaluationQuery } from './evaluation.query';
 import { Injectable } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
+import { UntypedFormControl } from '@angular/forms';
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   Evaluation,
@@ -24,7 +24,7 @@ export class EvaluationDataService {
     map((params) => params.get('evaluationId') || '')
   );
   readonly EvaluationList: Observable<Evaluation[]>;
-  readonly filterControl = new FormControl();
+  readonly filterControl = new UntypedFormControl();
   private filterTerm: Observable<string>;
   private sortColumn: Observable<string>;
   private sortIsAscending: Observable<boolean>;

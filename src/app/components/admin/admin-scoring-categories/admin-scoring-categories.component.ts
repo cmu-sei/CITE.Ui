@@ -8,7 +8,7 @@ import { ScoringCategoryQuery } from 'src/app/data/scoring-category/scoring-cate
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminScoringCategoryEditDialogComponent } from '../admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
 

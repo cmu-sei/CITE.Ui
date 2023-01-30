@@ -4,8 +4,8 @@
 import { ScoringModelStore } from './scoring-model.store';
 import { ScoringModelQuery } from './scoring-model.query';
 import { Injectable } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
+import { UntypedFormControl } from '@angular/forms';
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   ScoringModel,
@@ -24,7 +24,7 @@ export class ScoringModelDataService {
   // );
   readonly scoringModelList: Observable<ScoringModel[]>;
   readonly selected: Observable<ScoringModel>;
-  readonly filterControl = new FormControl();
+  readonly filterControl = new UntypedFormControl();
   private filterTerm: Observable<string>;
   private sortColumn: Observable<string>;
   private sortIsAscending: Observable<boolean>;

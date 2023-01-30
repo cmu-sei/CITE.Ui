@@ -4,10 +4,10 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 -->
 
 <!-- Header -->
-<div fxLayout="row" fxLayoutAlign="start center">
+<div class="cssLayoutRowStartCenter">
   <div class="sp-icon" style="margin-right: 10px;">
     <mat-icon
-      class="mdi-36px"
+      class="mdi-24px"
       fontIcon="mdi-clipboard-list-outline"
       [ngStyle]="{'color': topbarColor}"
     ></mat-icon>
@@ -73,7 +73,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <button
           mat-icon-button
           ngxClipboard
-          [cbContent]="row.id"
           (click)="addOrEditAction(row); $event.stopPropagation()"
           title="Edit Action"
         >

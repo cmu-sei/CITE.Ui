@@ -3,10 +3,10 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div fxLayout="row" fxLayoutAlign="start center">
+<div class="cssLayoutRowStartCenter">
   <div class="sp-icon">
     <mat-icon
-      class="mdi-36px"
+      class="mdi-24px"
       fontIcon="mdi-account"
       [ngStyle]="{'color': topbarColor}"
     ></mat-icon>
@@ -24,7 +24,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
   </mat-form-field>
   <div style="width: 30px;">
     <button
-      fxLayoutAlign="start center"
       mat-icon-button
       (click)="applyFilter('')"
       style="outline: none;"
@@ -107,7 +106,6 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         <button
           mat-icon-button
           ngxClipboard
-          [cbContent]="user.id"
           (click)="$event.stopPropagation()"
           title="Copy User ID:  {{ user.id }}"
         >
@@ -116,7 +114,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
         {{ user.name }}
       </span>
       <span class="mat-cell permission-cell">
-        <div fxLayout="row">
+        <div class="cssLayoutRowStartCenter">
           <div class="permission-item" *ngFor="let permission of permissionList">
             <mat-checkbox
               [checked]="hasPermission(permission.id, user)"
