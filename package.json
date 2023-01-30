@@ -37,7 +37,6 @@
     "@datorama/akita-ngdevtools": "^7.0.0",
     "@mdi/font": "^5.9.55",
     "@microsoft/signalr": "^5.0.7",
-    "@schematics/update": "^0.1102.18",
     "@types/luxon": "^3.2.0",
     "ajv": "^8.6.0",
     "core-js": "^3.14.0",
@@ -49,7 +48,6 @@
     "oidc-client": "^1.11.5",
     "rxjs": "^6.6.7",
     "rxjs-compat": "^6.6.7",
-    "schematics-utilities": "^2.0.3",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
   },
