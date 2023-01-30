@@ -16,16 +16,16 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the project r
   </button>
 </div>
 <div mat-dialog-content *ngIf="data && data.action">
-  <div fxLayout="row" class="add-margin">
-    <div fxFlex fxFlexOffset="10">
+  <div>
+    <div>
       <mat-form-field class="description-field full-width">
         <mat-label>Action Description</mat-label>
         <input matInput [(ngModel)]="data.action.description" />
       </mat-form-field>
     </div>
   </div>
-  <div fxLayout="row" class="add-margin">
-    <div fxFlex fxFlexOffset="10">
+  <div class="add-margin">
+    <div>
       <mat-form-field class="button-margins full-width">
         <mat-label>Team</mat-label>
         <mat-select placeholder="Team" [(ngModel)]="data.action.teamId">
@@ -37,11 +37,11 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the project r
       </mat-form-field>
     </div>
   </div>
-  <div fxLayout="row" class="bottom-button">
-    <div fxFlex fxLayoutAlign="left" class="delete-button">
+  <div class="cssLayoutRowStartCenter bottom-button">
+    <div class="delete-button">
       <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>
     </div>
-    <div fxFlex fxLayoutAlign="end" class="delete-button">
+    <div class="delete-button">
       <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
     </div>
   </div>
