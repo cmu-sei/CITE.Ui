@@ -5,7 +5,7 @@ import { GroupStore } from './group.store';
 import { GroupQuery } from './group.query';
 import { Injectable } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   Group,

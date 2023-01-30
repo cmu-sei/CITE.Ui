@@ -3,7 +3,7 @@
 
 import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
 import { Group, Team, ItemStatus} from 'src/app/generated/cite.api/model/models';
 import { GroupDataService } from 'src/app/data/group/group-data.service';
