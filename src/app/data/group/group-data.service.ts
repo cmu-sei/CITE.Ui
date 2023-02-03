@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { GroupStore } from './group.store';
 import { GroupQuery } from './group.query';
@@ -75,18 +76,18 @@ export class GroupDataService {
         ]) =>
           items
             ? (items as Group[])
-                .sort((a: Group, b: Group) =>
-                  this.sortGroups(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (group) =>
-                    ('' + group.name)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: Group, b: Group) =>
+                this.sortGroups(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (group) =>
+                  ('' + group.name)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     group.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );
