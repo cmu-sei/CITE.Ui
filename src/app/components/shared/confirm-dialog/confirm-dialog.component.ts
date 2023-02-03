@@ -5,13 +5,13 @@ import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDia
 import {Component, Inject} from '@angular/core';
 
 @Component({
-    selector: 'confirm-dialog',
-    templateUrl: './confirm-dialog.component.html'
+  selector: 'confirm-dialog',
+  templateUrl: './confirm-dialog.component.html'
 })
 export class ConfirmDialogComponent {
   public title: string;
   public message: string;
-  public removeArtifacts: boolean = true;
+  public removeArtifacts = true;
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<ConfirmDialogComponent>) {
     this.dialogRef.disableClose = true;
   }

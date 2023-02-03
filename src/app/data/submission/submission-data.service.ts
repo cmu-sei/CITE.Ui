@@ -9,8 +9,6 @@ import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   Submission,
-  SubmissionCategory,
-  SubmissionOption,
   SubmissionService,
   SubmissionOptionService,
   SubmissionComment,
@@ -82,9 +80,9 @@ export class SubmissionDataService {
         ]) =>
           items
             ? (items as Submission[])
-                .sort((a: Submission, b: Submission) =>
-                  this.sortSubmissions(a, b, sortColumn, sortIsAscending)
-                )
+              .sort((a: Submission, b: Submission) =>
+                this.sortSubmissions(a, b, sortColumn, sortIsAscending)
+              )
             : []
       )
     );
@@ -334,7 +332,9 @@ export class SubmissionDataService {
       if (matchingSubmission) {
         submission.id = matchingSubmission.id;
       } else {
-        console.log('submission not found. user=' + submission.userId + ', team=' + submission.teamId + ', group=' + submission.groupId + ', evaluation=' + submission.evaluationId);
+        console.log('submission not found. user=' +
+          submission.userId + ', team=' + submission.teamId +
+          ', group=' + submission.groupId + ', evaluation=' + submission.evaluationId);
       }
     }
     this.submissionStore.upsert(submission.id, submission);

@@ -4,8 +4,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ComnAuthQuery, ComnAuthService } from '@cmusei/crucible-common';
-import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
-import { filter, map, take, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { EvaluationTeamService } from 'src/app/generated/cite.api/api/api';
 import { EvaluationTeam, Team } from 'src/app/generated/cite.api/model/models';
 

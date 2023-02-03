@@ -44,7 +44,7 @@ export class ErrorService implements ErrorHandler {
           'The Identity Server could not be reached for user authentication.'
         );
       } else if (err.rejection.message === 'Failed to fetch') {
-        console.log('SignalR error reaching the Gallery API:  ' + err.rejection.message)
+        console.log('SignalR error reaching the Gallery API:  ' + err.rejection.message);
       } else {
         messageService.displayMessage('Error', err.rejection.message);
         console.log(err.rejection.message);

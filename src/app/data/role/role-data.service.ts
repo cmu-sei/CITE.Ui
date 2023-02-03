@@ -10,7 +10,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   Role,
   RoleService,
-  ItemStatus
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -80,18 +79,18 @@ export class RoleDataService {
         ]) =>
           items
             ? (items as Role[])
-                .sort((a: Role, b: Role) =>
-                  this.sortRoles(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (role) =>
-                    ('' + role.name)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: Role, b: Role) =>
+                this.sortRoles(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (role) =>
+                  ('' + role.name)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     role.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );

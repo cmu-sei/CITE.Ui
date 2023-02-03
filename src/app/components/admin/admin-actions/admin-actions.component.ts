@@ -36,8 +36,7 @@ import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admi
   templateUrl: './admin-actions.component.html',
   styleUrls: ['./admin-actions.component.scss'],
 })
-export class AdminActionsComponent
-  implements OnDestroy, OnInit, AfterViewInit {
+export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() showSelectionControls: boolean;
   @Input() pageSize: number;
   @Input() pageIndex: number;
@@ -82,21 +81,21 @@ export class AdminActionsComponent
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
     this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
-        this.evaluationList = evaluations;
-        if (!evaluations.some(e => e.id === this.selectedEvaluationId)) {
-          this.selectedEvaluationId = '';
-          this.selectedTeamId = '';
-          this.teamList = [];
-          this.actionList = [];
-          this.criteriaChanged();
-        }
+      this.evaluationList = evaluations;
+      if (!evaluations.some(e => e.id === this.selectedEvaluationId)) {
+        this.selectedEvaluationId = '';
+        this.selectedTeamId = '';
+        this.teamList = [];
+        this.actionList = [];
+        this.criteriaChanged();
+      }
     });
     this.moveDataService.unload();
     this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
-        this.moveList = moves;
+      this.moveList = moves;
     });
     this.teamQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teams => {
-        this.teamList = teams;
+      this.teamList = teams;
     });
     this.actionDataService.unload();
     this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe((actions) => {

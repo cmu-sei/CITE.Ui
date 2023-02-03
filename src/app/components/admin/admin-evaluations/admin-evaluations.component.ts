@@ -132,7 +132,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       'Delete this evaluation?',
       'Are you sure that you want to delete ' + evaluation.description + '?'
     ).subscribe((result) => {
-      if (result["confirm"]) {
+      if (result['confirm']) {
         this.evaluationDataService.delete(evaluation.id);
       }
     });

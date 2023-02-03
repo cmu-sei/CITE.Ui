@@ -2,7 +2,6 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
 import { DashboardComponent } from './dashboard.component';
 
 describe('DashboardComponent', () => {
@@ -13,7 +12,7 @@ describe('DashboardComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ DashboardComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

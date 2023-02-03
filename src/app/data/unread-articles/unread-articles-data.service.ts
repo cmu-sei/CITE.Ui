@@ -2,12 +2,11 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { UnreadArticlesStore } from './unread-articles.store';
-import { UnreadArticlesQuery } from './unread-articles.query';
 import { Injectable } from '@angular/core';
 import { UnreadArticles } from './unread-articles';
-import { GalleryService } from 'src/app/generated/cite.api'
-import { map, take, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { GalleryService } from 'src/app/generated/cite.api';
+import { take, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 
 @Injectable({

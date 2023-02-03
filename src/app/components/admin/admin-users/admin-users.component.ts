@@ -2,7 +2,6 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
 import {

@@ -104,7 +104,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
         if (this.canAccessAdminSection && !this.isSuperUser) {
           this.evaluationDataService.loadMine();
         }
-    });
+      });
     this.pageSize = activatedRoute.queryParamMap.pipe(
       map((params) => parseInt(params.get('pagesize') || '20', 10))
     );

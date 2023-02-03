@@ -2,7 +2,6 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
 import { AdminUsersComponent } from './admin-users.component';
 
 describe('AdminUsersComponent', () => {
@@ -13,7 +12,7 @@ describe('AdminUsersComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ AdminUsersComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

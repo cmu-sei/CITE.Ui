@@ -1,23 +1,23 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { animate, state, style, transition, trigger} from '@angular/animations';
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import {
-         Action,
-         Evaluation,
-         Move,
-         Role,
-         Submission,
-         Team,
-         User
-       } from 'src/app/generated/cite.api/model/models';
+  Action,
+  Evaluation,
+  Move,
+  Role,
+  Submission,
+  Team,
+  User
+} from 'src/app/generated/cite.api/model/models';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { ActionQuery } from 'src/app/data/action/action.query';
 import { MoveQuery } from 'src/app/data/move/move.query';

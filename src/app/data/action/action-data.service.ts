@@ -10,7 +10,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   Action,
   ActionService,
-  ItemStatus
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -80,18 +79,18 @@ export class ActionDataService {
         ]) =>
           items
             ? (items as Action[])
-                .sort((a: Action, b: Action) =>
-                  this.sortActions(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (action) =>
-                    ('' + action.description)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: Action, b: Action) =>
+                this.sortActions(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (action) =>
+                  ('' + action.description)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     action.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );

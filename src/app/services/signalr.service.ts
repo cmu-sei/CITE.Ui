@@ -79,7 +79,7 @@ export class SignalRService implements OnDestroy {
   private reconnect() {
     if (this.hubConnection != null) {
       this.hubConnection.stop().then(() => {
-        console.log("Reconnecting to the hub.");
+        console.log('Reconnecting to the hub.');
         this.connectionPromise = this.hubConnection.start();
         this.connectionPromise.then(() => this.join());
       });
@@ -168,7 +168,7 @@ export class SignalRService implements OnDestroy {
     );
 
     this.hubConnection.on('SubmissionCreated', (submission: Submission) => {
-        this.submissionDataService.updateStore(submission);
+      this.submissionDataService.updateStore(submission);
     });
 
     this.hubConnection.on('SubmissionDeleted', (id: string) => {
@@ -210,8 +210,8 @@ export class SignalRService implements OnDestroy {
 
   private addTeamHandlers() {
     this.hubConnection.on('TeamUpdated', (team: Team) => {
-        this.teamDataService.updateStore(team);
-      }
+      this.teamDataService.updateStore(team);
+    }
     );
 
     this.hubConnection.on('TeamCreated', (team: Team) => {
@@ -225,8 +225,8 @@ export class SignalRService implements OnDestroy {
 
   private addTeamUserHandlers() {
     this.hubConnection.on('TeamUserUpdated', (teamUser: TeamUser) => {
-        this.teamUserDataService.updateStore(teamUser);
-      }
+      this.teamUserDataService.updateStore(teamUser);
+    }
     );
 
     this.hubConnection.on('TeamUserCreated', (teamUser: TeamUser) => {
@@ -240,8 +240,8 @@ export class SignalRService implements OnDestroy {
 
   private addUserHandlers() {
     this.hubConnection.on('UserUpdated', (user: User) => {
-        this.userDataService.updateStore(user);
-      }
+      this.userDataService.updateStore(user);
+    }
     );
 
     this.hubConnection.on('UserCreated', (user: User) => {

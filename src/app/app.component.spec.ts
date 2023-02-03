@@ -23,7 +23,7 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'cite-ui'`, () => {
+  it('should have as title \'cite-ui\'', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app.title).toEqual('cite-ui');

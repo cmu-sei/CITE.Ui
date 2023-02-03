@@ -80,18 +80,18 @@ export class MoveDataService {
         ]) =>
           items
             ? (items as Move[])
-                .sort((a: Move, b: Move) =>
-                  this.sortMoves(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (move) =>
-                    ('' + move.description)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: Move, b: Move) =>
+                this.sortMoves(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (move) =>
+                  ('' + move.description)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     move.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );

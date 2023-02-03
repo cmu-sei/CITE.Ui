@@ -5,12 +5,12 @@ import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angu
 import { UntypedFormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
-import { Team, TeamType, User, ItemStatus} from 'src/app/generated/cite.api/model/models';
+import { Team, TeamType, User } from 'src/app/generated/cite.api/model/models';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { AdminTeamEditDialogComponent } from 'src/app/components/admin/admin-team-edit-dialog/admin-team-edit-dialog.component';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
@@ -129,7 +129,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   }
 
   getTeamTypeName(teamTypeId: string) {
-    var teamType = this.teamTypeList.find(tt => tt.id === teamTypeId);
+    const teamType = this.teamTypeList.find(tt => tt.id === teamTypeId);
     return teamType ? teamType.name : ' ';
   }
 

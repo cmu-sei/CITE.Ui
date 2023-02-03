@@ -5,12 +5,12 @@ import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angu
 import { UntypedFormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
-import { Group, Team, ItemStatus} from 'src/app/generated/cite.api/model/models';
+import { Group, Team } from 'src/app/generated/cite.api/model/models';
 import { GroupDataService } from 'src/app/data/group/group-data.service';
 import { GroupQuery } from 'src/app/data/group/group.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-groups',

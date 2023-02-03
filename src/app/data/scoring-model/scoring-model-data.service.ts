@@ -80,21 +80,21 @@ export class ScoringModelDataService {
         ]) =>
           items
             ? (items as ScoringModel[])
-                .sort((a: ScoringModel, b: ScoringModel) =>
-                  this.sortScoringModels(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (scoringModel) =>
-                    ('' + scoringModel.description)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: ScoringModel, b: ScoringModel) =>
+                this.sortScoringModels(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (scoringModel) =>
+                  ('' + scoringModel.description)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     scoringModel.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase()) ||
                     scoringModel.status
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );

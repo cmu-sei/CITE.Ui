@@ -12,7 +12,7 @@ import {
 import { LegacyPageEvent as PageEvent, MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { Team, Evaluation } from 'src/app/generated/cite.api';
+import { Team } from 'src/app/generated/cite.api';
 import { EvaluationTeamDataService } from 'src/app/data/evaluation-team-data.service';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { Subject } from 'rxjs';
@@ -58,7 +58,7 @@ export class AdminEvaluationTeamsComponent implements OnDestroy, OnInit {
       const teams: Team[] = [];
       evaluationTeams.filter(et => et.evaluationId === this.evaluationId).forEach(et => {
         teams.push(this.teamList.find(t => t.id === et.teamId));
-      })
+      });
       this.setDataSources(teams);
     });
     this.evaluationTeamDataService.getEvaluationTeamsFromApi();
@@ -81,9 +81,9 @@ export class AdminEvaluationTeamsComponent implements OnDestroy, OnInit {
       if (a.name < b.name) {
         return -1;
       } else if (a.name > b.name) {
-          return 1;
+        return 1;
       } else {
-          return 0;
+        return 0;
       }
     });
     const newAllTeams = !this.teamList ? new Array<Team>() : this.teamList.slice(0);

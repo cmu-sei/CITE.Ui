@@ -13,7 +13,7 @@ describe('TopbarComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ TopbarComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

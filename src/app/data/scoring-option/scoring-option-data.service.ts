@@ -80,18 +80,18 @@ export class ScoringOptionDataService {
         ]) =>
           items
             ? (items as ScoringOption[])
-                .sort((a: ScoringOption, b: ScoringOption) =>
-                  this.sortScoringOptions(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (scoringOption) =>
-                    ('' + scoringOption.description)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: ScoringOption, b: ScoringOption) =>
+                this.sortScoringOptions(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (scoringOption) =>
+                  ('' + scoringOption.description)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     scoringOption.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );

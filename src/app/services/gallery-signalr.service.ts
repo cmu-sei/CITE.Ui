@@ -55,7 +55,7 @@ export class GallerySignalRService implements OnDestroy {
   private reconnect() {
     if (this.hubConnection != null) {
       this.hubConnection.stop().then(() => {
-        console.log("Reconnecting to the gallery hub.");
+        console.log('Reconnecting to the gallery hub.');
         this.connectionPromise = this.hubConnection.start();
         this.connectionPromise.then(() => this.join());
       });

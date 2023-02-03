@@ -80,18 +80,18 @@ export class ScoringCategoryDataService {
         ]) =>
           items
             ? (items as ScoringCategory[])
-                .sort((a: ScoringCategory, b: ScoringCategory) =>
-                  this.sortScoringCategories(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (scoringCategory) =>
-                    ('' + scoringCategory.description)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: ScoringCategory, b: ScoringCategory) =>
+                this.sortScoringCategories(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (scoringCategory) =>
+                  ('' + scoringCategory.description)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     scoringCategory.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );

@@ -2,21 +2,20 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
-import { AdminTeamUsersDialogComponent } from './admin-team-users.component';
+import { AdminTeamUsersComponent } from './admin-team-users.component';
 
 describe('AdminTeamUsersComponent', () => {
-  let component: AdminTeamUsersDialogComponent;
-  let fixture: ComponentFixture<AdminTeamUsersDialogComponent>;
+  let component: AdminTeamUsersComponent;
+  let fixture: ComponentFixture<AdminTeamUsersComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [AdminTeamUsersDialogComponent],
+      declarations: [AdminTeamUsersComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AdminTeamUsersDialogComponent);
+    fixture = TestBed.createComponent(AdminTeamUsersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

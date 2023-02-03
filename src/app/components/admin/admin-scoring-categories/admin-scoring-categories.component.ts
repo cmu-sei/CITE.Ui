@@ -10,7 +10,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
-import { AdminScoringCategoryEditDialogComponent } from '../admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
+import {
+  AdminScoringCategoryEditDialogComponent
+} from '../admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
 
 @Component({
   selector: 'app-admin-scoring-categories',
@@ -88,7 +90,8 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   }
 
   togglePanel(scoringCategoryId: string) {
-    this.editScoringCategoryId = this.editScoringCategoryId === scoringCategoryId ? this.editScoringCategoryId = '' : this.editScoringCategoryId = scoringCategoryId;
+    this.editScoringCategoryId =
+      this.editScoringCategoryId === scoringCategoryId ? this.editScoringCategoryId = '' : this.editScoringCategoryId = scoringCategoryId;
     this.scoringCategoryClick.emit(this.editScoringCategoryId);
   }
 
@@ -105,7 +108,7 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
       'Delete this scoringCategory?',
       'Are you sure that you want to delete ' + scoringCategory.description + '?'
     ).subscribe((result) => {
-      if (result["confirm"]) {
+      if (result['confirm']) {
         this.scoringCategoryDataService.delete(scoringCategory.id);
       }
     });

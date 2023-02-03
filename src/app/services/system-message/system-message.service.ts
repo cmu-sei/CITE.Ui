@@ -9,13 +9,13 @@ import { SystemMessageComponent } from 'src/app/components/shared/system-message
 @Injectable()
 export class SystemMessageService {
 
-    constructor(
-        private messageSheet: MatBottomSheet
-    ) { }
+  constructor(
+    private messageSheet: MatBottomSheet
+  ) { }
 
-    public displayMessage(title: string, message: string) {
-        this.messageSheet.open(SystemMessageComponent, {data: {title: title, message: message} });
-    }
+  public displayMessage(title: string, message: string) {
+    this.messageSheet.open(SystemMessageComponent, {data: {title: title, message: message} });
+  }
 }
 
 

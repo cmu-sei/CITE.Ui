@@ -6,7 +6,6 @@ import {
   UntypedFormControl,
   FormGroupDirective,
   NgForm,
-  Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
@@ -41,7 +40,7 @@ export class AdminScoringOptionEditDialogComponent {
   }
 
   errorFree() {
-    return this.data.scoringOption.description.length > 0
+    return (this.data.scoringOption.description.length > 0);
   }
 
   /**
