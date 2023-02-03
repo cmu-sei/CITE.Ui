@@ -1,6 +1,7 @@
 /*
  Copyright 2023 Carnegie Mellon University. All Rights Reserved. 
- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+ Released under a MIT (SEI)-style license. See LICENSE.md in the 
+ project root for license information.
 */
 
 /*
@@ -54,7 +55,7 @@ module.exports = {
                 "accessibility": "explicit"
             }
         ],
-        "@typescript-eslint/indent": "error",
+        "@typescript-eslint/indent": ["error", 2, {"ignoredNodes": ["FunctionExpression[params]:has(Identifier[decorators])"], "SwitchCase": 1}],
         "@typescript-eslint/member-delimiter-style": [
             "error",
             {
@@ -68,7 +69,7 @@ module.exports = {
                 }
             }
         ],
-        "@typescript-eslint/member-ordering": "error",
+        "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/naming-convention": [
             "error",
             {
