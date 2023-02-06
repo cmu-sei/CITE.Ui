@@ -1,6 +1,7 @@
 /*
-Copyright 2022 Carnegie Mellon University. All Rights Reserved. 
- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license. See LICENSE.md in the
+// project root for license information.
 */
 
 /*
@@ -15,9 +16,13 @@ export class SortByPipe implements PipeTransform {
 
   transform(value: any[], order = '', column: string = ''): any[] {
     // no array
-    if (!value || order === '' || !order) { return value; }
+    if (!value || order === '' || !order) {
+      return value;
+    }
     // array with only one item
-    if (value.length <= 1) { return value; }
+    if (value.length <= 1) {
+      return value;
+    }
     // sort 1d array
     if (!column || column === '') {
       if (order === 'asc') {
@@ -40,7 +45,7 @@ export class DisplayOrderPipe implements PipeTransform {
       return value;
     }
     // sort by displayOrder
-    var temp = value.map(x => x);
+    const temp = value.map(x => x);
     return temp.sort((a: any, b: any) =>
       (a.displayOrder - b.displayOrder)
     );

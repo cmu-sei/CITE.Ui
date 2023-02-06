@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { SubmissionStore } from './submission.store';
 import { SubmissionQuery } from './submission.query';
@@ -9,8 +10,6 @@ import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   Submission,
-  SubmissionCategory,
-  SubmissionOption,
   SubmissionService,
   SubmissionOptionService,
   SubmissionComment,
@@ -82,9 +81,9 @@ export class SubmissionDataService {
         ]) =>
           items
             ? (items as Submission[])
-                .sort((a: Submission, b: Submission) =>
-                  this.sortSubmissions(a, b, sortColumn, sortIsAscending)
-                )
+              .sort((a: Submission, b: Submission) =>
+                this.sortSubmissions(a, b, sortColumn, sortIsAscending)
+              )
             : []
       )
     );
@@ -334,7 +333,9 @@ export class SubmissionDataService {
       if (matchingSubmission) {
         submission.id = matchingSubmission.id;
       } else {
-        console.log('submission not found. user=' + submission.userId + ', team=' + submission.teamId + ', group=' + submission.groupId + ', evaluation=' + submission.evaluationId);
+        console.log('submission not found. user=' +
+          submission.userId + ', team=' + submission.teamId +
+          ', group=' + submission.groupId + ', evaluation=' + submission.evaluationId);
       }
     }
     this.submissionStore.upsert(submission.id, submission);

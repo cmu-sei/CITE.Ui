@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { ActionStore } from './action.store';
 import { ActionQuery } from './action.query';
@@ -10,7 +11,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   Action,
   ActionService,
-  ItemStatus
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -80,18 +80,18 @@ export class ActionDataService {
         ]) =>
           items
             ? (items as Action[])
-                .sort((a: Action, b: Action) =>
-                  this.sortActions(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (action) =>
-                    ('' + action.description)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: Action, b: Action) =>
+                this.sortActions(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (action) =>
+                  ('' + action.description)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     action.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );

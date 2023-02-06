@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
@@ -63,11 +64,17 @@ import { AdminMoveEditDialogComponent } from './components/admin/admin-move-edit
 import { AdminRoleEditDialogComponent } from './components/admin/admin-role-edit-dialog/admin-role-edit-dialog.component';
 import { AdminRolesComponent } from 'src/app/components/admin/admin-roles/admin-roles.component';
 import { AdminScoringCategoriesComponent } from './components/admin/admin-scoring-categories/admin-scoring-categories.component';
-import { AdminScoringCategoryEditDialogComponent } from './components/admin/admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
+import {
+  AdminScoringCategoryEditDialogComponent
+} from './components/admin/admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
 import { AdminScoringModelsComponent } from './components/admin/admin-scoring-models/admin-scoring-models.component';
-import { AdminScoringModelEditDialogComponent } from './components/admin/admin-scoring-model-edit-dialog/admin-scoring-model-edit-dialog.component';
+import {
+  AdminScoringModelEditDialogComponent
+} from './components/admin/admin-scoring-model-edit-dialog/admin-scoring-model-edit-dialog.component';
 import { AdminScoringOptionsComponent } from './components/admin/admin-scoring-options/admin-scoring-options.component';
-import { AdminScoringOptionEditDialogComponent } from './components/admin/admin-scoring-option-edit-dialog/admin-scoring-option-edit-dialog.component';
+import {
+  AdminScoringOptionEditDialogComponent
+} from './components/admin/admin-scoring-option-edit-dialog/admin-scoring-option-edit-dialog.component';
 import { AdminSubmissionsComponent } from './components/admin/admin-submissions/admin-submissions.component';
 import { AdminTeamsComponent } from './components/admin/admin-teams/admin-teams.component';
 import { AdminTeamEditDialogComponent } from './components/admin/admin-team-edit-dialog/admin-team-edit-dialog.component';

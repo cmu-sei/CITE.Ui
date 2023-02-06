@@ -1,18 +1,18 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import {
   Component,
   OnDestroy,
   OnInit,
   Input,
-  ElementRef,
   ViewChild,
 } from '@angular/core';
 import { LegacyPageEvent as PageEvent, MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { User, Team } from 'src/app/generated/cite.api';
+import { User } from 'src/app/generated/cite.api';
 import { TeamUserDataService } from 'src/app/data/user/team-user-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { Subject } from 'rxjs';
@@ -73,9 +73,9 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
       if (a.name < b.name) {
         return -1;
       } else if (a.name > b.name) {
-          return 1;
+        return 1;
       } else {
-          return 0;
+        return 0;
       }
     });
     const newAllUsers = !this.userList ? new Array<User>() : this.userList.slice(0);

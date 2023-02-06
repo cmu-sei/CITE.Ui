@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
@@ -10,7 +11,6 @@ import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-mode
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminScoringModelEditDialogComponent } from '../admin-scoring-model-edit-dialog/admin-scoring-model-edit-dialog.component';
@@ -88,7 +88,8 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   }
 
   togglePanel(scoringModel: ScoringModel) {
-    this.editScoringModel = this.editScoringModel.id === scoringModel.id ? this.editScoringModel = {} : this.editScoringModel = { ...scoringModel};
+    this.editScoringModel =
+      this.editScoringModel.id === scoringModel.id ? this.editScoringModel = {} : this.editScoringModel = { ...scoringModel};
   }
 
   saveScoringModel(scoringModel: ScoringModel) {
@@ -104,7 +105,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
       'Delete this scoringModel?',
       'Are you sure that you want to delete ' + scoringModel.description + '?'
     ).subscribe((result) => {
-      if (result["confirm"]) {
+      if (result['confirm']) {
         this.scoringModelDataService.delete(scoringModel.id);
       }
     });

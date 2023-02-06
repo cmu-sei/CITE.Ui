@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
@@ -104,7 +105,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
         if (this.canAccessAdminSection && !this.isSuperUser) {
           this.evaluationDataService.loadMine();
         }
-    });
+      });
     this.pageSize = activatedRoute.queryParamMap.pipe(
       map((params) => parseInt(params.get('pagesize') || '20', 10))
     );

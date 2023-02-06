@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import {
   Component,
@@ -11,7 +12,6 @@ import {
   ViewChild,
   AfterViewInit,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { ActivatedRoute } from '@angular/router';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -23,7 +23,7 @@ import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
@@ -34,8 +34,7 @@ import { AdminRoleEditDialogComponent } from '../admin-role-edit-dialog/admin-ro
   templateUrl: './admin-roles.component.html',
   styleUrls: ['./admin-roles.component.scss'],
 })
-export class AdminRolesComponent
-  implements OnDestroy, OnInit, AfterViewInit {
+export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() showSelectionControls: boolean;
   @Input() pageSize: number;
   @Input() pageIndex: number;
@@ -76,17 +75,17 @@ export class AdminRolesComponent
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
     this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
-        this.evaluationList = evaluations;
-        if (!evaluations.some(e => e.id === this.selectedEvaluationId)) {
-          this.selectedEvaluationId = '';
-          this.selectedTeamId = '';
-          this.teamList = [];
-          this.roleList = [];
-          this.criteriaChanged();
-        }
+      this.evaluationList = evaluations;
+      if (!evaluations.some(e => e.id === this.selectedEvaluationId)) {
+        this.selectedEvaluationId = '';
+        this.selectedTeamId = '';
+        this.teamList = [];
+        this.roleList = [];
+        this.criteriaChanged();
+      }
     });
     this.teamQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teams => {
-        this.teamList = teams;
+      this.teamList = teams;
     });
     this.roleDataService.unload();
     this.roleQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe((roles) => {
@@ -119,7 +118,7 @@ export class AdminRolesComponent
     this.roleDataService.unload();
     this.teamDataService.loadByEvaluationId(evaluationId);
     this.roleDataService.loadByEvaluation(this.selectedEvaluationId);
-}
+  }
 
   selectTeam(teamId: string) {
     this.selectedTeamId = teamId;

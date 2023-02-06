@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
@@ -131,28 +132,28 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       });
     // subscribe to evaluations
     this.evaluationQuery.selectAll()
-    .pipe(takeUntil(this.unsubscribe$))
-    .subscribe(evaluations => {
-      this.evaluationList = evaluations;
-      const numberOfEvaluations = evaluations ? evaluations.length : 0;
-      this.topbarText = numberOfEvaluations !== 1 ?
-        this.topbarTextBase + ' (' + numberOfEvaluations + ' Active Incidents)' :
-        this.topbarTextBase + ' (1 Active Incident)';
-      // make sure the requested evaluation is contained in the active ones.  If not force manual selection.
-      if (numberOfEvaluations > 0) {
-        const evaluation = evaluations.find(e => e.id === this.selectedEvaluationId);
-        if (evaluation) {
-          this.loadEvaluationData();
-        } else if (numberOfEvaluations === 1) {
-          this.selectEvaluation(evaluations[0].id);
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(evaluations => {
+        this.evaluationList = evaluations;
+        const numberOfEvaluations = evaluations ? evaluations.length : 0;
+        this.topbarText = numberOfEvaluations !== 1 ?
+          this.topbarTextBase + ' (' + numberOfEvaluations + ' Active Incidents)' :
+          this.topbarTextBase + ' (1 Active Incident)';
+        // make sure the requested evaluation is contained in the active ones.  If not force manual selection.
+        if (numberOfEvaluations > 0) {
+          const evaluation = evaluations.find(e => e.id === this.selectedEvaluationId);
+          if (evaluation) {
+            this.loadEvaluationData();
+          } else if (numberOfEvaluations === 1) {
+            this.selectEvaluation(evaluations[0].id);
+          }
         }
-      }
-    });
+      });
     // subscribe to the logged in user
     this.userDataService.loggedInUser
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user) => {
-        if (user && user.profile && user.profile.sub != this.loggedInUserId) {
+        if (user && user.profile && user.profile.sub !== this.loggedInUserId) {
           this.loggedInUserId = user.profile.sub;
           this.evaluationList = null;
           this.evaluationDataService.loadMine();
@@ -179,13 +180,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             if (!submission) {
               submission = results.find(
                 (s) =>
-                  s.moveNumber == evaluation.currentMoveNumber &&
+                  s.moveNumber === evaluation.currentMoveNumber &&
                   s.userId === this.loggedInUserId
               );
             } else {
               const upToDate = results.some(
                 (s) =>
-                  s.moveNumber == evaluation.currentMoveNumber &&
+                  s.moveNumber === evaluation.currentMoveNumber &&
                   s.userId === submission.userId &&
                   s.teamId === submission.teamId &&
                   s.evaluationId === submission.evaluationId

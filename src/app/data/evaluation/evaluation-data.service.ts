@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { EvaluationStore } from './evaluation.store';
 import { EvaluationQuery } from './evaluation.query';
@@ -80,21 +81,21 @@ export class EvaluationDataService {
         ]) =>
           items
             ? (items as Evaluation[])
-                .sort((a: Evaluation, b: Evaluation) =>
-                  this.sortEvaluations(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (evaluation) =>
-                    ('' + evaluation.description)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: Evaluation, b: Evaluation) =>
+                this.sortEvaluations(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (evaluation) =>
+                  ('' + evaluation.description)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     ('' + evaluation.status)
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase()) ||
                     evaluation.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );
@@ -164,7 +165,7 @@ export class EvaluationDataService {
         (evaluations) => {
           evaluations.forEach(e => {
             this.setAsDates(e);
-          })
+          });
           this.evaluationStore.set(evaluations);
         },
         (error) => {

@@ -1,8 +1,9 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, Output, OnDestroy, OnInit } from '@angular/core';
-import { ScoringOption, ItemStatus, Team, User} from 'src/app/generated/cite.api/model/models';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ScoringOption, ItemStatus } from 'src/app/generated/cite.api/model/models';
 import { ScoringOptionDataService } from 'src/app/data/scoring-option/scoring-option-data.service';
 import { ScoringOptionQuery } from 'src/app/data/scoring-option/scoring-option.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
@@ -95,7 +96,7 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
       'Delete this scoringOption?',
       'Are you sure that you want to delete ' + scoringOption.description + '?'
     ).subscribe((result) => {
-      if (result["confirm"]) {
+      if (result['confirm']) {
         this.scoringOptionDataService.delete(scoringOption.id);
       }
     });

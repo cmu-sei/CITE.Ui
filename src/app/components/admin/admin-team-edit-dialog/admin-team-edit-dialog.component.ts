@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import {
@@ -85,10 +86,10 @@ export class AdminTeamEditDialogComponent {
       this.data.team.name = this.teamNameFormControl.value
         .toString()
         .trim();
-        this.data.team.shortName = this.teamShortNameFormControl.value
+      this.data.team.shortName = this.teamShortNameFormControl.value
         .toString()
         .trim();
-        this.data.team.teamTypeId = this.teamTypeIdFormControl.value
+      this.data.team.teamTypeId = this.teamTypeIdFormControl.value
         .toString()
         .trim();
       if (this.errorFree) {

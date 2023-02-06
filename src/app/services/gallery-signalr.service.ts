@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Injectable, OnDestroy } from '@angular/core';
 import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
@@ -55,7 +56,7 @@ export class GallerySignalRService implements OnDestroy {
   private reconnect() {
     if (this.hubConnection != null) {
       this.hubConnection.stop().then(() => {
-        console.log("Reconnecting to the gallery hub.");
+        console.log('Reconnecting to the gallery hub.');
         this.connectionPromise = this.hubConnection.start();
         this.connectionPromise.then(() => this.join());
       });

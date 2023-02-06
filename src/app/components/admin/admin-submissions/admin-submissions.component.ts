@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import {
   Component,
@@ -24,16 +25,14 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { DialogService } from "src/app/services/dialog/dialog.service";
+import { DialogService } from 'src/app/services/dialog/dialog.service';
 
 @Component({
   selector: 'app-admin-submissions',
   templateUrl: './admin-submissions.component.html',
   styleUrls: ['./admin-submissions.component.scss'],
 })
-export class AdminSubmissionsComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+export class AdminSubmissionsComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() pageSize: number;
   @Input() pageIndex: number;
   @Output() sortChange = new EventEmitter<Sort>();
@@ -48,7 +47,7 @@ export class AdminSubmissionsComponent
   evaluationList: Evaluation[] = [];
   submissionTypes = [ SubmissionType.official, SubmissionType.team, SubmissionType.user ];
   selectedSubmissionTypes = [ SubmissionType.official, SubmissionType.team ];
-  selectedMove: number = -1;
+  selectedMove = -1;
   moveList: number[] = [];
   userList$: User[] = [];
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -86,7 +85,7 @@ export class AdminSubmissionsComponent
       .selectAllPopulated()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((submissions) => {
-        var moves: number[] = [];
+        const moves: number[] = [];
         submissions.forEach(submission => {
           if (!moves.includes(+submission.moveNumber)) {
             moves.push(+submission.moveNumber);
@@ -129,7 +128,7 @@ export class AdminSubmissionsComponent
       'Delete this submission?',
       'Are you sure that you want to delete this submission?'
     ).subscribe((result) => {
-      if (result["confirm"]) {
+      if (result['confirm']) {
         this.submissionDataService.delete(submission.id);
       }
     });
@@ -152,10 +151,10 @@ export class AdminSubmissionsComponent
   }
 
   criteriaChanged() {
-    var includedSubmissions: PopulatedSubmission[] = [];
+    const includedSubmissions: PopulatedSubmission[] = [];
     this.populatedSubmissions.forEach(submission => {
       if ( this.selectedSubmissionTypes.includes(submission.submissionType) &&
-           (this.selectedMove === -1 || this.selectedMove == submission.moveNumber)) {
+           (this.selectedMove === -1 || this.selectedMove === submission.moveNumber)) {
         includedSubmissions.push(submission);
       }
     });

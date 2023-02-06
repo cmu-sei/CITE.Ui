@@ -1,11 +1,12 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
@@ -13,16 +14,15 @@ import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { ItemStatus,
-         Evaluation,
-         ScoringModel,
-         ScoringOption,
-         Submission,
-         SubmissionComment,
-         Team,
-         User
-       } from 'src/app/generated/cite.api/model/models';
+  Evaluation,
+  ScoringModel,
+  ScoringOption,
+  Submission,
+  SubmissionComment,
+  Team,
+  User
+} from 'src/app/generated/cite.api/model/models';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
-import { AdminScoringOptionEditDialogComponent } from '../admin/admin-scoring-option-edit-dialog/admin-scoring-option-edit-dialog.component';
 import { Title} from '@angular/platform-browser';
 
 @Component({
@@ -152,7 +152,7 @@ export class ScoringModelComponent {
           this.loggedInUserId = user.profile.sub;
           this.userId = this.loggedInUserId;
         }
-    });
+      });
 
     // observe the submission list
     this.submissionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
@@ -189,13 +189,13 @@ export class ScoringModelComponent {
     let isSelected = false;
     const submissionCategories = this.displayedSubmission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
-      const sc = submissionCategories.find(sc => sc.scoringCategoryId === scoringCategoryId);
+      const sc = submissionCategories.find(subCat => subCat.scoringCategoryId === scoringCategoryId);
       if (sc) {
-        const so = sc.submissionOptions.find(so => so.scoringOptionId === scoringOptionId);
+        const so = sc.submissionOptions.find(subOpt => subOpt.scoringOptionId === scoringOptionId);
         isSelected = so && so.isSelected;
       }
       if (isSelected) {
-        const scoringCategory = this.selectedScoringModel.scoringCategories.find(sc => sc.id === scoringCategoryId);
+        const scoringCategory = this.selectedScoringModel.scoringCategories.find(subCat => subCat.id === scoringCategoryId);
         const scoringOption = scoringCategory.scoringOptions.find(so => so.id === scoringOptionId);
       }
     }
@@ -206,9 +206,9 @@ export class ScoringModelComponent {
     let selectedCount = 0;
     const submissionCategories = this.displayedSubmission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
-      const sc = submissionCategories.find(sc => sc.scoringCategoryId === scoringCategoryId);
+      const sc = submissionCategories.find(subCat => subCat.scoringCategoryId === scoringCategoryId);
       if (sc) {
-        const so = sc.submissionOptions.find(so => so.scoringOptionId === scoringOptionId);
+        const so = sc.submissionOptions.find(subOpt => subOpt.scoringOptionId === scoringOptionId);
         selectedCount = so ? so.selectedCount : 0;
       }
     }
@@ -291,12 +291,12 @@ export class ScoringModelComponent {
     }
     const submissionCategory = this.displayedSubmission.submissionCategories
       .find(sc => sc.scoringCategoryId === scoringCategoryId);
-      if (submissionCategory) {
-        const submissionOption = submissionCategory.submissionOptions.find(so => so.scoringOptionId === scoringOptionId);
-        if (submissionOption) {
-          return submissionOption.submissionComments;
-        }
+    if (submissionCategory) {
+      const submissionOption = submissionCategory.submissionOptions.find(so => so.scoringOptionId === scoringOptionId);
+      if (submissionOption) {
+        return submissionOption.submissionComments;
       }
+    }
     return [];
   }
 
@@ -308,9 +308,9 @@ export class ScoringModelComponent {
     let isSelected = null;
     const submissionCategories = this.displayedSubmission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
-      const sc = submissionCategories.find(sc => sc.scoringCategoryId === scoringCategoryId);
+      const sc = submissionCategories.find(subCat => subCat.scoringCategoryId === scoringCategoryId);
       if (sc) {
-        const so = sc.submissionOptions.find(so => so.scoringOptionId === scoringOptionId);
+        const so = sc.submissionOptions.find(subOpt => subOpt.scoringOptionId === scoringOptionId);
         isSelected = so && so.isSelected;
         selectedBy = so && so.modifiedBy;
       }
@@ -320,7 +320,7 @@ export class ScoringModelComponent {
         return 'Unselected by ' + this.getUserName(selectedBy);
       }
     }
-     return;
+    return;
   }
 
   getUserName(id) {
@@ -330,10 +330,11 @@ export class ScoringModelComponent {
 
   completeSubmission() {
     // if not the curret move, score cannot be reopened, so ask for confirmation
-    if (this.displayedMoveNumber != this.currentMoveNumber) {
+    if (this.displayedMoveNumber !== this.currentMoveNumber) {
       this.dialogService.confirm(
         'WARNING:  You will not be able to reopen this score!',
-        'Move ' + this.displayedMoveNumber + ' has ended. You will not be able to reopen this score. Are you sure that you wish to submit this score?'
+        'Move ' + this.displayedMoveNumber +
+          ' has ended. You will not be able to reopen this score. Are you sure that you wish to submit this score?'
       ).subscribe((result) => {
         if (result['confirm']) {
           this.verifyAndSubmit();
@@ -375,8 +376,12 @@ export class ScoringModelComponent {
     this.displayedSubmission.submissionCategories.forEach(sc => {
       const scoringCategory = this.selectedScoringModel.scoringCategories.find(x => x.id === sc.scoringCategoryId);
       const scoringOptions = scoringCategory.scoringOptions;
-      const optionIds = scoringOptions.filter(x => !x.isModifier).map(function(x) { return x.id; });
-      const modifierIds = scoringOptions.filter(x => x.isModifier).map(function(x) { return x.id; });
+      const optionIds = scoringOptions.filter(x => !x.isModifier).map(function(x) {
+        return x.id;
+      });
+      const modifierIds = scoringOptions.filter(x => x.isModifier).map(function(x) {
+        return x.id;
+      });
       const optionSelected = sc.submissionOptions.filter(so => optionIds.includes(so.scoringOptionId)).some(so => so.isSelected);
       if (!optionSelected) {
         noCategoryOption.push(scoringCategory.displayOrder);
@@ -412,33 +417,33 @@ export class ScoringModelComponent {
     switch (selection) {
       case 'user':
         newSubmission = submissions.find(s =>
-            s.moveNumber == this.displayedMoveNumber &&
+          s.moveNumber === this.displayedMoveNumber &&
             s.userId === this.loggedInUserId);
         break;
       case 'team':
         newSubmission = submissions.find(s =>
-            s.moveNumber == this.displayedMoveNumber &&
+          s.moveNumber === this.displayedMoveNumber &&
             s.userId === null &&
             s.teamId !== null &&
             !s.scoreIsAnAverage);
         break;
       case 'team-avg':
         newSubmission = submissions.find(s =>
-            s.moveNumber == this.displayedMoveNumber &&
+          s.moveNumber === this.displayedMoveNumber &&
             s.userId === null &&
             s.teamId !== null &&
             s.scoreIsAnAverage);
         break;
       case 'group-avg':
         newSubmission = submissions.find(s =>
-            s.moveNumber == this.displayedMoveNumber &&
+          s.moveNumber === this.displayedMoveNumber &&
             s.userId === null &&
             s.teamId === null &&
             s.scoreIsAnAverage);
         break;
       case 'official':
         newSubmission = submissions.find(s =>
-            s.moveNumber == this.displayedMoveNumber &&
+          s.moveNumber === this.displayedMoveNumber &&
             s.userId === null &&
             s.teamId === null &&
             s.groupId === null);
@@ -465,7 +470,7 @@ export class ScoringModelComponent {
     this.showReopenButton = this.displayedSubmission && canSubmit &&
                             !this.displayedSubmission.scoreIsAnAverage &&
                             this.displayedSubmission.status === ItemStatus.Complete &&
-                            this.displayedSubmission.moveNumber == this.currentMoveNumber;
+                            this.displayedSubmission.moveNumber === this.currentMoveNumber;
     this.showSubmitButton = this.displayedSubmission && canSubmit &&
                             !this.displayedSubmission.scoreIsAnAverage &&
                             this.displayedSubmission.status === ItemStatus.Active;
@@ -479,24 +484,24 @@ export class ScoringModelComponent {
   setDisplayedSelection() {
     let selection = '';
     if (!this.displayedSubmission.userId
-      && !this.displayedSubmission.teamId
-      && !this.displayedSubmission.groupId
-      && !this.displayedSubmission.scoreIsAnAverage) {
-        selection = 'official';
+        && !this.displayedSubmission.teamId
+        && !this.displayedSubmission.groupId
+        && !this.displayedSubmission.scoreIsAnAverage) {
+      selection = 'official';
     } else if (!this.displayedSubmission.userId
-      && !this.displayedSubmission.teamId
-      && this.displayedSubmission.groupId
-      && this.displayedSubmission.scoreIsAnAverage) {
-        selection = 'group-avg';
-    } else if (this.displayedSubmission.moveNumber == this.displayedMoveNumber
-      && !this.displayedSubmission.userId
-      && this.displayedSubmission.teamId
-      && this.displayedSubmission.scoreIsAnAverage) {
-        selection = 'team-avg';
+        && !this.displayedSubmission.teamId
+        && this.displayedSubmission.groupId
+        && this.displayedSubmission.scoreIsAnAverage) {
+      selection = 'group-avg';
+    } else if (this.displayedSubmission.moveNumber === this.displayedMoveNumber
+        && !this.displayedSubmission.userId
+        && this.displayedSubmission.teamId
+        && this.displayedSubmission.scoreIsAnAverage) {
+      selection = 'team-avg';
     } else if (!this.displayedSubmission.userId
-      && this.displayedSubmission.teamId
-      && !this.displayedSubmission.scoreIsAnAverage) {
-        selection = 'team';
+        && this.displayedSubmission.teamId
+        && !this.displayedSubmission.scoreIsAnAverage) {
+      selection = 'team';
     } else {
       selection = 'user';
     }

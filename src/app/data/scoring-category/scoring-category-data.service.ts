@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { ScoringCategoryStore } from './scoring-category.store';
 import { ScoringCategoryQuery } from './scoring-category.query';
@@ -80,18 +81,18 @@ export class ScoringCategoryDataService {
         ]) =>
           items
             ? (items as ScoringCategory[])
-                .sort((a: ScoringCategory, b: ScoringCategory) =>
-                  this.sortScoringCategories(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (scoringCategory) =>
-                    ('' + scoringCategory.description)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: ScoringCategory, b: ScoringCategory) =>
+                this.sortScoringCategories(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (scoringCategory) =>
+                  ('' + scoringCategory.description)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     scoringCategory.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );

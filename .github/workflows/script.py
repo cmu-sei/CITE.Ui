@@ -2,7 +2,7 @@ import os
 import datetime
 
 header_test = 'Released under a MIT (SEI)-style license'
-header = 'Copyright ' + str(datetime.date.today().year) + ' Carnegie Mellon University. All Rights Reserved. \n Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.'
+header = 'Copyright ' + str(datetime.date.today().year) + ' Carnegie Mellon University. All Rights Reserved.\n Released under a MIT (SEI)-style license. See LICENSE.md in the\n project root for license information.'
 
 print('header not in:')
 # iterate over all files in directory

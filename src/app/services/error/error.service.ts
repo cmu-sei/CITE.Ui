@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Injectable, Injector, ErrorHandler } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -44,7 +45,7 @@ export class ErrorService implements ErrorHandler {
           'The Identity Server could not be reached for user authentication.'
         );
       } else if (err.rejection.message === 'Failed to fetch') {
-        console.log('SignalR error reaching the Gallery API:  ' + err.rejection.message)
+        console.log('SignalR error reaching the Gallery API:  ' + err.rejection.message);
       } else {
         messageService.displayMessage('Error', err.rejection.message);
         console.log(err.rejection.message);

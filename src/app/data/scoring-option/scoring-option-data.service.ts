@@ -1,5 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { ScoringOptionStore } from './scoring-option.store';
 import { ScoringOptionQuery } from './scoring-option.query';
@@ -80,18 +81,18 @@ export class ScoringOptionDataService {
         ]) =>
           items
             ? (items as ScoringOption[])
-                .sort((a: ScoringOption, b: ScoringOption) =>
-                  this.sortScoringOptions(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (scoringOption) =>
-                    ('' + scoringOption.description)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: ScoringOption, b: ScoringOption) =>
+                this.sortScoringOptions(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (scoringOption) =>
+                  ('' + scoringOption.description)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     scoringOption.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );
