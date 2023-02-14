@@ -4,64 +4,54 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="cssLayoutRowStartCenter">
-  <div class="sp-icon">
-    <mat-icon
-      class="mdi-24px"
-      fontIcon="mdi-account-multiple"
-      [ngStyle]="{'color': topbarColor}"
-    ></mat-icon>
-  </div>
-  <button
-    mat-icon-button
-    (click)="addOrEditTeam(null)"
-    style="outline: none; margin-left: 20px;"
-    title="Add Team"
-  >
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
-  </button>
-  <mat-form-field style="width: 300px; margin-left: 10px;">
-    <input matInput [formControl]="filterControl" placeholder="Search" />
-  </mat-form-field>
-  <div style="width: 30px;">
-    <button
-      mat-icon-button
-      (click)="applyFilter('')"
-      style="outline: none;"
-      title="Clear Search"
-    >
-      <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
-    </button>
-  </div>
-  <div *ngIf="!addingNewTeam">
-    <mat-paginator
-      #paginator
-      [length]="teamList?.length"
-      [pageIndex]="pageIndex"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"
-      (page)="paginatorEvent($event)"
-    ></mat-paginator>
-  </div>
-</div>
-
 <mat-accordion displayMode="flat">
   <section
     matSort
     (matSortChange)="sortChanged($event)"
     class="mat-elevation-z2 mat-header-row"
   >
-    <div class="mat-header-cell two-cell" mat-sort-header="shortName"><span style="margin-left: 80px;">Short Name</span></div>
-    <div class="mat-header-cell five-cell" mat-sort-header="name">Name</div>
+    <div class="mat-header-cell one-cell">
+      <button
+        mat-icon-button
+        (click)="addOrEditTeam(null)"
+        style="outline: none;"
+        title="Add Team"
+      >
+        <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+      </button>
+    </div>
+    <div class="mat-header-cell one-cell" mat-sort-header="shortName">
+      Short Name
+    </div>
     <div class="mat-header-cell three-cell" mat-sort-header="teamTypeId">Team Type</div>
+    <div class="mat-header-cell one-cell" mat-sort-header="name">
+      Name
+    </div>
+    <div class="mat-header-cell four-cell">
+      <div class="panel-div">
+        <mat-form-field style="width: 60%; margin-left: 10px;">
+          <input matInput [formControl]="filterControl" placeholder="Search" />
+        </mat-form-field>
+        <div style="width: 30px;">
+          <button
+            mat-icon-button
+            (click)="applyFilter('')"
+            style="outline: none;"
+            title="Clear Search"
+          >
+            <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
   </section>
 
   <mat-expansion-panel
-    *ngFor="let team of paginateTeams(teamList, pageIndex, pageSize)"
+    *ngFor="let team of teamList"
     [expanded]="editTeam.id === team.id"
   >
     <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading" (click)="togglePanel(team); $event.stopPropagation()">
-      <div class="mat-cell two-cell">
+      <div class="mat-cell one-cell">
         <div class="panel-div">
           <button
             mat-icon-button
@@ -79,17 +69,21 @@ project root for license information or contact permission@sei.cmu.edu for full 
           >
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can"></mat-icon>
           </button>
-          {{ team.shortName }}
         </div>
       </div>
-      <div class="mat-cell five-cell center-self">
+      <div class="mat-cell one-cell center-self">
         <div class="panel-div">
-          {{ team.name }}
+          {{ team.shortName }}
         </div>
       </div>
       <div class="mat-cell three-cell center-self">
         <div class="panel-div">
           {{ getTeamTypeName(team.teamTypeId) }}
+        </div>
+      </div>
+      <div class="mat-cell five-cell center-self">
+        <div class="panel-div">
+          {{ team.name }}
         </div>
       </div>
     </mat-expansion-panel-header>

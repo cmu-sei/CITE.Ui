@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Carnegie Mellon University. All Rights Reserved. 
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the
 // project root for license information.
 */
@@ -11,10 +11,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { ActionService } from './api/action.service';
 import { EvaluationService } from './api/evaluation.service';
-import { EvaluationTeamService } from './api/evaluationTeam.service';
 import { GalleryService } from './api/gallery.service';
-import { GroupService } from './api/group.service';
-import { GroupTeamService } from './api/groupTeam.service';
 import { HealthCheckService } from './api/healthCheck.service';
 import { MoveService } from './api/move.service';
 import { PermissionService } from './api/permission.service';
@@ -39,10 +36,7 @@ import { UserPermissionService } from './api/userPermission.service';
   providers: [
     ActionService,
     EvaluationService,
-    EvaluationTeamService,
     GalleryService,
-    GroupService,
-    GroupTeamService,
     HealthCheckService,
     MoveService,
     PermissionService,

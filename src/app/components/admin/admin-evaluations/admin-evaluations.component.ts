@@ -104,6 +104,11 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
 
   togglePanel(evaluation: Evaluation) {
     this.editEvaluation = this.editEvaluation.id === evaluation.id ? this.editEvaluation = {} : this.editEvaluation = { ...evaluation};
+    this.evaluationDataService.setActive(this.editEvaluation.id);
+    // if an evaluation has been selected, load the evaluation, so that we have its details
+    if (this.editEvaluation.id) {
+      this.evaluationDataService.loadById(this.editEvaluation.id);
+    }
   }
 
   saveEvaluation(evaluation: Evaluation) {

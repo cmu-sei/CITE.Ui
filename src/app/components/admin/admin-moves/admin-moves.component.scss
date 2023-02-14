@@ -2,12 +2,42 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-.mat-table {
-  display: block;
+.panel-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  margin-left: 10%;
+}
+
+.panel-div {
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: left;
+}
+
+.user-div {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.name-width {
+  width: 600px;
+}
+
+.short-width {
+  width: 150px;
 }
 
 .mat-header-row {
   min-height: 56px;
+  font-family: "open_sansregular";
 }
 
 .mat-row {
@@ -27,24 +57,6 @@
   flex: 1;
   overflow: hidden;
   word-wrap: break-word;
-  text-align: left;
-  align-self: center;
-}
-
-.cell-one {
-  flex: 1;
-}
-
-.cell-two {
-  flex: 2;
-}
-
-.cell-five {
-  flex: 5;
-}
-
-.cell-six {
-  flex: 6;
 }
 
 .button-margins {
@@ -70,14 +82,39 @@
   text-align: left;
 }
 
-.mat-select {
-  width: 100px;
-}
-
 .pad-top {
   margin-top: 12px;
 }
 
-.description-width {
-  width: 90%;
+.cell-one {
+  flex: 1;
 }
+
+.cell-two {
+  flex: 2;
+}
+
+.cell-three {
+  flex: 3;
+}
+
+.cell-four {
+  flex: 4;
+}
+
+.cell-five {
+  flex: 5;
+}
+
+.cell-six {
+  flex: 6;
+}
+
+.cell-eight {
+  flex: 8;
+}
+
+.center-self {
+  align-self: center;
+}
+

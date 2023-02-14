@@ -96,16 +96,23 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </span>
     </mat-expansion-panel-header>
     <div class="move-container" *ngIf="editEvaluation.id === evaluation.id">
-      <app-admin-moves
-        [evaluationId]="evaluation.id"
-      ></app-admin-moves>
-    </div>
-    <div class="move-container" *ngIf="editEvaluation.id === evaluation.id">
-      <h2>Teams</h2>
-      <app-admin-evaluation-teams
-        [evaluationId]="evaluation.id"
-        [teamList]="teamList"
-      ></app-admin-evaluation-teams>
+      <mat-expansion-panel class="bottom-space">
+        <mat-expansion-panel-header>
+          <h4>Moves</h4>
+        </mat-expansion-panel-header>
+        <app-admin-moves
+          [evaluationId]="evaluation.id"
+        ></app-admin-moves>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <h4>Teams</h4>
+        </mat-expansion-panel-header>
+        <app-admin-teams
+          [evaluationId]="evaluation.id"
+        >
+        </app-admin-teams>
+      </mat-expansion-panel>
     </div>
   </mat-expansion-panel>
 </mat-accordion>

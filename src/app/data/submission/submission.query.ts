@@ -11,7 +11,6 @@ import { combineLatest, Observable } from 'rxjs';
 import { PopulatedSubmission, SubmissionType } from './submission.models';
 import { TeamQuery } from '../team/team.query';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { GroupQuery } from '../group/group.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 
 @QueryConfig({
@@ -25,7 +24,6 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
   constructor(
     protected store: SubmissionStore,
     protected teamQuery: TeamQuery,
-    protected groupQuery: GroupQuery,
     protected userDataService: UserDataService
   ) {
     super(store);
@@ -39,10 +37,9 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
     return combineLatest([
       this.selectAll(),
       this.teamQuery.selectAll(),
-      this.groupQuery.selectAll(),
       this.userDataService.userList
     ]).pipe(
-      map(([submissions, teams, groups, users]) => {
+      map(([submissions, teams, users]) => {
         const populatedSubmissions: Array<PopulatedSubmission> = [];
         submissions.forEach((submission) => {
           if (submission.userId) {
@@ -85,10 +82,12 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
             const populatedSubmission = {
               ...submission,
             } as PopulatedSubmission;
-            const group = groups.find((x) => x.id === submission.groupId);
-            if (group) {
-              populatedSubmission.name = group.name;
-            }
+            // const group = groups.find((x) => x.id === submission.groupId);
+            // if (group) {
+            //   populatedSubmission.name = group.name;
+            // }
+            populatedSubmission.name = submission.groupId;
+            // TODO: fix the above code to work with team types
             populatedSubmission.submissionType = SubmissionType.groupAvg;
             populatedSubmissions.push(populatedSubmission);
           } else {

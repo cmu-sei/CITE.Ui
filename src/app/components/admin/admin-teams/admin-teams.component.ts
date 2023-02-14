@@ -2,13 +2,14 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
 import { Team, TeamType, User } from 'src/app/generated/cite.api/model/models';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
+import { UserDataService } from 'src/app/data/user/user-data.service';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -22,12 +23,7 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
   styleUrls: ['./admin-teams.component.scss'],
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
-  @Input() teamList: Team[];
-  @Input() userList: User[];
-  @Output() sortChange = new EventEmitter<Sort>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
+  @Input() evaluationId: string;
   filterControl: UntypedFormControl = this.teamDataService.filterControl;
   filterString = '';
   newTeam: Team = { id: '', name: '' };
@@ -39,7 +35,9 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   originalTeamName = '';
   originalTeamShortName = '';
   defaultScoringModelId = this.settingsService.settings.DefaultScoringModelId;
+  teamList: Team[];
   teamTypeList: TeamType[] = [];
+  userList: User[] = [];
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -47,20 +45,27 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public dialogService: DialogService,
     private teamDataService: TeamDataService,
-    private teamQuery: TeamQuery
+    private teamQuery: TeamQuery,
+    private userDataService: UserDataService
   ) {
     this.teamDataService.teamTypes.pipe(takeUntil(this.unsubscribe$)).subscribe(teamTypes => {
-      this.teamTypeList = teamTypes;
+      this.teamTypeList = teamTypes ? teamTypes : [];
+    });
+    this.teamQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teams => {
+      this.teamList = teams ? teams : [];
     });
     this.teamDataService.loadTeamTypes();
-    this.teamDataService.load();
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
+    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+      this.userList = users;
+    });
   }
 
   ngOnInit() {
     this.filterControl.setValue(this.filterString);
+    this.teamDataService.loadByEvaluationId(this.evaluationId);
   }
 
   addOrEditTeam(team: Team) {
@@ -68,7 +73,8 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
       team = {
         name: '',
         shortName: '',
-        teamTypeId: ''
+        teamTypeId: '',
+        evaluationId: this.evaluationId
       };
     } else {
       team = {... team};
@@ -126,7 +132,8 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   }
 
   sortChanged(sort: Sort) {
-    this.sortChange.emit(sort);
+    // TODO: fix sort
+    // this.sortChange.emit(sort);
   }
 
   getTeamTypeName(teamTypeId: string) {
@@ -135,7 +142,8 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   }
 
   paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
+    // TODO: fix paging
+    // this.pageChange.emit(page);
   }
 
   paginateTeams(teams: Team[], pageIndex: number, pageSize: number) {

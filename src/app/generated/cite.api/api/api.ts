@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Carnegie Mellon University. All Rights Reserved. 
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the
 // project root for license information.
 */
@@ -8,14 +8,8 @@ export * from './action.service';
 import { ActionService } from './action.service';
 export * from './evaluation.service';
 import { EvaluationService } from './evaluation.service';
-export * from './evaluationTeam.service';
-import { EvaluationTeamService } from './evaluationTeam.service';
 export * from './gallery.service';
 import { GalleryService } from './gallery.service';
-export * from './group.service';
-import { GroupService } from './group.service';
-export * from './groupTeam.service';
-import { GroupTeamService } from './groupTeam.service';
 export * from './healthCheck.service';
 import { HealthCheckService } from './healthCheck.service';
 export * from './move.service';
@@ -48,4 +42,4 @@ export * from './user.service';
 import { UserService } from './user.service';
 export * from './userPermission.service';
 import { UserPermissionService } from './userPermission.service';
-export const APIS = [ActionService, EvaluationService, EvaluationTeamService, GalleryService, GroupService, GroupTeamService, HealthCheckService, MoveService, PermissionService, RoleService, ScoringCategoryService, ScoringModelService, ScoringOptionService, SubmissionService, SubmissionCategoryService, SubmissionCommentService, SubmissionOptionService, TeamService, TeamTypeService, TeamUserService, UserService, UserPermissionService];
+export const APIS = [ActionService, EvaluationService, GalleryService, HealthCheckService, MoveService, PermissionService, RoleService, ScoringCategoryService, ScoringModelService, ScoringOptionService, SubmissionService, SubmissionCategoryService, SubmissionCommentService, SubmissionOptionService, TeamService, TeamTypeService, TeamUserService, UserService, UserPermissionService];

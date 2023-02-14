@@ -1,14 +1,11 @@
 /*
-Copyright 2022 Carnegie Mellon University. All Rights Reserved. 
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the
 // project root for license information.
 */
 
 export * from './action';
 export * from './evaluation';
-export * from './evaluationTeam';
-export * from './group';
-export * from './groupTeam';
 export * from './itemStatus';
 export * from './move';
 export * from './permission';

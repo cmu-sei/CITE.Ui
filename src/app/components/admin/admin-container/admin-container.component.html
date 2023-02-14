@@ -187,34 +187,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-list-item
           *ngIf="isSuperUser"
           class="showhand highlight"
-          [ngClass]="getSelectedClass(teamsText)"
-          id="wrapper"
-          (click)="gotoSection(teamsText)"
-        >
-          <div class="lefticon">
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-account-multiple"
-              [ngStyle]="{ color: topbarColor }"
-            ></mat-icon>
-          </div>
-
-          <div id="teamsText" class="application-name">
-            {{ teamsText }}
-          </div>
-
-          <div>
-            <button aria-labelledby="teamsText" mat-icon-button>
-              <mat-icon
-                class="icon-color"
-                fontIcon="mdi-chevron-right"
-              ></mat-icon>
-            </button>
-          </div>
-        </mat-list-item>
-        <mat-list-item
-          *ngIf="isSuperUser"
-          class="showhand highlight"
           [ngClass]="getSelectedClass(usersText)"
           id="wrapper"
           (click)="gotoSection(usersText)"
@@ -295,27 +267,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
           (pageChange)="pageChangeHandler($event)"
         >
         </app-admin-submissions>
-      </span>
-      <span *ngIf="isSuperUser && ((showSection | async) === groupsText)">
-        <app-admin-groups
-          [teamList]="teamList | async"
-          [pageSize]="pageSize | async"
-          [pageIndex]="pageIndex | async"
-          (sortChange)="sortChangeHandler($event)"
-          (pageChange)="pageChangeHandler($event)"
-        >
-        </app-admin-groups>
-      </span>
-      <span *ngIf="isSuperUser && ((showSection | async) === teamsText)">
-        <app-admin-teams
-          [teamList]="teamList | async"
-          [userList]="userList | async"
-          [pageSize]="pageSize | async"
-          [pageIndex]="pageIndex | async"
-          (sortChange)="sortChangeHandler($event)"
-          (pageChange)="pageChangeHandler($event)"
-        >
-        </app-admin-teams>
       </span>
       <span *ngIf="isSuperUser && ((showSection | async) === usersText)">
         <app-admin-users

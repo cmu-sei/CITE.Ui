@@ -7,11 +7,13 @@ import { Move } from 'src/app/generated/cite.api/model/models';
 import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
+import { Sort } from '@angular/material/sort';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { AdminMoveEditDialogComponent } from '../admin-move-edit-dialog/admin-move-edit-dialog.component';
+import { UntypedFormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-moves',
@@ -20,6 +22,8 @@ import { AdminMoveEditDialogComponent } from '../admin-move-edit-dialog/admin-mo
 })
 export class AdminMovesComponent implements OnInit, OnDestroy {
   @Input() evaluationId: string;
+  filterControl: UntypedFormControl = this.moveDataService.filterControl;
+  filterString = '';
   moveList: Move[];
   isLoading = false;
   topbarColor = '#ef3a47';
@@ -83,6 +87,15 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
         this.moveDataService.delete(move.id);
       }
     });
+  }
+
+  applyFilter(filterValue: string) {
+    this.filterControl.setValue(filterValue);
+  }
+
+  sortChanged(sort: Sort) {
+    // TODO: fix sort
+    // this.sortChange.emit(sort);
   }
 
   ngOnDestroy() {
