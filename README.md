@@ -2,6 +2,10 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.
 
+## Documentation
+
+[CITE Documentation](https://cmu-sei.github.io/crucible/cite/)
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4721/`. The app will automatically reload if you change any of the source files.
