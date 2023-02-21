@@ -48,8 +48,9 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   addOrEditMove(move: Move) {
     if (!move) {
       move = {
+        evaluationId: this.evaluationId,
         description: '',
-        moveNumber: 0,
+        moveNumber: this.moveList.length !== 0 ? this.moveList.length : 0,
         situationDescription: '',
         situationTime: new Date()
       };
