@@ -8,7 +8,6 @@ import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator
 import { Sort } from '@angular/material/sort';
 import { Evaluation, ItemStatus, Team, User} from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
-import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
@@ -51,7 +50,6 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   constructor(
     private settingsService: ComnSettingsService,
     private evaluationDataService: EvaluationDataService,
-    private evaluationQuery: EvaluationQuery,
     private scoringModelDataService: ScoringModelDataService,
     private scoringModelQuery: ScoringModelQuery,
     private dialog: MatDialog,
@@ -104,6 +102,11 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
 
   togglePanel(evaluation: Evaluation) {
     this.editEvaluation = this.editEvaluation.id === evaluation.id ? this.editEvaluation = {} : this.editEvaluation = { ...evaluation};
+    this.evaluationDataService.setActive(this.editEvaluation.id);
+    // if an evaluation has been selected, load the evaluation, so that we have its details
+    if (this.editEvaluation.id) {
+      this.evaluationDataService.loadById(this.editEvaluation.id);
+    }
   }
 
   saveEvaluation(evaluation: Evaluation) {

@@ -58,7 +58,6 @@ import { AdminActionEditDialogComponent } from './components/admin/admin-action-
 import { AdminContainerComponent } from './components/admin/admin-container/admin-container.component';
 import { AdminEvaluationEditDialogComponent } from './components/admin/admin-evaluation-edit-dialog/admin-evaluation-edit-dialog.component';
 import { AdminEvaluationsComponent } from './components/admin/admin-evaluations/admin-evaluations.component';
-import { AdminEvaluationTeamsComponent } from './components/admin/admin-evaluation-teams/admin-evaluation-teams.component';
 import { AdminMovesComponent } from './components/admin/admin-moves/admin-moves.component';
 import { AdminMoveEditDialogComponent } from './components/admin/admin-move-edit-dialog/admin-move-edit-dialog.component';
 import { AdminRoleEditDialogComponent } from './components/admin/admin-role-edit-dialog/admin-role-edit-dialog.component';
@@ -79,8 +78,6 @@ import { AdminSubmissionsComponent } from './components/admin/admin-submissions/
 import { AdminTeamsComponent } from './components/admin/admin-teams/admin-teams.component';
 import { AdminTeamEditDialogComponent } from './components/admin/admin-team-edit-dialog/admin-team-edit-dialog.component';
 import { AdminTeamUsersComponent } from './components/admin/admin-team-users/admin-team-users.component';
-import { AdminGroupsComponent } from './components/admin/admin-groups/admin-groups.component';
-import { AdminGroupTeamsComponent } from './components/admin/admin-group-teams/admin-group-teams.component';
 import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HomeAppComponent } from './components/home-app/home-app.component';
@@ -122,7 +119,6 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     AdminContainerComponent,
     AdminEvaluationEditDialogComponent,
     AdminEvaluationsComponent,
-    AdminEvaluationTeamsComponent,
     AdminMovesComponent,
     AdminMoveEditDialogComponent,
     AdminRoleEditDialogComponent,
@@ -137,8 +133,6 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     AdminTeamsComponent,
     AdminTeamEditDialogComponent,
     AdminTeamUsersComponent,
-    AdminGroupsComponent,
-    AdminGroupTeamsComponent,
     AdminUsersComponent,
     DashboardComponent,
     TopbarComponent,

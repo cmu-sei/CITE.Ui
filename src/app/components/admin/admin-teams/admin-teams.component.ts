@@ -2,13 +2,14 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
 import { Team, TeamType, User } from 'src/app/generated/cite.api/model/models';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
+import { UserDataService } from 'src/app/data/user/user-data.service';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -22,12 +23,7 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
   styleUrls: ['./admin-teams.component.scss'],
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
-  @Input() teamList: Team[];
-  @Input() userList: User[];
-  @Output() sortChange = new EventEmitter<Sort>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
+  @Input() evaluationId: string;
   filterControl: UntypedFormControl = this.teamDataService.filterControl;
   filterString = '';
   newTeam: Team = { id: '', name: '' };
@@ -39,7 +35,12 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   originalTeamName = '';
   originalTeamShortName = '';
   defaultScoringModelId = this.settingsService.settings.DefaultScoringModelId;
+  teamList: Team[];
+  filteredTeamList: Team[];
   teamTypeList: TeamType[] = [];
+  userList: User[] = [];
+  sort: Sort = {active: 'shortName', direction: 'asc'};
+  sortedTeams: Team[] = [];
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -47,20 +48,34 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public dialogService: DialogService,
     private teamDataService: TeamDataService,
-    private teamQuery: TeamQuery
+    private teamQuery: TeamQuery,
+    private userDataService: UserDataService
   ) {
     this.teamDataService.teamTypes.pipe(takeUntil(this.unsubscribe$)).subscribe(teamTypes => {
-      this.teamTypeList = teamTypes;
+      this.teamTypeList = teamTypes ? teamTypes : [];
+    });
+    this.teamQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teams => {
+      this.teamList = teams ? teams : [];
+      this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
     });
     this.teamDataService.loadTeamTypes();
-    this.teamDataService.load();
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
+    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+      this.userList = users;
+    });
+    this.filterControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((term) => {
+        this.filterString = term;
+        this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
+      });
   }
 
   ngOnInit() {
-    this.filterControl.setValue(this.filterString);
+    // this.filterControl.setValue(this.filterString);
+    this.teamDataService.loadByEvaluationId(this.evaluationId);
   }
 
   addOrEditTeam(team: Team) {
@@ -68,7 +83,8 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
       team = {
         name: '',
         shortName: '',
-        teamTypeId: ''
+        teamTypeId: '',
+        evaluationId: this.evaluationId
       };
     } else {
       team = {... team};
@@ -126,25 +142,70 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   }
 
   sortChanged(sort: Sort) {
-    this.sortChange.emit(sort);
+    this.sort = sort && sort.direction ? sort : {active: 'shortName', direction: 'asc'};
+    this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
+  }
+
+  getFilteredTeams(teams: Team[]): Team[] {
+    let filteredTeams: Team[] = [];
+    if (teams) {
+      teams.forEach(t => {
+        if (t.evaluationId === this.evaluationId) {
+          filteredTeams.push({... t});
+        } else {
+        }
+      });
+      if (filteredTeams && filteredTeams.length > 0 && this.filterString) {
+        const filterString = this.filterString.toLowerCase();
+        filteredTeams = filteredTeams
+          .filter((a) =>
+            a.shortName.toLowerCase().includes(filterString) ||
+            a.name.toLowerCase().includes(filterString) ||
+            this.getTeamTypeName(a.teamTypeId).toLowerCase().includes(filterString)
+          );
+      }
+    }
+    return filteredTeams;
+  }
+
+  getSortedTeams(teams: Team[]) {
+    if (teams) {
+      teams.sort((a, b) => this.sortTeams(a, b, this.sort.active, this.sort.direction));
+    }
+    return teams;
+  }
+
+  private sortTeams(
+    a: Team,
+    b: Team,
+    column: string,
+    direction: string
+  ) {
+    const isAsc = direction !== 'desc';
+    switch (column) {
+      case 'teamTypeId':
+        const aVal = this.getTeamTypeName(a.teamTypeId);
+        const bVal = this.getTeamTypeName(b.teamTypeId);
+        if (aVal === bVal) {
+          return ( (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        }
+        return ( (aVal < bVal ? -1 : 1) * (isAsc ? 1 : -1) );
+        break;
+      case 'name':
+        if (a.name.toLowerCase() === b.name.toLowerCase()) {
+          return ( (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        }
+        return ( (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        break;
+      default:
+        return ( (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        break;
+    }
   }
 
   getTeamTypeName(teamTypeId: string) {
     const teamType = this.teamTypeList.find(tt => tt.id === teamTypeId);
     return teamType ? teamType.name : ' ';
-  }
-
-  paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
-  }
-
-  paginateTeams(teams: Team[], pageIndex: number, pageSize: number) {
-    if (!teams) {
-      return [];
-    }
-    const startIndex = pageIndex * pageSize;
-    const copy = teams.slice();
-    return copy.splice(startIndex, pageSize);
   }
 
   ngOnDestroy() {

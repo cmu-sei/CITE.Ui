@@ -4,27 +4,49 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="cssLayoutRowStartCenter">
-  <h3>Moves</h3>
-</div>
-
-<mat-accordion displayMode="flat" class="mat-table">
+<mat-accordion displayMode="flat">
   <section
+    matSort
+    (matSortChange)="sortChanged($event)"
     class="mat-elevation-z2 mat-header-row"
   >
-  <span class="mat-header-cell cell-two" mat-header="moveNumber">Move Number</span>
-  <span class="mat-header-cell cell-five" mat-header="description">Description</span>
-    <span class="mat-header-cell cell-two">
-      <button mat-stroked-button (click)="addOrEditMove(null)">Add Move</button>
-    </span>
+    <div class="mat-header-cell cell-one">
+      <button
+        mat-icon-button
+        (click)="addOrEditMove(null)"
+        style="outline: none;"
+        title="Add Move"
+      >
+        <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+      </button>
+    </div>
+    <div class="mat-header-cell cell-one" mat-sort-header="moveNumber">Number</div>
+    <div class="mat-header-cell cell-three" mat-sort-header="description">Description</div>
+    <div class="mat-header-cell cell-five">
+      <div class="panel-div">
+        <mat-form-field style="width: 60%; margin-left: 10px;">
+          <input matInput [formControl]="filterControl" placeholder="Search" />
+        </mat-form-field>
+        <div style="width: 30px;">
+          <button
+            mat-icon-button
+            (click)="applyFilter('')"
+            style="outline: none;"
+            title="Clear Search"
+          >
+            <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
   </section>
 
   <mat-expansion-panel
-    *ngFor="let move of moveList"
+    *ngFor="let move of sortedMoves"
     [disabled]="true"
   >
     <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading">
-      <span class="mat-cell cell-two">
+      <div class="mat-cell cell-one">
         <button
           mat-icon-button
           (click)="addOrEditMove(move); $event.stopPropagation()"
@@ -43,11 +65,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
             fontIcon="mdi-trash-can"
           ></mat-icon>
         </button>
+      </div>
+      <div class="mat-cell cell-one center-self">
         {{ move.moveNumber }}
-      </span>
-      <span class="mat-cell cell-six">
+      </div>
+      <div class="mat-cell cell-eight center-self">
         {{ move.description }}
-      </span>
+      </div>
     </mat-expansion-panel-header>
   </mat-expansion-panel>
 </mat-accordion>
