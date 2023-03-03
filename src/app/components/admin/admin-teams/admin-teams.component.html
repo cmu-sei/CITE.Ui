@@ -47,7 +47,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </section>
 
   <mat-expansion-panel
-    *ngFor="let team of teamList"
+    *ngFor="let team of sortedTeams"
     [expanded]="editTeam.id === team.id"
   >
     <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading" (click)="togglePanel(team); $event.stopPropagation()">

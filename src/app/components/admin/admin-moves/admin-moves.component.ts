@@ -24,7 +24,10 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   @Input() evaluationId: string;
   filterControl: UntypedFormControl = this.moveDataService.filterControl;
   filterString = '';
+  sort: Sort = {active: 'moveNumber', direction: 'asc'};
+  sortedMoves: Move[] = [];
   moveList: Move[];
+  filteredMoveList: Move[];
   isLoading = false;
   topbarColor = '#ef3a47';
   private unsubscribe$ = new Subject();
@@ -40,9 +43,15 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
     this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
-      this.moveList = moves
-        .sort((a, b) => +a.moveNumber - b.moveNumber);
+      this.moveList = moves;
+      this.sortedMoves = this.getSortedMoves(this.getFilteredMoves(this.moveList));
     });
+    this.filterControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((term) => {
+        this.filterString = term;
+        this.sortedMoves = this.getSortedMoves(this.getFilteredMoves(this.moveList));
+      });
   }
 
   ngOnInit() {
@@ -52,8 +61,9 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   addOrEditMove(move: Move) {
     if (!move) {
       move = {
+        evaluationId: this.evaluationId,
         description: '',
-        moveNumber: 0,
+        moveNumber: this.moveList.length !== 0 ? this.moveList.length : 0,
         situationDescription: '',
         situationTime: new Date()
       };
@@ -94,8 +104,54 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   }
 
   sortChanged(sort: Sort) {
-    // TODO: fix sort
-    // this.sortChange.emit(sort);
+    this.sort = sort && sort.direction ? sort : {active: 'moveNumber', direction: 'asc'};
+    this.sortedMoves = this.getSortedMoves(this.getFilteredMoves(this.moveList));
+  }
+
+  getFilteredMoves(moves: Move[]): Move[] {
+    let filteredMoves: Move[] = [];
+    if (moves) {
+      moves.forEach(se => {
+        if (se.evaluationId === this.evaluationId) {
+          filteredMoves.push({... se});
+        }
+      });
+      if (filteredMoves && filteredMoves.length > 0 && this.filterString) {
+        const filterString = this.filterString.toLowerCase();
+        filteredMoves = filteredMoves
+          .filter((a) =>
+            a.description.toLowerCase().includes(filterString)
+          );
+      }
+    }
+    return filteredMoves;
+  }
+
+  getSortedMoves(moves: Move[]) {
+    if (moves) {
+      moves.sort((a, b) => this.sortMoves(a, b, this.sort.active, this.sort.direction));
+    }
+    return moves;
+  }
+
+  private sortMoves(
+    a: Move,
+    b: Move,
+    column: string,
+    direction: string
+  ) {
+    const isAsc = direction !== 'desc';
+    switch (column) {
+      case 'description':
+        if (a.description.toLowerCase() === b.description.toLowerCase()) {
+          return ( (+a.moveNumber < +b.moveNumber ? -1 : 1) * (isAsc ? 1 : -1) );
+        }
+        return ( (a.description < b.description ? -1 : 1) * (isAsc ? 1 : -1) );
+        break;
+      default:
+        return ( (+a.moveNumber < +b.moveNumber ? -1 : 1) * (isAsc ? 1 : -1) );
+        break;
+    }
   }
 
   ngOnDestroy() {

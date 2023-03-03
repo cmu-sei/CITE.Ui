@@ -36,8 +36,11 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   originalTeamShortName = '';
   defaultScoringModelId = this.settingsService.settings.DefaultScoringModelId;
   teamList: Team[];
+  filteredTeamList: Team[];
   teamTypeList: TeamType[] = [];
   userList: User[] = [];
+  sort: Sort = {active: 'shortName', direction: 'asc'};
+  sortedTeams: Team[] = [];
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -53,6 +56,8 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     });
     this.teamQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teams => {
       this.teamList = teams ? teams : [];
+      console.log(this.teamList.length + ' teams');
+      this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
     });
     this.teamDataService.loadTeamTypes();
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
@@ -61,11 +66,17 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
       this.userList = users;
     });
+    this.filterControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((term) => {
+        this.filterString = term;
+        this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
+      });
   }
 
   ngOnInit() {
     this.filterControl.setValue(this.filterString);
-    this.teamDataService.loadByEvaluationId(this.evaluationId);
+    // this.teamDataService.loadByEvaluationId(this.evaluationId);
   }
 
   addOrEditTeam(team: Team) {
@@ -132,27 +143,75 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   }
 
   sortChanged(sort: Sort) {
-    // TODO: fix sort
-    // this.sortChange.emit(sort);
+    this.sort = sort && sort.direction ? sort : {active: 'shortName', direction: 'asc'};
+    this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
+  }
+
+  getFilteredTeams(teams: Team[]): Team[] {
+    console.log(this.evaluationId + ' is the evaluation ID');
+    let filteredTeams: Team[] = [];
+    if (teams) {
+      teams.forEach(t => {
+        if (t.evaluationId === this.evaluationId) {
+          filteredTeams.push({... t});
+        } else {
+          console.log(t.evaluationId + ' is the team evaluation ID');
+        }
+      });
+      if (filteredTeams && filteredTeams.length > 0 && this.filterString) {
+        const filterString = this.filterString.toLowerCase();
+        console.log(filterString + ' is the filter string');
+        filteredTeams = filteredTeams
+          .filter((a) =>
+            a.shortName.toLowerCase().includes(filterString) ||
+            a.name.toLowerCase().includes(filterString) ||
+            this.getTeamTypeName(a.teamTypeId).toLowerCase().includes(filterString)
+          );
+      }
+    }
+    console.log(filteredTeams.length + ' filtered teams');
+    return filteredTeams;
+  }
+
+  getSortedTeams(teams: Team[]) {
+    if (teams) {
+      teams.sort((a, b) => this.sortTeams(a, b, this.sort.active, this.sort.direction));
+    }
+    console.log(teams.length + ' sorted teams');
+    return teams;
+  }
+
+  private sortTeams(
+    a: Team,
+    b: Team,
+    column: string,
+    direction: string
+  ) {
+    const isAsc = direction !== 'desc';
+    switch (column) {
+      case 'teamTypeId':
+        const aVal = this.getTeamTypeName(a.teamTypeId);
+        const bVal = this.getTeamTypeName(b.teamTypeId);
+        if (aVal === bVal) {
+          return ( (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        }
+        return ( (aVal < bVal ? -1 : 1) * (isAsc ? 1 : -1) );
+        break;
+      case 'name':
+        if (a.name.toLowerCase() === b.name.toLowerCase()) {
+          return ( (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        }
+        return ( (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        break;
+      default:
+        return ( (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        break;
+    }
   }
 
   getTeamTypeName(teamTypeId: string) {
     const teamType = this.teamTypeList.find(tt => tt.id === teamTypeId);
     return teamType ? teamType.name : ' ';
-  }
-
-  paginatorEvent(page: PageEvent) {
-    // TODO: fix paging
-    // this.pageChange.emit(page);
-  }
-
-  paginateTeams(teams: Team[], pageIndex: number, pageSize: number) {
-    if (!teams) {
-      return [];
-    }
-    const startIndex = pageIndex * pageSize;
-    const copy = teams.slice();
-    return copy.splice(startIndex, pageSize);
   }
 
   ngOnDestroy() {

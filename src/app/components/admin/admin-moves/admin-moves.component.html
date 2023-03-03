@@ -42,7 +42,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </section>
 
   <mat-expansion-panel
-    *ngFor="let move of moveList"
+    *ngFor="let move of sortedMoves"
     [disabled]="true"
   >
     <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading">
