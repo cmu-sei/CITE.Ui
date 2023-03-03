@@ -2,7 +2,6 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
@@ -18,7 +17,6 @@ import {
 } from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
-import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { TopbarView } from 'src/app/components/shared/top-bar/topbar.models';
 import {
@@ -54,7 +52,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   canSwitchEvaluations = new BehaviorSubject<boolean>(false);
   evaluationList = this.evaluationDataService.EvaluationList;
   scoringModelList = this.scoringModelDataService.scoringModelList;
-  teamList = this.teamDataService.teamList;
   userList = this.userDataService.userList;
   permissionList: Observable<Permission[]>;
   pageSize: Observable<number>;
@@ -71,7 +68,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     private router: Router,
     private evaluationDataService: EvaluationDataService,
     private scoringModelDataService: ScoringModelDataService,
-    private teamDataService: TeamDataService,
     private userDataService: UserDataService,
     activatedRoute: ActivatedRoute,
     private permissionService: PermissionService,
@@ -88,7 +84,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
         this.isSuperUser = result;
         this.canSwitchEvaluations.next(result);
         if (this.isSuperUser) {
-          this.teamDataService.load();
           this.evaluationDataService.load();
           this.userDataService.getUsersFromApi();
           this.userDataService

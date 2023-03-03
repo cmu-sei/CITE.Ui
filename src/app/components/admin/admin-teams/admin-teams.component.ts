@@ -56,7 +56,6 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     });
     this.teamQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teams => {
       this.teamList = teams ? teams : [];
-      console.log(this.teamList.length + ' teams');
       this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
     });
     this.teamDataService.loadTeamTypes();
@@ -75,8 +74,8 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.filterControl.setValue(this.filterString);
-    // this.teamDataService.loadByEvaluationId(this.evaluationId);
+    // this.filterControl.setValue(this.filterString);
+    this.teamDataService.loadByEvaluationId(this.evaluationId);
   }
 
   addOrEditTeam(team: Team) {
@@ -148,19 +147,16 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   }
 
   getFilteredTeams(teams: Team[]): Team[] {
-    console.log(this.evaluationId + ' is the evaluation ID');
     let filteredTeams: Team[] = [];
     if (teams) {
       teams.forEach(t => {
         if (t.evaluationId === this.evaluationId) {
           filteredTeams.push({... t});
         } else {
-          console.log(t.evaluationId + ' is the team evaluation ID');
         }
       });
       if (filteredTeams && filteredTeams.length > 0 && this.filterString) {
         const filterString = this.filterString.toLowerCase();
-        console.log(filterString + ' is the filter string');
         filteredTeams = filteredTeams
           .filter((a) =>
             a.shortName.toLowerCase().includes(filterString) ||
@@ -169,7 +165,6 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
           );
       }
     }
-    console.log(filteredTeams.length + ' filtered teams');
     return filteredTeams;
   }
 
@@ -177,7 +172,6 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     if (teams) {
       teams.sort((a, b) => this.sortTeams(a, b, this.sort.active, this.sort.direction));
     }
-    console.log(teams.length + ' sorted teams');
     return teams;
   }
 
