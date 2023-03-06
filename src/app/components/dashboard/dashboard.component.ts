@@ -83,9 +83,11 @@ export class DashboardComponent implements OnDestroy {
       this.moveList = moves;
       if (moves && moves.length > 0) {
         this.currentMove = moves.find(m => +m.moveNumber === +this.selectedEvaluation.currentMoveNumber);
-        this.actionList = this.allActions
-          .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
-          .sort((a, b) => a.description < b.description ? -1 : 1);
+        if (this.currentMove) {
+          this.actionList = this.allActions
+            .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
+            .sort((a, b) => a.description < b.description ? -1 : 1);
+        }
       } else {
         this.currentMove = {};
         this.actionList = [];
@@ -97,9 +99,11 @@ export class DashboardComponent implements OnDestroy {
       active = active ? active : { id: '', moveNumber: -1, submissionCategories: []} as Submission;
       if (this.moveList && this.moveList.length > 0) {
         this.currentMove = this.moveList.find(m => +m.moveNumber === +active.moveNumber);
-        this.actionList = this.allActions
-          .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
-          .sort((a, b) => a.description < b.description ? -1 : 1);
+        if (this.currentMove) {
+          this.actionList = this.allActions
+            .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
+            .sort((a, b) => a.description < b.description ? -1 : 1);
+        }
       } else {
         this.currentMove = {};
         this.actionList = [];
@@ -117,9 +121,11 @@ export class DashboardComponent implements OnDestroy {
     // observe the Action list
     this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(actions => {
       this.allActions = actions;
-      this.actionList = actions
-        .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
-        .sort((a, b) => a.description < b.description ? -1 : 1);
+      if (this.currentMove) {
+        this.actionList = actions
+          .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
+          .sort((a, b) => a.description < b.description ? -1 : 1);
+      }
     });
     // observe the Role list
     this.roleQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(roles => {
