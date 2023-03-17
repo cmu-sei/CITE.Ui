@@ -2,11 +2,11 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnDestroy, OnChanges, SimpleChange } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
-import { Evaluation, ItemStatus, Team, User} from 'src/app/generated/cite.api/model/models';
+import { Evaluation, ItemStatus, Team, User } from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
@@ -22,9 +22,8 @@ import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dia
   templateUrl: './admin-evaluations.component.html',
   styleUrls: ['./admin-evaluations.component.scss'],
 })
-export class AdminEvaluationsComponent implements OnInit, OnDestroy {
+export class AdminEvaluationsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() evaluationList: Evaluation[];
-  @Input() teamList: Team[];
   @Input() pageSize: number;
   @Input() pageIndex: number;
   @Output() sortChange = new EventEmitter<Sort>();
@@ -63,12 +62,24 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       const scoringModel = scoringModels.find(sm => sm.status === ItemStatus.Active);
       this.selectedScoringModelId = !scoringModel ? '' : scoringModel.id;
     });
-    this.evaluationDataService.load();
     this.scoringModelDataService.load();
   }
 
   ngOnInit() {
     this.filterControl.setValue(this.filterString);
+  }
+
+  ngOnChanges(changes) {
+    if (changes['evaluationList']) {
+      if ((changes['evaluationList'].previousValue === undefined) ||
+        (changes['evaluationList'].currentValue.length !== changes['evaluationList'].previousValue.length)) {
+        this.evaluationList.forEach(evaluation => {
+          if (evaluation.moves.length === 0) {
+            this.evaluationDataService.loadById(evaluation.id);
+          }
+        });
+      }
+    }
   }
 
   addOrEditEvaluation(evaluation: Evaluation) {
@@ -82,7 +93,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
         situationTime: new Date()
       };
     } else {
-      evaluation = {... evaluation};
+      evaluation = { ...evaluation };
     }
     const dialogRef = this.dialog.open(AdminEvaluationEditDialogComponent, {
       width: '800px',
@@ -117,16 +128,38 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     }
   }
 
+  getLowestMoveNumber(evaluation: Evaluation) {
+
+    if (evaluation.moves.length > 0) {
+      return evaluation.moves[0].moveNumber;
+    } else {
+      return 0;
+    }
+  }
+
+  getHighestMoveNumber(evaluation: Evaluation) {
+
+    if (evaluation.moves.length > 0) {
+      return evaluation.moves[evaluation.moves.length - 1].moveNumber;
+    } else {
+      return 0;
+    }
+  }
+
   incrementCurrentMoveNumber(evaluation: Evaluation) {
     const updateEvaluation = { ...evaluation };
-    updateEvaluation.currentMoveNumber ++;
+    const index = evaluation.moves.findIndex(m => m.moveNumber === evaluation.currentMoveNumber);
+    const newMove = evaluation.moves[index + 1];
+    updateEvaluation.currentMoveNumber = newMove.moveNumber;
     this.evaluationDataService.changeCurrentMove(updateEvaluation);
   }
 
   decrementCurrentMoveNumber(evaluation: Evaluation) {
     if (evaluation.currentMoveNumber > 0) {
       const updateEvaluation = { ...evaluation };
-      updateEvaluation.currentMoveNumber --;
+      const index = evaluation.moves.findIndex(m => m.moveNumber === evaluation.currentMoveNumber);
+      const newMove = evaluation.moves[index - 1];
+      updateEvaluation.currentMoveNumber = newMove.moveNumber;
       this.evaluationDataService.changeCurrentMove(updateEvaluation);
     }
   }
