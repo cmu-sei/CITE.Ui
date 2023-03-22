@@ -2,11 +2,11 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnInit, Output, OnDestroy, OnChanges, SimpleChange } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
-import { Evaluation, ItemStatus, Team, User } from 'src/app/generated/cite.api/model/models';
+import { Evaluation, ItemStatus, Move } from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
@@ -22,7 +22,7 @@ import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dia
   templateUrl: './admin-evaluations.component.html',
   styleUrls: ['./admin-evaluations.component.scss'],
 })
-export class AdminEvaluationsComponent implements OnInit, OnDestroy, OnChanges {
+export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   @Input() evaluationList: Evaluation[];
   @Input() pageSize: number;
   @Input() pageIndex: number;
@@ -67,19 +67,6 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     this.filterControl.setValue(this.filterString);
-  }
-
-  ngOnChanges(changes) {
-    if (changes['evaluationList']) {
-      if ((changes['evaluationList'].previousValue === undefined) ||
-        (changes['evaluationList'].currentValue.length !== changes['evaluationList'].previousValue.length)) {
-        this.evaluationList.forEach(evaluation => {
-          if (evaluation.moves.length === 0) {
-            this.evaluationDataService.loadById(evaluation.id);
-          }
-        });
-      }
-    }
   }
 
   addOrEditEvaluation(evaluation: Evaluation) {
@@ -129,37 +116,51 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getLowestMoveNumber(evaluation: Evaluation) {
+    let lowestMoveNumber = evaluation && evaluation.moves && evaluation.moves.length > 0 ? Number.MAX_SAFE_INTEGER : 0;
+    evaluation.moves.forEach(m => {
+      if (m.moveNumber < lowestMoveNumber) {
+        lowestMoveNumber = m.moveNumber;
+      }
+    });
 
-    if (evaluation.moves.length > 0) {
-      return evaluation.moves[0].moveNumber;
-    } else {
-      return 0;
-    }
+    return lowestMoveNumber;
   }
 
   getHighestMoveNumber(evaluation: Evaluation) {
+    let highestMoveNumber = evaluation && evaluation.moves && evaluation.moves.length > 0 ? Number.MIN_SAFE_INTEGER : 0;
+    evaluation.moves.forEach(m => {
+      if (m.moveNumber > highestMoveNumber) {
+        highestMoveNumber = m.moveNumber;
+      }
+    });
 
-    if (evaluation.moves.length > 0) {
-      return evaluation.moves[evaluation.moves.length - 1].moveNumber;
-    } else {
-      return 0;
-    }
+    return highestMoveNumber;
   }
 
   incrementCurrentMoveNumber(evaluation: Evaluation) {
-    const updateEvaluation = { ...evaluation };
-    const index = evaluation.moves.findIndex(m => m.moveNumber === evaluation.currentMoveNumber);
-    const newMove = evaluation.moves[index + 1];
-    updateEvaluation.currentMoveNumber = newMove.moveNumber;
-    this.evaluationDataService.changeCurrentMove(updateEvaluation);
+    let nextHighestMove = {moveNumber: Number.MAX_SAFE_INTEGER} as Move;
+    evaluation.moves.forEach(m => {
+      if (m.moveNumber > evaluation.currentMoveNumber && m.moveNumber < nextHighestMove.moveNumber) {
+        nextHighestMove = m;
+      }
+    });
+    if (+evaluation.currentMoveNumber !== +nextHighestMove.moveNumber) {
+      const updateEvaluation = { ...evaluation };
+      updateEvaluation.currentMoveNumber = nextHighestMove.moveNumber;
+      this.evaluationDataService.changeCurrentMove(updateEvaluation);
+    }
   }
 
   decrementCurrentMoveNumber(evaluation: Evaluation) {
-    if (evaluation.currentMoveNumber > 0) {
+    let nextLowestMove = {moveNumber: Number.MIN_SAFE_INTEGER} as Move;
+    evaluation.moves.forEach(m => {
+      if (m.moveNumber < evaluation.currentMoveNumber && m.moveNumber > nextLowestMove.moveNumber) {
+        nextLowestMove = m;
+      }
+    });
+    if (+evaluation.currentMoveNumber !== +nextLowestMove.moveNumber) {
       const updateEvaluation = { ...evaluation };
-      const index = evaluation.moves.findIndex(m => m.moveNumber === evaluation.currentMoveNumber);
-      const newMove = evaluation.moves[index - 1];
-      updateEvaluation.currentMoveNumber = newMove.moveNumber;
+      updateEvaluation.currentMoveNumber = nextLowestMove.moveNumber;
       this.evaluationDataService.changeCurrentMove(updateEvaluation);
     }
   }

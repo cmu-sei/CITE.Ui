@@ -14,7 +14,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   <div class="move-div" *ngIf="selectedEvaluationId && displayedMoveNumber >= 0">
     <h1 class="nowrap">Move:&nbsp;</h1>
-    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="displayedMoveNumber <= 0" (click)="decrementDisplayedMove()">
+    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="displayedMoveNumber <= minMoveNumber" (click)="decrementDisplayedMove()">
       <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
     </button>
     <h1 class="nowrap" [ngStyle]='displayedMoveStyle'>{{ displayedMoveNumber }}</h1>

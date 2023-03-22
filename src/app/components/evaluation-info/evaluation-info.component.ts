@@ -29,6 +29,7 @@ export class EvaluationInfoComponent {
   scoresheetSection = Section.scoresheet;
   currentTeamId = '';
   maxMoveNumber = 0;
+  minMoveNumber = 0;
   displayedMoveNumber = -1;
   displayedMoveDescription = '';
   displayedMoveStyle = {  };
@@ -52,9 +53,11 @@ export class EvaluationInfoComponent {
         const currentMove = moves.find(m => +m.moveNumber === this.displayedMoveNumber);
         this.displayedMoveDescription =  currentMove ? currentMove.description : '';
         this.maxMoveNumber = moves.sort((a, b) => +b.moveNumber - a.moveNumber)[0].moveNumber;
+        this.minMoveNumber = moves.sort((a, b) => +a.moveNumber - b.moveNumber)[0].moveNumber;
       } else {
         this.displayedMoveDescription =  '';
         this.maxMoveNumber = 0;
+        this.minMoveNumber = 0;
       }
     });
     // observe the active submission
@@ -88,8 +91,35 @@ export class EvaluationInfoComponent {
     });
   }
 
+  getLowestMoveNumber() {
+    let lowestMoveNumber = this.moveList && this.moveList.length > 0 ? Number.MAX_SAFE_INTEGER : 0;
+    this.moveList.forEach(m => {
+      if (m.moveNumber < lowestMoveNumber) {
+        lowestMoveNumber = m.moveNumber;
+      }
+    });
+
+    return lowestMoveNumber;
+  }
+
+  getHighestMoveNumber() {
+    let highestMoveNumber = this.moveList && this.moveList.length > 0 ? Number.MIN_SAFE_INTEGER : 0;
+    this.moveList.forEach(m => {
+      if (m.moveNumber > highestMoveNumber) {
+        highestMoveNumber = m.moveNumber;
+      }
+    });
+
+    return highestMoveNumber;
+  }
+
   incrementDisplayedMove() {
-    const newMoveNumber = +this.displayedMoveNumber + 1;
+    let newMoveNumber = this.getCurrentMoveNumber();
+    this.moveList.forEach(m => {
+      if (+m.moveNumber > +this.displayedMoveNumber && +m.moveNumber < +newMoveNumber) {
+        newMoveNumber = m.moveNumber;
+      }
+    });
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const submissions = this.submissionQuery.getAll();
     let newSubmission = submissions.find(s =>
@@ -117,7 +147,12 @@ export class EvaluationInfoComponent {
   }
 
   decrementDisplayedMove() {
-    const newMoveNumber = +this.displayedMoveNumber - 1;
+    let newMoveNumber = this.minMoveNumber;
+    this.moveList.forEach(m => {
+      if (+m.moveNumber < +this.displayedMoveNumber && +m.moveNumber > +newMoveNumber) {
+        newMoveNumber = m.moveNumber;
+      }
+    });
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const newSubmission = this.submissionQuery.getAll()
       .find(s => +s.moveNumber === +newMoveNumber
