@@ -50,6 +50,8 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
             const user = users.find((x) => x.id === submission.userId);
             if (user) {
               populatedSubmission.name = user.name;
+            } else {
+              populatedSubmission.name = submission.userId;
             }
             populatedSubmission.submissionType = SubmissionType.user;
             populatedSubmissions.push(populatedSubmission);
@@ -62,6 +64,8 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
               const team = teams.find((x) => x.id === submission.teamId);
               if (team) {
                 populatedSubmission.name = team.name;
+              } else {
+                populatedSubmission.name = submission.teamId;
               }
               populatedSubmission.submissionType = SubmissionType.team;
               populatedSubmissions.push(populatedSubmission);
@@ -73,6 +77,8 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
               const team = teams.find((x) => x.id === submission.teamId);
               if (team) {
                 populatedSubmission.name = team.name;
+              } else {
+                populatedSubmission.name = submission.teamId;
               }
               populatedSubmission.submissionType = SubmissionType.teamAvg;
               populatedSubmissions.push(populatedSubmission);
