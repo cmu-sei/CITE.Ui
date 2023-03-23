@@ -6,7 +6,7 @@ import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angu
 import { UntypedFormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
-import { Evaluation, ItemStatus, Team, User} from 'src/app/generated/cite.api/model/models';
+import { Evaluation, ItemStatus, Move } from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
@@ -24,7 +24,6 @@ import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dia
 })
 export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   @Input() evaluationList: Evaluation[];
-  @Input() teamList: Team[];
   @Input() pageSize: number;
   @Input() pageIndex: number;
   @Output() sortChange = new EventEmitter<Sort>();
@@ -63,7 +62,6 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       const scoringModel = scoringModels.find(sm => sm.status === ItemStatus.Active);
       this.selectedScoringModelId = !scoringModel ? '' : scoringModel.id;
     });
-    this.evaluationDataService.load();
     this.scoringModelDataService.load();
   }
 
@@ -82,7 +80,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
         situationTime: new Date()
       };
     } else {
-      evaluation = {... evaluation};
+      evaluation = { ...evaluation };
     }
     const dialogRef = this.dialog.open(AdminEvaluationEditDialogComponent, {
       width: '800px',
@@ -117,16 +115,52 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     }
   }
 
+  getLowestMoveNumber(evaluation: Evaluation) {
+    let lowestMoveNumber = evaluation && evaluation.moves && evaluation.moves.length > 0 ? Number.MAX_SAFE_INTEGER : 0;
+    evaluation.moves.forEach(m => {
+      if (m.moveNumber < lowestMoveNumber) {
+        lowestMoveNumber = m.moveNumber;
+      }
+    });
+
+    return lowestMoveNumber;
+  }
+
+  getHighestMoveNumber(evaluation: Evaluation) {
+    let highestMoveNumber = evaluation && evaluation.moves && evaluation.moves.length > 0 ? Number.MIN_SAFE_INTEGER : 0;
+    evaluation.moves.forEach(m => {
+      if (m.moveNumber > highestMoveNumber) {
+        highestMoveNumber = m.moveNumber;
+      }
+    });
+
+    return highestMoveNumber;
+  }
+
   incrementCurrentMoveNumber(evaluation: Evaluation) {
-    const updateEvaluation = { ...evaluation };
-    updateEvaluation.currentMoveNumber ++;
-    this.evaluationDataService.changeCurrentMove(updateEvaluation);
+    let nextHighestMove = {moveNumber: Number.MAX_SAFE_INTEGER} as Move;
+    evaluation.moves.forEach(m => {
+      if (m.moveNumber > evaluation.currentMoveNumber && m.moveNumber < nextHighestMove.moveNumber) {
+        nextHighestMove = m;
+      }
+    });
+    if (+evaluation.currentMoveNumber !== +nextHighestMove.moveNumber) {
+      const updateEvaluation = { ...evaluation };
+      updateEvaluation.currentMoveNumber = nextHighestMove.moveNumber;
+      this.evaluationDataService.changeCurrentMove(updateEvaluation);
+    }
   }
 
   decrementCurrentMoveNumber(evaluation: Evaluation) {
-    if (evaluation.currentMoveNumber > 0) {
+    let nextLowestMove = {moveNumber: Number.MIN_SAFE_INTEGER} as Move;
+    evaluation.moves.forEach(m => {
+      if (m.moveNumber < evaluation.currentMoveNumber && m.moveNumber > nextLowestMove.moveNumber) {
+        nextLowestMove = m;
+      }
+    });
+    if (+evaluation.currentMoveNumber !== +nextLowestMove.moveNumber) {
       const updateEvaluation = { ...evaluation };
-      updateEvaluation.currentMoveNumber --;
+      updateEvaluation.currentMoveNumber = nextLowestMove.moveNumber;
       this.evaluationDataService.changeCurrentMove(updateEvaluation);
     }
   }
