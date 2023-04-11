@@ -16,6 +16,7 @@
 @include mat.legacy-core();
 $mdi-font-path: '~@mdi/font/fonts';
 @import '@mdi/font/scss/materialdesignicons';
+@import '~material-design-icons/iconfont/material-icons.css';    // added for ngx-mat-datetimepicker
 
 /* END VENDER IMPORTS */
 
