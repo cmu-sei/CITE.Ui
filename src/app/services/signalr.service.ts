@@ -275,7 +275,7 @@ class RetryPolicy {
     let nextRetrySeconds = Math.pow(2, retryContext.previousRetryCount + 1);
 
     if (retryContext.elapsedMilliseconds / 1000 > this.maxSeconds) {
-      this.router.navigate(['/']);
+      location.reload();
     }
 
     nextRetrySeconds +=
