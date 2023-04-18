@@ -8,7 +8,6 @@ import * as signalR from '@microsoft/signalr';
 import { Action, Evaluation, ItemStatus, Move, Role, ScoringModel, Submission, Team, TeamUser, User } from 'src/app/generated/cite.api';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
-import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { MoveDataService } from '../data/move/move-data.service';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
@@ -38,7 +37,6 @@ export class SignalRService implements OnDestroy {
     private settingsService: ComnSettingsService,
     private actionDataService: ActionDataService,
     private evaluationDataService: EvaluationDataService,
-    private evaluationQuery: EvaluationQuery,
     private moveDataService: MoveDataService,
     private roleDataService: RoleDataService,
     private scoringModelDataService: ScoringModelDataService,
@@ -63,7 +61,7 @@ export class SignalRService implements OnDestroy {
       .withUrl(
         `${this.settingsService.settings.ApiUrl}/hubs/main?bearer=${accessToken}`
       )
-      .withAutomaticReconnect(new RetryPolicy(60, 0, 5))
+      .withAutomaticReconnect(new RetryPolicy(120, 0, 5))
       .build();
 
     this.hubConnection.onreconnected(() => {
@@ -273,8 +271,8 @@ class RetryPolicy {
   ): number | null {
     let nextRetrySeconds = Math.pow(2, retryContext.previousRetryCount + 1);
 
-    if (nextRetrySeconds > this.maxSeconds) {
-      nextRetrySeconds = this.maxSeconds;
+    if (retryContext.elapsedMilliseconds / 1000 > this.maxSeconds) {
+      location.reload();
     }
 
     nextRetrySeconds +=
