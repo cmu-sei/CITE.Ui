@@ -17,7 +17,6 @@ import { TeamUserDataService } from 'src/app/data/user/team-user-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Router } from '@angular/router';
 
 export enum ApplicationArea {
   home = '',
@@ -44,8 +43,7 @@ export class SignalRService implements OnDestroy {
     private submissionDataService: SubmissionDataService,
     private teamDataService: TeamDataService,
     private teamUserDataService: TeamUserDataService,
-    private userDataService: UserDataService,
-    private router: Router
+    private userDataService: UserDataService
   ) {
     this.authService.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       this.reconnect();
@@ -63,7 +61,7 @@ export class SignalRService implements OnDestroy {
       .withUrl(
         `${this.settingsService.settings.ApiUrl}/hubs/main?bearer=${accessToken}`
       )
-      .withAutomaticReconnect(new RetryPolicy(120, 0, 5, this.router))
+      .withAutomaticReconnect(new RetryPolicy(120, 0, 5))
       .build();
 
     this.hubConnection.onreconnected(() => {
@@ -265,8 +263,7 @@ class RetryPolicy {
   constructor(
     private maxSeconds: number,
     private minJitterSeconds: number,
-    private maxJitterSeconds: number,
-    private router: Router
+    private maxJitterSeconds: number
   ) {}
 
   nextRetryDelayInMilliseconds(
