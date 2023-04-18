@@ -8,7 +8,6 @@ import * as signalR from '@microsoft/signalr';
 import { Action, Evaluation, ItemStatus, Move, Role, ScoringModel, Submission, Team, TeamUser, User } from 'src/app/generated/cite.api';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
-import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { MoveDataService } from '../data/move/move-data.service';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
@@ -18,6 +17,7 @@ import { TeamUserDataService } from 'src/app/data/user/team-user-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 export enum ApplicationArea {
   home = '',
@@ -38,14 +38,14 @@ export class SignalRService implements OnDestroy {
     private settingsService: ComnSettingsService,
     private actionDataService: ActionDataService,
     private evaluationDataService: EvaluationDataService,
-    private evaluationQuery: EvaluationQuery,
     private moveDataService: MoveDataService,
     private roleDataService: RoleDataService,
     private scoringModelDataService: ScoringModelDataService,
     private submissionDataService: SubmissionDataService,
     private teamDataService: TeamDataService,
     private teamUserDataService: TeamUserDataService,
-    private userDataService: UserDataService
+    private userDataService: UserDataService,
+    private router: Router
   ) {
     this.authService.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       this.reconnect();
@@ -63,7 +63,7 @@ export class SignalRService implements OnDestroy {
       .withUrl(
         `${this.settingsService.settings.ApiUrl}/hubs/main?bearer=${accessToken}`
       )
-      .withAutomaticReconnect(new RetryPolicy(60, 0, 5))
+      .withAutomaticReconnect(new RetryPolicy(120, 0, 5, this.router))
       .build();
 
     this.hubConnection.onreconnected(() => {
@@ -265,7 +265,8 @@ class RetryPolicy {
   constructor(
     private maxSeconds: number,
     private minJitterSeconds: number,
-    private maxJitterSeconds: number
+    private maxJitterSeconds: number,
+    private router: Router
   ) {}
 
   nextRetryDelayInMilliseconds(
@@ -273,8 +274,8 @@ class RetryPolicy {
   ): number | null {
     let nextRetrySeconds = Math.pow(2, retryContext.previousRetryCount + 1);
 
-    if (nextRetrySeconds > this.maxSeconds) {
-      nextRetrySeconds = this.maxSeconds;
+    if (retryContext.elapsedMilliseconds / 1000 > this.maxSeconds) {
+      this.router.navigate(['/']);
     }
 
     nextRetrySeconds +=
