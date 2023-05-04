@@ -326,7 +326,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       .pipe(take(1))
       .subscribe(
         (message) => {
-          this.apiIsSick = !message.startsWith('CITE API Version:');
+          this.apiIsSick =  message !== 'It is well';
           this.apiMessage = message;
         },
         (error) => {

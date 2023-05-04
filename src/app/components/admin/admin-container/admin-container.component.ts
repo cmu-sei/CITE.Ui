@@ -130,7 +130,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     const appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
     titleService.setTitle(appTitle);
     this.topbarText = this.settingsService.settings.AppTopBarText || this.topbarText;
-    this.healthCheck();
+    this.getApiVersion();
   }
 
   ngOnInit() {
@@ -214,20 +214,16 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     }
   }
 
-  healthCheck() {
+  getApiVersion() {
     this.healthCheckService
-      .healthCheck()
+      .getVersion()
       .pipe(take(1))
       .subscribe(
         (message) => {
-          if (!message.startsWith('CITE API Version:')) {
-            this.apiVersion = 'CITE API ERROR!';
-          } else {
-            this.apiVersion = message;
-          }
+          this.apiVersion = message;
         },
         (error) => {
-          this.apiVersion = 'CITE API ERROR!';
+          this.apiVersion = 'API ERROR!';
         }
       );
   }
