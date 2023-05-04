@@ -66,7 +66,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   topbarImage = this.settingsService.settings.AppTopBarImage;
   theme$: Observable<Theme>;
   uiVersion = environment.VERSION;
-  apiVersion = 'CITE API ERROR!';
+  apiVersion = 'API ERROR!';
 
   constructor(
     private router: Router,
