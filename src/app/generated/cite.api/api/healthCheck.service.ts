@@ -112,15 +112,15 @@ export class HealthCheckService {
     }
 
     /**
-     * Responds when this api is functional
-     * Returns a health message, "It is well".
+     * Checks the liveliness health endpoint
+     * Returns a HealthReport of the liveliness health check
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public healthCheck(observe?: 'body', reportProgress?: boolean): Observable<string>;
-    public healthCheck(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
-    public healthCheck(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
-    public healthCheck(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public healthGetLiveliness(observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public healthGetLiveliness(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public healthGetLiveliness(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public healthGetLiveliness(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -147,7 +147,53 @@ export class HealthCheckService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.get<string>(`${this.configuration.basePath}/api/healthcheck`,
+        return this.httpClient.get<any>(`${this.configuration.basePath}/api/health/live`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Checks the readiness health endpoint
+     * Returns a HealthReport of the readiness health check
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public healthGetReadiness(observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public healthGetReadiness(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public healthGetReadiness(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public healthGetReadiness(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.get<any>(`${this.configuration.basePath}/api/health/ready`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

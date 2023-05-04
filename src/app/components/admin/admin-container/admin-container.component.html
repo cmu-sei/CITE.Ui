@@ -214,12 +214,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-list-item>
       </mat-list>
       <div class="app-versions" style="margin-bottom: 58px;" *ngIf="!hideTopbar">
-        UI Version: {{ uiVersion }}<br />
-        API Version: {{ apiVersion }}
+        Versions: UI {{ uiVersion }},  API {{ apiVersion }}
       </div>
       <div class="app-versions" *ngIf="hideTopbar">
-        UI Version: {{ uiVersion }}<br />
-        API Version: {{ apiVersion }}
+        Versions: UI {{ uiVersion }},  API {{ apiVersion }}
       </div>
       <img
         *ngIf="!hideTopbar"
