@@ -29,6 +29,7 @@ import { Title } from '@angular/platform-browser';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialog/admin-action-edit-dialog.component';
+import { AdminRoleEditDialogComponent } from '../admin/admin-role-edit-dialog/admin-role-edit-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -227,6 +228,57 @@ export class DashboardComponent implements OnDestroy {
     return theUser ? theUser.name : '';
   }
 
+  getUserNames(userList: User[]) {
+    let nameList = '';
+    userList.forEach(u => {
+      nameList = u.name ? nameList + u.name + ', ' : nameList;
+    });
+
+    return nameList.length > 2 ? nameList.substring(0, nameList.length - 2) : nameList;
+  }
+
+  addOrEditRole(role: Role) {
+    if (!role) {
+      role = {
+        name: '',
+        evaluationId: this.selectedEvaluation.id,
+        teamId: this.teamId
+      };
+    } else {
+      role = {... role};
+    }
+    const dialogRef = this.matDialog.open(AdminRoleEditDialogComponent, {
+      width: '800px',
+      data: {
+        role: role
+      },
+    });
+    dialogRef.componentInstance.editComplete.subscribe((result) => {
+      if (result.saveChanges && result.role) {
+        this.saveRole(result.role);
+      }
+      dialogRef.close();
+    });
+  }
+
+  saveRole(role: Role) {
+    if (role.id) {
+      this.roleDataService.updateRole(role);
+    } else {
+      this.roleDataService.add(role);
+    }
+  }
+
+  deleteRoleRequest(role: Role) {
+    this.dialogService.confirm(
+      'Delete this role?',
+      'Are you sure that you want to delete this role?'
+    ).subscribe((result) => {
+      if (result['confirm']) {
+        this.roleDataService.delete(role.id);
+      }
+    });
+  }
 
   updateRoleUsers(role: Role, event: any) {
     const newRoleUsers = event.value;

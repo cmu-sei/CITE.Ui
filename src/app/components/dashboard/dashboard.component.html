@@ -15,6 +15,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <b>You have {{ unreadArticles.count }} unread Gallery inject<span *ngIf="+unreadArticles.count > 1">s</span>, please access the Gallery to review them.</b>
     </div>
   </div>
+  <!-- Actions section -->
   <div class="row-container">
     <div class="section-container mat-elevation-z8 four-cell">
       <div class="row-container">
@@ -90,17 +91,85 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
     </div>
   </div>
+  <!-- Roles Section -->
   <div class="row-container">
     <div class="section-container mat-elevation-z8 four-cell">
-      <b>Roles:</b>
-      <div class="role-container" *ngFor="let role of roleList">
-        <div class="role-cell five-cell">
+      <div class="row-container">
+        <div class="one-cell center-self">
+          <b>Roles:</b>
+        </div>
+        <div class="five-cell">
+          <button
+            mat-icon-button
+            ngxClipboard
+            (click)="isRoleEditMode = true"
+            title="Edit Roles"
+            *ngIf="!isRoleEditMode"
+          >
+            <mat-icon
+              class="mdi-24px"
+              fontIcon="mdi-square-edit-outline">
+            </mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            (click)="isRoleEditMode = false"
+            style="outline: none; margin-left: 20px;"
+            title="Close Role Editing"
+            *ngIf="isRoleEditMode"
+          >
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            (click)="addOrEditRole(null)"
+            style="outline: none; margin-left: 20px;"
+            title="Add Role"
+            *ngIf="isRoleEditMode"
+          >
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+          </button>
+        </div>
+      </div>
+      <div class="row-container" *ngFor="let role of roleList">
+        <div class="role-cell" *ngIf="isRoleEditMode">
+          <button
+            mat-icon-button
+            ngxClipboard
+            (click)="addOrEditRole(role); $event.stopPropagation()"
+            title="Edit Role"
+          >
+            <mat-icon
+              class="mdi-24px"
+              fontIcon="mdi-square-edit-outline">
+            </mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            class="button-end"
+            (click)="deleteRoleRequest(role); $event.stopPropagation()"
+            title="Delete Role"
+          >
+            <mat-icon
+              class="mdi-24px"
+              fontIcon="mdi-trash-can"
+            ></mat-icon>
+          </button>
+        </div>
+        <div class="five-cell center-self">
           <label>{{ role.name }}</label>
         </div>
-        <div class="role-cell five-cell">
-          <mat-select placeholder="Assign Users" [value]="role.users" multiple (selectionChange)="updateRoleUsers(role, $event)">
+        <div class="five-cell center-self">
+          <mat-select
+            *ngIf="!isRoleEditMode"
+            placeholder="Assign Users"
+            [value]="role.users"
+            multiple
+            (selectionChange)="updateRoleUsers(role, $event)"
+          >
             <mat-option *ngFor="let user of teamUsers" [value]="user">{{ user.name }}</mat-option>
           </mat-select>
+          <span *ngIf="isRoleEditMode">{{ getUserNames(role.users) }}</span>
         </div>
       </div>
     </div>
