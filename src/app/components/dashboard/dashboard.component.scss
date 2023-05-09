@@ -77,10 +77,11 @@
   min-width: 80px;
 }
 
-.right-buttons {
+.right-cell {
   display: flex;
   flex: 1;
   justify-content: flex-end;
+  min-width: 100px;
 }
 
 .dashboard-category-description {

@@ -19,10 +19,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <div class="row-container">
     <div class="section-container mat-elevation-z8 four-cell">
       <div class="row-container">
-        <div class="one-cell center-self">
+        <div class="five-cell center-self">
           <b>Actions:</b>
         </div>
-        <div class="five-cell">
+        <div class="right-cell">
           <button
             mat-icon-button
             ngxClipboard
@@ -37,21 +37,21 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </button>
           <button
             mat-icon-button
-            (click)="isActionEditMode = false"
-            style="outline: none; margin-left: 20px;"
-            title="Close Action Editing"
-            *ngIf="isActionEditMode"
-          >
-            <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
-          </button>
-          <button
-            mat-icon-button
             (click)="addOrEditAction(null)"
             style="outline: none; margin-left: 20px;"
             title="Add Action"
             *ngIf="isActionEditMode"
           >
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            (click)="isActionEditMode = false"
+            style="outline: none; margin-left: 20px;"
+            title="Close Action Editing"
+            *ngIf="isActionEditMode"
+          >
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
           </button>
         </div>
       </div>
@@ -95,10 +95,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <div class="row-container">
     <div class="section-container mat-elevation-z8 four-cell">
       <div class="row-container">
-        <div class="one-cell center-self">
+        <div class="five-cell center-self">
           <b>Roles:</b>
         </div>
-        <div class="five-cell">
+        <div class="right-cell">
           <button
             mat-icon-button
             ngxClipboard
@@ -113,21 +113,21 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </button>
           <button
             mat-icon-button
-            (click)="isRoleEditMode = false"
-            style="outline: none; margin-left: 20px;"
-            title="Close Role Editing"
-            *ngIf="isRoleEditMode"
-          >
-            <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
-          </button>
-          <button
-            mat-icon-button
             (click)="addOrEditRole(null)"
             style="outline: none; margin-left: 20px;"
             title="Add Role"
             *ngIf="isRoleEditMode"
           >
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            (click)="isRoleEditMode = false"
+            style="outline: none; margin-left: 20px;"
+            title="Close Role Editing"
+            *ngIf="isRoleEditMode"
+          >
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
           </button>
         </div>
       </div>
