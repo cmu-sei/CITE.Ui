@@ -213,6 +213,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </div>
         </mat-list-item>
       </mat-list>
+      <div class="app-versions" style="margin-bottom: 58px;" *ngIf="!hideTopbar">
+        Versions: UI {{ uiVersion }},  API {{ apiVersion }}
+      </div>
+      <div class="app-versions" *ngIf="hideTopbar">
+        Versions: UI {{ uiVersion }},  API {{ apiVersion }}
+      </div>
       <img
         *ngIf="!hideTopbar"
         class="cmu-logo"
