@@ -13,7 +13,7 @@ import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
-import { TeamUserDataService } from 'src/app/data/user/team-user-data.service';
+import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -225,15 +225,14 @@ export class SignalRService implements OnDestroy {
   private addTeamUserHandlers() {
     this.hubConnection.on('TeamUserUpdated', (teamUser: TeamUser) => {
       this.teamUserDataService.updateStore(teamUser);
-    }
-    );
+    });
 
     this.hubConnection.on('TeamUserCreated', (teamUser: TeamUser) => {
       this.teamUserDataService.updateStore(teamUser);
     });
 
-    this.hubConnection.on('TeamUserDeleted', (teamUser: TeamUser) => {
-      this.teamUserDataService.deleteFromStore(teamUser);
+    this.hubConnection.on('TeamUserDeleted', (id: string) => {
+      this.teamUserDataService.deleteFromStore(id);
     });
   }
 

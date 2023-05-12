@@ -120,8 +120,20 @@ project root for license information or contact permission@sei.cmu.edu for full 
             >User Name</mat-header-cell
           >
           <mat-cell *matCellDef="let element">
-            <div *ngIf="element.name !== null">{{ element.name }}</div>
-            <div *ngIf="element.name === null">{{ element.id }}</div>
+            <div *ngIf="element.user.name !== null">{{ element.user.name }}</div>
+            <div *ngIf="element.user.name === null">{{ element.id }}</div>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="isObserver">
+          <mat-header-cell *matHeaderCellDef mat-sort-header
+            >Observer</mat-header-cell
+          >
+          <mat-cell *matCellDef="let element">
+            <mat-checkbox
+              [checked]="element.isObserver"
+              (change)="setObserverValue(element.id, $event.checked)"
+            ></mat-checkbox>
           </mat-cell>
         </ng-container>
 
@@ -136,8 +148,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </mat-cell>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedUserColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedUserColumns"></mat-row>
+        <mat-header-row *matHeaderRowDef="displayedTeamUserColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedTeamUserColumns"></mat-row>
       </mat-table>
 
     </div>
