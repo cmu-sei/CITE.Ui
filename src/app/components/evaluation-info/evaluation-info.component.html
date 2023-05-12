@@ -28,6 +28,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
     &nbsp;
   </div>
   <div class="right-buttons">
+    <span class="center-self">Viewing:&nbsp;&nbsp;</span>
+    <mat-select class="center-self" placeholder="Team" [value]="selectedTeam.id" (selectionChange)="setActiveTeam($event.value)">
+      <mat-option *ngFor="let team of teamList" [value]="team.id">
+        {{ team.shortName }}
+      </mat-option>
+    </mat-select>
     <button
       mat-icon-button
       style="outline: none;"
@@ -51,7 +57,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       mat-icon-button
       *ngIf="showAdminButton"
       [routerLink]="['/admin']"
-      [queryParams]="{evaluation: selectedEvaluationId, move: getCurrentMoveNumber(), team: currentTeamId, section: 'Actions'}"
+      [queryParams]="{evaluation: selectedEvaluationId, move: getCurrentMoveNumber(), team: currentTeamId, section: 'Evaluations'}"
       style="outline: none;"
       title="Administration"
     >

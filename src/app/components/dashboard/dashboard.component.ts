@@ -122,6 +122,11 @@ export class DashboardComponent implements OnDestroy {
       if (active.id === activeId) {
         this.teamUsers = active.users;
         this.teamId = active.id;
+        if (activeId) {
+          // load the team data for this team
+          this.actionDataService.loadByEvaluationTeam(active.evaluationId, active.id);
+          this.roleDataService.loadByEvaluationTeam(active.evaluationId, active.id);
+        }
       }
     });
     // observe the Action list

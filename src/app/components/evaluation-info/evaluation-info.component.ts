@@ -4,15 +4,14 @@
 
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Evaluation, ItemStatus, Move, Submission } from 'src/app/generated/cite.api/model/models';
-import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
-import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
+import { Evaluation, ItemStatus, Move, Submission, Team } from 'src/app/generated/cite.api/model/models';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
+import { TeamDataService } from 'src/app/data/team/team-data.service';
+import { TeamQuery } from 'src/app/data/team/team.query';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UserDataService } from 'src/app/data/user/user-data.service';
 import { Section } from 'src/app/components/home-app/home-app.component';
 
 @Component({
@@ -24,6 +23,7 @@ export class EvaluationInfoComponent {
   @Input() showAdminButton: boolean;
   @Input() showMoveArrows: boolean;
   @Input() evaluationList: Evaluation[];
+  @Input() teamList: Team[];
   selectedEvaluationId = '';
   selectedSection = Section.dashboard;
   scoresheetSection = Section.scoresheet;
@@ -34,15 +34,15 @@ export class EvaluationInfoComponent {
   displayedMoveDescription = '';
   displayedMoveStyle = {  };
   moveList: Move[] = [];
+  selectedTeam: Team = {} as Team;
   private unsubscribe$ = new Subject();
 
   constructor(
-    private evaluationDataService: EvaluationDataService,
-    private evaluationQuery: EvaluationQuery,
     private moveQuery: MoveQuery,
     private submissionDataService: SubmissionDataService,
     private submissionQuery: SubmissionQuery,
-    private userDataService: UserDataService,
+    private teamDataService: TeamDataService,
+    private teamQuery: TeamQuery,
     private activatedRoute: ActivatedRoute,
     private router: Router
   ) {
@@ -73,8 +73,12 @@ export class EvaluationInfoComponent {
         this.currentTeamId = active.teamId;
       }
     });
+    // observe the selected team
+    (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
+      this.selectedTeam = active ? active : this.selectedTeam;
+    });
     // subscribe to route changes
-    activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
+    this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       const evaluationId = params.get('evaluation');
       if (evaluationId) {
         this.selectedEvaluationId = evaluationId;
@@ -188,6 +192,10 @@ export class EvaluationInfoComponent {
       queryParams: { section: section },
       queryParamsHandling: 'merge',
     });
+  }
+
+  setActiveTeam(teamId: string) {
+    this.teamDataService.setActive(teamId);
   }
 
   activeEvaluations(): Evaluation[] {

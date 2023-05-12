@@ -43,7 +43,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
         [evaluationList]="evaluationList"
         [showAdminButton]="canAccessAdminSection$ | async"
         [showMoveArrows]="selectedSection === section.scoresheet"
-        ></app-evaluation-info>
+        [teamList]="teamList"
+      ></app-evaluation-info>
     </div>
       <div class="app-content-container"
         *ngIf="isReady"

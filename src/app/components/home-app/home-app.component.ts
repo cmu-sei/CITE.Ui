@@ -5,7 +5,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, Observable, BehaviorSubject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import {
   ComnSettingsService,
@@ -36,8 +36,6 @@ import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { ApplicationArea, SignalRService } from 'src/app/services/signalr.service';
 import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
-import { ActionDataService } from 'src/app/data/action/action-data.service';
-import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 
 export enum Section {
@@ -102,9 +100,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private signalRService: SignalRService,
     private gallerySignalRService: GallerySignalRService,
     private healthCheckService: HealthCheckService,
-    private actionDataService: ActionDataService,
     private moveQuery: MoveQuery,
-    private roleDataService: RoleDataService,
     private unreadArticlesQuery: UnreadArticlesQuery,
     titleService: Title
   ) {
@@ -127,7 +123,12 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       .subscribe((teams) => {
         this.teamList = teams;
         if (teams && teams.length > 0) {
-          this.loadTeamData();
+          // set the active team for this user
+          teams.forEach(t => {
+            if (t.users.some(u => u.id === this.loggedInUserId)) {
+              this.teamDataService.setActive(t.id);
+            }
+          });
         }
       });
     // subscribe to evaluations
@@ -273,16 +274,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
       this.currentMoveNumber = evaluation.currentMoveNumber;
     }
-  }
-
-  loadTeamData() {
-    this.teamList.forEach(t => {
-      if (t.users.some(u => u.id === this.loggedInUserId)) {
-        this.teamDataService.setActive(t.id);
-        this.actionDataService.loadByEvaluationTeam(this.selectedEvaluationId, t.id);
-        this.roleDataService.loadByEvaluationTeam(this.selectedEvaluationId, t.id);
-      }
-    });
   }
 
   selectEvaluation(evaluationId: string) {
