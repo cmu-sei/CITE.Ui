@@ -146,6 +146,26 @@ export class SubmissionDataService {
       );
   }
 
+  loadByEvaluationTeam(evaluationId: string, teamId: string) {
+    this.submissionStore.setLoading(true);
+    this.submissionService
+      .getByEvaluationTeam(evaluationId, teamId)
+      .pipe(
+        tap(() => {
+          this.submissionStore.setLoading(false);
+        }),
+        take(1)
+      )
+      .subscribe(
+        (submissions) => {
+          this.submissionStore.set(submissions);
+        },
+        (error) => {
+          this.submissionStore.set([]);
+        }
+      );
+  }
+
   loadById(id: string) {
     this.submissionStore.setLoading(true);
     return this.submissionService

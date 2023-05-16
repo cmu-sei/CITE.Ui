@@ -78,8 +78,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   currentMoveNumber = -1;
   userCurrentSubmission: Submission;
   unreadArticles$ = this.unreadArticlesQuery.selectActive() as Observable<UnreadArticles>;
-  loadedSubmissionsForEvaluation: Evaluation;
+  evaluationForLoadedSubmissions: Evaluation;
   moveList$ = this.moveQuery.selectAll() as Observable<Move[]>;
+  myTeamId = '';
+  myTeamId$ = new Subject<string>();
 
 
   constructor(
@@ -126,6 +128,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           // set the active team for this user
           teams.forEach(t => {
             if (t.users.some(u => u.id === this.loggedInUserId)) {
+              this.myTeamId = t.id;
+              this.myTeamId$.next(t.id);
               this.teamDataService.setActive(t.id);
             }
           });
@@ -169,42 +173,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.isReady = true;
       }
     });
-    // subscribe to submissions
-    this.submissionQuery
-      .selectAll()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(results => {
-        const evaluation = this.evaluationQuery.getActive() as Evaluation;
-        if (evaluation) {
-          if (results && results.length > 0) {
-            let submission = this.submissionQuery.getActive() as Submission;
-            if (!submission) {
-              submission = results.find(
-                (s) =>
-                  s.moveNumber === evaluation.currentMoveNumber &&
-                  s.userId === this.loggedInUserId
-              );
-            } else {
-              const upToDate = results.some(
-                (s) =>
-                  s.moveNumber === evaluation.currentMoveNumber &&
-                  s.userId === submission.userId &&
-                  s.teamId === submission.teamId &&
-                  s.evaluationId === submission.evaluationId
-              );
-              submission = upToDate ? submission : null;
-            }
-            if (!submission) {
-              this.makeNewSubmission(evaluation);
-            } else {
-              this.userCurrentSubmission = submission;
-              this.submissionDataService.setActive(submission.id);
-            }
-          } else {
-            this.makeNewSubmission(evaluation);
-          }
-        }
-      });
     // subscribe to authorizedUser
     this.userDataService.isAuthorizedUser
       .pipe(takeUntil(this.unsubscribe$))
@@ -224,9 +192,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           this.selectedSection = Section.scoresheet;
           break;
         default:
-          if (this.selectedSection === Section.scoresheet && this.userCurrentSubmission) {
-            this.submissionDataService.setActive(this.userCurrentSubmission.id);
-          }
           this.selectedSection = Section.dashboard;
           break;
       }
@@ -281,22 +246,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       queryParams: { evaluation: evaluationId },
       queryParamsHandling: 'merge',
     });
-  }
-
-  makeNewSubmission(evaluation?: Evaluation) {
-    if (!evaluation || this.loadedSubmissionsForEvaluation === evaluation) {
-      return;
-    }
-    this.loadedSubmissionsForEvaluation = evaluation;
-    const submission = {} as Submission;
-    submission.teamId = this.teamQuery.getActiveId();
-    submission.evaluationId = evaluation.id;
-    submission.moveNumber = evaluation.currentMoveNumber;
-    submission.score = 0;
-    submission.scoringModelId = evaluation.scoringModelId;
-    submission.status = ItemStatus.Active;
-    submission.userId = this.loggedInUserId;
-    this.submissionDataService.add(submission);
   }
 
   logout() {
