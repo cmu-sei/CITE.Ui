@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Evaluation, ItemStatus, Move, Submission, Team } from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -21,10 +21,11 @@ import { UserDataService } from 'src/app/data/user/user-data.service';
   templateUrl: './evaluation-info.component.html',
   styleUrls: ['./evaluation-info.component.scss'],
 })
-export class EvaluationInfoComponent implements OnDestroy, OnInit {
+export class EvaluationInfoComponent implements OnDestroy {
   @Input() showAdminButton: boolean;
   @Input() showMoveArrows: boolean;
   @Input() teamList: Team[];
+  @Input() myTeamId: string;
   @Input() submissionList: Submission[];
   evaluationList: Evaluation[] = [];
   evaluationList$ = this.evaluationQuery.selectAll();
@@ -32,8 +33,8 @@ export class EvaluationInfoComponent implements OnDestroy, OnInit {
   selectedSection = Section.dashboard;
   scoresheetSection = Section.scoresheet;
   moveList: Move[] = [];
-  myTeamId = '';
-  selectedTeam: Team;
+  displayedMoveNumber = -1;
+  selectedTeamId = '';
   loggedInUserId = '';
   loggedInUser$ = this.userDataService.loggedInUser;
   submissions$ = this.submissionQuery.selectAll();
@@ -66,28 +67,54 @@ export class EvaluationInfoComponent implements OnDestroy, OnInit {
       } else if (evaluationList && evaluationList.length === 1) {
         evaluation = evaluationList[0];
       }
+      if (evaluation && !this.displayedMoveNumber) {
+        this.displayedMoveNumber = evaluation.currentMoveNumber;
+      }
+      console.log('eval-info displayed move number is ' + this.displayedMoveNumber);
       this.moveList = moves;
       if (evaluation && teams.length > 0) {
         this.selectedEvaluationId = evaluation.id;
         this.loggedInUserId = user.profile.sub;
-        if (!this.selectedTeam) {
-          this.selectedTeam = teams.find(t => t.users.some(u => u.id === this.loggedInUserId));
-          this.myTeamId = this.selectedTeam.id;
+        if (!this.selectedTeamId) {
+          const selectedTeam = teams.find(t => t.users.some(u => u.id === this.loggedInUserId));
+          this.selectedTeamId = selectedTeam ? selectedTeam.id : '';
+          this.teamDataService.setActive(selectedTeam.id);
         }
         if (submissions.length === 0) {
           this.makeNewSubmission();
-        } else {
+        // don't process the submissions if the selected team has changed, but the new submissions haven't been loaded yet
+        } else if (submissions.some(s => s.teamId && s.teamId === this.selectedTeamId)) {
           if (!this.activeSubmission) {
-            const submission = submissions.find(s => s.userId && +s.moveNumber === +evaluation.currentMoveNumber);
-            this.submissionDataService.setActive(submission.id);
+            let submission: Submission;
+            const moveNumber = this.displayedMoveNumber > -1 ? this.displayedMoveNumber : evaluation.currentMoveNumber;
+            if (this.myTeamId === this.selectedTeamId) {
+              submission = submissions.find(s => s.userId && +s.moveNumber === +moveNumber);
+            } else {
+              submission = submissions.find(s =>
+                !s.userId &&
+                s.teamId === this.selectedTeamId
+                && +s.moveNumber === +moveNumber
+              );
+            }
+            if (submission) {
+              console.log('submission setActive move ' + submission.moveNumber);
+              this.submissionDataService.setActive(submission.id);
+            } else {
+              this.makeNewSubmission();
+            }
           }
         }
       }
     });
-
     // observe active submission
     this.activeSubmission$.pipe(takeUntil(this.unsubscribe$)).subscribe(activeSubmission => {
-      this.activeSubmission = activeSubmission;
+      if (activeSubmission) {
+        this.activeSubmission = activeSubmission;
+        this.displayedMoveNumber = activeSubmission.moveNumber;
+        console.log('ActiveSubmission set (move, userId, teamId) = (' + activeSubmission.moveNumber + ', ' + activeSubmission.userId + ', ' + activeSubmission.teamId + ')');
+      } else {
+        console.log('Observed a blank ActiveSubmission.  Displayed move is ' + this.displayedMoveNumber);
+      }
     });
     // subscribe to route changes
     this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
@@ -107,14 +134,11 @@ export class EvaluationInfoComponent implements OnDestroy, OnInit {
     });
   }
 
-  ngOnInit() {
-  }
-
   makeNewSubmission() {
     const evaluation = this.evaluationList.find(e => e.id === this.selectedEvaluationId);
-    const userId = this.selectedTeam.id !== this.myTeamId ? null : this.loggedInUserId;
+    const userId = this.selectedTeamId !== this.myTeamId ? null : this.loggedInUserId;
     const submission = {
-      teamId: this.selectedTeam.id ? this.selectedTeam.id : this.myTeamId,
+      teamId: this.selectedTeamId ? this.selectedTeamId : this.myTeamId,
       evaluationId: evaluation.id,
       moveNumber: evaluation.currentMoveNumber,
       score: 0,
@@ -182,10 +206,11 @@ export class EvaluationInfoComponent implements OnDestroy, OnInit {
       s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
     );
     if (newSubmission) {
+      console.log('increment 1 submission setActive move ' + newSubmission.moveNumber);
       this.submissionDataService.setActive(newSubmission.id);
     } else {
       // the new submission would not be allowed, so select the default submission
-      if (this.myTeamId === this.selectedTeam.id) {
+      if (this.myTeamId === this.selectedTeamId) {
         // select the user score
         newSubmission = submissions.find(s =>
           +s.moveNumber === +newMoveNumber  &&
@@ -205,6 +230,7 @@ export class EvaluationInfoComponent implements OnDestroy, OnInit {
         );
       }
       if (newSubmission) {
+        console.log('increment 2 submission setActive move ' + newSubmission.moveNumber);
         this.submissionDataService.setActive(newSubmission.id);
       }
     }
@@ -225,6 +251,7 @@ export class EvaluationInfoComponent implements OnDestroy, OnInit {
         && s.groupId === displayedSubmission.groupId
         && s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage);
     if (newSubmission) {
+      console.log('decrement submission setActive move ' + newSubmission.moveNumber);
       this.submissionDataService.setActive(newSubmission.id);
     }
   }
@@ -247,9 +274,10 @@ export class EvaluationInfoComponent implements OnDestroy, OnInit {
   }
 
   setActiveTeam(teamId: string) {
-    this.submissionDataService.unload();
-    this.selectedTeam = this.teamList.find(t => t.id === teamId);
+    this.selectedTeamId = teamId;
+    this.activeSubmission = null;
     this.submissionDataService.loadByEvaluationTeam(this.selectedEvaluationId, teamId);
+    this.teamDataService.setActive(teamId);
   }
 
   activeEvaluations(): Evaluation[] {
