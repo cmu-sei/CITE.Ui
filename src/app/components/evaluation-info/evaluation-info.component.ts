@@ -6,6 +6,7 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Evaluation, ItemStatus, Move, Submission, Team } from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
+import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
@@ -46,6 +47,7 @@ export class EvaluationInfoComponent implements OnDestroy {
 
   constructor(
     private evaluationQuery: EvaluationQuery,
+    private moveDataService: MoveDataService,
     private moveQuery: MoveQuery,
     private submissionDataService: SubmissionDataService,
     private submissionQuery: SubmissionQuery,
@@ -258,7 +260,14 @@ export class EvaluationInfoComponent implements OnDestroy {
 
   selectEvaluation(evaluationId: string) {
     if (evaluationId !== this.selectedEvaluationId) {
+      this.displayedMoveNumber = -1;
+      this.selectedTeamId = '';
+      this.activeSubmission = null;
+      this.selectedEvaluationId = '';
+      this.moveList = [];
       this.submissionDataService.unload();
+      this.teamDataService.unload();
+      this.moveDataService.unload();
       this.router.navigate([], {
         queryParams: { evaluation: evaluationId },
         queryParamsHandling: 'merge',
