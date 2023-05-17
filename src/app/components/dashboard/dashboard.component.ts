@@ -54,7 +54,7 @@ export class DashboardComponent implements OnDestroy {
   allActions: Action[] = [];
   roleList: Role[];
   currentMoveNumber: number;
-  teamId = '';
+  activeTeamId = '';
   isActionEditMode = false;
   isRoleEditMode = false;
   private unsubscribe$ = new Subject();
@@ -112,12 +112,10 @@ export class DashboardComponent implements OnDestroy {
 
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.teamQuery.getActiveId();
-      active = active ? active : { id: '' } as Team;
-      if (active.id === activeId) {
+      if (active) {
         this.teamUsers = active.users;
-        this.teamId = active.id;
-        if (activeId) {
+        this.activeTeamId = active.id;
+        if (active.id) {
           console.log('Dashboard loading articles and roles for team ' + active.id);
           // load the team data for this team
           this.actionDataService.loadByEvaluationTeam(active.evaluationId, active.id);
@@ -168,7 +166,7 @@ export class DashboardComponent implements OnDestroy {
         description: '',
         evaluationId: this.selectedEvaluation.id,
         moveNumber: this.currentMoveNumber,
-        teamId: this.teamId
+        teamId: this.activeTeamId
       };
     } else {
       action = {... action};
@@ -243,7 +241,7 @@ export class DashboardComponent implements OnDestroy {
       role = {
         name: '',
         evaluationId: this.selectedEvaluation.id,
-        teamId: this.teamId
+        teamId: this.activeTeamId
       };
     } else {
       role = {... role};

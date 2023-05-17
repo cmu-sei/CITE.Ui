@@ -5,7 +5,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, combineLatest } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import {
   ComnSettingsService,
@@ -115,16 +115,16 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.theme$ = this.authQuery.userTheme$;
     this.hideTopbar = this.inIframe();
     this.submissionDataService.unload();
-    this.evaluationDataService.unload();
     this.scoringModelDataService.unload();
     this.teamDataService.unload();
-    // subscribe to teams
-    this.teamQuery
-      .selectAll()
+    // observe logged in user and teams
+    combineLatest([this.userDataService.loggedInUser, this.teamQuery.selectAll()])
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((teams) => {
-        this.teamList = teams;
-        if (teams && teams.length > 0) {
+      .subscribe(([user, teams]) => {
+        if (user && user.profile && teams && teams.length > 0) {
+          this.loggedInUserId = user.profile.sub;
+          this.expectingMyEvaluations = true;
+          this.teamList = teams;
           // set the active team for this user
           teams.forEach(t => {
             if (t.users.some(u => u.id === this.loggedInUserId)) {
@@ -135,7 +135,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           });
         }
       });
-    // subscribe to evaluations
+    // observe evaluations
     this.evaluationQuery.selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(evaluations => {
@@ -146,6 +146,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           this.topbarTextBase + ' (1 Active Incident)';
         // make sure the requested evaluation is contained in the active ones.  If not force manual selection.
         if (numberOfEvaluations > 0) {
+          this.expectingMyEvaluations = false;
           const evaluation = evaluations.find(e => e.id === this.selectedEvaluationId);
           if (evaluation) {
             this.loadEvaluationData();
@@ -154,18 +155,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
         }
       });
-    // subscribe to the logged in user
-    this.userDataService.loggedInUser
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((user) => {
-        if (user && user.profile && user.profile.sub !== this.loggedInUserId) {
-          this.loggedInUserId = user.profile.sub;
-          this.evaluationList = null;
-          this.evaluationDataService.loadMine();
-          this.expectingMyEvaluations = true;
-        }
-      });
-    // subscribe to active submission
+    // observe active submission
     (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       const activeId = this.submissionQuery.getActiveId();
       active = active ? active : { id: '', moveNumber: -1 } as Submission;
@@ -173,13 +163,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.isReady = true;
       }
     });
-    // subscribe to authorizedUser
+    // observe authorizedUser
     this.userDataService.isAuthorizedUser
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((isAuthorized) => {
         this.isAuthorizedUser = isAuthorized;
       });
-    // subscribe to route changes
+    // observe route changes
     activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       const evaluationId = params.get('evaluation');
       if (evaluationId) {
@@ -196,6 +186,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           break;
       }
     });
+    // load the user's evaluations
+    this.evaluationDataService.loadMine();
     // Set the display settings from config file
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
