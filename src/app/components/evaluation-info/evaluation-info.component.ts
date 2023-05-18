@@ -86,6 +86,7 @@ export class EvaluationInfoComponent implements OnDestroy {
           this.makeNewSubmission();
         // don't process the submissions if the selected team has changed, but the new submissions haven't been loaded yet
         } else if (submissions.some(s => s.teamId && s.teamId === this.selectedTeamId)) {
+          console.log('Processing submissions for team ' + this.selectedTeamId);
           if (!this.activeSubmission) {
             let submission: Submission;
             const moveNumber = this.displayedMoveNumber > -1 ? this.displayedMoveNumber : evaluation.currentMoveNumber;
@@ -105,6 +106,12 @@ export class EvaluationInfoComponent implements OnDestroy {
               this.makeNewSubmission();
             }
           }
+        } else {
+          submissions.forEach(s => {
+            if (s.teamId) {
+              console.log('Got submissions for the wrong team - ' + s.teamId);
+            }
+          });
         }
       }
     });
@@ -182,7 +189,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   getMoveStyle() {
-    return this.activeSubmission && +this.activeSubmission.moveNumber === +this.getCurrentMoveNumber ? {} : { color: 'darkgray' };
+    return this.activeSubmission && +this.activeSubmission.moveNumber === +this.getCurrentMoveNumber() ? {} : { color: 'darkgray' };
   }
 
   getMoveDescription() {
@@ -285,6 +292,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   setActiveTeam(teamId: string) {
     this.selectedTeamId = teamId;
     this.activeSubmission = null;
+    console.log('********** Requesting team ' + teamId);
     this.submissionDataService.loadByEvaluationTeam(this.selectedEvaluationId, teamId);
     this.teamDataService.setActive(teamId);
   }

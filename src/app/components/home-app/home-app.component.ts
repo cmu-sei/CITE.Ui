@@ -82,6 +82,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   moveList$ = this.moveQuery.selectAll() as Observable<Move[]>;
   myTeamId = '';
   myTeamId$ = new Subject<string>();
+  xyz = '';
 
 
   constructor(
@@ -129,8 +130,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           teams.forEach(t => {
             if (t.users.some(u => u.id === this.loggedInUserId)) {
               this.myTeamId = t.id;
-              this.myTeamId$.next(t.id);
               this.teamDataService.setActive(t.id);
+              const thisScope = this;
+              setTimeout(function() {
+                thisScope.myTeamId$.next(t.id);
+              }, 200);
             }
           });
         }
@@ -228,7 +232,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.scoringModelDataService.loadById(evaluation.scoringModelId);
       this.submissionDataService.loadMineByEvaluation(this.selectedEvaluationId);
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
-      this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
+      this.teamDataService.loadMine(this.selectedEvaluationId);
       this.currentMoveNumber = evaluation.currentMoveNumber;
     }
   }

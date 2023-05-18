@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
@@ -30,10 +30,11 @@ import { Title} from '@angular/platform-browser';
   templateUrl: './scoring-model.component.html',
   styleUrls: ['./scoring-model.component.scss'],
 })
-export class ScoringModelComponent {
+export class ScoringModelComponent implements OnDestroy {
+  @Input() myTeamId: string;
   loggedInUserId = '';
   userId = '';
-  teamId = '';
+  activeTeamId = '';
   teamUsers: User[];
   currentMoveNumber = -1;
   displayedMoveNumber = -1;
@@ -139,7 +140,7 @@ export class ScoringModelComponent {
       const activeId = this.teamQuery.getActiveId();
       active = active ? active : { id: '' } as Team;
       if (active.id === activeId) {
-        this.teamId = active.id;
+        this.activeTeamId = active.id;
         this.teamUsers = active.users;
       }
     });
@@ -513,6 +514,11 @@ export class ScoringModelComponent {
       queryParams: { section: section },
       queryParamsHandling: 'merge',
     });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next(null);
+    this.unsubscribe$.complete();
   }
 
 }
