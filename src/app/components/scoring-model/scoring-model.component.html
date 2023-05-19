@@ -184,7 +184,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             class="move-buttons status-font"
             *ngIf="myTeamId !== activeTeamId"
           >
-            {{ displayedSubmission.status }}
+            {{ getSubmissionStatusText() }}
           </span>
         </div>
       </mat-header-cell>

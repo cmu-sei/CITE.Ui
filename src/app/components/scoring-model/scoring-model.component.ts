@@ -76,19 +76,19 @@ export class ScoringModelComponent implements OnDestroy {
     this.titleService.setTitle('CITE Scoresheet');
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.evaluationQuery.getActiveId();
-      active = active ? active : { id: '', currentMoveNumber: -1} as Evaluation;
-      if (active.id === activeId) {
+      if (active) {
         this.selectedEvaluation = active;
         this.currentMoveNumber = active.currentMoveNumber;
+        // load the team data for the active team
+        if (this.activeTeamId) {
+          console.log('Scoresheet active evaluation query loading submissions for team ' + this.activeTeamId);
+          this.submissionDataService.loadByEvaluationTeam(active.id, this.activeTeamId);
+        }
       }
     });
-
     // observe the active submission
     (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.submissionQuery.getActiveId();
-      active = active ? active : { id: '', moveNumber: -1, submissionCategories: []} as Submission;
-      if (active.id === activeId) {
+      if (active) {
         if (active.submissionCategories.length === 0) {
           if (active.scoreIsAnAverage) {
             if (active.teamId) {
@@ -125,26 +125,24 @@ export class ScoringModelComponent implements OnDestroy {
         this.setFormatting();
       }
     });
-
     // observe the selected scoring model
     (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.scoringModelQuery.getActiveId();
-      active = active ? active : { id: '' } as ScoringModel;
-      if (active.id === activeId) {
+      if (active) {
         this.selectedScoringModel = active;
       }
     });
-
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.teamQuery.getActiveId();
-      active = active ? active : { id: '' } as Team;
-      if (active.id === activeId) {
+      if (active) {
         this.activeTeamId = active.id;
         this.teamUsers = active.users;
+        if (active.id) {
+          console.log('Scoresheet active team query loading submissions for team ' + active.id);
+          // load the team data for this team
+          this.submissionDataService.loadByEvaluationTeam(active.evaluationId, active.id);
+        }
       }
     });
-
     // observe the logged in user ID
     this.userDataService.loggedInUser
       .pipe(takeUntil(this.unsubscribe$))
@@ -154,7 +152,6 @@ export class ScoringModelComponent implements OnDestroy {
           this.userId = this.loggedInUserId;
         }
       });
-
     // observe the submission list
     this.submissionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
       this.submissionList = submissions;
@@ -163,7 +160,6 @@ export class ScoringModelComponent implements OnDestroy {
       this.showOfficialScore = this.submissionList.some(
         s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && !s.groupId);
     });
-
     // observe the permissions
     this.userDataService.canModify.pipe(takeUntil(this.unsubscribe$)).subscribe(canModify => {
       this.hasCanModifyPermission = canModify;
@@ -329,6 +325,10 @@ export class ScoringModelComponent implements OnDestroy {
     return theUser ? theUser.name : '';
   }
 
+  getSubmissionStatusText() {
+    return this.displayedSubmission.status === ItemStatus.Complete ? 'Submitted' : 'Unsubmitted';
+  }
+
   completeSubmission() {
     // if not the curret move, score cannot be reopened, so ask for confirmation
     if (this.displayedMoveNumber !== this.currentMoveNumber) {
@@ -453,6 +453,7 @@ export class ScoringModelComponent implements OnDestroy {
         break;
     }
     if (newSubmission) {
+      console.log('Scoresheet selectDisplayedSubmission setting active submission ' + newSubmission.id);
       this.submissionDataService.setActive(newSubmission.id);
     }
   }

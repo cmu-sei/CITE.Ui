@@ -45,30 +45,31 @@ project root for license information or contact permission@sei.cmu.edu for full 
         [teamList]="teamList"
         [myTeamId]="myTeamId$ | async"
         [submissionList]="submissionList | async"
+        (setDisplayedMove)="setDisplayedMove($event)"
         ></app-evaluation-info>
     </div>
-      <div class="app-content-container"
-        *ngIf="isReady"
-      >
-        <div class="app-model-container mat-elevation-z8" autosize *ngIf="selectedSection === section.dashboard">
-          <app-dashboard
-            *ngIf="unreadArticles$ && moveList$"
-            [unreadArticles]="unreadArticles$ | async"
-            [myTeamId]="myTeamId$ | async"
-          ></app-dashboard>
-        </div>
-        <div class="app-model-container mat-elevation-z8" autosize *ngIf="selectedSection === section.scoresheet">
-          <app-scoring-model
-            [myTeamId]="myTeamId$ | async"
-          ></app-scoring-model>
-        </div>
-        <div class="app-score-container mat-elevation-z8" autosize>
-          <app-score-card
-            *ngIf="unreadArticles$ && moveList$"
-            [selectedScoringModel]="selectedScoringModel | async"
-            [submissionList]="submissionList | async"
-          ></app-score-card>
-        </div>
+    <div class="app-content-container"
+      *ngIf="isReady"
+    >
+      <div class="app-model-container mat-elevation-z8" autosize *ngIf="selectedSection === section.dashboard">
+        <app-dashboard
+          *ngIf="unreadArticles$ && moveList$"
+          [unreadArticles]="unreadArticles$ | async"
+          [myTeamId]="myTeamId$ | async"
+        ></app-dashboard>
       </div>
+      <div class="app-model-container mat-elevation-z8" autosize *ngIf="selectedSection === section.scoresheet">
+        <app-scoring-model
+          [myTeamId]="myTeamId$ | async"
+        ></app-scoring-model>
+      </div>
+      <div class="app-score-container mat-elevation-z8" autosize>
+        <app-score-card
+          *ngIf="unreadArticles$ && moveList$"
+          [selectedScoringModel]="selectedScoringModel | async"
+          [submissionList]="submissionList | async"
+        ></app-score-card>
+      </div>
+    </div>
   </div>
 </div>

@@ -13,7 +13,6 @@ import {
   Evaluation,
   Move,
   Role,
-  Submission,
   Team,
   User
 } from 'src/app/generated/cite.api/model/models';
@@ -22,7 +21,6 @@ import { ActionQuery } from 'src/app/data/action/action.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { RoleQuery } from 'src/app/data/role/role.query';
-import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { Title } from '@angular/platform-browser';
@@ -67,14 +65,12 @@ export class DashboardComponent implements OnDestroy {
     private moveQuery: MoveQuery,
     private roleDataService: RoleDataService,
     private roleQuery: RoleQuery,
-    private submissionQuery: SubmissionQuery,
     private unreadArticlesDataService: UnreadArticlesDataService,
     public dialogService: DialogService,
     public matDialog: MatDialog,
     private titleService: Title
   ) {
     this.titleService.setTitle('CITE Dashboard');
-
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       const activeId = this.evaluationQuery.getActiveId();
@@ -100,8 +96,8 @@ export class DashboardComponent implements OnDestroy {
         this.actionList = [];
       }
     });
-    // observe the active submission
-    (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
+    // observe the active move
+    (this.moveQuery.selectActive() as Observable<Move>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
         this.currentMoveNumber = active.moveNumber;
         this.actionList = this.allActions
@@ -109,7 +105,6 @@ export class DashboardComponent implements OnDestroy {
           .sort((a, b) => a.description < b.description ? -1 : 1);
       }
     });
-
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {

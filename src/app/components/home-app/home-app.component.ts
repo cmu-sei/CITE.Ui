@@ -160,11 +160,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
       });
     // observe active submission
-    (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.submissionQuery.getActiveId();
-      active = active ? active : { id: '', moveNumber: -1 } as Submission;
-      if (activeId && active.id === activeId) {
-        this.isReady = true;
+    (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
+      if (active) {
+        this.selectedEvaluationId = active.id;
+        this.loadEvaluationData();
       }
     });
     // observe authorizedUser
@@ -177,8 +176,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       const evaluationId = params.get('evaluation');
       if (evaluationId) {
-        this.selectedEvaluationId = evaluationId;
-        this.loadEvaluationData();
+        this.evaluationDataService.setActive(evaluationId);
       }
       const section = params.get('section');
       switch (section) {
@@ -235,6 +233,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.teamDataService.loadMine(this.selectedEvaluationId);
       this.currentMoveNumber = evaluation.currentMoveNumber;
     }
+    this.isReady = true;
   }
 
   selectEvaluation(evaluationId: string) {
@@ -242,6 +241,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       queryParams: { evaluation: evaluationId },
       queryParamsHandling: 'merge',
     });
+  }
+
+  setDisplayedMove(moveId: string) {
+    this.moveDataService.setActive(moveId);
   }
 
   logout() {

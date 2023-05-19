@@ -13,24 +13,24 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-option>
     </mat-select>
   </div>
-  <div class="move-div" *ngIf="selectedEvaluationId && activeSubmission">
+  <div class="move-div" *ngIf="selectedEvaluationId && displayedMoveNumber > -1">
     <h1 class="nowrap">Move:&nbsp;</h1>
-    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="activeSubmission.moveNumber <= getMinMoveNumber()" (click)="decrementDisplayedMove()">
+    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="isMinMoveNumber()" (click)="decrementDisplayedMove()">
       <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
     </button>
-    <h1 class="nowrap" [ngStyle]='getMoveStyle()'>{{ activeSubmission.moveNumber }}</h1>
-    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="selectedEvaluationId && activeSubmission.moveNumber >= getCurrentMoveNumber()" (click)="incrementDisplayedMove()">
+    <h1 class="nowrap" [ngStyle]='getMoveStyle()'>{{ displayedMoveNumber }}</h1>
+    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isMaxMoveNumber()" (click)="incrementDisplayedMove()">
       <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
     </button>
-    <h1 class="space-right">&nbsp;of&nbsp;{{ getMaxMoveNumber() }}</h1>
+    <h1 class="space-right">of&nbsp;&nbsp;&nbsp;{{ getMaxMoveNumber() }}</h1>
     <h1 [ngStyle]='getMoveStyle()'>{{ getMoveDescription() }}</h1>
   </div>
-  <div class="move-div" *ngIf="!selectedEvaluationId || !activeSubmission || activeSubmission.moveNumber < 0">
+  <div class="move-div" *ngIf="!selectedEvaluationId || displayedMoveNumber < 0">
     &nbsp;
   </div>
   <div class="right-buttons" *ngIf="selectedTeamId">
-    <span *ngIf="selectedTeamId === myTeamId" class="center-self">Team:&nbsp;&nbsp;</span>
-    <span class="center-self" *ngIf="selectedTeamId !== myTeamId">Observing:&nbsp;&nbsp;</span>
+    <span *ngIf="selectedTeamId === myTeamId" class="mat-select center-self bold-text">Team:&nbsp;&nbsp;</span>
+    <span *ngIf="selectedTeamId !== myTeamId" class="mat-select center-self bold-text">Observing:&nbsp;&nbsp;</span>
     <span *ngIf="teamList && teamList.length <= 1" class="mat-select center-self">{{ getTeamShortName() }}</span>
     <mat-select *ngIf="teamList && teamList.length > 1" class="center-self" placeholder="Team" [value]="selectedTeamId" (selectionChange)="setActiveTeam($event.value)">
       <mat-option *ngFor="let team of teamList" [value]="team.id">
@@ -60,7 +60,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       mat-icon-button
       *ngIf="showAdminButton"
       [routerLink]="['/admin']"
-      [queryParams]="{evaluation: selectedEvaluationId, move: getCurrentMoveNumber(), team: selectedTeamId, section: 'Evaluations'}"
+      [queryParams]="{evaluation: selectedEvaluationId, move: currentMoveNumber, team: selectedTeamId, section: 'Evaluations'}"
       style="outline: none;"
       title="Administration"
     >
