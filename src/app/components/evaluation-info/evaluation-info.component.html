@@ -29,8 +29,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
     &nbsp;
   </div>
   <div class="right-buttons" *ngIf="selectedTeamId">
+    <span *ngIf="selectedTeamId === myTeamId" class="center-self">Team:&nbsp;&nbsp;</span>
     <span class="center-self" *ngIf="selectedTeamId !== myTeamId">Observing:&nbsp;&nbsp;</span>
-    <mat-select class="center-self" placeholder="Team" [value]="selectedTeamId" (selectionChange)="setActiveTeam($event.value)">
+    <span *ngIf="teamList && teamList.length <= 1" class="mat-select center-self">{{ getTeamShortName() }}</span>
+    <mat-select *ngIf="teamList && teamList.length > 1" class="center-self" placeholder="Team" [value]="selectedTeamId" (selectionChange)="setActiveTeam($event.value)">
       <mat-option *ngFor="let team of teamList" [value]="team.id">
         {{ team.shortName }}
       </mat-option>
