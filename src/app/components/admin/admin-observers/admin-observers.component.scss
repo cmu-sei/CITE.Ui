@@ -1,4 +1,4 @@
-// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+// Copyright 2023 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
@@ -11,7 +11,7 @@
   min-height: 600px;
 }
 
-.team-list-container {
+.observer-list-container {
   display: flex;
   flex-direction: column;
   flex: 8;
@@ -23,7 +23,6 @@
 .spacer {
   display: flex;
   flex: 1;
-  min-width: 40px;
 }
 
 .mat-table-all-users {
@@ -31,7 +30,7 @@
   max-height: 400px;
 }
 
-.mat-table-team-users {
+.mat-table-observers {
   overflow: auto;
   max-height: 600px;
 }
@@ -50,10 +49,4 @@
   margin-top: 10px;
   display: inline-flex;
   align-items: center;
-}
-
-.full-width {
-  display: flex;
-  flex: 1;
-  flex-direction: row;
 }

@@ -10,6 +10,7 @@ import { Evaluation, ItemStatus, Move } from 'src/app/generated/cite.api/model/m
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
+import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -51,6 +52,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     private evaluationDataService: EvaluationDataService,
     private scoringModelDataService: ScoringModelDataService,
     private scoringModelQuery: ScoringModelQuery,
+    private teamUserDataService: TeamUserDataService,
     private dialog: MatDialog,
     public dialogService: DialogService
   ) {
@@ -104,6 +106,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     // if an evaluation has been selected, load the evaluation, so that we have its details
     if (this.editEvaluation.id) {
       this.evaluationDataService.loadById(this.editEvaluation.id);
+      this.teamUserDataService.loadByEvaluation(this.editEvaluation.id);
     }
   }
 

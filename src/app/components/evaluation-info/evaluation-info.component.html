@@ -67,4 +67,17 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
     </button>
   </div>
+  <div class="right-buttons" *ngIf="!selectedTeamId">
+    <button
+      aria-label="Show Administration Page"
+      mat-icon-button
+      *ngIf="showAdminButton"
+      [routerLink]="['/admin']"
+      [queryParams]="{evaluation: selectedEvaluationId, move: currentMoveNumber, team: selectedTeamId, section: 'Evaluations'}"
+      style="outline: none;"
+      title="Administration"
+    >
+      <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
+    </button>
+  </div>
 </div>

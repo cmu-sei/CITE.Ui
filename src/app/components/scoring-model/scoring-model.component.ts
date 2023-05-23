@@ -81,7 +81,6 @@ export class ScoringModelComponent implements OnDestroy {
         this.currentMoveNumber = active.currentMoveNumber;
         // load the team data for the active team
         if (this.activeTeamId) {
-          console.log('Scoresheet active evaluation query loading submissions for team ' + this.activeTeamId);
           this.submissionDataService.loadByEvaluationTeam(active.id, this.activeTeamId);
         }
       }
@@ -137,7 +136,6 @@ export class ScoringModelComponent implements OnDestroy {
         this.activeTeamId = active.id;
         this.teamUsers = active.users;
         if (active.id) {
-          console.log('Scoresheet active team query loading submissions for team ' + active.id);
           // load the team data for this team
           this.submissionDataService.loadByEvaluationTeam(active.evaluationId, active.id);
         }
@@ -453,7 +451,6 @@ export class ScoringModelComponent implements OnDestroy {
         break;
     }
     if (newSubmission) {
-      console.log('Scoresheet selectDisplayedSubmission setting active submission ' + newSubmission.id);
       this.submissionDataService.setActive(newSubmission.id);
     }
   }

@@ -50,7 +50,7 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
       this.setDataSources();
     });
     this.teamUserQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(tUsers => {
-      this.teamUsers = tUsers;
+      this.teamUsers = tUsers.filter(tu => tu.teamId === this.teamId);
       this.setDataSources();
     });
     this.pageEvent = new PageEvent();
@@ -61,9 +61,11 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   ngOnInit() {
     this.sort.sort(<MatSortable>{ id: 'name', start: 'asc' });
     this.userDataSource.sort = this.sort;
-    this.teamUserDataService.loadByTeam(this.teamId);
+    // this.teamUserDataService.loadByTeam(this.teamId);
     this.filterControl.setValue('');
-  }
+    this.teamUsers = this.teamUserQuery.getAll().filter(tu => tu.teamId === this.teamId);
+    this.setDataSources();
+}
 
   clearFilter() {
     this.filterControl.setValue('');
@@ -74,8 +76,8 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
     // get users from the TeamUsers
     // sort the list and add it as the data source
     this.teamUserDataSource.data = this.teamUsers.sort((a, b) => {
-      const aName = a.user.name ? a.user.name.toLowerCase() : '';
-      const bName = b.user.name ? b.user.name.toLowerCase() : '';
+      const aName = this.getUserName(a.userId).toLowerCase();
+      const bName = this.getUserName(b.userId).toLowerCase();
       if (aName < bName) {
         return -1;
       } else if (aName > bName) {
@@ -96,6 +98,10 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
     this.userDataSource.paginator = this.paginator;
   }
 
+  getUserName(id: string) {
+    const user = this.userList.find(u => u.id === id);
+    return user ? user.name : '?';
+  }
 
   addUserToTeam(user: User): void {
     const teamUser = {

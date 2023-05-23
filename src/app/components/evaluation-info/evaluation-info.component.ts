@@ -62,7 +62,6 @@ export class EvaluationInfoComponent implements OnDestroy {
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(t => {
       if (t) {
-        console.log('active team query setting selectedTeamId to ' + t.id);
         this.selectedTeamId = t ? t.id : this.selectedTeamId;
       }
     });
@@ -78,7 +77,6 @@ export class EvaluationInfoComponent implements OnDestroy {
           break;
       }
       const team = params.get('team');
-      console.log('query params setting selectedTeamId to ' + team);
       this.selectedTeamId = team ? team : this.selectedTeamId;
     });
   }
@@ -135,7 +133,6 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   setSection(section: string) {
-    console.log('before changing section selectedTeamId is ' + this.selectedTeamId);
     this.changeSection.emit(section);
   }
 
@@ -145,7 +142,6 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   setActiveTeam(teamId: string) {
-    console.log('setting selecetdTeamId to ' + teamId);
     this.selectedTeamId = teamId;
     this.changeTeam.emit(teamId);
   }

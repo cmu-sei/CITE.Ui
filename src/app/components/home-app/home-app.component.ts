@@ -57,7 +57,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   section = Section;
   selectedSection = Section.dashboard;
   loggedInUserId = '';
-  canAccessAdminSection$ = this.userDataService.canAccessAdminSection;
+  canAccessAdminSection$ = new BehaviorSubject<boolean>(false);
   isAuthorizedUser = false;
   isSidebarOpen = true;
   private unsubscribe$ = new Subject();
@@ -160,6 +160,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             this.setTeams(teams, true);
           }
         }
+        if (user) {
+          this.canAccessAdminSection$.next(this.userDataService.canAccessAdminSection.getValue());
+        }
       });
     // observe active evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
@@ -237,7 +240,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (evaluation) {
       this.evaluationDataService.setActive(this.selectedEvaluationId);
       this.scoringModelDataService.loadById(evaluation.scoringModelId);
-      console.log('load submissions mine');
       this.submissionDataService.loadMineByEvaluation(this.selectedEvaluationId);
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
       this.teamDataService.loadMine(this.selectedEvaluationId);
@@ -298,7 +300,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         );
       }
       if (newSubmission) {
-        console.log('increment 2 submission setActive move ' + newSubmission.moveNumber);
         this.submissionDataService.setActive(newSubmission.id);
       }
     }
@@ -319,32 +320,25 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   setTeams(teams: Team[], setActive: boolean) {
-    console.log('setTeams is processing teams ' + teams.length);
     teams.forEach(t => {
       if (t.users.some(u => u.id === this.loggedInUserId)) {
-        console.log('set my team to ' + t.shortName + '-' + t.id);
         this.myTeamId = t.id;
         this.myTeamId$.next(t.id);
-        console.log('setTeams set my team to ' + t.id);
         if (setActive) {
           this.teamDataService.setActive(t.id);
         }
         if (this.waitingForActiveTeam) {
           this.processSubmissions(this.submissionQuery.getAll());
         }
-      } else {
-        console.log('did not find my team for my user ID ' + this.loggedInUserId + ' but my team ID is ' + this.myTeamId);
       }
     });
 
   }
 
   changeTeam(teamId: string) {
-    console.log('before changing active team to ' + teamId + ' my team is ' + this.myTeamId);
     this.teamDataService.setActive(teamId);
     this.submissionDataService.setActive('');
     this.submissionDataService.unload();
-    console.log('load submissions in change team ' + teamId);
     this.submissionDataService.loadByEvaluationTeam(this.selectedEvaluationId, teamId);
     this.router.navigate([], {
       queryParams: { team: teamId },
@@ -353,8 +347,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   changeSection(section: string) {
-    console.log('before changing to ' + section + ' my team is ' + this.myTeamId +
-      ' and the active team is ' + this.teamQuery.getActiveId());
     this.router.navigate([], {
       queryParams: { section: section },
       queryParamsHandling: 'merge',
@@ -362,55 +354,38 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   processSubmissions(submissions) {
-    console.log('process submissions');
     // process submissions
     const activeTeam = this.teamQuery.getActive() as Team;
     if (!activeTeam) {
-      console.log('processSubmissions  no active team');
       this.waitingForActiveTeam = true;
       return;
     }
     if (submissions.length === 0) {
-      console.log('No submissions, so trying to make a new submission');
       this.makeNewSubmission();
     // don't process the submissions if the selected team has changed, but the new submissions haven't been loaded yet
     } else if (submissions.some(s => s.teamId && s.teamId === activeTeam.id)) {
-      console.log('Processing submissions for team ' + activeTeam.id);
       let activeSubmission = this.activeSubmission$.getValue();
       activeSubmission = activeSubmission ? submissions.find(s => s.id === activeSubmission.id) : null;
       if (!activeSubmission) {
         let submission: Submission;
         const moveNumber = (this.moveQuery.getActive() as Move).moveNumber;
-        console.log('Processing submissions no ative submission. move number is ' + moveNumber);
         if (this.myTeamId === activeTeam.id) {
           submission = submissions.find(s => s.userId && +s.moveNumber === +moveNumber);
-          console.log('Processing submissions getting submission for my team');
         } else {
           submission = submissions.find(s =>
             !s.userId &&
             s.teamId === activeTeam.id
             && +s.moveNumber === +moveNumber
           );
-          console.log('Processing submissions getting submission for another team');
         }
         if (submission) {
-          console.log('Processing submissions setting active submission ' + submission.id);
           this.submissionDataService.setActive(submission.id);
         } else {
-          console.log('Processing submissions submission was not found!' + submission.id);
           this.makeNewSubmission();
         }
       } else {
-        console.log('process submissions emitting active submission ' + activeSubmission.id);
         this.activeSubmission$.next(activeSubmission);
       }
-    } else {
-      console.log('did not process submissions');
-      submissions.forEach(s => {
-        if (s.teamId) {
-          console.log('Got submissions for the wrong team - ' + s.teamId);
-        }
-      });
     }
   }
 
@@ -427,7 +402,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       status: ItemStatus.Active,
       userId: userId,
     } as Submission;
-    console.log('adding a new submission');
     this.submissionDataService.add(submission);
   }
 

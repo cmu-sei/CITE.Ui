@@ -1,0 +1,138 @@
+<!--
+Copyright 2023 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license, please see LICENSE.md in the
+project root for license information or contact permission@sei.cmu.edu for full terms.
+-->
+
+<div class="cssLayoutRowStartCenter">
+
+  <div class="spacer">&nbsp;</div>
+
+  <div class="user-list-container mat-elevation-z8">
+
+    <div class="sp-icon">
+      <mat-icon
+        class="mdi-24px"
+        fontIcon="mdi-account-group"
+      ></mat-icon>
+    <span style="margin-left: 10px">
+      Evaluation Users
+    </span>
+    </div>
+
+    <mat-card
+      *ngIf="false"
+      style="display: flex; justify-content: center; align-items: center;"
+    >
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </mat-card>
+
+    <mat-table
+      class="mat-table-all-users"
+      #table
+      [dataSource]="teamUserDataSource"
+      matSort
+    >
+      <ng-container matColumnDef="team">
+        <mat-header-cell *matHeaderCellDef
+          >Team</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          {{ getTeamName(element.teamId) }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef
+          >User</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          {{ getUserName(element.userId) }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div>
+            <button mat-stroked-button (click)="addObserver(element.id)">
+              Add
+            </button>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedTeamUserColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedTeamUserColumns"></mat-row>
+    </mat-table>
+
+    <div *ngIf="teamUserDataSource.filteredData.length === 0">No results found</div>
+  </div>
+
+  <div class="spacer">&nbsp;</div>
+
+  <div class="observer-list-container mat-elevation-z8">
+
+    <div class="sp-icon">
+      <mat-icon
+          class="mdi-24px"
+          fontIcon="mdi-account-multiple"
+      ></mat-icon>
+      <span style="margin-left: 10px">
+        Observers
+      </span>
+    </div>
+
+    <mat-card
+      *ngIf="false"
+      style="display: flex; justify-content: center; align-items: center;"
+    >
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </mat-card>
+
+    <mat-table
+      class="mat-table-all-users"
+      #table
+      [dataSource]="observerDataSource"
+      matSort
+    >
+      <ng-container matColumnDef="team">
+        <mat-header-cell *matHeaderCellDef
+          >Team</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          {{ getTeamName(element.teamId) }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef
+          >User</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          {{ getUserName(element.userId) }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div>
+            <button mat-stroked-button (click)="removeObserver(element.id)">
+              Remove
+            </button>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedObserverColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedObserverColumns"></mat-row>
+    </mat-table>
+
+  </div>
+
+  <div class="spacer">&nbsp;</div>
+
+</div>
