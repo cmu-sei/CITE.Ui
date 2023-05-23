@@ -418,36 +418,36 @@ export class ScoringModelComponent implements OnDestroy {
     switch (selection) {
       case 'user':
         newSubmission = submissions.find(s =>
-          s.moveNumber === this.displayedMoveNumber &&
-            s.userId === this.loggedInUserId);
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === this.loggedInUserId);
         break;
       case 'team':
         newSubmission = submissions.find(s =>
-          s.moveNumber === this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId !== null &&
-            !s.scoreIsAnAverage);
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId !== null &&
+          !s.scoreIsAnAverage);
         break;
       case 'team-avg':
         newSubmission = submissions.find(s =>
-          s.moveNumber === this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId !== null &&
-            s.scoreIsAnAverage);
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId !== null &&
+          s.scoreIsAnAverage);
         break;
       case 'group-avg':
         newSubmission = submissions.find(s =>
-          s.moveNumber === this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId === null &&
-            s.scoreIsAnAverage);
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId === null &&
+          s.scoreIsAnAverage);
         break;
       case 'official':
         newSubmission = submissions.find(s =>
-          s.moveNumber === this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId === null &&
-            s.groupId === null);
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId === null &&
+          s.groupId === null);
         break;
       default:
         break;
