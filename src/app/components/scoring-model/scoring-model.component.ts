@@ -96,7 +96,7 @@ export class ScoringModelComponent implements OnDestroy {
             } else {
               this.submissionDataService.loadTeamTypeAverageSubmission(active);
             }
-          } else {
+          } else if (this.displayedSubmission && this.displayedSubmission.id !== active.id) {
             this.submissionDataService.loadById(active.id);
           }
         }

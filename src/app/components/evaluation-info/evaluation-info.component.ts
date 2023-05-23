@@ -4,15 +4,15 @@
 
 import { Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Evaluation, ItemStatus, Move, Submission, Team } from 'src/app/generated/cite.api/model/models';
+import { Evaluation, ItemStatus, Move, Team } from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
+import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
 import { Section } from 'src/app/components/home-app/home-app.component';
-import { UserDataService } from 'src/app/data/user/user-data.service';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-evaluation-info',
@@ -24,108 +24,50 @@ export class EvaluationInfoComponent implements OnDestroy {
   @Input() showMoveArrows: boolean;
   @Input() teamList: Team[];
   @Input() myTeamId: string;
-  @Input() submissionList: Submission[];
-  @Output() setDisplayedMove = new EventEmitter<string>();
-  evaluationList: Evaluation[] = [];
-  evaluationList$ = this.evaluationQuery.selectAll();
+  @Input() evaluationList: Evaluation[];
+  @Input() moveList: Move[];
+  @Output() incrementActiveMove = new EventEmitter<Move>();
+  @Output() decrementActiveMove = new EventEmitter<Move>();
+  @Output() changeTeam = new EventEmitter<string>();
+  @Output() changeSection = new EventEmitter<string>();
+  @Output() changeEvaluation = new EventEmitter<string>();
   selectedEvaluationId = '';
   selectedSection = Section.dashboard;
   scoresheetSection = Section.scoresheet;
-  moveList: Move[] = [];
   displayedMoveNumber = -1;
   currentMoveNumber = -1;
   selectedTeamId = '';
-  loggedInUserId = '';
-  loggedInUser$ = this.userDataService.loggedInUser;
-  teams$ = this.teamQuery.selectAll();
-  moves$ = (this.moveQuery.selectAll() as Observable<Move[]>);
   private unsubscribe$ = new Subject();
 
   constructor(
     private evaluationQuery: EvaluationQuery,
+    private moveDataService: MoveDataService,
     private moveQuery: MoveQuery,
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
-    private userDataService: UserDataService,
     private activatedRoute: ActivatedRoute,
     private router: Router
   ) {
-    // observe the vital information and process it when it is all present
-    combineLatest([this.evaluationList$, this.moves$, this.loggedInUser$, this.teams$])
-      .pipe(takeUntil(this.unsubscribe$)).subscribe(([evaluationList, moves, user, teams]) => {
-        this.evaluationList = evaluationList;
-        let evaluation: Evaluation;
-        if (this.selectedEvaluationId) {
-          evaluation = evaluationList.find(e => e.id === this.selectedEvaluationId);
-          this.currentMoveNumber = evaluation.currentMoveNumber;
-        } else if (evaluationList && evaluationList.length === 1) {
-          evaluation = evaluationList[0];
-          this.selectedEvaluationId = evaluation.id;
-          this.currentMoveNumber = evaluation.currentMoveNumber;
-        }
-        this.moveList = moves.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
-        if (evaluation && this.moveList.length > 0 && +this.displayedMoveNumber === -1) {
-          this.displayedMoveNumber = evaluation.currentMoveNumber;
-        }
-        console.log('eval-info displayed move number is ' + this.displayedMoveNumber);
-        if (evaluation && teams.length > 0) {
-          this.selectedEvaluationId = evaluation.id;
-          this.loggedInUserId = user.profile.sub;
-          if (!this.selectedTeamId) {
-            const selectedTeam = teams.find(t => t.users.some(u => u.id === this.loggedInUserId));
-            this.selectedTeamId = selectedTeam ? selectedTeam.id : '';
-            this.teamDataService.setActive(selectedTeam.id);
-          }
-          // if (submissions.length === 0) {
-          //   this.makeNewSubmission();
-          // // don't process the submissions if the selected team has changed, but the new submissions haven't been loaded yet
-          // } else if (submissions.some(s => s.teamId && s.teamId === this.selectedTeamId)) {
-          //   console.log('Processing submissions for team ' + this.selectedTeamId);
-          //   if (!this.activeSubmission) {
-          //     let submission: Submission;
-          //     const moveNumber = this.displayedMoveNumber > -1 ? this.displayedMoveNumber : evaluation.currentMoveNumber;
-          //     if (this.myTeamId === this.selectedTeamId) {
-          //       submission = submissions.find(s => s.userId && +s.moveNumber === +moveNumber);
-          //     } else {
-          //       submission = submissions.find(s =>
-          //         !s.userId &&
-          //         s.teamId === this.selectedTeamId
-          //         && +s.moveNumber === +moveNumber
-          //       );
-          //     }
-          //     if (submission) {
-          //       console.log('Eval-Info combineLatest setting active submission ' + submission.id);
-          //       this.submissionDataService.setActive(submission.id);
-          //     } else {
-          //       this.makeNewSubmission();
-          //     }
-          //   }
-          // } else {
-          //   submissions.forEach(s => {
-          //     if (s.teamId) {
-          //       console.log('Got submissions for the wrong team - ' + s.teamId);
-          //     }
-          //   });
-          // }
-        }
-      });
-    // // observe active submission
-    // this.activeSubmission$.pipe(takeUntil(this.unsubscribe$)).subscribe(activeSubmission => {
-    //   if (activeSubmission && this.activeSubmission && this.activeSubmission === activeSubmission) {
-    //     this.activeSubmission = activeSubmission;
-    //     this.displayedMoveNumber = activeSubmission.moveNumber;
-    //     console.log('ActiveSubmission set (move, userId, teamId) = (' +
-    //       activeSubmission.moveNumber + ', ' + activeSubmission.userId + ', ' + activeSubmission.teamId + ')');
-    //   } else {
-    //     console.log('Observed an ActiveSubmission change with nothing to do.  Displayed move is ' + this.displayedMoveNumber);
-    //   }
-    // });
-    // subscribe to route changes
-    this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
-      const evaluationId = params.get('evaluation');
-      if (evaluationId) {
-        this.selectedEvaluationId = evaluationId;
+    // observe the active evaluation
+    (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(e => {
+      if (e) {
+        this.selectedEvaluationId = e.id;
+        this.currentMoveNumber = e.currentMoveNumber;
       }
+    });
+    // observe the active move
+    (this.moveQuery.selectActive() as Observable<Move>).pipe(takeUntil(this.unsubscribe$)).subscribe(m => {
+      this.displayedMoveNumber = m ? m.moveNumber : this.displayedMoveNumber;
+    });
+    // observe the active team
+    (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(t => {
+      if (t) {
+        console.log('active team query setting selectedTeamId to ' + t.id);
+        this.selectedTeamId = t ? t.id : this.selectedTeamId;
+      }
+    });
+    // observe route changes
+    this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       const section = params.get('section');
       switch (section) {
         case 'scoresheet':
@@ -135,26 +77,18 @@ export class EvaluationInfoComponent implements OnDestroy {
           this.selectedSection = Section.dashboard;
           break;
       }
+      const team = params.get('team');
+      console.log('query params setting selectedTeamId to ' + team);
+      this.selectedTeamId = team ? team : this.selectedTeamId;
     });
   }
 
-  // makeNewSubmission() {
-  //   const evaluation = this.evaluationList.find(e => e.id === this.selectedEvaluationId);
-  //   const userId = this.selectedTeamId !== this.myTeamId ? null : this.loggedInUserId;
-  //   const submission = {
-  //     teamId: this.selectedTeamId ? this.selectedTeamId : this.myTeamId,
-  //     evaluationId: evaluation.id,
-  //     moveNumber: evaluation.currentMoveNumber,
-  //     score: 0,
-  //     scoringModelId: evaluation.scoringModelId,
-  //     status: ItemStatus.Active,
-  //     userId: userId,
-  //   } as Submission;
-  //   this.submissionDataService.add(submission);
-  // }
+  sortedMoveList() {
+    return this.moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
+  }
 
   isMinMoveNumber() {
-    return this.moveList.length === 0 ? true : +this.displayedMoveNumber === +this.moveList[0].moveNumber;
+    return this.sortedMoveList().length === 0 ? true : +this.displayedMoveNumber === +this.sortedMoveList()[0].moveNumber;
   }
 
   isMaxMoveNumber() {
@@ -162,11 +96,11 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   getMinMoveNumber() {
-    return this.moveList.length > 0 ? this.moveList[0].moveNumber : +this.currentMoveNumber;
+    return this.sortedMoveList().length > 0 ? this.sortedMoveList()[0].moveNumber : +this.currentMoveNumber;
   }
 
   getMaxMoveNumber() {
-    return this.moveList.length > 0 ? this.moveList[this.moveList.length - 1].moveNumber : +this.currentMoveNumber;
+    return this.sortedMoveList().length > 0 ? this.sortedMoveList()[this.moveList.length - 1].moveNumber : +this.currentMoveNumber;
   }
 
   getMoveStyle() {
@@ -179,99 +113,41 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   incrementDisplayedMove() {
-    const nextMoveIndex = this.moveList.findIndex(m => +m.moveNumber === +this.displayedMoveNumber) + 1;
+    const nextMoveIndex = this.sortedMoveList().findIndex(m => +m.moveNumber === +this.displayedMoveNumber) + 1;
     if (nextMoveIndex < this.moveList.length) {
-      this.displayedMoveNumber = this.moveList[nextMoveIndex].moveNumber;
-      this.setDisplayedMove.emit(this.moveList[nextMoveIndex].id);
+      this.displayedMoveNumber = this.sortedMoveList()[nextMoveIndex].moveNumber;
+      this.incrementActiveMove.emit(this.sortedMoveList()[nextMoveIndex]);
     }
-    // const displayedSubmission = this.submissionQuery.getActive() as Submission;
-    // const submissions = this.submissionQuery.getAll();
-    // let newSubmission = submissions.find(s =>
-    //   s.moveNumber === +newMoveNumber  &&
-    //   s.userId === displayedSubmission.userId  &&
-    //   s.teamId === displayedSubmission.teamId  &&
-    //   s.groupId === displayedSubmission.groupId  &&
-    //   s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
-    // );
-    // if (newSubmission) {
-    //   console.log('increment 1 submission setActive move ' + newSubmission.moveNumber);
-    //   this.submissionDataService.setActive(newSubmission.id);
-    // } else {
-    //   // the new submission would not be allowed, so select the default submission
-    //   if (this.myTeamId === this.selectedTeamId) {
-    //     // select the user score
-    //     newSubmission = submissions.find(s =>
-    //       +s.moveNumber === +newMoveNumber  &&
-    //       s.userId  &&
-    //       s.teamId &&
-    //       !s.groupId  &&
-    //       !s.scoreIsAnAverage
-    //     );
-    //   } else {
-    //     // select the team score
-    //     newSubmission = submissions.find(s =>
-    //       +s.moveNumber === +newMoveNumber  &&
-    //       !s.userId  &&
-    //       s.teamId &&
-    //       !s.groupId  &&
-    //       !s.scoreIsAnAverage
-    //     );
-    //   }
-    //   if (newSubmission) {
-    //     console.log('increment 2 submission setActive move ' + newSubmission.moveNumber);
-    //     this.submissionDataService.setActive(newSubmission.id);
-    //   }
-    // }
   }
 
   decrementDisplayedMove() {
-    const nextMoveIndex = this.moveList.findIndex(m => +m.moveNumber === +this.displayedMoveNumber) - 1;
+    const nextMoveIndex = this.sortedMoveList().findIndex(m => +m.moveNumber === +this.displayedMoveNumber) - 1;
     if (nextMoveIndex >= 0) {
-      this.displayedMoveNumber = this.moveList[nextMoveIndex].moveNumber;
-      this.setDisplayedMove.emit(this.moveList[nextMoveIndex].id);
+      this.displayedMoveNumber = this.sortedMoveList()[nextMoveIndex].moveNumber;
+      this.decrementActiveMove.emit(this.sortedMoveList()[nextMoveIndex]);
     }
-    // const displayedSubmission = this.submissionQuery.getActive() as Submission;
-    // const newSubmission = this.submissionList
-    //   .find(s => +s.moveNumber === +newMoveNumber
-    //     && s.userId === displayedSubmission.userId
-    //     && s.teamId === displayedSubmission.teamId
-    //     && s.groupId === displayedSubmission.groupId
-    //     && s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage);
-    // if (newSubmission) {
-    //   console.log('decrement submission setActive move ' + newSubmission.moveNumber);
-    //   this.submissionDataService.setActive(newSubmission.id);
-    // }
   }
 
   selectEvaluation(evaluationId: string) {
     if (evaluationId !== this.selectedEvaluationId) {
-      this.displayedMoveNumber = -1;
-      this.selectedTeamId = '';
-      this.selectedEvaluationId = '';
-      this.moveList = [];
-      this.teamDataService.unload();
-      this.router.navigate([], {
-        queryParams: { evaluation: evaluationId },
-        queryParamsHandling: 'merge',
-      });
+      this.changeEvaluation.emit(evaluationId);
     }
   }
 
   setSection(section: string) {
-    this.router.navigate([], {
-      queryParams: { section: section },
-      queryParamsHandling: 'merge',
-    });
+    console.log('before changing section selectedTeamId is ' + this.selectedTeamId);
+    this.changeSection.emit(section);
   }
 
   getTeamShortName() {
     const myTeam = this.teamList.find(t => t.id === this.myTeamId);
-    return myTeam ? myTeam.shortName : this.myTeamId;
+    return myTeam ? myTeam.shortName : '';
   }
 
   setActiveTeam(teamId: string) {
+    console.log('setting selecetdTeamId to ' + teamId);
     this.selectedTeamId = teamId;
-    this.teamDataService.setActive(teamId);
+    this.changeTeam.emit(teamId);
   }
 
   activeEvaluations(): Evaluation[] {

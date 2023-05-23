@@ -86,12 +86,10 @@ export class DashboardComponent implements OnDestroy {
       if (moves && moves.length > 0) {
         const currentMove = moves.find(m => +m.moveNumber === +this.selectedEvaluation.currentMoveNumber);
         this.currentMoveNumber = currentMove ? currentMove.moveNumber : this.currentMoveNumber;
-        console.log('Dashboard set the current move to ' + this.currentMoveNumber);
         this.actionList = this.allActions
           .filter(a => +a.moveNumber === +this.currentMoveNumber)
           .sort((a, b) => a.description < b.description ? -1 : 1);
       } else {
-        console.log('Dashboard reset the current move');
         this.currentMoveNumber = -1;
         this.actionList = [];
       }
@@ -111,7 +109,6 @@ export class DashboardComponent implements OnDestroy {
         this.teamUsers = active.users;
         this.activeTeamId = active.id;
         if (active.id) {
-          console.log('Dashboard loading articles and roles for team ' + active.id);
           // load the team data for this team
           this.actionDataService.loadByEvaluationTeam(active.evaluationId, active.id);
           this.roleDataService.loadByEvaluationTeam(active.evaluationId, active.id);
@@ -120,9 +117,7 @@ export class DashboardComponent implements OnDestroy {
     });
     // observe the Action list
     this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(actions => {
-      console.log('Dashboard received '  + actions.length + ' actions for team ');
       this.allActions = actions;
-      console.log('Dashboard displaying actions for move ' + this.currentMoveNumber);
       this.actionList = actions
         .filter(a => +a.moveNumber === +this.currentMoveNumber)
         .sort((a, b) => a.description < b.description ? -1 : 1);

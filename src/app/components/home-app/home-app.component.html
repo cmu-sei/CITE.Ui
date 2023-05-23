@@ -42,10 +42,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <app-evaluation-info
         [showAdminButton]="canAccessAdminSection$ | async"
         [showMoveArrows]="selectedSection === section.scoresheet"
-        [teamList]="teamList"
+        [teamList]="teamList$ | async"
         [myTeamId]="myTeamId$ | async"
-        [submissionList]="submissionList | async"
-        (setDisplayedMove)="setDisplayedMove($event)"
+        [evaluationList]="evaluationList$ | async"
+        [moveList]="moveList$ | async"
+        (incrementActiveMove)="incrementActiveMove($event)"
+        (decrementActiveMove)="decrementActiveMove($event)"
+        (changeTeam)="changeTeam($event)"
+        (changeSection)="changeSection($event)"
+        (changeEvaluation)="changeEvaluation($event)"
         ></app-evaluation-info>
     </div>
     <div class="app-content-container"
@@ -66,8 +71,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="app-score-container mat-elevation-z8" autosize>
         <app-score-card
           *ngIf="unreadArticles$ && moveList$"
-          [selectedScoringModel]="selectedScoringModel | async"
-          [submissionList]="submissionList | async"
+          [selectedScoringModel]="activeScoringModel$ | async"
+          [submissionList]="submissionList$ | async"
+          [activeSubmission]="activeSubmission$ | async"
         ></app-score-card>
       </div>
     </div>

@@ -4,7 +4,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="sticky-card" *ngIf="displayedMoveNumber >=0">
+<div class="sticky-card" *ngIf="activeSubmission">
 
   <div class="score-card-container sticky-card">
     <h1>Score Summary</h1>
@@ -51,4 +51,4 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
 
 </div>
-<div *ngIf="displayedMoveNumber < 0">No Active Submission</div>
+<div *ngIf="!activeSubmission">No Active Submission</div>
