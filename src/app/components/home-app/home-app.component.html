@@ -17,7 +17,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   ></app-topbar>
 
   <div
-    *ngIf="apiIsSick"
+    *ngIf="apiIsSick && waitedLongEnough"
     class="app-header-container background text"
     autosize
   >
@@ -27,7 +27,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
 
   <div
-    *ngIf="!apiIsSick && expectingMyEvaluations && evaluationList && evaluationList.length === 0"
+    *ngIf="!apiIsSick && waitedLongEnough && (!evaluationList || evaluationList.length === 0)"
     class="app-header-container"
   >
     <h1>You are not a team member for an active evaluation.</h1>

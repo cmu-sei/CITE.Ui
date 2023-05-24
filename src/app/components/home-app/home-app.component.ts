@@ -74,7 +74,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   evaluationList$ = this.evaluationQuery.selectAll();
   submissionList$ = this.submissionQuery.selectAll();
   displayedSubmission: Submission;
-  expectingMyEvaluations = false;
+  waitedLongEnough = false;
   isReady = false;
   currentMoveNumber = -1;
   userCurrentSubmission: Submission;
@@ -129,7 +129,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.topbarText = numberOfEvaluations !== 1 ?
           this.topbarTextBase + ' (' + numberOfEvaluations + ' Active Incidents)' :
           this.topbarTextBase + ' (1 Active Incident)';
-        this.expectingMyEvaluations = numberOfEvaluations === 0;
         let evaluation: Evaluation;
         // if an evaluation has been selected, make it the active one
         if (this.selectedEvaluationId && evaluations && evaluations.length > 0) {
@@ -155,7 +154,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
           if (teams.length > 0 && user.profile) {
             this.loggedInUserId = user.profile.sub;
-            this.expectingMyEvaluations = true;
             // set this user's team and optionally the active team
             this.setTeams(teams, true);
           }
@@ -233,6 +231,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           console.log(err);
         });
     }
+    const thisScope = this;
+    setTimeout(function() {
+      thisScope.waitedLongEnough = true;
+    }, 500);
   }
 
   loadEvaluationData() {
