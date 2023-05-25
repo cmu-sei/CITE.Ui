@@ -99,6 +99,12 @@ export class SignalRService implements OnDestroy {
     this.isJoined = false;
   }
 
+  public switchTeam(oldTeamId: string, newTeamId: string) {
+    if (this.isJoined) {
+      this.hubConnection.invoke('switchTeam', [oldTeamId, newTeamId]);
+    }
+  }
+
   private addHandlers() {
     this.addActionHandlers();
     this.addEvaluationHandlers();

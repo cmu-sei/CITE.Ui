@@ -234,7 +234,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     const thisScope = this;
     setTimeout(function() {
       thisScope.waitedLongEnough = true;
-    }, 500);
+    }, 1000);
   }
 
   loadEvaluationData() {
@@ -328,16 +328,22 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.myTeamId$.next(t.id);
         if (setActive) {
           this.teamDataService.setActive(t.id);
+          this.signalRService.switchTeam(t.id, t.id);
         }
         if (this.waitingForActiveTeam) {
           this.processSubmissions(this.submissionQuery.getAll());
         }
       }
     });
-
   }
 
   changeTeam(teamId: string) {
+    let oldTeamId = this.teamQuery.getActiveId();
+    if (oldTeamId !== teamId) {
+      // make sure to send a Guid for old team ID
+      oldTeamId = oldTeamId ? oldTeamId : teamId;
+      this.signalRService.switchTeam(oldTeamId, teamId);
+    }
     this.teamDataService.setActive(teamId);
     this.submissionDataService.setActive('');
     this.submissionDataService.unload();
