@@ -22,7 +22,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="five-cell center-self">
           <b>Actions:</b>
         </div>
-        <div class="right-cell">
+        <div class="right-cell" *ngIf="myTeamId === activeTeamId">
           <button
             mat-icon-button
             ngxClipboard
@@ -86,6 +86,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             (change)="checkAction(action.id, $event.checked)"
             [matTooltip]="changedBy(action.id)"
             *ngIf="!isActionEditMode"
+            [disabled]="myTeamId !== activeTeamId"
           ></mat-checkbox>{{ action.description }}
         </div>
       </div>
@@ -98,7 +99,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="five-cell center-self">
           <b>Roles:</b>
         </div>
-        <div class="right-cell">
+        <div class="right-cell" *ngIf="myTeamId === activeTeamId">
           <button
             mat-icon-button
             ngxClipboard
@@ -166,6 +167,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             [value]="role.users"
             multiple
             (selectionChange)="updateRoleUsers(role, $event)"
+            [disabled]="myTeamId !== activeTeamId"
           >
             <mat-option *ngFor="let user of teamUsers" [value]="user">{{ user.name }}</mat-option>
           </mat-select>

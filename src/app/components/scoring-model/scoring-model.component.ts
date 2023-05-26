@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
@@ -30,10 +30,11 @@ import { Title} from '@angular/platform-browser';
   templateUrl: './scoring-model.component.html',
   styleUrls: ['./scoring-model.component.scss'],
 })
-export class ScoringModelComponent {
+export class ScoringModelComponent implements OnDestroy {
+  @Input() myTeamId: string;
   loggedInUserId = '';
   userId = '';
-  teamId = '';
+  activeTeamId = '';
   teamUsers: User[];
   currentMoveNumber = -1;
   displayedMoveNumber = -1;
@@ -75,19 +76,18 @@ export class ScoringModelComponent {
     this.titleService.setTitle('CITE Scoresheet');
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.evaluationQuery.getActiveId();
-      active = active ? active : { id: '', currentMoveNumber: -1} as Evaluation;
-      if (active.id === activeId) {
+      if (active) {
         this.selectedEvaluation = active;
         this.currentMoveNumber = active.currentMoveNumber;
+        // load the team data for the active team
+        if (this.activeTeamId) {
+          this.submissionDataService.loadByEvaluationTeam(active.id, this.activeTeamId);
+        }
       }
     });
-
     // observe the active submission
     (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.submissionQuery.getActiveId();
-      active = active ? active : { id: '', moveNumber: -1, submissionCategories: []} as Submission;
-      if (active.id === activeId) {
+      if (active) {
         if (active.submissionCategories.length === 0) {
           if (active.scoreIsAnAverage) {
             if (active.teamId) {
@@ -95,7 +95,7 @@ export class ScoringModelComponent {
             } else {
               this.submissionDataService.loadTeamTypeAverageSubmission(active);
             }
-          } else {
+          } else if (this.displayedSubmission && this.displayedSubmission.id !== active.id) {
             this.submissionDataService.loadById(active.id);
           }
         }
@@ -124,26 +124,23 @@ export class ScoringModelComponent {
         this.setFormatting();
       }
     });
-
     // observe the selected scoring model
     (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.scoringModelQuery.getActiveId();
-      active = active ? active : { id: '' } as ScoringModel;
-      if (active.id === activeId) {
+      if (active) {
         this.selectedScoringModel = active;
       }
     });
-
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.teamQuery.getActiveId();
-      active = active ? active : { id: '' } as Team;
-      if (active.id === activeId) {
-        this.teamId = active.id;
+      if (active) {
+        this.activeTeamId = active.id;
         this.teamUsers = active.users;
+        if (active.id) {
+          // load the team data for this team
+          this.submissionDataService.loadByEvaluationTeam(active.evaluationId, active.id);
+        }
       }
     });
-
     // observe the logged in user ID
     this.userDataService.loggedInUser
       .pipe(takeUntil(this.unsubscribe$))
@@ -153,7 +150,6 @@ export class ScoringModelComponent {
           this.userId = this.loggedInUserId;
         }
       });
-
     // observe the submission list
     this.submissionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
       this.submissionList = submissions;
@@ -162,7 +158,6 @@ export class ScoringModelComponent {
       this.showOfficialScore = this.submissionList.some(
         s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && !s.groupId);
     });
-
     // observe the permissions
     this.userDataService.canModify.pipe(takeUntil(this.unsubscribe$)).subscribe(canModify => {
       this.hasCanModifyPermission = canModify;
@@ -328,6 +323,10 @@ export class ScoringModelComponent {
     return theUser ? theUser.name : '';
   }
 
+  getSubmissionStatusText() {
+    return this.displayedSubmission.status === ItemStatus.Complete ? 'Submitted' : 'Unsubmitted';
+  }
+
   completeSubmission() {
     // if not the curret move, score cannot be reopened, so ask for confirmation
     if (this.displayedMoveNumber !== this.currentMoveNumber) {
@@ -417,36 +416,36 @@ export class ScoringModelComponent {
     switch (selection) {
       case 'user':
         newSubmission = submissions.find(s =>
-          s.moveNumber === this.displayedMoveNumber &&
-            s.userId === this.loggedInUserId);
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === this.loggedInUserId);
         break;
       case 'team':
         newSubmission = submissions.find(s =>
-          s.moveNumber === this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId !== null &&
-            !s.scoreIsAnAverage);
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId !== null &&
+          !s.scoreIsAnAverage);
         break;
       case 'team-avg':
         newSubmission = submissions.find(s =>
-          s.moveNumber === this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId !== null &&
-            s.scoreIsAnAverage);
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId !== null &&
+          s.scoreIsAnAverage);
         break;
       case 'group-avg':
         newSubmission = submissions.find(s =>
-          s.moveNumber === this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId === null &&
-            s.scoreIsAnAverage);
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId === null &&
+          s.scoreIsAnAverage);
         break;
       case 'official':
         newSubmission = submissions.find(s =>
-          s.moveNumber === this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId === null &&
-            s.groupId === null);
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId === null &&
+          s.groupId === null);
         break;
       default:
         break;
@@ -513,6 +512,11 @@ export class ScoringModelComponent {
       queryParams: { section: section },
       queryParamsHandling: 'merge',
     });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next(null);
+    this.unsubscribe$.complete();
   }
 
 }

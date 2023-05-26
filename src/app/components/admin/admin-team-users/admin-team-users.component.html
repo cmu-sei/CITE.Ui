@@ -4,7 +4,8 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="cssLayoutRowStartCenter">
+<div class="full-width">
+
   <div class="user-list-container mat-elevation-z8">
 
     <div class="sp-icon">
@@ -88,58 +89,70 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </mat-paginator>
   </div>
 
-  <div style="margin-left: 20px;">
-    <div class="team-list-container mat-elevation-z8">
+  <div class="spacer">&nbsp;</div>
 
-      <div class="sp-icon">
-        <mat-icon
-            class="mdi-24px"
-            fontIcon="mdi-account-group"
-        ></mat-icon>
-        <span style="margin-left: 10px">
-          Team Users
-        </span>
-      </div>
+  <div class="team-list-container mat-elevation-z8">
 
-      <mat-card
-        *ngIf="false"
-        style="display: flex; justify-content: center; align-items: center;"
-      >
-        <mat-progress-spinner color="primary" mode="indeterminate">
-        </mat-progress-spinner>
-      </mat-card>
-
-      <mat-table
-        class="mat-table-all-users"
-        #table
-        [dataSource]="teamUserDataSource"
-        matSort
-      >
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header
-            >User Name</mat-header-cell
-          >
-          <mat-cell *matCellDef="let element">
-            <div *ngIf="element.name !== null">{{ element.name }}</div>
-            <div *ngIf="element.name === null">{{ element.id }}</div>
-          </mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="id">
-          <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <div>
-              <button mat-stroked-button (click)="removeUserFromTeam(element)">
-                Remove
-              </button>
-            </div>
-          </mat-cell>
-        </ng-container>
-
-        <mat-header-row *matHeaderRowDef="displayedUserColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedUserColumns"></mat-row>
-      </mat-table>
-
+    <div class="sp-icon">
+      <mat-icon
+          class="mdi-24px"
+          fontIcon="mdi-account-group"
+      ></mat-icon>
+      <span style="margin-left: 10px">
+        Team Users
+      </span>
     </div>
+
+    <mat-card
+      *ngIf="false"
+      style="display: flex; justify-content: center; align-items: center;"
+    >
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </mat-card>
+
+    <mat-table
+      class="mat-table-all-users"
+      #table
+      [dataSource]="teamUserDataSource"
+      matSort
+    >
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >User Name</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          <div>{{ getUserName(element.userId) }}</div>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="isObserver">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Observer</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          <mat-checkbox
+            [checked]="element.isObserver"
+            (change)="setObserverValue(element.id, $event.checked)"
+          ></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div>
+            <button mat-stroked-button (click)="removeUserFromTeam(element)">
+              Remove
+            </button>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedTeamUserColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedTeamUserColumns"></mat-row>
+    </mat-table>
+
   </div>
+
 </div>

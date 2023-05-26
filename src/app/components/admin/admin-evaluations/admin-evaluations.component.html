@@ -108,7 +108,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           [evaluationId]="evaluation.id"
         ></app-admin-moves>
       </mat-expansion-panel>
-      <mat-expansion-panel>
+      <mat-expansion-panel class="bottom-space">
         <mat-expansion-panel-header>
           <h4>Teams</h4>
         </mat-expansion-panel-header>
@@ -116,6 +116,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
           [evaluationId]="evaluation.id"
         >
         </app-admin-teams>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <h4>Observers</h4>
+        </mat-expansion-panel-header>
+        <app-admin-observers
+          [evaluationId]="evaluation.id"
+        >
+        </app-admin-observers>
       </mat-expansion-panel>
     </div>
   </mat-expansion-panel>

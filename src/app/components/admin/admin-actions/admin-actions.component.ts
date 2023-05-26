@@ -122,7 +122,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     } else {
       if (this.selectedEvaluationId && (this.selectedMoveNumber >= 0) && this.selectedTeamId) {
         this.actionDataService.loadByEvaluationMoveTeam(this.selectedEvaluationId, +this.selectedMoveNumber, this.selectedTeamId);
-        this.teamDataService.loadMine();
+        this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
       }
     }
   }

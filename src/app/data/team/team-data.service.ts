@@ -85,14 +85,14 @@ export class TeamDataService {
         ]) =>
           items
             ? (items as Team[])
-                .sort((a: Team, b: Team) =>
-                  this.sortTeams(a, b, sortColumn, sortIsAscending)
-                )
-                .filter(
-                  (team) =>
-                    ('' + team.name)
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase()) ||
+              .sort((a: Team, b: Team) =>
+                this.sortTeams(a, b, sortColumn, sortIsAscending)
+              )
+              .filter(
+                (team) =>
+                  ('' + team.name)
+                    .toLowerCase()
+                    .includes(filterTerm.toLowerCase()) ||
                     ('' + team.shortName)
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase()) ||
@@ -102,35 +102,10 @@ export class TeamDataService {
                     team.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase())
-                )
+              )
             : []
       )
     );
-    // this.selected = combineLatest([
-    //   this.teamList,
-    //   this._requestedTeamId$,
-    // ]).pipe(
-    //   map(([teamList, requestedTeamId]) => {
-    //     let selectedTeam: Team = null;
-    //     if (teamList && teamList.length > 0) {
-    //       if (requestedTeamId) {
-    //         selectedTeam = teamList.find((team) => team.id === requestedTeamId);
-    //         if (selectedTeam && selectedTeam.id !== this._requestedTeamId) {
-    //           this.teamStore.setActive(requestedTeamId);
-    //           this._requestedTeamId = requestedTeamId;
-    //         }
-    //       } else {
-    //         selectedTeam = teamList[0];
-    //         this.setActive(selectedTeam.id);
-    //       }
-    //     } else {
-    //       this._requestedTeamId = '';
-    //       this.teamStore.setActive('');
-    //       this.teamStore.update({ teamList: [] });
-    //     }
-    //     return selectedTeam;
-    //   })
-    // );
   }
 
   private sortTeams(
@@ -216,10 +191,10 @@ export class TeamDataService {
       );
   }
 
-  loadMine() {
+  loadMine(evaluationId: string) {
     this.teamStore.setLoading(true);
     this.teamService
-      .getMyTeams()
+      .getMyEvaluationTeams(evaluationId)
       .pipe(
         tap(() => {
           this.teamStore.setLoading(false);

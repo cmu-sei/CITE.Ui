@@ -101,7 +101,7 @@ export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
   ngOnInit() {
     if (!this.showSelectionControls && this.selectedEvaluationId && this.selectedTeamId) {
       this.roleDataService.loadByEvaluationTeam(this.selectedEvaluationId, this.selectedTeamId);
-      this.teamDataService.loadMine();
+      this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
     } else if (this.showSelectionControls && this.selectedEvaluationId) {
       this.selectEvaluation(this.selectedEvaluationId);
     }

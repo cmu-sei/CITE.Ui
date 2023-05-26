@@ -10,7 +10,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     class="full-width"
     *ngIf="
       selectedEvaluation.id &&
-      teamId &&
+      activeTeamId &&
       selectedScoringModel &&
       displayedMoveNumber >= 0
     "
@@ -29,6 +29,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               class="background-button move-button"
               (click)="selectDisplayedSubmission('user')"
               *ngIf="displaying === 'user'"
+              [disabled]="myTeamId !== activeTeamId"
               title="Your personal score"
             >
               User
@@ -38,7 +39,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
               class="plain-button move-button"
               (click)="selectDisplayedSubmission('user')"
               *ngIf="displaying !== 'user'"
-              title="Your private personal score"
+              [disabled]="myTeamId !== activeTeamId"
+              title="Your personal score"
             >
               User
             </button>
@@ -49,7 +51,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               class="background-button move-button"
               (click)="selectDisplayedSubmission('team')"
               *ngIf="displaying === 'team'"
-              title="Your team's score"
+              title="The team's score"
             >
               Team
             </button>
@@ -58,7 +60,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               class="plain-button move-button"
               (click)="selectDisplayedSubmission('team')"
               *ngIf="displaying !== 'team'"
-              title="Your team's score"
+              title="The team's score"
             >
               Team
             </button>
@@ -69,6 +71,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               class="background-button move-button"
               (click)="selectDisplayedSubmission('team-avg')"
               *ngIf="displaying === 'team-avg'"
+              [disabled]="myTeamId !== activeTeamId"
               title="The average of all user scores for your team"
             >
               Team Avg
@@ -78,6 +81,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               class="plain-button move-button"
               (click)="selectDisplayedSubmission('team-avg')"
               *ngIf="displaying !== 'team-avg'"
+              [disabled]="myTeamId !== activeTeamId"
               title="The average of all user scores for your team"
             >
               Team Avg
@@ -133,6 +137,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         >
           <span
             class="move-buttons"
+            *ngIf="myTeamId === activeTeamId"
           >
             <button
               mat-raised-button
@@ -175,6 +180,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
               Preset
             </button>
           </span>
+          <span
+            class="move-buttons status-font"
+            *ngIf="myTeamId !== activeTeamId"
+          >
+            <span *ngIf="!displayedSubmission.scoreIsAnAverage">{{ getSubmissionStatusText() }}</span>
+          </span>
         </div>
       </mat-header-cell>
 
@@ -212,24 +223,24 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     [aria-label]="scoringOption.description"
                     *ngIf="!displayedSubmission.scoreIsAnAverage"
                     [checked]="isSelected(scoringCategory.id, scoringOption.id)"
-                    [disabled]="!showModifyControls"
+                    [disabled]="!showModifyControls || myTeamId !== activeTeamId"
                     [matTooltip]="selectedBy(scoringCategory.id, scoringOption.id)"
                     (change)="
                       toggleOption($event, scoringCategory.id, scoringOption.id)
                     "
                   >
-                  {{ scoringOption.description }} &nbsp;
-                </mat-checkbox>
+                    {{ scoringOption.description }} &nbsp;
+                  </mat-checkbox>
                   <span *ngIf="displayedSubmission.scoreIsAnAverage">
                     [{{ selectedCount(scoringCategory.id, scoringOption.id) }}]
                   &nbsp;&nbsp;{{ scoringOption.description }}
-                </span>
-                <button
+                  </span>
+                  <button
                     id="add-comment"
                     aria-label="Add Comment"
                     mat-icon-button
                     class="small-button"
-                    *ngIf="showModifyControls"
+                    *ngIf="showModifyControls && myTeamId === activeTeamId"
                     (click)="addComment(addCommenttemplate, scoringOption)"
                     title="Add Comment"
                   >
@@ -255,7 +266,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                       aria-label="Edit Comment"
                       mat-icon-button
                       class="small-button"
-                      *ngIf="showModifyControls"
+                      *ngIf="showModifyControls && myTeamId === activeTeamId"
                       (click)="
                         editComment(addCommenttemplate, scoringOption, comment)
                       "
@@ -271,7 +282,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                       aria-label="Delete Comment"
                       mat-icon-button
                       class="small-button"
-                      *ngIf="showModifyControls"
+                      *ngIf="showModifyControls && myTeamId === activeTeamId"
                       (click)="deleteComment(comment)"
                       title="Delete Comment"
                     >
@@ -327,7 +338,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <h1>Please contact your administrator.</h1>
   </div>
   <div
-    *ngIf="selectedEvaluation.id && selectedScoringModel && !teamId"
+    *ngIf="selectedEvaluation.id && selectedScoringModel && !activeTeamId"
     class="text-center"
   >
     <p>&nbsp;</p>

@@ -13,7 +13,6 @@ import {
   Evaluation,
   Move,
   Role,
-  Submission,
   Team,
   User
 } from 'src/app/generated/cite.api/model/models';
@@ -22,7 +21,6 @@ import { ActionQuery } from 'src/app/data/action/action.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { RoleQuery } from 'src/app/data/role/role.query';
-import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { Title } from '@angular/platform-browser';
@@ -46,14 +44,15 @@ import { AdminRoleEditDialogComponent } from '../admin/admin-role-edit-dialog/ad
 export class DashboardComponent implements OnDestroy {
   @Input() unreadArticles: UnreadArticles;
   @Input() moveList: Move[];
+  @Input() myTeamId: string;
   teamUsers: User[];
   selectedEvaluation: Evaluation = {};
   isLoading = false;
   actionList: Action[] = [];
   allActions: Action[] = [];
   roleList: Role[];
-  currentMove: Move = {};
-  teamId = '';
+  currentMoveNumber: number;
+  activeTeamId = '';
   isActionEditMode = false;
   isRoleEditMode = false;
   private unsubscribe$ = new Subject();
@@ -66,14 +65,12 @@ export class DashboardComponent implements OnDestroy {
     private moveQuery: MoveQuery,
     private roleDataService: RoleDataService,
     private roleQuery: RoleQuery,
-    private submissionQuery: SubmissionQuery,
     private unreadArticlesDataService: UnreadArticlesDataService,
     public dialogService: DialogService,
     public matDialog: MatDialog,
     private titleService: Title
   ) {
     this.titleService.setTitle('CITE Dashboard');
-
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       const activeId = this.evaluationQuery.getActiveId();
@@ -87,51 +84,43 @@ export class DashboardComponent implements OnDestroy {
     (this.moveQuery.selectAll() as Observable<Move[]>).pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
       this.moveList = moves;
       if (moves && moves.length > 0) {
-        this.currentMove = moves.find(m => +m.moveNumber === +this.selectedEvaluation.currentMoveNumber);
-        if (this.currentMove) {
-          this.actionList = this.allActions
-            .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
-            .sort((a, b) => a.description < b.description ? -1 : 1);
-        }
+        const currentMove = moves.find(m => +m.moveNumber === +this.selectedEvaluation.currentMoveNumber);
+        this.currentMoveNumber = currentMove ? currentMove.moveNumber : this.currentMoveNumber;
+        this.actionList = this.allActions
+          .filter(a => +a.moveNumber === +this.currentMoveNumber)
+          .sort((a, b) => a.description < b.description ? -1 : 1);
       } else {
-        this.currentMove = {};
+        this.currentMoveNumber = -1;
         this.actionList = [];
       }
     });
-    // observe the active submission
-    (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.submissionQuery.getActiveId();
-      active = active ? active : { id: '', moveNumber: -1, submissionCategories: []} as Submission;
-      if (this.moveList && this.moveList.length > 0) {
-        this.currentMove = this.moveList.find(m => +m.moveNumber === +active.moveNumber);
-        if (this.currentMove) {
-          this.actionList = this.allActions
-            .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
-            .sort((a, b) => a.description < b.description ? -1 : 1);
-        }
-      } else {
-        this.currentMove = {};
-        this.actionList = [];
+    // observe the active move
+    (this.moveQuery.selectActive() as Observable<Move>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
+      if (active) {
+        this.currentMoveNumber = active.moveNumber;
+        this.actionList = this.allActions
+          .filter(a => +a.moveNumber === +active.moveNumber)
+          .sort((a, b) => a.description < b.description ? -1 : 1);
       }
     });
-
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.teamQuery.getActiveId();
-      active = active ? active : { id: '' } as Team;
-      if (active.id === activeId) {
+      if (active) {
         this.teamUsers = active.users;
-        this.teamId = active.id;
+        this.activeTeamId = active.id;
+        if (active.id) {
+          // load the team data for this team
+          this.actionDataService.loadByEvaluationTeam(active.evaluationId, active.id);
+          this.roleDataService.loadByEvaluationTeam(active.evaluationId, active.id);
+        }
       }
     });
     // observe the Action list
     this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(actions => {
       this.allActions = actions;
-      if (this.currentMove) {
-        this.actionList = actions
-          .filter(a => +a.moveNumber === +this.currentMove.moveNumber)
-          .sort((a, b) => a.description < b.description ? -1 : 1);
-      }
+      this.actionList = actions
+        .filter(a => +a.moveNumber === +this.currentMoveNumber)
+        .sort((a, b) => a.description < b.description ? -1 : 1);
     });
     // observe the Role list
     this.roleQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(roles => {
@@ -166,8 +155,8 @@ export class DashboardComponent implements OnDestroy {
       action = {
         description: '',
         evaluationId: this.selectedEvaluation.id,
-        moveNumber: this.currentMove.moveNumber,
-        teamId: this.teamId
+        moveNumber: this.currentMoveNumber,
+        teamId: this.activeTeamId
       };
     } else {
       action = {... action};
@@ -242,7 +231,7 @@ export class DashboardComponent implements OnDestroy {
       role = {
         name: '',
         evaluationId: this.selectedEvaluation.id,
-        teamId: this.teamId
+        teamId: this.activeTeamId
       };
     } else {
       role = {... role};

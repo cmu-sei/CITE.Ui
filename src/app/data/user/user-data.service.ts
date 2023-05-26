@@ -166,7 +166,7 @@ export class UserDataService implements OnDestroy {
         this.canIncrementMove.next(canIncrementMove || isSuperUser || isContentDeveloper);
         this.canSubmit.next(canSubmit || isSuperUser || isContentDeveloper || canIncrementMove);
         this.canModify.next(canModify || isSuperUser || isContentDeveloper || canIncrementMove || canSubmit);
-        this.canAccessAdminSection.next(isSuperUser || isContentDeveloper || canIncrementMove || canSubmit);
+        this.canAccessAdminSection.next(isSuperUser || isContentDeveloper);
         // Emit the modified user.
         this.loggedInUser.next(authUser);
       });

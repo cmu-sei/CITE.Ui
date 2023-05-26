@@ -5,8 +5,7 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { ScoringModel, Submission } from 'src/app/generated/cite.api/model/models';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
-import { Subject, Observable } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-score-card',
@@ -17,7 +16,7 @@ export class ScoreCardComponent implements OnDestroy {
   isLoading = false;
   @Input() selectedScoringModel: ScoringModel;
   @Input() submissionList: Submission[];
-  displayedMoveNumber = -1;
+  @Input() activeSubmission: Submission;
   levels = [
     {
       scoremin: '90', scoremax: '100', level: 5, name: 'Emergency', color: 'black',
@@ -43,18 +42,12 @@ export class ScoreCardComponent implements OnDestroy {
 
   constructor(
     private submissionQuery: SubmissionQuery
-  ) {
-    (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe((active) => {
-      if (active && active.id) {
-        this.displayedMoveNumber = active.moveNumber;
-      }
-    });
-  }
+  ) {}
 
   currentSubmissions() {
-    if (this.submissionList) {
+    if (this.activeSubmission && this.submissionList) {
       return this.submissionList
-        .filter(s => s.moveNumber === this.displayedMoveNumber)
+        .filter(s => s.moveNumber === this.activeSubmission.moveNumber)
         .sort((a, b) => b.score - a.score);
     } else {
       return [];

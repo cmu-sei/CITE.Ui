@@ -202,6 +202,10 @@ export class MoveDataService {
       });
   }
 
+  setActive(id: string) {
+    this.moveStore.setActive(id);
+  }
+
   setPageEvent(pageEvent: PageEvent) {
     this.moveStore.update({ pageEvent: pageEvent });
   }
