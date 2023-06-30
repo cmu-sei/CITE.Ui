@@ -20,6 +20,10 @@
   height: 100%;
 }
 
+.under-top-bar {
+  height: calc(100vd - 400px);
+}
+
 .app-header-container {
   display: flex;
   flex-flow: column;
@@ -42,6 +46,7 @@
   text-align: left;
   flex: 65;
   overflow: auto;
+  height: calc(100% - 98px);
 }
 
 .app-score-container {
