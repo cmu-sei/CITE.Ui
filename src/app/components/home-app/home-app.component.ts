@@ -85,7 +85,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   teamList$ = this.teamQuery.selectAll();
   myTeamId = '';
   myTeamId$ = new BehaviorSubject<string>('');
-  activeSubmission$ = new BehaviorSubject<Submission>(null);
+  activeSubmission$ = this.submissionQuery.selectActive() as Observable<Submission>;
   waitingForActiveTeam = false;
 
   constructor(
@@ -194,12 +194,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     // observe the submissions
     this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
       this.processSubmissions(submissions);
-    });
-    // observe active submission
-    (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(s => {
-      if (s) {
-        this.activeSubmission$.next(s);
-      }
     });
     // load the user's evaluations
     this.evaluationDataService.loadMine();
@@ -372,7 +366,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.makeNewSubmission();
     // don't process the submissions if the selected team has changed, but the new submissions haven't been loaded yet
     } else if (submissions.some(s => s.teamId && s.teamId === activeTeam.id)) {
-      let activeSubmission = this.activeSubmission$.getValue();
+      let activeSubmission = this.submissionQuery.getActive() as Submission;
       activeSubmission = activeSubmission ? submissions.find(s => s.id === activeSubmission.id) : null;
       if (!activeSubmission) {
         let submission: Submission;
@@ -391,8 +385,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         } else {
           this.makeNewSubmission();
         }
-      } else {
-        this.activeSubmission$.next(activeSubmission);
       }
     }
   }
