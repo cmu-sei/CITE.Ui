@@ -279,7 +279,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
     );
     if (newSubmission) {
-      this.submissionDataService.setActive(newSubmission.id);
+      this.setAndGetActiveSubmission(newSubmission.id);
     } else {
       // the new submission would not be allowed, so select the default submission
       if (this.myTeamId === (this.teamQuery.getActive() as Team).id) {
@@ -302,7 +302,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         );
       }
       if (newSubmission) {
-        this.submissionDataService.setActive(newSubmission.id);
+        this.setAndGetActiveSubmission(newSubmission.id);
       }
     }
   }
@@ -317,7 +317,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         && s.groupId === displayedSubmission.groupId
         && s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage);
     if (newSubmission) {
-      this.submissionDataService.setActive(newSubmission.id);
+      this.setAndGetActiveSubmission(newSubmission.id);
     }
   }
 
@@ -387,7 +387,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           );
         }
         if (submission) {
-          this.submissionDataService.setActive(submission.id);
+          this.setAndGetActiveSubmission(submission.id);
         } else {
           this.makeNewSubmission();
         }
@@ -411,6 +411,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       userId: userId,
     } as Submission;
     this.submissionDataService.add(submission);
+  }
+
+  setAndGetActiveSubmission(submissionId: string) {
+    this.submissionDataService.loadById(submissionId);
+    this.submissionDataService.setActive(submissionId);
   }
 
   logout() {
