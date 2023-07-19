@@ -79,10 +79,6 @@ export class ScoringModelComponent implements OnDestroy {
       if (active) {
         this.selectedEvaluation = active;
         this.currentMoveNumber = active.currentMoveNumber;
-        // load the team data for the active team
-        if (this.activeTeamId) {
-          this.submissionDataService.loadByEvaluationTeam(active.id, this.activeTeamId);
-        }
       }
     });
     // observe the active submission
@@ -135,10 +131,6 @@ export class ScoringModelComponent implements OnDestroy {
       if (active) {
         this.activeTeamId = active.id;
         this.teamUsers = active.users;
-        if (active.id) {
-          // load the team data for this team
-          this.submissionDataService.loadByEvaluationTeam(active.evaluationId, active.id);
-        }
       }
     });
     // observe the logged in user ID
@@ -451,6 +443,7 @@ export class ScoringModelComponent implements OnDestroy {
         break;
     }
     if (newSubmission) {
+      this.submissionDataService.loadById(newSubmission.id);
       this.submissionDataService.setActive(newSubmission.id);
     }
   }
@@ -505,13 +498,6 @@ export class ScoringModelComponent implements OnDestroy {
       selection = 'user';
     }
     this.displaying = selection;
-  }
-
-  setSection(section: string) {
-    this.router.navigate([], {
-      queryParams: { section: section },
-      queryParamsHandling: 'merge',
-    });
   }
 
   ngOnDestroy() {
