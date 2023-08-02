@@ -75,8 +75,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     private teamQuery: TeamQuery,
     private dialog: MatDialog,
     public dialogService: DialogService,
-    public matDialog: MatDialog,
-    private activatedRoute: ActivatedRoute
+    public matDialog: MatDialog
   ) {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
@@ -94,6 +93,10 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     this.moveDataService.unload();
     this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
       this.moveList = moves;
+      if (this.selectedMoveNumber === -1) {
+        this.selectedMoveNumber = moves[0] ? +moves[0].moveNumber : -1;
+        this.actionDataService.loadByEvaluationMove(this.selectedEvaluationId, this.selectedMoveNumber);
+      }
     });
     this.teamQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teams => {
       this.teamList = teams;
@@ -102,12 +105,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe((actions) => {
       this.actionList = actions;
       this.criteriaChanged();
-    });
-    this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
-      this.selectedEvaluationId = params.get('evaluation');
-      const moveNumber = params.get('move');
-      this.selectedMoveNumber = moveNumber && moveNumber.length ? +moveNumber : -1;
-      this.selectedTeamId = params.get('team');
+      console.log(this.selectedMoveNumber);
     });
   }
 
@@ -135,6 +133,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
   selectEvaluation(evaluationId: string) {
     this.selectedEvaluationId = evaluationId;
     this.selectedTeamId = '';
+    this.selectedMoveNumber = -1;
     this.actionDataService.unload();
     this.moveDataService.unload();
     this.moveDataService.loadByEvaluation(evaluationId);
