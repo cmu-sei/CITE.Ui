@@ -35,8 +35,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
 
   <div
+    class="content-under-topbar"
     *ngIf="!apiIsSick && isAuthorizedUser"
-    style="height: inherit"
   >
     <div class="app-header-container">
       <app-evaluation-info
@@ -63,7 +63,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           [myTeamId]="myTeamId$ | async"
         ></app-dashboard>
       </div>
-      <div class="app-model-container mat-elevation-z8" autosize *ngIf="selectedSection === section.scoresheet">
+      <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.scoresheet">
         <app-scoring-model
           [myTeamId]="myTeamId$ | async"
         ></app-scoring-model>

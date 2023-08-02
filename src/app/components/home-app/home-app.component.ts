@@ -422,6 +422,14 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
   }
 
+  getAppContentClass() {
+    if (this.inIframe()) {
+      return 'app-model-container-no-topbar mat-elevation-z8';
+    } else {
+      return 'app-model-container mat-elevation-z8';
+    }
+  }
+
   healthCheck() {
     this.healthCheckService
       .healthGetReadiness()

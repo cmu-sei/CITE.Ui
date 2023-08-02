@@ -11,6 +11,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   text-align: left;
+  height: 100%;
 }
 
 .description-container {
@@ -121,6 +122,10 @@
 
 .full-width {
   width: 100%;
+}
+
+.full-height {
+  height: 100%;
 }
 
 .black {
