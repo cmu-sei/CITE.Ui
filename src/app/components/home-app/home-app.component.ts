@@ -37,6 +37,7 @@ import { TeamQuery } from 'src/app/data/team/team.query';
 import { ApplicationArea, SignalRService } from 'src/app/services/signalr.service';
 import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
+import { UIDataService } from 'src/app/data/ui/ui-data.service';
 
 export enum Section {
   dashboard = 'dashboard',
@@ -108,6 +109,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private healthCheckService: HealthCheckService,
     private moveQuery: MoveQuery,
     private unreadArticlesQuery: UnreadArticlesQuery,
+    private uiDataService: UIDataService,
     titleService: Title
   ) {
     this.healthCheck();
@@ -154,8 +156,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
           if (teams.length > 0 && user.profile) {
             this.loggedInUserId = user.profile.sub;
-            // set this user's team and optionally the active team
-            this.setTeams(teams, true);
+            // set this user's team and the active team
+            this.setTeams(teams);
           }
         }
         if (user) {
@@ -180,16 +182,28 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       const evaluationId = params.get('evaluation');
       if (evaluationId) {
         this.evaluationDataService.setActive(evaluationId);
+        this.uiDataService.setEvaluation(evaluationId);
+      } else {
+        this.evaluationDataService.setActive(this.uiDataService.getEvaluation());
       }
       const section = params.get('section');
       switch (section) {
         case 'scoresheet':
           this.selectedSection = Section.scoresheet;
           break;
-        default:
+        case 'dashboard':
           this.selectedSection = Section.dashboard;
           break;
+        default:
+          const savedSection = this.uiDataService.getSection();
+          if (savedSection === 'scoresheet') {
+            this.selectedSection =  Section.scoresheet;
+          } else {
+            this.selectedSection = Section.dashboard;
+          }
+          break;
       }
+      this.uiDataService.setSection(this.selectedSection);
     });
     // observe the submissions
     this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
@@ -236,7 +250,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (evaluation) {
       this.evaluationDataService.setActive(this.selectedEvaluationId);
       this.scoringModelDataService.loadById(evaluation.scoringModelId);
-      this.submissionDataService.loadMineByEvaluation(this.selectedEvaluationId);
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
       this.teamDataService.loadMine(this.selectedEvaluationId);
       this.currentMoveNumber = evaluation.currentMoveNumber;
@@ -252,9 +265,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       queryParams: { evaluation: evaluationId, team: '' },
       queryParamsHandling: 'merge',
     });
-
-
-
     this.router.navigate([], {
       queryParams: { evaluation: evaluationId },
       queryParamsHandling: 'merge',
@@ -315,20 +325,31 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
   }
 
-  setTeams(teams: Team[], setActive: boolean) {
+  setTeams(teams: Team[]) {
+    // check if saved teamId is in the list of teams
+    let savedTeamId = this.uiDataService.getTeam();
+    let activeTeamId = teams.some(t => t.id === savedTeamId) ? savedTeamId : '';
+    // find the user's team
     teams.forEach(t => {
       if (t.users.some(u => u.id === this.loggedInUserId)) {
         this.myTeamId = t.id;
         this.myTeamId$.next(t.id);
-        if (setActive) {
-          this.teamDataService.setActive(t.id);
-          this.signalRService.switchTeam(t.id, t.id);
+        // if the saved team wasn't in the list, set the user's team to the active team
+        if (!activeTeamId) {
+          activeTeamId = t.id;
+          this.uiDataService.setTeam(activeTeamId);
         }
-        if (this.waitingForActiveTeam) {
-          this.processSubmissions(this.submissionQuery.getAll());
-        }
+        this.teamDataService.setActive(activeTeamId);
       }
     });
+    // if there was no saved team, make the saved team the active team
+    savedTeamId = savedTeamId ? savedTeamId : activeTeamId;
+    if (savedTeamId && activeTeamId) {
+      this.signalRService.switchTeam(savedTeamId, activeTeamId);
+      if (this.waitingForActiveTeam) {
+        this.processSubmissions(this.submissionQuery.getAll());
+      }
+    }
   }
 
   changeTeam(teamId: string) {
@@ -336,23 +357,21 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (oldTeamId !== teamId) {
       // make sure to send a Guid for old team ID
       oldTeamId = oldTeamId ? oldTeamId : teamId;
+      // signalR hub: leave the old team and join the new team
       this.signalRService.switchTeam(oldTeamId, teamId);
     }
     this.teamDataService.setActive(teamId);
+    this.uiDataService.setTeam(teamId);
+    console.log('changeTeam: ' + teamId);
     this.submissionDataService.setActive('');
     this.submissionDataService.unload();
+    this.uiDataService.setSubmission('');
     this.submissionDataService.loadByEvaluationTeam(this.selectedEvaluationId, teamId);
-    this.router.navigate([], {
-      queryParams: { team: teamId },
-      queryParamsHandling: 'merge',
-    });
   }
 
   changeSection(section: string) {
-    this.router.navigate([], {
-      queryParams: { section: section },
-      queryParamsHandling: 'merge',
-    });
+    this.selectedSection = section as Section;
+    this.uiDataService.setSection(section);
   }
 
   processSubmissions(submissions) {
@@ -370,7 +389,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       activeSubmission = activeSubmission ? submissions.find(s => s.id === activeSubmission.id) : null;
       if (!activeSubmission) {
         let submission: Submission;
-        const moveNumber = (this.moveQuery.getActive() as Move).moveNumber;
+        const moveNumber = (this.moveQuery.getActive() as Move)?.moveNumber;
         if (this.myTeamId === activeTeam.id) {
           submission = submissions.find(s => s.userId && +s.moveNumber === +moveNumber);
         } else {
@@ -408,6 +427,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   setAndGetActiveSubmission(submissionId: string) {
     this.submissionDataService.loadById(submissionId);
     this.submissionDataService.setActive(submissionId);
+    this.uiDataService.setSubmission(submissionId);
   }
 
   logout() {

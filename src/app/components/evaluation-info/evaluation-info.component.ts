@@ -3,16 +3,14 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Evaluation, ItemStatus, Move, Team } from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
-import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
-import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { Observable, Subject } from 'rxjs';
 import { Section } from 'src/app/components/home-app/home-app.component';
 import { takeUntil } from 'rxjs';
+import { UIDataService } from 'src/app/data/ui/ui-data.service';
 
 @Component({
   selector: 'app-evaluation-info',
@@ -41,12 +39,9 @@ export class EvaluationInfoComponent implements OnDestroy {
 
   constructor(
     private evaluationQuery: EvaluationQuery,
-    private moveDataService: MoveDataService,
     private moveQuery: MoveQuery,
-    private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
-    private activatedRoute: ActivatedRoute,
-    private router: Router
+    private uiDataService: UIDataService
   ) {
     // observe the active evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(e => {
@@ -65,20 +60,8 @@ export class EvaluationInfoComponent implements OnDestroy {
         this.selectedTeamId = t ? t.id : this.selectedTeamId;
       }
     });
-    // observe route changes
-    this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
-      const section = params.get('section');
-      switch (section) {
-        case 'scoresheet':
-          this.selectedSection = Section.scoresheet;
-          break;
-        default:
-          this.selectedSection = Section.dashboard;
-          break;
-      }
-      const team = params.get('team');
-      this.selectedTeamId = team ? team : this.selectedTeamId;
-    });
+    this.selectedSection = this.uiDataService.getSection() as Section;
+    this.selectedTeamId = this.uiDataService.getTeam();
   }
 
   sortedMoveList() {
@@ -128,11 +111,13 @@ export class EvaluationInfoComponent implements OnDestroy {
 
   selectEvaluation(evaluationId: string) {
     if (evaluationId !== this.selectedEvaluationId) {
+      this.selectedEvaluationId = evaluationId;
       this.changeEvaluation.emit(evaluationId);
     }
   }
 
-  setSection(section: string) {
+  setSection(section: Section) {
+    this.selectedSection = section;
     this.changeSection.emit(section);
   }
 

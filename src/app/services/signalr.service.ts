@@ -80,7 +80,13 @@ export class SignalRService implements OnDestroy {
       this.hubConnection.stop().then(() => {
         console.log('Reconnecting to the hub.');
         this.connectionPromise = this.hubConnection.start();
-        this.connectionPromise.then(() => this.join());
+        this.connectionPromise.then(() => {
+          if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
+            setTimeout(() => this.reconnect(), 500);
+          } else {
+            this.join();
+          }
+        });
       });
     }
   }
@@ -88,8 +94,8 @@ export class SignalRService implements OnDestroy {
   public join() {
     if (this.hubConnection.state === signalR.HubConnectionState.Connected) {
       this.hubConnection.invoke('Join' + this.applicationArea);
+      this.isJoined = true;
     }
-    this.isJoined = true;
   }
 
   public leave() {
@@ -100,8 +106,13 @@ export class SignalRService implements OnDestroy {
   }
 
   public switchTeam(oldTeamId: string, newTeamId: string) {
-    if (this.isJoined) {
-      this.hubConnection.invoke('switchTeam', [oldTeamId, newTeamId]);
+    console.log('trying to switch teams via signalR');
+    if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
+      setTimeout(() => this.switchTeam(oldTeamId, newTeamId), 500);
+    } else {
+      if (this.isJoined) {
+        this.hubConnection.invoke('switchTeam', [oldTeamId, newTeamId]);
+      }
     }
   }
 

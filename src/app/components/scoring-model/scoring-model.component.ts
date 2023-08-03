@@ -84,16 +84,14 @@ export class ScoringModelComponent implements OnDestroy {
     // observe the active submission
     (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
-        if (active.submissionCategories.length === 0) {
-          if (active.scoreIsAnAverage) {
-            if (active.teamId) {
-              this.submissionDataService.loadTeamAverageSubmission(active);
-            } else {
-              this.submissionDataService.loadTeamTypeAverageSubmission(active);
-            }
-          } else if (this.displayedSubmission && this.displayedSubmission.id !== active.id) {
-            this.submissionDataService.loadById(active.id);
+        if (active.scoreIsAnAverage) {
+          if (active.teamId) {
+            this.submissionDataService.loadTeamAverageSubmission(active);
+          } else {
+            this.submissionDataService.loadTeamTypeAverageSubmission(active);
           }
+        } else if (this.displayedSubmission && this.displayedSubmission.id !== active.id && active.submissionCategories.length === 0) {
+          this.submissionDataService.loadById(active.id);
         }
         this.displayedSubmission = active;
         this.displayedMoveNumber = active.moveNumber;
@@ -443,7 +441,9 @@ export class ScoringModelComponent implements OnDestroy {
         break;
     }
     if (newSubmission) {
-      this.submissionDataService.loadById(newSubmission.id);
+      if (!newSubmission.scoreIsAnAverage) {
+        this.submissionDataService.loadById(newSubmission.id);
+      }
       this.submissionDataService.setActive(newSubmission.id);
     }
   }
