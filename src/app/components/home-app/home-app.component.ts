@@ -78,6 +78,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   waitedLongEnough = false;
   isReady = false;
   currentMoveNumber = -1;
+  displayedMoveNumber = -1;
   userCurrentSubmission: Submission;
   unreadArticles$ = this.unreadArticlesQuery.selectActive() as Observable<UnreadArticles>;
   evaluationForLoadedSubmissions: Evaluation;
@@ -146,9 +147,16 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
         if (evaluation) {
           this.selectedEvaluationId = evaluation.id;
+          this.displayedMoveNumber = uiDataService.getMoveNumber();
+          console.log('uidataservice displayed move number is ' + this.displayedMoveNumber);
+          this.displayedMoveNumber =
+            this.displayedMoveNumber >= 0 && this.displayedMoveNumber <= evaluation.currentMoveNumber ?
+              this.displayedMoveNumber :
+              evaluation.currentMoveNumber;
+          console.log('verifying displayed move number is ' + this.displayedMoveNumber);
           if (moves.length > 0 && !this.moveQuery.getActive()) {
             if (!this.moveQuery.getActive()) {
-              const move = this.moveQuery.getAll().find(m => m.moveNumber === evaluation.currentMoveNumber);
+              const move = this.moveQuery.getAll().find(m => m.moveNumber === this.displayedMoveNumber);
               if (move) {
                 this.moveDataService.setActive(move.id);
               }
@@ -261,18 +269,16 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.selectedEvaluationId = evaluationId;
     this.moveDataService.unload();
     this.teamDataService.unload();
-    this.router.navigate([], {
-      queryParams: { evaluation: evaluationId, team: '' },
-      queryParamsHandling: 'merge',
-    });
+    this.uiDataService.setEvaluation(evaluationId);
     this.router.navigate([], {
       queryParams: { evaluation: evaluationId },
-      queryParamsHandling: 'merge',
     });
   }
 
   incrementActiveMove(move: Move) {
     this.moveDataService.setActive(move.id);
+    this.uiDataService.setMoveNumber(move.moveNumber);
+    this.displayedMoveNumber = move.moveNumber;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const submissions = this.submissionQuery.getAll();
     let newSubmission = submissions.find(s =>
@@ -283,7 +289,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
     );
     if (newSubmission) {
-      this.setAndGetActiveSubmission(newSubmission.id);
+      this.setAndGetActiveSubmission(newSubmission);
     } else {
       // the new submission would not be allowed, so select the default submission
       if (this.myTeamId === (this.teamQuery.getActive() as Team).id) {
@@ -306,13 +312,15 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         );
       }
       if (newSubmission) {
-        this.setAndGetActiveSubmission(newSubmission.id);
+        this.setAndGetActiveSubmission(newSubmission);
       }
     }
   }
 
   decrementActiveMove(move: Move) {
     this.moveDataService.setActive(move.id);
+    this.uiDataService.setMoveNumber(move.moveNumber);
+    this.displayedMoveNumber = move.moveNumber;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const newSubmission = this.submissionQuery.getAll()
       .find(s => +s.moveNumber === +move.moveNumber
@@ -321,13 +329,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         && s.groupId === displayedSubmission.groupId
         && s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage);
     if (newSubmission) {
-      this.setAndGetActiveSubmission(newSubmission.id);
+      this.setAndGetActiveSubmission(newSubmission);
     }
   }
 
   setTeams(teams: Team[]) {
     // check if saved teamId is in the list of teams
-    let savedTeamId = this.uiDataService.getTeam();
+    const savedTeamId = this.uiDataService.getTeam();
     let activeTeamId = teams.some(t => t.id === savedTeamId) ? savedTeamId : '';
     // find the user's team
     teams.forEach(t => {
@@ -339,16 +347,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           activeTeamId = t.id;
           this.uiDataService.setTeam(activeTeamId);
         }
-        this.teamDataService.setActive(activeTeamId);
       }
     });
-    // if there was no saved team, make the saved team the active team
-    savedTeamId = savedTeamId ? savedTeamId : activeTeamId;
-    if (savedTeamId && activeTeamId) {
-      this.signalRService.switchTeam(savedTeamId, activeTeamId);
-      if (this.waitingForActiveTeam) {
-        this.processSubmissions(this.submissionQuery.getAll());
-      }
+    if (activeTeamId) {
+      this.changeTeam(activeTeamId);
     }
   }
 
@@ -365,7 +367,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     console.log('changeTeam: ' + teamId);
     this.submissionDataService.setActive('');
     this.submissionDataService.unload();
-    this.uiDataService.setSubmission('');
     this.submissionDataService.loadByEvaluationTeam(this.selectedEvaluationId, teamId);
   }
 
@@ -387,23 +388,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     } else if (submissions.some(s => s.teamId && s.teamId === activeTeam.id)) {
       let activeSubmission = this.submissionQuery.getActive() as Submission;
       activeSubmission = activeSubmission ? submissions.find(s => s.id === activeSubmission.id) : null;
-      if (!activeSubmission) {
-        let submission: Submission;
-        const moveNumber = (this.moveQuery.getActive() as Move)?.moveNumber;
-        if (this.myTeamId === activeTeam.id) {
-          submission = submissions.find(s => s.userId && +s.moveNumber === +moveNumber);
-        } else {
-          submission = submissions.find(s =>
-            !s.userId &&
-            s.teamId === activeTeam.id
-            && +s.moveNumber === +moveNumber
-          );
-        }
-        if (submission) {
-          this.setAndGetActiveSubmission(submission.id);
-        } else {
-          this.makeNewSubmission();
-        }
+      if (!activeSubmission || activeSubmission.submissionCategories.length === 0) {
+        let savedSubmission = this.uiDataService.getSubmissionType();
+        console.log('home 386: savedSubmission is ' + savedSubmission);
+        savedSubmission = savedSubmission ? savedSubmission : 'team';
+        this.selectDisplayedSubmission(savedSubmission);
       }
     }
   }
@@ -424,10 +413,70 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.submissionDataService.add(submission);
   }
 
-  setAndGetActiveSubmission(submissionId: string) {
-    this.submissionDataService.loadById(submissionId);
-    this.submissionDataService.setActive(submissionId);
-    this.uiDataService.setSubmission(submissionId);
+  setAndGetActiveSubmission(submission: Submission) {
+    if (!submission.scoreIsAnAverage) {
+      console.log('home 418:  loading submission ' + submission.id);
+      this.submissionDataService.loadById(submission.id);
+    } else {
+      if (submission.teamId) {
+        this.submissionDataService.loadTeamAverageSubmission(submission);
+      } else {
+        this.submissionDataService.loadTeamTypeAverageSubmission(submission);
+      }
+    }
+    console.log('home 427: set active submission ' + submission.id);
+    this.submissionDataService.setActive(submission.id);
+  }
+
+  selectDisplayedSubmission(selection: string) {
+    console.log('setting saved submission to ' + selection);
+    this.uiDataService.setSubmissionType(selection);
+    console.log('confirming: actually set to ' + this.uiDataService.getSubmissionType());
+    console.log('selectDisplayedSubmission displayed move number is ' + this.displayedMoveNumber);
+    const submissions = this.submissionQuery.getAll();
+    let newSubmission: Submission = null;
+    switch (selection) {
+      case 'user':
+        newSubmission = submissions.find(s =>
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === this.loggedInUserId);
+        break;
+      case 'team':
+        newSubmission = submissions.find(s =>
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId !== null &&
+          !s.scoreIsAnAverage);
+        break;
+      case 'team-avg':
+        newSubmission = submissions.find(s =>
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId !== null &&
+          s.scoreIsAnAverage);
+        break;
+      case 'group-avg':
+        newSubmission = submissions.find(s =>
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId === null &&
+          s.scoreIsAnAverage);
+        break;
+      case 'official':
+        newSubmission = submissions.find(s =>
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId === null &&
+          s.groupId === null);
+        break;
+      default:
+        break;
+    }
+    if (newSubmission) {
+      this.setAndGetActiveSubmission(newSubmission);
+    } else {
+      this.makeNewSubmission();
+    }
   }
 
   logout() {

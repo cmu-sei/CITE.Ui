@@ -8,7 +8,11 @@ import { Injectable } from '@angular/core';
 
 export class UIState {
   selectedTheme = '';
-  selectedMselTab = '';
+  selectedEvaluation = '';
+  selectedMoveNumber = -1;
+  selectedSection = '';
+  selectedSubmissionType = '';
+  selectedTeam = '';
   expandedItems: string[] = [];
 }
 
@@ -51,6 +55,18 @@ export class UIDataService {
   // end Evaluation selection
 
   //
+  // Move selection
+  setMoveNumber(selectedMoveNumber: number) {
+    this.uiState.selectedMoveNumber = selectedMoveNumber;
+    this.saveChanges();
+  }
+
+  getMoveNumber(): number {
+    return this.uiState.selectedMoveNumber;
+  }
+  // end Evaluation selection
+
+  //
   // section selection
   setSection(section: string) {
     this.uiState.selectedSection = section;
@@ -75,14 +91,14 @@ export class UIDataService {
   // end Team selection
 
   //
-  // Submission selection
-  setSubmission(submission: string) {
-    this.uiState.selectedSubmission = submission;
+  // SubmissionType selection
+  setSubmissionType(submissionType: string) {
+    this.uiState.selectedSubmissionType = submissionType;
     this.saveChanges();
   }
 
-  getSubmission(): string {
-    return this.uiState.selectedSubmission;
+  getSubmissionType(): string {
+    return this.uiState.selectedSubmissionType;
   }
   // end Submission selection
 

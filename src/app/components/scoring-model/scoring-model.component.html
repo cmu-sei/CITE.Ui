@@ -27,7 +27,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-flat-button
               color="user"
               class="background-button move-button"
-              (click)="selectDisplayedSubmission('user')"
+              (click)="selectDisplayedSubmission.emit('user')"
               *ngIf="displaying === 'user'"
               [disabled]="myTeamId !== activeTeamId"
               title="Your personal score"
@@ -37,7 +37,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <button
               mat-stroked-button
               class="plain-button move-button"
-              (click)="selectDisplayedSubmission('user')"
+              (click)="selectDisplayedSubmission.emit('user')"
               *ngIf="displaying !== 'user'"
               [disabled]="myTeamId !== activeTeamId"
               title="Your personal score"
@@ -49,7 +49,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-flat-button
               color="team"
               class="background-button move-button"
-              (click)="selectDisplayedSubmission('team')"
+              (click)="selectDisplayedSubmission.emit('team')"
               *ngIf="displaying === 'team'"
               title="The team's score"
             >
@@ -58,7 +58,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <button
               mat-stroked-button
               class="plain-button move-button"
-              (click)="selectDisplayedSubmission('team')"
+              (click)="selectDisplayedSubmission.emit('team')"
               *ngIf="displaying !== 'team'"
               title="The team's score"
             >
@@ -69,7 +69,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-flat-button
               color="team-avg"
               class="background-button move-button"
-              (click)="selectDisplayedSubmission('team-avg')"
+              (click)="selectDisplayedSubmission.emit('team-avg')"
               *ngIf="displaying === 'team-avg'"
               [disabled]="myTeamId !== activeTeamId"
               title="The average of all user scores for your team"
@@ -79,7 +79,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <button
               mat-stroked-button
               class="plain-button move-button"
-              (click)="selectDisplayedSubmission('team-avg')"
+              (click)="selectDisplayedSubmission.emit('team-avg')"
               *ngIf="displaying !== 'team-avg'"
               [disabled]="myTeamId !== activeTeamId"
               title="The average of all user scores for your team"
@@ -91,7 +91,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-flat-button
               color="group-avg"
               class="background-button move-button"
-              (click)="selectDisplayedSubmission('group-avg')"
+              (click)="selectDisplayedSubmission.emit('group-avg')"
               *ngIf="displaying === 'group-avg'"
               title="The average of all team scores for your group"
             >
@@ -100,7 +100,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <button
               mat-stroked-button
               class="plain-button move-button"
-              (click)="selectDisplayedSubmission('group-avg')"
+              (click)="selectDisplayedSubmission.emit('group-avg')"
               *ngIf="displaying !== 'group-avg' && showGroupAvgScore"
               title="The average of all team scores for your group"
             >
@@ -111,7 +111,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-flat-button
               color="official"
               class="background-button move-button"
-              (click)="selectDisplayedSubmission('official')"
+              (click)="selectDisplayedSubmission.emit('official')"
               *ngIf="displaying === 'official'"
               title="The official score for this move"
             >
@@ -120,7 +120,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <button
               mat-stroked-button
               class="plain-button move-button"
-              (click)="selectDisplayedSubmission('official')"
+              (click)="selectDisplayedSubmission.emit('official')"
               *ngIf="displaying !== 'official' && showOfficialScore"
               title="The official score for this move"
             >

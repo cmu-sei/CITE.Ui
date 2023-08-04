@@ -2,9 +2,8 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -24,6 +23,7 @@ import { ItemStatus,
 } from 'src/app/generated/cite.api/model/models';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { Title} from '@angular/platform-browser';
+import { UIDataService } from 'src/app/data/ui/ui-data.service';
 
 @Component({
   selector: 'app-scoring-model',
@@ -32,6 +32,7 @@ import { Title} from '@angular/platform-browser';
 })
 export class ScoringModelComponent implements OnDestroy {
   @Input() myTeamId: string;
+  @Output() selectDisplayedSubmission = new EventEmitter<string>();
   loggedInUserId = '';
   userId = '';
   activeTeamId = '';
@@ -69,8 +70,8 @@ export class ScoringModelComponent implements OnDestroy {
     private teamQuery: TeamQuery,
     private dialogService: DialogService,
     public matDialog: MatDialog,
-    private router: Router,
-    private titleService: Title
+    private titleService: Title,
+    private uiDataService: UIDataService
 
   ) {
     this.titleService.setTitle('CITE Scoresheet');
@@ -78,22 +79,15 @@ export class ScoringModelComponent implements OnDestroy {
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
         this.selectedEvaluation = active;
+        console.log('scoring 82: set currentMovenumber to ' + active.currentMoveNumber);
         this.currentMoveNumber = active.currentMoveNumber;
       }
     });
     // observe the active submission
     (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
-        if (active.scoreIsAnAverage) {
-          if (active.teamId) {
-            this.submissionDataService.loadTeamAverageSubmission(active);
-          } else {
-            this.submissionDataService.loadTeamTypeAverageSubmission(active);
-          }
-        } else if (this.displayedSubmission && this.displayedSubmission.id !== active.id && active.submissionCategories.length === 0) {
-          this.submissionDataService.loadById(active.id);
-        }
         this.displayedSubmission = active;
+        console.log('scoring 89: set displayedMovenumber to ' + active.moveNumber);
         this.displayedMoveNumber = active.moveNumber;
         if (+active.score < 35) {
           this.displayedScoreClass = 'white';
@@ -400,56 +394,8 @@ export class ScoringModelComponent implements OnDestroy {
     this.submissionDataService.updateSubmission(submission);
   }
 
-  selectDisplayedSubmission(selection: string) {
-    const submissions = this.submissionQuery.getAll();
-    let newSubmission: Submission = null;
-    switch (selection) {
-      case 'user':
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +this.displayedMoveNumber &&
-          s.userId === this.loggedInUserId);
-        break;
-      case 'team':
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +this.displayedMoveNumber &&
-          s.userId === null &&
-          s.teamId !== null &&
-          !s.scoreIsAnAverage);
-        break;
-      case 'team-avg':
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +this.displayedMoveNumber &&
-          s.userId === null &&
-          s.teamId !== null &&
-          s.scoreIsAnAverage);
-        break;
-      case 'group-avg':
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +this.displayedMoveNumber &&
-          s.userId === null &&
-          s.teamId === null &&
-          s.scoreIsAnAverage);
-        break;
-      case 'official':
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +this.displayedMoveNumber &&
-          s.userId === null &&
-          s.teamId === null &&
-          s.groupId === null);
-        break;
-      default:
-        break;
-    }
-    if (newSubmission) {
-      if (!newSubmission.scoreIsAnAverage) {
-        this.submissionDataService.loadById(newSubmission.id);
-      }
-      this.submissionDataService.setActive(newSubmission.id);
-    }
-  }
-
   setFormatting() {
-    this.setDisplayedSelection();
+    this.displaying = this.uiDataService.getSubmissionType();
     // set proper permissions for this selection
     const canModify =
       (this.displaying === 'user') ||
@@ -471,33 +417,6 @@ export class ScoringModelComponent implements OnDestroy {
                               this.displayedSubmission.status === ItemStatus.Active;
     this.tableClass = this.displaying + '-text';
     this.buttonClass = 'mat-' + this.displaying;
-  }
-
-  setDisplayedSelection() {
-    let selection = '';
-    if (!this.displayedSubmission.userId
-        && !this.displayedSubmission.teamId
-        && !this.displayedSubmission.groupId
-        && !this.displayedSubmission.scoreIsAnAverage) {
-      selection = 'official';
-    } else if (!this.displayedSubmission.userId
-        && !this.displayedSubmission.teamId
-        && this.displayedSubmission.groupId
-        && this.displayedSubmission.scoreIsAnAverage) {
-      selection = 'group-avg';
-    } else if (this.displayedSubmission.moveNumber === this.displayedMoveNumber
-        && !this.displayedSubmission.userId
-        && this.displayedSubmission.teamId
-        && this.displayedSubmission.scoreIsAnAverage) {
-      selection = 'team-avg';
-    } else if (!this.displayedSubmission.userId
-        && this.displayedSubmission.teamId
-        && !this.displayedSubmission.scoreIsAnAverage) {
-      selection = 'team';
-    } else {
-      selection = 'user';
-    }
-    this.displaying = selection;
   }
 
   ngOnDestroy() {

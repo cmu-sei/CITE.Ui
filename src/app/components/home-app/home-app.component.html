@@ -66,6 +66,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.scoresheet">
         <app-scoring-model
           [myTeamId]="myTeamId$ | async"
+          (selectDisplayedSubmission)="selectDisplayedSubmission($event)"
         ></app-scoring-model>
       </div>
       <div class="app-score-container mat-elevation-z8" autosize>
