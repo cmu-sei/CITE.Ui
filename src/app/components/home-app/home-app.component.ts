@@ -362,6 +362,12 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       // signalR hub: leave the old team and join the new team
       this.signalRService.switchTeam(oldTeamId, teamId);
     }
+    // when observing a team, you can't see the user or the team average
+    if (teamId !== this.myTeamId) {
+      if (this.uiDataService.getSubmissionType() === 'user' || this.uiDataService.getSubmissionType() === 'team-avg') {
+        this.uiDataService.setSubmissionType('team');
+      }
+    }
     this.teamDataService.setActive(teamId);
     this.uiDataService.setTeam(teamId);
     console.log('changeTeam: ' + teamId);
