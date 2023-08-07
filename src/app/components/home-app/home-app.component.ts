@@ -37,6 +37,7 @@ import { TeamQuery } from 'src/app/data/team/team.query';
 import { ApplicationArea, SignalRService } from 'src/app/services/signalr.service';
 import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
+import { UIDataService } from 'src/app/data/ui/ui-data.service';
 
 export enum Section {
   dashboard = 'dashboard',
@@ -77,6 +78,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   waitedLongEnough = false;
   isReady = false;
   currentMoveNumber = -1;
+  displayedMoveNumber = -1;
   userCurrentSubmission: Submission;
   unreadArticles$ = this.unreadArticlesQuery.selectActive() as Observable<UnreadArticles>;
   evaluationForLoadedSubmissions: Evaluation;
@@ -108,6 +110,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private healthCheckService: HealthCheckService,
     private moveQuery: MoveQuery,
     private unreadArticlesQuery: UnreadArticlesQuery,
+    private uiDataService: UIDataService,
     titleService: Title
   ) {
     this.healthCheck();
@@ -144,9 +147,14 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
         if (evaluation) {
           this.selectedEvaluationId = evaluation.id;
+          this.displayedMoveNumber = uiDataService.getMoveNumber();
+          this.displayedMoveNumber =
+            this.displayedMoveNumber >= 0 && this.displayedMoveNumber <= evaluation.currentMoveNumber ?
+              this.displayedMoveNumber :
+              evaluation.currentMoveNumber;
           if (moves.length > 0 && !this.moveQuery.getActive()) {
             if (!this.moveQuery.getActive()) {
-              const move = this.moveQuery.getAll().find(m => m.moveNumber === evaluation.currentMoveNumber);
+              const move = this.moveQuery.getAll().find(m => m.moveNumber === this.displayedMoveNumber);
               if (move) {
                 this.moveDataService.setActive(move.id);
               }
@@ -154,8 +162,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
           if (teams.length > 0 && user.profile) {
             this.loggedInUserId = user.profile.sub;
-            // set this user's team and optionally the active team
-            this.setTeams(teams, true);
+            // set this user's team and the active team
+            this.setTeams(teams);
           }
         }
         if (user) {
@@ -180,16 +188,28 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       const evaluationId = params.get('evaluation');
       if (evaluationId) {
         this.evaluationDataService.setActive(evaluationId);
+        this.uiDataService.setEvaluation(evaluationId);
+      } else {
+        this.evaluationDataService.setActive(this.uiDataService.getEvaluation());
       }
       const section = params.get('section');
       switch (section) {
         case 'scoresheet':
           this.selectedSection = Section.scoresheet;
           break;
-        default:
+        case 'dashboard':
           this.selectedSection = Section.dashboard;
           break;
+        default:
+          const savedSection = this.uiDataService.getSection();
+          if (savedSection === 'scoresheet') {
+            this.selectedSection =  Section.scoresheet;
+          } else {
+            this.selectedSection = Section.dashboard;
+          }
+          break;
       }
+      this.uiDataService.setSection(this.selectedSection);
     });
     // observe the submissions
     this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
@@ -236,7 +256,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (evaluation) {
       this.evaluationDataService.setActive(this.selectedEvaluationId);
       this.scoringModelDataService.loadById(evaluation.scoringModelId);
-      this.submissionDataService.loadMineByEvaluation(this.selectedEvaluationId);
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
       this.teamDataService.loadMine(this.selectedEvaluationId);
       this.currentMoveNumber = evaluation.currentMoveNumber;
@@ -248,21 +267,16 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.selectedEvaluationId = evaluationId;
     this.moveDataService.unload();
     this.teamDataService.unload();
-    this.router.navigate([], {
-      queryParams: { evaluation: evaluationId, team: '' },
-      queryParamsHandling: 'merge',
-    });
-
-
-
+    this.uiDataService.setEvaluation(evaluationId);
     this.router.navigate([], {
       queryParams: { evaluation: evaluationId },
-      queryParamsHandling: 'merge',
     });
   }
 
   incrementActiveMove(move: Move) {
     this.moveDataService.setActive(move.id);
+    this.uiDataService.setMoveNumber(move.moveNumber);
+    this.displayedMoveNumber = move.moveNumber;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const submissions = this.submissionQuery.getAll();
     let newSubmission = submissions.find(s =>
@@ -273,7 +287,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
     );
     if (newSubmission) {
-      this.setAndGetActiveSubmission(newSubmission.id);
+      this.setAndGetActiveSubmission(newSubmission);
     } else {
       // the new submission would not be allowed, so select the default submission
       if (this.myTeamId === (this.teamQuery.getActive() as Team).id) {
@@ -296,13 +310,15 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         );
       }
       if (newSubmission) {
-        this.setAndGetActiveSubmission(newSubmission.id);
+        this.setAndGetActiveSubmission(newSubmission);
       }
     }
   }
 
   decrementActiveMove(move: Move) {
     this.moveDataService.setActive(move.id);
+    this.uiDataService.setMoveNumber(move.moveNumber);
+    this.displayedMoveNumber = move.moveNumber;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const newSubmission = this.submissionQuery.getAll()
       .find(s => +s.moveNumber === +move.moveNumber
@@ -311,24 +327,29 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         && s.groupId === displayedSubmission.groupId
         && s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage);
     if (newSubmission) {
-      this.setAndGetActiveSubmission(newSubmission.id);
+      this.setAndGetActiveSubmission(newSubmission);
     }
   }
 
-  setTeams(teams: Team[], setActive: boolean) {
+  setTeams(teams: Team[]) {
+    // check if saved teamId is in the list of teams
+    const savedTeamId = this.uiDataService.getTeam();
+    let activeTeamId = teams.some(t => t.id === savedTeamId) ? savedTeamId : '';
+    // find the user's team
     teams.forEach(t => {
       if (t.users.some(u => u.id === this.loggedInUserId)) {
         this.myTeamId = t.id;
         this.myTeamId$.next(t.id);
-        if (setActive) {
-          this.teamDataService.setActive(t.id);
-          this.signalRService.switchTeam(t.id, t.id);
-        }
-        if (this.waitingForActiveTeam) {
-          this.processSubmissions(this.submissionQuery.getAll());
+        // if the saved team wasn't in the list, set the user's team to the active team
+        if (!activeTeamId) {
+          activeTeamId = t.id;
+          this.uiDataService.setTeam(activeTeamId);
         }
       }
     });
+    if (activeTeamId) {
+      this.changeTeam(activeTeamId);
+    }
   }
 
   changeTeam(teamId: string) {
@@ -336,23 +357,25 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (oldTeamId !== teamId) {
       // make sure to send a Guid for old team ID
       oldTeamId = oldTeamId ? oldTeamId : teamId;
+      // signalR hub: leave the old team and join the new team
       this.signalRService.switchTeam(oldTeamId, teamId);
     }
+    // when observing a team, you can't see the user or the team average
+    if (teamId !== this.myTeamId) {
+      if (this.uiDataService.getSubmissionType() === 'user' || this.uiDataService.getSubmissionType() === 'team-avg') {
+        this.uiDataService.setSubmissionType('team');
+      }
+    }
     this.teamDataService.setActive(teamId);
+    this.uiDataService.setTeam(teamId);
     this.submissionDataService.setActive('');
     this.submissionDataService.unload();
     this.submissionDataService.loadByEvaluationTeam(this.selectedEvaluationId, teamId);
-    this.router.navigate([], {
-      queryParams: { team: teamId },
-      queryParamsHandling: 'merge',
-    });
   }
 
   changeSection(section: string) {
-    this.router.navigate([], {
-      queryParams: { section: section },
-      queryParamsHandling: 'merge',
-    });
+    this.selectedSection = section as Section;
+    this.uiDataService.setSection(section);
   }
 
   processSubmissions(submissions) {
@@ -368,23 +391,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     } else if (submissions.some(s => s.teamId && s.teamId === activeTeam.id)) {
       let activeSubmission = this.submissionQuery.getActive() as Submission;
       activeSubmission = activeSubmission ? submissions.find(s => s.id === activeSubmission.id) : null;
-      if (!activeSubmission) {
-        let submission: Submission;
-        const moveNumber = (this.moveQuery.getActive() as Move).moveNumber;
-        if (this.myTeamId === activeTeam.id) {
-          submission = submissions.find(s => s.userId && +s.moveNumber === +moveNumber);
-        } else {
-          submission = submissions.find(s =>
-            !s.userId &&
-            s.teamId === activeTeam.id
-            && +s.moveNumber === +moveNumber
-          );
-        }
-        if (submission) {
-          this.setAndGetActiveSubmission(submission.id);
-        } else {
-          this.makeNewSubmission();
-        }
+      if (!activeSubmission || activeSubmission.submissionCategories.length === 0) {
+        let savedSubmission = this.uiDataService.getSubmissionType();
+        savedSubmission = savedSubmission ? savedSubmission : 'team';
+        this.selectDisplayedSubmission(savedSubmission);
       }
     }
   }
@@ -405,9 +415,65 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.submissionDataService.add(submission);
   }
 
-  setAndGetActiveSubmission(submissionId: string) {
-    this.submissionDataService.loadById(submissionId);
-    this.submissionDataService.setActive(submissionId);
+  setAndGetActiveSubmission(submission: Submission) {
+    if (!submission.scoreIsAnAverage) {
+      this.submissionDataService.loadById(submission.id);
+    } else {
+      if (submission.teamId) {
+        this.submissionDataService.loadTeamAverageSubmission(submission);
+      } else {
+        this.submissionDataService.loadTeamTypeAverageSubmission(submission);
+      }
+    }
+    this.submissionDataService.setActive(submission.id);
+  }
+
+  selectDisplayedSubmission(selection: string) {
+    this.uiDataService.setSubmissionType(selection);
+    const submissions = this.submissionQuery.getAll();
+    let newSubmission: Submission = null;
+    switch (selection) {
+      case 'user':
+        newSubmission = submissions.find(s =>
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === this.loggedInUserId);
+        break;
+      case 'team':
+        newSubmission = submissions.find(s =>
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId !== null &&
+          !s.scoreIsAnAverage);
+        break;
+      case 'team-avg':
+        newSubmission = submissions.find(s =>
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId !== null &&
+          s.scoreIsAnAverage);
+        break;
+      case 'group-avg':
+        newSubmission = submissions.find(s =>
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId === null &&
+          s.scoreIsAnAverage);
+        break;
+      case 'official':
+        newSubmission = submissions.find(s =>
+          +s.moveNumber === +this.displayedMoveNumber &&
+          s.userId === null &&
+          s.teamId === null &&
+          s.groupId === null);
+        break;
+      default:
+        break;
+    }
+    if (newSubmission) {
+      this.setAndGetActiveSubmission(newSubmission);
+    } else {
+      this.makeNewSubmission();
+    }
   }
 
   logout() {
@@ -419,6 +485,14 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       return window.self !== window.top;
     } catch (e) {
       return true;
+    }
+  }
+
+  getAppContentClass() {
+    if (this.inIframe()) {
+      return 'app-model-container-no-topbar mat-elevation-z8';
+    } else {
+      return 'app-model-container mat-elevation-z8';
     }
   }
 

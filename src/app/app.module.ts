@@ -96,6 +96,7 @@ import { BASE_PATH } from './generated/cite.api';
 import { ApiModule as SwaggerCodegenApiModule } from './generated/cite.api/api.module';
 import { DisplayOrderPipe, SortByPipe } from 'src/app/utilities/sort-by-pipe';
 import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+import { UIDataService } from './data/ui/ui-data.service';
 
 const settings: ComnSettingsConfig = {
   url: 'assets/config/settings.json',
@@ -200,6 +201,7 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     DialogService,
     SystemMessageService,
     UserDataService,
+    UIDataService,
     {
       provide: BASE_PATH,
       useFactory: getBasePath,

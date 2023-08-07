@@ -1,6 +1,6 @@
 {
   "name": "cite-ui",
-  "version": "1.3.2",
+  "version": "1.3.3-rc1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

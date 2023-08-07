@@ -33,7 +33,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <mat-form-field class="button-margins" *ngIf="showSelectionControls">
     <mat-label>Move</mat-label>
     <mat-select placeholder="Move" [value]="selectedMoveNumber" (selectionChange)="selectMove($event.value)">
-      <mat-option *ngFor="let move of moveList" [value]="move.moveNumber">
+      <mat-option *ngFor="let move of moveList" [value]="+move.moveNumber">
         {{ move.moveNumber }} - {{ move.description }}
       </mat-option>
     </mat-select>

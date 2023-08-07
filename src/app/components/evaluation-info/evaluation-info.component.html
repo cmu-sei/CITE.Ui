@@ -23,7 +23,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
     </button>
     <h1 class="space-right">of&nbsp;&nbsp;&nbsp;{{ getMaxMoveNumber() }}</h1>
-    <h1 [ngStyle]='getMoveStyle()'>{{ getMoveDescription() }}</h1>
+    <span class="description-span"><h1 [ngStyle]='getMoveStyle()'>{{ getMoveDescription() }}</h1></span>
   </div>
   <div class="move-div" *ngIf="!selectedEvaluationId || displayedMoveNumber < 0">
     &nbsp;
