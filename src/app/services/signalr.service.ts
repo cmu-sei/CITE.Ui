@@ -106,7 +106,6 @@ export class SignalRService implements OnDestroy {
   }
 
   public switchTeam(oldTeamId: string, newTeamId: string) {
-    console.log('trying to switch teams via signalR');
     if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
       setTimeout(() => this.switchTeam(oldTeamId, newTeamId), 500);
     } else {

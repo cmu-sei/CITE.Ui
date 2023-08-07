@@ -79,7 +79,6 @@ export class ScoringModelComponent implements OnDestroy {
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
         this.selectedEvaluation = active;
-        console.log('scoring 82: set currentMovenumber to ' + active.currentMoveNumber);
         this.currentMoveNumber = active.currentMoveNumber;
       }
     });
@@ -87,7 +86,6 @@ export class ScoringModelComponent implements OnDestroy {
     (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
         this.displayedSubmission = active;
-        console.log('scoring 89: set displayedMovenumber to ' + active.moveNumber);
         this.displayedMoveNumber = active.moveNumber;
         if (+active.score < 35) {
           this.displayedScoreClass = 'white';

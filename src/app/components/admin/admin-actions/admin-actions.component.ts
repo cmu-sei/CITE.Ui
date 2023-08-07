@@ -105,7 +105,6 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe((actions) => {
       this.actionList = actions;
       this.criteriaChanged();
-      console.log(this.selectedMoveNumber);
     });
   }
 

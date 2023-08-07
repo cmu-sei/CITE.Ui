@@ -148,12 +148,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         if (evaluation) {
           this.selectedEvaluationId = evaluation.id;
           this.displayedMoveNumber = uiDataService.getMoveNumber();
-          console.log('uidataservice displayed move number is ' + this.displayedMoveNumber);
           this.displayedMoveNumber =
             this.displayedMoveNumber >= 0 && this.displayedMoveNumber <= evaluation.currentMoveNumber ?
               this.displayedMoveNumber :
               evaluation.currentMoveNumber;
-          console.log('verifying displayed move number is ' + this.displayedMoveNumber);
           if (moves.length > 0 && !this.moveQuery.getActive()) {
             if (!this.moveQuery.getActive()) {
               const move = this.moveQuery.getAll().find(m => m.moveNumber === this.displayedMoveNumber);
@@ -370,7 +368,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
     this.teamDataService.setActive(teamId);
     this.uiDataService.setTeam(teamId);
-    console.log('changeTeam: ' + teamId);
     this.submissionDataService.setActive('');
     this.submissionDataService.unload();
     this.submissionDataService.loadByEvaluationTeam(this.selectedEvaluationId, teamId);
@@ -396,7 +393,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       activeSubmission = activeSubmission ? submissions.find(s => s.id === activeSubmission.id) : null;
       if (!activeSubmission || activeSubmission.submissionCategories.length === 0) {
         let savedSubmission = this.uiDataService.getSubmissionType();
-        console.log('home 386: savedSubmission is ' + savedSubmission);
         savedSubmission = savedSubmission ? savedSubmission : 'team';
         this.selectDisplayedSubmission(savedSubmission);
       }
@@ -421,7 +417,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   setAndGetActiveSubmission(submission: Submission) {
     if (!submission.scoreIsAnAverage) {
-      console.log('home 418:  loading submission ' + submission.id);
       this.submissionDataService.loadById(submission.id);
     } else {
       if (submission.teamId) {
@@ -430,15 +425,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.submissionDataService.loadTeamTypeAverageSubmission(submission);
       }
     }
-    console.log('home 427: set active submission ' + submission.id);
     this.submissionDataService.setActive(submission.id);
   }
 
   selectDisplayedSubmission(selection: string) {
-    console.log('setting saved submission to ' + selection);
     this.uiDataService.setSubmissionType(selection);
-    console.log('confirming: actually set to ' + this.uiDataService.getSubmissionType());
-    console.log('selectDisplayedSubmission displayed move number is ' + this.displayedMoveNumber);
     const submissions = this.submissionQuery.getAll();
     let newSubmission: Submission = null;
     switch (selection) {
