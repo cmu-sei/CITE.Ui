@@ -16,5 +16,6 @@
     "AppTopBarHexTextColor": "#FFFFFF",
     "AppTopBarText": "CITE - Collaborative Incident Threat Evaluator",
     "AppTopBarImage": "/assets/img/account-group-white.png",
-    "UseLocalAuthStorage": false
+    "UseLocalAuthStorage": false,
+    "useAccessTokenExpirationRedirect": true
 }
