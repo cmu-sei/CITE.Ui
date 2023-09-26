@@ -27,16 +27,37 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
 
   <div
-    *ngIf="!apiIsSick && waitedLongEnough && (!evaluationList || evaluationList.length === 0)"
+    *ngIf="!apiIsSick && waitedLongEnough && evaluationList.length === 0"
     class="app-header-container"
   >
-    <h1>You are not a team member for an active evaluation.</h1>
-    <h2>Please contact the site administrator or your event facilator.</h2>
+    <span style="margin-top: 200px;">
+      <h1>You are not a team member for an active evaluation.</h1>
+      <h2>Please contact the site administrator or your event facilator.</h2>
+    </span>
+
+    <button
+      aria-label="Show Administration Page"
+      mat-icon-button
+      *ngIf="canAccessAdminSection$ | async"
+      [routerLink]="['/admin']"
+      [queryParams]="{section: 'Evaluations'}"
+      style="outline: none; align-self: center;"
+      title="Administration"
+    >
+      <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
+      Goto Administration Pages
+    </button>
+
+
+
+
+
+
   </div>
 
   <div
     class="content-under-topbar"
-    *ngIf="!apiIsSick && isAuthorizedUser"
+    *ngIf="!apiIsSick && isAuthorizedUser && evaluationList.length > 0"
   >
     <div class="app-header-container">
       <app-evaluation-info

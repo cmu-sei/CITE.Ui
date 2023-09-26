@@ -400,8 +400,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   makeNewSubmission() {
-    const activeTeam = this.teamQuery.getActive() as Team;
     const evaluation = this.evaluationQuery.getAll().find(e => e.id === this.selectedEvaluationId);
+    if (!evaluation) {
+      return;
+    }
+    const activeTeam = this.teamQuery.getActive() as Team;
     const userId = activeTeam && activeTeam.id !== this.myTeamId ? null : this.loggedInUserId;
     const submission = {
       teamId: activeTeam ? activeTeam.id : this.myTeamId,
