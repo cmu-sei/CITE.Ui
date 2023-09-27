@@ -24,12 +24,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
       [(opened)]="isSidebarOpen"
     >
       <mat-list>
-        <mat-list-item class="appslist" title="Exit Administration">
+        <mat-list-item class="appslist" title="Exit Administration" (click)="exitAdminPages()">
           <button
             aria-label="Exit Administration"
             mat-icon-button
-            [routerLink]="['/']"
-            [queryParams]="{evaluation: (evaluationId | async)}"
+            (click)="exitAdminPages()"
             style="outline: none"
           >
             <mat-icon
@@ -37,7 +36,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               fontIcon="mdi-close-circle-outline"
             ></mat-icon>
           </button>
-          <a class="nolink" [routerLink]="['/']">
+          <a class="nolink" (click)="exitAdminPages()">
             <div>
               <h2 class="icon-text">Administration</h2>
             </div>
