@@ -29,8 +29,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
     &nbsp;
   </div>
   <div class="right-buttons" *ngIf="selectedTeamId">
-    <span *ngIf="selectedTeamId === myTeamId" class="mat-select center-self bold-text">Team:&nbsp;&nbsp;</span>
-    <span *ngIf="selectedTeamId !== myTeamId" class="mat-select center-self bold-text">Observing:&nbsp;&nbsp;</span>
+    <span *ngIf="selectedTeamId && selectedTeamId === myTeamId" class="mat-select center-self bold-text">Team:&nbsp;&nbsp;</span>
+    <span *ngIf="selectedTeamId && selectedTeamId !== myTeamId" class="mat-select center-self bold-text">Observing:&nbsp;&nbsp;</span>
     <span *ngIf="teamList && teamList.length <= 1" class="mat-select center-self">{{ getTeamShortName() }}</span>
     <mat-select *ngIf="teamList && teamList.length > 1" class="center-self" placeholder="Team" [value]="selectedTeamId" (selectionChange)="setActiveTeam($event.value)">
       <mat-option *ngFor="let team of teamList" [value]="team.id">
@@ -42,7 +42,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       style="outline: none;"
       title="Dashboard"
       (click)="setSection('dashboard')"
-      *ngIf="selectedSection === scoresheetSection"
+      *ngIf="selectedTeamId && selectedSection === scoresheetSection"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard"></mat-icon>
     </button>
@@ -51,7 +51,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       style="outline: none;"
       title="Scoresheet"
       (click)="setSection('scoresheet')"
-      *ngIf="selectedSection !== scoresheetSection"
+      *ngIf="selectedTeamId && selectedSection !== scoresheetSection"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>
     </button>

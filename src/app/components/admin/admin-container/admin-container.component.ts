@@ -16,6 +16,7 @@ import {
   UserPermission,
 } from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
+import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { TopbarView } from 'src/app/components/shared/top-bar/topbar.models';
@@ -47,7 +48,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   showSection: Observable<string>;
   displayedSection = '';
   exitSection = '';
-  evaluationId: Observable<string>;
+  originalEvaluationId: string;
   isSidebarOpen = true;
   isSuperUser = false;
   canAccessAdminSection = false;
@@ -71,6 +72,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   constructor(
     private router: Router,
     private evaluationDataService: EvaluationDataService,
+    private evaluationQuery: EvaluationQuery,
     private scoringModelDataService: ScoringModelDataService,
     private userDataService: UserDataService,
     activatedRoute: ActivatedRoute,
@@ -116,9 +118,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
       tap((params) => this.displayedSection = params.get('section')),
       map((params) => params.get('section') || this.evaluationsText)
     );
-    this.evaluationId = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('evaluation') || '')
-    );
+    this.originalEvaluationId = this.evaluationQuery.getActiveId();
 
     // Set the display settings from config file
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
@@ -226,6 +226,11 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
           this.apiVersion = 'API ERROR!';
         }
       );
+  }
+
+  exitAdminPages() {
+    this.evaluationDataService.setActive(this.originalEvaluationId);
+    this.router.navigate(['/']);
   }
 
   ngOnDestroy() {
