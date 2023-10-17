@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
 import {
   UntypedFormControl,
   FormGroupDirective,
@@ -11,6 +11,8 @@ import {
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
+import { Editor, Toolbar } from 'ngx-editor';
+
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class UserErrorStateMatcher implements ErrorStateMatcher {
@@ -29,8 +31,19 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
   styleUrls: ['./admin-evaluation-edit-dialog.component.scss'],
 })
 
-export class AdminEvaluationEditDialogComponent {
+export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
   @Output() editComplete = new EventEmitter<any>();
+  editor: Editor;
+  toolbar: Toolbar = [
+    ['bold', 'italic'],
+    ['underline', 'strike'],
+    ['code', 'blockquote'],
+    ['ordered_list', 'bullet_list'],
+    [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
+    ['link', 'image'],
+    ['text_color', 'background_color'],
+    ['align_left', 'align_center', 'align_right', 'align_justify'],
+  ];
 
   public situationDateFormControl = new UntypedFormControl(
     this.data.evaluation.situationTime ? this.data.evaluation.situationTime : '',
@@ -43,6 +56,10 @@ export class AdminEvaluationEditDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     dialogRef.disableClose = true;
+  }
+
+  ngOnInit() {
+    this.editor = new Editor();
   }
 
   errorFree() {
@@ -92,6 +109,10 @@ export class AdminEvaluationEditDialogComponent {
 
   decrementCurrentMoveNumber() {
     this.data.evaluation.currentMoveNumber --;
+  }
+
+  ngOnDestroy() {
+    this.editor.destroy();
   }
 
 }

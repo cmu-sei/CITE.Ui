@@ -6,8 +6,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <div class="top-level-container">
   <div class="row-container">
     <div class="section-container">
-      <h4 *ngIf="selectedEvaluation && selectedEvaluation.situationTime">Exercise Time: {{ selectedEvaluation.situationTime.toLocaleString('en-US', {timeZone: 'America/New_York'}) | date : 'EEEE, MMMM d, y  h:mm:ss a' }} ET</h4>
-      {{ selectedEvaluation.situationDescription }}
+      <h4 *ngIf="selectedEvaluation && selectedEvaluation.situationTime">
+        Exercise Time: {{ selectedEvaluation.situationTime.toLocaleString('en-US', {timeZone: 'America/New_York'}) | date : 'EEEE, MMMM d, y  h:mm:ss a' }} ET
+      </h4>
+      <section class="content" [innerHTML]="selectedEvaluation.situationDescription"></section>
     </div>
   </div>
   <div class="row-container" *ngIf="unreadArticles && +unreadArticles.count > 0">

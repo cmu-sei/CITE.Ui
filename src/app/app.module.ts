@@ -95,6 +95,7 @@ import { SystemMessageService } from './services/system-message/system-message.s
 import { BASE_PATH } from './generated/cite.api';
 import { ApiModule as SwaggerCodegenApiModule } from './generated/cite.api/api.module';
 import { DisplayOrderPipe, SortByPipe } from 'src/app/utilities/sort-by-pipe';
+import { NgxEditorModule } from 'ngx-editor';
 import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 import { UIDataService } from './data/ui/ui-data.service';
 
@@ -192,6 +193,7 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     ComnAuthModule.forRoot(),
     ComnSettingsModule.forRoot(),
     MatDatepickerModule,
+    NgxEditorModule,
     NgxMatTimepickerModule,
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule,

@@ -34,11 +34,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
   <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field full-width">
-        <mat-label>Situation Description</mat-label>
-        <textarea matInput [(ngModel)]="data.move.situationDescription"></textarea>
-      </mat-form-field>
+    <mat-label class="gray">Situation Description</mat-label>
+    <div class="NgxEditor__Wrapper bottom-space">
+      <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
+      <ngx-editor [editor]="editor" [(ngModel)]="data.move.situationDescription" [disabled]="false"></ngx-editor>
     </div>
   </div>
   <div class="add-margin">
