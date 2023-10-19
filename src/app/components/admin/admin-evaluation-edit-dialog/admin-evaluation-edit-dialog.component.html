@@ -66,13 +66,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
   <div class="add-margin">
-    <mat-label class="gray">Situation Description</mat-label>
-    <div class="NgxEditor__Wrapper bottom-space">
-      <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
-      <ngx-editor [editor]="editor" [(ngModel)]="data.evaluation.situationDescription" [disabled]="false"></ngx-editor>
-    </div>
-  </div>
-  <div class="add-margin">
     <div>
       <mat-form-field>
         <input
@@ -100,6 +93,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </ngx-mat-datetime-picker>
      </mat-form-field>
     </div>
+  </div>
+  <div class="add-margin">
+    <mat-label class="gray">Situation Description</mat-label>
+    <angular-editor [placeholder]="'Enter situation description here...'" [(ngModel)]="data.evaluation.situationDescription" [config]="editorConfig"></angular-editor>
   </div>
   <div class="cssLayoutRowStartCenter bottom-button">
     <div class="delete-button">
