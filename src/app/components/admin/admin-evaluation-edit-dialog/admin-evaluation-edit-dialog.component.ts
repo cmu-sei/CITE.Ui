@@ -54,21 +54,6 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
       {class: 'calibri', name: 'Calibri'},
       {class: 'comic-sans-ms', name: 'Comic Sans MS'}
     ],
-    customClasses: [
-      {
-        name: 'quote',
-        class: 'quote',
-      },
-      {
-        name: 'redText',
-        class: 'redText'
-      },
-      {
-        name: 'titleText',
-        class: 'titleText',
-        tag: 'h1',
-      },
-    ],
     uploadUrl: '',
     uploadWithCredentials: false,
     sanitize: true,
