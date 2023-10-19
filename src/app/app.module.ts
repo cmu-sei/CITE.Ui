@@ -97,6 +97,7 @@ import { ApiModule as SwaggerCodegenApiModule } from './generated/cite.api/api.m
 import { DisplayOrderPipe, SortByPipe } from 'src/app/utilities/sort-by-pipe';
 import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 import { UIDataService } from './data/ui/ui-data.service';
+import { AngularEditorModule } from '@kolkov/angular-editor';
 
 const settings: ComnSettingsConfig = {
   url: 'assets/config/settings.json',
@@ -195,6 +196,7 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     NgxMatTimepickerModule,
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule,
+    AngularEditorModule,
   ],
   exports: [MatSortModule],
   providers: [

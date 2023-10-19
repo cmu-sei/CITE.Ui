@@ -28,6 +28,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialog/admin-action-edit-dialog.component';
 import { AdminRoleEditDialogComponent } from '../admin/admin-role-edit-dialog/admin-role-edit-dialog.component';
+import { AngularEditorConfig } from '@kolkov/angular-editor';
 
 @Component({
   selector: 'app-dashboard',
@@ -56,6 +57,22 @@ export class DashboardComponent implements OnDestroy {
   isActionEditMode = false;
   isRoleEditMode = false;
   private unsubscribe$ = new Subject();
+  editorConfig: AngularEditorConfig = {
+    editable: false,
+    height: 'auto',
+    minHeight: '0',
+    maxHeight: '400px',
+    width: '100%',
+    minWidth: '0',
+    translate: 'yes',
+    enableToolbar: false,
+    showToolbar: false,
+    placeholder: '',
+    defaultParagraphSeparator: '',
+    defaultFontName: '',
+    defaultFontSize: '',
+    sanitize: true,
+  };
 
   constructor(
     private evaluationQuery: EvaluationQuery,

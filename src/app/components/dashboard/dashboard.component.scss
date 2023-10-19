@@ -40,6 +40,12 @@
   padding-left: 20px;
   padding-right: 20px;
   font-family: "Open Sans", sans-serif;
+  width: 100%;
+}
+
+.angular-editor {
+  width: 100%;
+  max-height: calc(100vh - 200px);
 }
 
 .item-container {

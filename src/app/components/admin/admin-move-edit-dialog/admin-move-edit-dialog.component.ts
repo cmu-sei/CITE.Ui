@@ -11,6 +11,7 @@ import {
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
+import { AngularEditorConfig } from '@kolkov/angular-editor';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class UserErrorStateMatcher implements ErrorStateMatcher {
@@ -31,11 +32,39 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 
 export class AdminMoveEditDialogComponent {
   @Output() editComplete = new EventEmitter<any>();
-
-  public situationDateFormControl = new UntypedFormControl(
+  situationDateFormControl = new UntypedFormControl(
     this.data.move.situationTime ? this.data.move.situationTime : '',
     []
   );
+  editorConfig: AngularEditorConfig = {
+    editable: true,
+    spellcheck: true,
+    height: 'auto',
+    minHeight: '0',
+    maxHeight: 'auto',
+    width: 'auto',
+    minWidth: '0',
+    translate: 'yes',
+    enableToolbar: true,
+    showToolbar: true,
+    placeholder: 'Enter text here...',
+    defaultParagraphSeparator: '',
+    defaultFontName: '',
+    defaultFontSize: '',
+    fonts: [
+      {class: 'arial', name: 'Arial'},
+      {class: 'times-new-roman', name: 'Times New Roman'},
+      {class: 'calibri', name: 'Calibri'},
+      {class: 'comic-sans-ms', name: 'Comic Sans MS'}
+    ],
+    uploadUrl: '',
+    uploadWithCredentials: false,
+    sanitize: true,
+    toolbarPosition: 'top',
+    toolbarHiddenButtons: [
+      ['backgroundColor']
+    ]
+  };
 
   constructor(
     public dialogService: DialogService,
@@ -93,5 +122,5 @@ export class AdminMoveEditDialogComponent {
   decrementCurrentMoveNumber() {
     this.data.move.currentMoveNumber --;
   }
-
+  
 }
