@@ -421,7 +421,7 @@ export class SubmissionService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.get<Array<Submission>>(`${this.configuration.basePath}/api/evaluations/${encodeURIComponent(String(evaluationId))}/submissions/mine`,
+        return this.httpClient.get<Array<Submission>>(`${this.configuration.basePath}/api/evaluations/${encodeURIComponent(String(evaluationId))}/my-submissions`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
