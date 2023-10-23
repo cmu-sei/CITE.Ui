@@ -29,6 +29,7 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialog/admin-action-edit-dialog.component';
 import { AdminRoleEditDialogComponent } from '../admin/admin-role-edit-dialog/admin-role-edit-dialog.component';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
+import { ComnSettingsService } from '@cmusei/crucible-common';
 
 @Component({
   selector: 'app-dashboard',
@@ -73,6 +74,7 @@ export class DashboardComponent implements OnDestroy {
     defaultFontSize: '',
     sanitize: true,
   };
+  galleryUrl = '';
 
   constructor(
     private evaluationQuery: EvaluationQuery,
@@ -85,7 +87,8 @@ export class DashboardComponent implements OnDestroy {
     private unreadArticlesDataService: UnreadArticlesDataService,
     public dialogService: DialogService,
     public matDialog: MatDialog,
-    private titleService: Title
+    private titleService: Title,
+    private settingsService: ComnSettingsService
   ) {
     this.titleService.setTitle('CITE Dashboard');
     // observe the selected evaluation
@@ -95,6 +98,7 @@ export class DashboardComponent implements OnDestroy {
       if (active.id === activeId) {
         this.selectedEvaluation = active;
         this.unreadArticlesDataService.loadById(activeId);
+        this.galleryUrl = this.settingsService.settings.GalleryUiUrl + '?exhibit=' + active.galleryExhibitId + '&section=archive';
       }
     });
     // observe the move list
