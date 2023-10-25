@@ -1,6 +1,7 @@
 {
     "ApiUrl": "http://localhost:4720",
     "GalleryApiUrl": "http://localhost:4722",
+    "GalleryUiUrl": "http://localhost:4723",
     "OIDCSettings": {
         "authority": "http://localhost:5000/",
         "client_id": "cite.ui",

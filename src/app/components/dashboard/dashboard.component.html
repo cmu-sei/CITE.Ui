@@ -14,7 +14,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   <div class="row-container" *ngIf="unreadArticles && +unreadArticles.count > 0">
     <div class="section-container mat-elevation-z8 one-cell">
-      <b>You have {{ unreadArticles.count }} unread Gallery inject<span *ngIf="+unreadArticles.count > 1">s</span>, please access the Gallery to review them.</b>
+      <b>You have {{ unreadArticles.count }} unread Gallery item<span *ngIf="+unreadArticles.count > 1">s</span>,
+      <a mat-stroked-button href="{{ galleryUrl }}" target="_blank">click here to view them in Gallery</a></b>
     </div>
   </div>
   <!-- Actions section -->
