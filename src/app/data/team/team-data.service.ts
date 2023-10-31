@@ -231,19 +231,6 @@ export class TeamDataService {
       );
   }
 
-  loadTeamTypes() {
-    this.teamTypeService
-      .getTeamTypes()
-      .pipe(
-        take(1)
-      )
-      .subscribe(
-        (teamTypes) => {
-          this.teamTypes.next(teamTypes);
-        }
-      );
-  }
-
   unload() {
     this.teamStore.set([]);
     this.setActive('');

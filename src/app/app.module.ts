@@ -78,6 +78,7 @@ import {
 import { AdminSubmissionsComponent } from './components/admin/admin-submissions/admin-submissions.component';
 import { AdminTeamsComponent } from './components/admin/admin-teams/admin-teams.component';
 import { AdminTeamEditDialogComponent } from './components/admin/admin-team-edit-dialog/admin-team-edit-dialog.component';
+import { AdminTeamTypesComponent } from './components/admin/admin-teamtypes/admin-teamtypes.component';
 import { AdminTeamUsersComponent } from './components/admin/admin-team-users/admin-team-users.component';
 import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -136,6 +137,7 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     AdminSubmissionsComponent,
     AdminTeamsComponent,
     AdminTeamEditDialogComponent,
+    AdminTeamTypesComponent,
     AdminTeamUsersComponent,
     AdminUsersComponent,
     DashboardComponent,

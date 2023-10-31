@@ -248,7 +248,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     const thisScope = this;
     setTimeout(function() {
       thisScope.waitedLongEnough = true;
-    }, 1000);
+    }, 10000);
   }
 
   loadEvaluationData() {

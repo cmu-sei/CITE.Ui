@@ -186,6 +186,34 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-list-item
           *ngIf="isSuperUser"
           class="showhand highlight"
+          [ngClass]="getSelectedClass(teamTypesText)"
+          id="wrapper"
+          (click)="gotoSection(teamTypesText)"
+        >
+          <div class="lefticon">
+            <mat-icon
+              class="mdi-24px"
+              fontIcon="mdi-playlist-play"
+              [ngStyle]="{ color: topbarColor }"
+            ></mat-icon>
+          </div>
+
+          <div id="teamTypesText" class="application-name">
+            {{ teamTypesText }}
+          </div>
+
+          <div>
+            <button aria-labelledby="teamTypesText" mat-icon-button>
+              <mat-icon
+                class="icon-color"
+                fontIcon="mdi-chevron-right"
+              ></mat-icon>
+            </button>
+          </div>
+        </mat-list-item>
+        <mat-list-item
+          *ngIf="isSuperUser"
+          class="showhand highlight"
           [ngClass]="getSelectedClass(usersText)"
           id="wrapper"
           (click)="gotoSection(usersText)"
@@ -271,6 +299,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
           (pageChange)="pageChangeHandler($event)"
         >
         </app-admin-submissions>
+      </span>
+      <span *ngIf="isSuperUser && ((showSection | async) === teamTypesText)">
+        <app-admin-teamtypes
+          [pageSize]="pageSize | async"
+          [pageIndex]="pageIndex | async"
+          (pageChange)="pageChangeHandler($event)"
+        >
+        </app-admin-teamtypes>
       </span>
       <span *ngIf="isSuperUser && ((showSection | async) === usersText)">
         <app-admin-users
