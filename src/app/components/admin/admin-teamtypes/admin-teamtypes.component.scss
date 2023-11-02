@@ -42,7 +42,7 @@
 
 .button-cell {
   flex: 5;
-  min-width: 50px;
+  min-width: 90px;
 }
 
 .name-cell {
@@ -110,4 +110,9 @@
 
 .checkbox-div {
   margin-left: 50px;
+  align-self: center;
+}
+
+.center-self {
+  align-self: center;
 }

@@ -18,6 +18,7 @@ import {
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
+import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { TopbarView } from 'src/app/components/shared/top-bar/topbar.models';
 import {
@@ -75,6 +76,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     private evaluationDataService: EvaluationDataService,
     private evaluationQuery: EvaluationQuery,
     private scoringModelDataService: ScoringModelDataService,
+    private teamTypeDataService: TeamTypeDataService,
     private userDataService: UserDataService,
     activatedRoute: ActivatedRoute,
     private permissionService: PermissionService,
@@ -120,7 +122,8 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
       map((params) => params.get('section') || this.evaluationsText)
     );
     this.originalEvaluationId = this.evaluationQuery.getActiveId();
-
+    // load and subscribe to TeamTypes
+    this.teamTypeDataService.load();
     // Set the display settings from config file
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor

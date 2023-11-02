@@ -16,7 +16,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { AdminTeamEditDialogComponent } from 'src/app/components/admin/admin-team-edit-dialog/admin-team-edit-dialog.component';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
-import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
+import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 
 @Component({
   selector: 'app-admin-teams',
@@ -50,17 +50,19 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     public dialogService: DialogService,
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
-    private teamTypeDataService: TeamTypeDataService,
+    private teamTypeQuery: TeamTypeQuery,
     private userDataService: UserDataService
   ) {
-    this.teamDataService.teamTypes.pipe(takeUntil(this.unsubscribe$)).subscribe(teamTypes => {
-      this.teamTypeList = teamTypes ? teamTypes : [];
+    // subscribe to TeamTypes
+    this.teamTypeQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamTypes => {
+      this.teamTypeList = teamTypes.sort((a: TeamType, b: TeamType) => {
+        return ( (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) );
+      });
     });
     this.teamQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teams => {
       this.teamList = teams ? teams : [];
       this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
     });
-    this.teamTypeDataService.load();
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;

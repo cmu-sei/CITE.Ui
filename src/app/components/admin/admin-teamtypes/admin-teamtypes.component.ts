@@ -45,8 +45,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
-    // load and subscribe to TeamTypes
-    this.teamTypeDataService.load();
+    // subscribe to TeamTypes
     this.teamTypeQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamTypes => {
       const newTeamTypes = new Array<TeamType>();
       teamTypes.forEach(tt => {
@@ -119,12 +118,12 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
 
   getSortedTeamTypes(teamTypes: TeamType[]) {
     if (teamTypes) {
-      teamTypes.sort((a, b) => this.sortTeams(a, b, this.sort.active, this.sort.direction));
+      teamTypes.sort((a, b) => this.sortTeamTypes(a, b, this.sort.active, this.sort.direction));
     }
     return teamTypes;
   }
 
-  private sortTeams(
+  private sortTeamTypes(
     a: TeamType,
     b: TeamType,
     column: string,
