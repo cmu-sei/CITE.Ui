@@ -1,0 +1,118 @@
+// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
+
+.mat-table {
+  display: block;
+}
+
+.mat-header-row {
+  min-height: 56px;
+  font-family: "open_sansregular";
+}
+
+.mat-row {
+  min-height: 48px;
+}
+
+.mat-row, .mat-header-row {
+  display: flex;
+  flex-direction: row;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  align-items: center;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.mat-cell, .mat-header-cell {
+  overflow: hidden;
+  word-wrap: break-word;
+  text-align: left;
+}
+
+.new-teamtype-cell {
+  flex: 1;
+}
+
+.edit-teamtype-name {
+  width: 300px;
+  margin-right: 16px;
+}
+
+.button-cell {
+  flex: 5;
+  min-width: 90px;
+}
+
+.name-cell {
+  flex: 30;
+  align-self: center;
+  min-width: 300px;
+}
+
+.flag-cell {
+  flex: 15;
+  justify-items: center;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  min-width: 125px;
+}
+
+.checkbox-margin {
+  margin-left: 30%;
+}
+
+.permission-cell {
+  flex: 70;
+}
+
+.button-end {
+  margin-left: 10px;
+  min-width: 370px;
+}
+
+.sp-icon {
+  margin-left: 10px;
+}
+
+.mat-accordion .mat-header-row {
+  padding-left: 1.5rem;
+  padding-right: 2rem;
+  border-bottom: none;
+}
+
+.mat-expansion-panel-header.mat-row {
+  border-bottom: none;
+}
+
+.mat-expansion-panel {
+  text-align: left;
+}
+
+.mat-select {
+  width: 100px;
+}
+
+.pad-top {
+  margin-top: 12px;
+}
+
+.permission-item {
+  margin-right: 10px;
+}
+
+.new-teamtype-spacing {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+.checkbox-div {
+  margin-left: 50px;
+  align-self: center;
+}
+
+.center-self {
+  align-self: center;
+}
