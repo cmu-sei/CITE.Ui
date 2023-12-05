@@ -75,6 +75,8 @@ export class DashboardComponent implements OnDestroy {
     sanitize: true,
   };
   galleryUrl = '';
+  originalRole: Role = {};
+  modifiedRole: Role = {};
 
   constructor(
     private evaluationQuery: EvaluationQuery,
@@ -290,21 +292,34 @@ export class DashboardComponent implements OnDestroy {
     });
   }
 
-  updateRoleUsers(role: Role, event: any) {
-    const newRoleUsers = event.value;
-    if (role.users.length < newRoleUsers.length) {
-      newRoleUsers.forEach(nru => {
-        if (!role.users.some(ru => ru.id === nru.id)) {
-          this.roleDataService.addRoleUser(role.id, nru.id);
-        }
-      });
-    } else {
-      role.users.forEach(ru => {
-        if (!newRoleUsers.some(nru => ru.id === nru.id)) {
-          this.roleDataService.removeRoleUser(role.id, ru.id);
-        }
-      });
+  openRoleUsers(role: Role) {
+    Object.assign(this.originalRole, role);
+    Object.assign(this.modifiedRole, role);
+  }
+
+  updateRoleUsers(roleId: string, event: any) {
+    if (roleId !== this.originalRole.id || roleId !== this.modifiedRole.id) {
+      alert('There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.');
     }
+    this.modifiedRole.users = event.value;
+  }
+
+  closeRoleUsers(roleId: string) {
+    if (roleId !== this.originalRole.id || roleId !== this.modifiedRole.id) {
+      alert('There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.');
+    }
+    const newUserIds = this.modifiedRole.users.map(({ id }) => id);
+    const oldUserIds = this.originalRole.users.map(({ id }) => id);
+    newUserIds.forEach(nru => {
+      if (!oldUserIds.some(ru => ru === nru)) {
+        this.roleDataService.addRoleUser(roleId, nru);
+      }
+    });
+    oldUserIds.forEach(ru => {
+      if (!newUserIds.some(nru => ru === nru)) {
+        this.roleDataService.removeRoleUser(roleId, ru);
+      }
+    });
   }
 
   ngOnDestroy() {
