@@ -70,7 +70,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="app-content-container"
       *ngIf="isReady"
     >
-      <div class="app-model-container mat-elevation-z8" autosize *ngIf="selectedSection === section.dashboard">
+      <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.dashboard">
         <app-dashboard
           *ngIf="unreadArticles$ && moveList$"
           [unreadArticles]="unreadArticles$ | async"
