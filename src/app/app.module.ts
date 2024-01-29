@@ -84,8 +84,8 @@ import { AdminUsersComponent } from './components/admin/admin-users/admin-users.
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HomeAppComponent } from './components/home-app/home-app.component';
 import { EvaluationInfoComponent } from './components/evaluation-info/evaluation-info.component';
-import { ScoreCardComponent } from './components/score-card/score-card.component';
-import { ScoringModelComponent } from './components/scoring-model/scoring-model.component';
+import { ScoreSummaryComponent } from './components/score-summary/score-summary.component';
+import { ScoresheetComponent } from './components/scoresheet/scoresheet.component';
 import { ConfirmDialogComponent } from './components/shared/confirm-dialog/confirm-dialog.component';
 import { SystemMessageComponent } from './components/shared/system-message/system-message.component';
 import { TopbarComponent } from './components/shared/top-bar/topbar.component';
@@ -114,8 +114,8 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     AppComponent,
     HomeAppComponent,
     EvaluationInfoComponent,
-    ScoreCardComponent,
-    ScoringModelComponent,
+    ScoreSummaryComponent,
+    ScoresheetComponent,
     SystemMessageComponent,
     ConfirmDialogComponent,
     AdminActionsComponent,

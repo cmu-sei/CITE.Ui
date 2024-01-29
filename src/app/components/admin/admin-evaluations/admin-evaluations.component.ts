@@ -17,6 +17,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dialog/admin-evaluation-edit-dialog.component';
+import { RightSideDisplay } from 'src/app/generated/cite.api/model/rightSideDisplay';
 
 @Component({
   selector: 'app-admin-evaluations',
@@ -44,6 +45,11 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     ItemStatus.Active,
     ItemStatus.Cancelled,
     ItemStatus.Complete
+  ];
+  rightSideDisplays = [
+    RightSideDisplay.ScoreSummary,
+    RightSideDisplay.HtmlBlock,
+    RightSideDisplay.EmbeddedUrl
   ];
   private unsubscribe$ = new Subject();
 
@@ -89,7 +95,8 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       data: {
         evaluation: evaluation,
         scoringModels: this.scoringModels,
-        itemStatuses: this.itemStatuses
+        itemStatuses: this.itemStatuses,
+        rightSideDisplays: this.rightSideDisplays
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
