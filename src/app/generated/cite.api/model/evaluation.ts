@@ -17,6 +17,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  */
 import { ItemStatus } from './itemStatus';
 import { Move } from './move';
+import { RightSideDisplay } from './rightSideDisplay';
 import { ScoringModel } from './scoringModel';
 import { Submission } from './submission';
 import { Team } from './team';
@@ -36,6 +37,10 @@ export interface Evaluation {
     scoringModelId?: string;
     scoringModel?: ScoringModel;
     galleryExhibitId?: string;
+    hideScoresOnScoreSheet?: boolean;
+    showPastSituationDescriptions?: boolean;
+    displayCommentTextBoxes?: boolean;
+    rightSideDisplay?: RightSideDisplay;
     teams?: Array<Team>;
     moves?: Array<Move>;
     submissions?: Array<Submission>;

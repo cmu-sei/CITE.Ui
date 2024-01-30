@@ -78,18 +78,18 @@ project root for license information or contact permission@sei.cmu.edu for full 
         ></app-dashboard>
       </div>
       <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.scoresheet">
-        <app-scoring-model
+        <app-scoresheet
           [myTeamId]="myTeamId$ | async"
           (selectDisplayedSubmission)="selectDisplayedSubmission($event)"
-        ></app-scoring-model>
+        ></app-scoresheet>
       </div>
       <div class="app-score-container mat-elevation-z8" autosize>
-        <app-score-card
+        <app-score-summary
           *ngIf="unreadArticles$ && moveList$"
           [selectedScoringModel]="activeScoringModel$ | async"
           [submissionList]="submissionList$ | async"
           [activeSubmission]="activeSubmission$ | async"
-        ></app-score-card>
+        ></app-score-summary>
       </div>
     </div>
   </div>

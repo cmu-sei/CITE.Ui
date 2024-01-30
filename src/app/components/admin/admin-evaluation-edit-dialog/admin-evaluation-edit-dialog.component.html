@@ -51,6 +51,33 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   <div class="add-margin">
     <div>
+      <mat-checkbox [(ngModel)]="data.evaluation.hideScoresOnScoreSheet">Hide Scores On Score Sheet</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.evaluation.showPastSituationDescriptions">Show Past Situation Descriptions</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.evaluation.displayCommentTextBoxes">Display Comments as Textboxes</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-form-field class="description-field full-width">
+        <mat-label>Right Side Display</mat-label>
+        <mat-select placeholder="Select a Right Side Display Option" [(ngModel)]="data.evaluation.rightSideDisplay">
+          <mat-option *ngFor="let item of data.rightSideDisplays" [value]="item">
+            {{ item }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
       <mat-form-field class="description-field full-width">
         <mat-label>Gallery Exhibit ID</mat-label>
         <input matInput [(ngModel)]="data.evaluation.galleryExhibitId" />
