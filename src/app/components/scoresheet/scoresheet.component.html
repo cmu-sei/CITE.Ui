@@ -217,7 +217,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               class="description-container"
               [ngClass]="tableClass"
             >
-              <div [ngClass]="scoringOption.isModifier ? 'indent-div' : ''">
+              <div [ngClass]="scoringOption.isModifier ? 'indent-div' : ''" style="width: 100%;">
                 <div>
                   <mat-checkbox
                     [aria-label]="scoringOption.description"
@@ -240,7 +240,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     aria-label="Add Comment"
                     mat-icon-button
                     class="small-button"
-                    *ngIf="showModifyControls && myTeamId === activeTeamId"
+                    *ngIf="showModifyControls && myTeamId === activeTeamId && !selectedEvaluation.displayCommentTextBoxes"
                     (click)="addComment(addCommenttemplate, scoringOption)"
                     title="Add Comment"
                   >
@@ -251,7 +251,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     ></mat-icon>
                   </button>
                 </div>
-                <div class="comment-list">
+                <div class="comment-list" *ngIf="!selectedEvaluation.displayCommentTextBoxes">
                   <div
                     *ngFor="
                       let comment of optionComments(
@@ -293,6 +293,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
                       ></mat-icon>
                     </button>
                   </div>
+                </div>
+                <div class="comment-box" *ngIf="selectedEvaluation.displayCommentTextBoxes">
+                  <textarea
+                    matInput
+                    [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
+                    (change)="changeComment(scoringCategory.id, scoringOption.id, $event)"
+                    class="comment"
+                  ></textarea>
                 </div>
               </div>
             </mat-cell>
