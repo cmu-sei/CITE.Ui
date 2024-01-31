@@ -41,6 +41,8 @@ export interface Evaluation {
     showPastSituationDescriptions?: boolean;
     displayCommentTextBoxes?: boolean;
     rightSideDisplay?: RightSideDisplay;
+    rightSideHtmlBlock?: string;
+    rightSideEmbeddedUrl?: string;
     teams?: Array<Team>;
     moves?: Array<Move>;
     submissions?: Array<Submission>;
