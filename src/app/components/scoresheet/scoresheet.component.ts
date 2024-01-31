@@ -248,6 +248,30 @@ export class ScoresheetComponent implements OnDestroy {
     });
   }
 
+  changeComment(scoringCategoryId, scoringOptionId, event) {
+    let comments = this.optionComments(scoringCategoryId, scoringOptionId);
+    const comment = comments ? comments[0] : null;
+    const commentText = event.target.value;
+    if (comment) {
+      if (commentText) {
+        const newComment = { ...comment} as SubmissionComment;
+        newComment.comment = event.target.value;
+        this.submissionDataService.updateSubmissionComment(newComment);
+      } else {
+        this.submissionDataService.deleteSubmissionComment(comment.id);
+      }
+    } else {
+      const submissionCategory = this.displayedSubmission.submissionCategories
+        .find(sc => sc.scoringCategoryId === scoringCategoryId);
+      if (submissionCategory) {
+        const submissionOption = submissionCategory.submissionOptions.find(so => so.scoringOptionId === scoringOptionId);
+        if (submissionOption) {
+          this.submissionDataService.addSubmissionComment(submissionOption.id, commentText);
+        }
+      }
+    }
+  }
+
   deleteComment(submissionComment: SubmissionComment) {
     this.dialogService.confirm(
       'Delete this comment?',

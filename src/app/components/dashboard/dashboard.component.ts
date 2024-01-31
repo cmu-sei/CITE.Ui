@@ -30,6 +30,7 @@ import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialo
 import { AdminRoleEditDialogComponent } from '../admin/admin-role-edit-dialog/admin-role-edit-dialog.component';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { ComnSettingsService } from '@cmusei/crucible-common';
+import { DateTimeFormatOptions } from 'luxon';
 
 @Component({
   selector: 'app-dashboard',
@@ -77,6 +78,7 @@ export class DashboardComponent implements OnDestroy {
   galleryUrl = '';
   originalRole: Role = {};
   modifiedRole: Role = {};
+  completeSituationDescription = '';
 
   constructor(
     private evaluationQuery: EvaluationQuery,
@@ -101,18 +103,21 @@ export class DashboardComponent implements OnDestroy {
         this.selectedEvaluation = active;
         this.unreadArticlesDataService.loadById(activeId);
         this.galleryUrl = this.settingsService.settings.GalleryUiUrl + '?exhibit=' + active.galleryExhibitId + '&section=archive';
+        this.setCompleteSituationDescription();
       }
     });
     // observe the move list
     (this.moveQuery.selectAll() as Observable<Move[]>).pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
-      this.moveList = moves;
       if (moves && moves.length > 0) {
+        this.moveList = moves.sort((a, b) => +a.moveNumber < +b.moveNumber ? 1 : -1);
         const currentMove = moves.find(m => +m.moveNumber === +this.selectedEvaluation.currentMoveNumber);
         this.currentMoveNumber = currentMove ? currentMove.moveNumber : this.currentMoveNumber;
         this.actionList = this.allActions
           .filter(a => +a.moveNumber === +this.currentMoveNumber)
           .sort((a, b) => a.description < b.description ? -1 : 1);
+        this.setCompleteSituationDescription();
       } else {
+        this.moveList = [];
         this.currentMoveNumber = -1;
         this.actionList = [];
       }
@@ -159,6 +164,31 @@ export class DashboardComponent implements OnDestroy {
         this.roleList.push(newRole);
       });
     });
+  }
+
+  setCompleteSituationDescription() {
+    const dateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZoneName: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    } as DateTimeFormatOptions;
+    let description = '<h4>' + this.selectedEvaluation.situationTime.toLocaleString('en-US', dateTimeFormatOptions)
+      + '<br /></h4>' + this.selectedEvaluation.situationDescription;
+    if (this.selectedEvaluation.showPastSituationDescriptions) {
+      this.moveList?.forEach(m => {
+        if (+m.moveNumber < +this.currentMoveNumber) {
+          description = description + '<br /><hr><hr><h4>'
+            + m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) + '<br /></h4>'
+            + m.situationDescription;
+        }
+      });
+    }
+    this.completeSituationDescription = description;
   }
 
   checkAction(actionId: string, isChecked: boolean) {

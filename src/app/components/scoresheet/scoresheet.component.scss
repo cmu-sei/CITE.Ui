@@ -12,6 +12,7 @@
   align-items: flex-start;
   text-align: left;
   height: 100%;
+  width: 100%;
 }
 
 .description-container {
@@ -62,6 +63,17 @@
   margin-bottom: 10px;
   font-style: italic;
   font-size: smaller;
+}
+
+.comment-box {
+  margin-left: 25px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.comment {
+  width: 94%;
+  resize: vertical;
 }
 
 .indent-div {
