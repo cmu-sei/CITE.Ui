@@ -76,6 +76,18 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-form-field>
     </div>
   </div>
+  <div class="add-margin" *ngIf="data.evaluation.rightSideDisplay === 'HtmlBlock'">
+    <mat-label class="gray">Right Side HTML Block</mat-label>
+    <angular-editor [placeholder]="'Enter content here...'" [(ngModel)]="data.evaluation.rightSideHtmlBlock" [config]="editorConfig"></angular-editor>
+  </div>
+  <div class="add-margin" *ngIf="data.evaluation.rightSideDisplay === 'EmbeddedUrl'">
+    <div>
+      <mat-form-field class="description-field full-width">
+        <mat-label>Right Side URL</mat-label>
+        <input matInput [(ngModel)]="data.evaluation.rightSideEmbeddedUrl" />
+      </mat-form-field>
+    </div>
+  </div>
   <div class="add-margin">
     <div>
       <mat-form-field class="description-field full-width">

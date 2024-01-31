@@ -85,11 +85,18 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="app-score-container mat-elevation-z8" autosize>
         <app-score-summary
-          *ngIf="unreadArticles$ && moveList$"
+          *ngIf="unreadArticles$ && moveList$ && (activeEvaluation$ | async)?.rightSideDisplay === 'ScoreSummary'"
           [selectedScoringModel]="activeScoringModel$ | async"
           [submissionList]="submissionList$ | async"
           [activeSubmission]="activeSubmission$ | async"
         ></app-score-summary>
+        <app-right-side-html
+          *ngIf="(activeEvaluation$ | async)?.rightSideDisplay === 'HtmlBlock'"
+          [evaluation$]="activeEvaluation$"
+        ></app-right-side-html>
+        <app-right-side-iframe
+          *ngIf="(activeEvaluation$ | async)?.rightSideDisplay === 'EmbeddedUrl'"
+        ></app-right-side-iframe>
       </div>
     </div>
   </div>
