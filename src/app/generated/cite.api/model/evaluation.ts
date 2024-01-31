@@ -43,6 +43,7 @@ export interface Evaluation {
     rightSideDisplay?: RightSideDisplay;
     rightSideHtmlBlock?: string;
     rightSideEmbeddedUrl?: string;
+    displayScoringModelByMoveNumber?: boolean;
     teams?: Array<Team>;
     moves?: Array<Move>;
     submissions?: Array<Submission>;
