@@ -19,7 +19,8 @@ import { ItemStatus,
   Submission,
   SubmissionComment,
   Team,
-  User
+  User,
+  ScoringCategory
 } from 'src/app/generated/cite.api/model/models';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { Title} from '@angular/platform-browser';
@@ -46,6 +47,7 @@ export class ScoresheetComponent implements OnDestroy {
   displayedScoreClass = 'white';
   displayedScoreHover = 'Level 0 - Baseline';
   displaying = 'user';
+  displayedScoringCategories: ScoringCategory[] = [];
   hasCanModifyPermission = false;
   hasCanSubmitPermission = false;
   canIncrementMove = false;
@@ -439,6 +441,23 @@ export class ScoresheetComponent implements OnDestroy {
                               this.displayedSubmission.status === ItemStatus.Active;
     this.tableClass = this.displaying + '-text';
     this.buttonClass = 'mat-' + this.displaying;
+  }
+
+  getDisplayedScoringCategories(): ScoringCategory[] {
+    const displayedScoringCategories: ScoringCategory[] = [];
+    this.selectedScoringModel.scoringCategories.forEach(scoringCategory => {
+      let hideIt = false;
+      if (this.selectedEvaluation.displayScoringModelByMoveNumber) {
+        if (+this.displayedMoveNumber < +scoringCategory.moveNumberFirstDisplay ||
+            +this.displayedMoveNumber > +scoringCategory.moveNumberLastDisplay) {
+          hideIt = true
+        }
+      }
+      if (!hideIt) {
+        displayedScoringCategories.push(scoringCategory);
+      }
+    });
+    return displayedScoringCategories;
   }
 
   ngOnDestroy() {
