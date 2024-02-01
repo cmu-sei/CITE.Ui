@@ -19,7 +19,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
     </button>
     <h1 class="nowrap" [ngStyle]='getMoveStyle()'>{{ displayedMoveNumber }}</h1>
-    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isMaxMoveNumber()" (click)="incrementDisplayedMove()">
+    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isIncrementDisabled()" (click)="incrementDisplayedMove()">
       <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
     </button>
     <h1 class="space-right">of&nbsp;&nbsp;&nbsp;{{ getMaxMoveNumber() }}</h1>
@@ -51,7 +51,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       style="outline: none;"
       title="Scoresheet"
       (click)="setSection('scoresheet')"
-      *ngIf="selectedTeamId && selectedSection !== scoresheetSection"
+      *ngIf="selectedTeamId && selectedSection !== scoresheetSection && !hideScoresheet()"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>
     </button>
