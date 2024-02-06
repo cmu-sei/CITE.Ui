@@ -93,7 +93,9 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   isIncrementDisabled(): boolean {
-    return ((this.isCurrentMoveNumber() && !this.canIncrementMove) || (this.canIncrementMove && (+this.currentMoveNumber < +this.getMaxMoveNumber)));
+    const sortedMoves = this.sortedMoveList();
+    const isMaxMove = sortedMoves.length === 0 || +this.displayedMoveNumber === +sortedMoves[sortedMoves.length - 1].moveNumber;
+    return (this.isCurrentMoveNumber() && !this.canIncrementMove) || (this.canIncrementMove && isMaxMove);
   }
 
   getMinMoveNumber() {

@@ -85,13 +85,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <span class="mat-cell pad-top">
         <button aria-label="Decrement Current Move" mat-icon-button
           [disabled]="evaluation.currentMoveNumber <= getLowestMoveNumber(evaluation)"
-          (click)="decrementCurrentMoveNumber(evaluation); $event.stopPropagation()">
+          (click)="decrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Decrement Move">
           <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
         </button>
         {{ evaluation.currentMoveNumber }}
         <button aria-label="Increment Current Move" mat-icon-button
           [disabled]="evaluation.currentMoveNumber >= getHighestMoveNumber(evaluation)"
-          (click)="incrementCurrentMoveNumber(evaluation); $event.stopPropagation()">
+          (click)="incrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Increment Move">
           <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
         </button>
       </span>

@@ -7,7 +7,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <div class="evaluation-info">
   <h2 *ngIf="!selectedEvaluationId">&nbsp;</h2>    <!-- Adds spacing to the selection box before a selection is made -->
   <div class="evaluation-selector-div mat-elevation-z8 background text" *ngIf="evaluationList && evaluationList.length > 0">
-    <mat-select placeholder="Select an active incident" [value]="selectedEvaluationId" (selectionChange)="selectEvaluation($event.value)">
+    <mat-select placeholder="Select an active incident" [value]="selectedEvaluationId" (selectionChange)="selectEvaluation($event.value)" title="Select an Active Incident">
       <mat-option *ngFor="let evaluation of activeEvaluations()" [value]="evaluation.id">
         {{ evaluation.description }}
       </mat-option>
@@ -15,11 +15,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   <div class="move-div" *ngIf="selectedEvaluationId && displayedMoveNumber > -1">
     <h1 class="nowrap">Move:&nbsp;</h1>
-    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="isMinMoveNumber()" (click)="decrementDisplayedMove()">
+    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="isMinMoveNumber()" (click)="decrementDisplayedMove()" title="Decrement Move">
       <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
     </button>
     <h1 class="nowrap" [ngStyle]='getMoveStyle()'>{{ displayedMoveNumber }}</h1>
-    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isIncrementDisabled()" (click)="incrementDisplayedMove()">
+    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isIncrementDisabled()" (click)="incrementDisplayedMove()" title="Increment Move">
       <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
     </button>
     <h1 class="space-right">of&nbsp;&nbsp;&nbsp;{{ getMaxMoveNumber() }}</h1>
