@@ -72,7 +72,7 @@
 }
 
 .comment {
-  width: 94%;
+  width: calc(100% - 32px);
   resize: vertical;
 }
 

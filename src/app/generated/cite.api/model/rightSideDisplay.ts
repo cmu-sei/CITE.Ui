@@ -17,10 +17,12 @@ Copyright 2024 Carnegie Mellon University. All Rights Reserved.
  */
 
 
-export type RightSideDisplay = 'ScoreSummary' | 'HtmlBlock' | 'EmbeddedUrl';
+export type RightSideDisplay = 'ScoreSummary' | 'HtmlBlock' | 'EmbeddedUrl' | 'Scoresheet' | 'None';
 
 export const RightSideDisplay = {
     ScoreSummary: 'ScoreSummary' as RightSideDisplay,
     HtmlBlock: 'HtmlBlock' as RightSideDisplay,
-    EmbeddedUrl: 'EmbeddedUrl' as RightSideDisplay
+    EmbeddedUrl: 'EmbeddedUrl' as RightSideDisplay,
+    Scoresheet: 'Scoresheet' as RightSideDisplay,
+    None: 'None' as RightSideDisplay,
 };

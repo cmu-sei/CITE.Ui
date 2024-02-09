@@ -33,6 +33,7 @@ import { UIDataService } from 'src/app/data/ui/ui-data.service';
 })
 export class ScoresheetComponent implements OnDestroy {
   @Input() myTeamId: string;
+  @Input() userOnly: boolean;
   @Output() selectDisplayedSubmission = new EventEmitter<string>();
   loggedInUserId = '';
   userId = '';

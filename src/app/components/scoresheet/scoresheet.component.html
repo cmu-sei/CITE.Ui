@@ -59,7 +59,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-stroked-button
               class="plain-button move-button"
               (click)="selectDisplayedSubmission.emit('team')"
-              *ngIf="displaying !== 'team'"
+              *ngIf="displaying !== 'team' && !userOnly"
               title="The team's score"
             >
               Team
@@ -80,8 +80,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-stroked-button
               class="plain-button move-button"
               (click)="selectDisplayedSubmission.emit('team-avg')"
-              *ngIf="displaying !== 'team-avg'"
-              [disabled]="myTeamId !== activeTeamId"
+              *ngIf="displaying !== 'team-avg' && !userOnly"
+              [disabled]="myTeamId !== activeTeamId && !userOnly"
               title="The average of all user scores for your team"
             >
               Team Avg
@@ -101,7 +101,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-stroked-button
               class="plain-button move-button"
               (click)="selectDisplayedSubmission.emit('group-avg')"
-              *ngIf="displaying !== 'group-avg' && showGroupAvgScore"
+              *ngIf="displaying !== 'group-avg' && showGroupAvgScore && !userOnly"
               title="The average of all team scores for your group"
             >
               Group Avg
@@ -121,7 +121,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-stroked-button
               class="plain-button move-button"
               (click)="selectDisplayedSubmission.emit('official')"
-              *ngIf="displaying !== 'official' && showOfficialScore"
+              *ngIf="displaying !== 'official' && showOfficialScore && !userOnly"
               title="The official score for this move"
             >
               Official
@@ -173,7 +173,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-raised-button
               [ngClass]="buttonClass"
               class="move-button background-button"
-              *ngIf="showModifyControls"
+              *ngIf="showModifyControls && !userOnly"
               (click)="presetSelections()"
               title="Preset selections to the previous move"
             >

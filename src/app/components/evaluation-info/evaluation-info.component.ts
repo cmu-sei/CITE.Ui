@@ -27,6 +27,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   @Input() myTeamId: string;
   @Input() evaluationList: Evaluation[];
   @Input() moveList: Move[];
+  @Input() scoresheetOnRight: boolean;
   @Output() incrementActiveMove = new EventEmitter<Move>();
   @Output() decrementActiveMove = new EventEmitter<Move>();
   @Output() changeTeam = new EventEmitter<string>();
@@ -180,9 +181,9 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   hideScoresheet(): boolean {
-    let hideIt = false;
+    let hideIt = this.scoresheetOnRight;
     const selectedTeam = this.teamList?.find(t => t.id === this.selectedTeamId);
-    if (selectedTeam) {
+    if (!hideIt && selectedTeam) {
       hideIt = selectedTeam.hideScoresheet;
     }
     return hideIt;

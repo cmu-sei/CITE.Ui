@@ -63,8 +63,20 @@
 .app-score-container {
   flex-flow: column;
   text-align: center;
+  height: calc(100% - 57px);
+  overflow-y: auto;
+}
+
+.flex-65 {
+  flex: 65;
+}
+
+.flex-50 {
+  flex: 50;
+}
+
+.flex-35 {
   flex: 35;
-  height: 100%;
 }
 
 .cite-logo {

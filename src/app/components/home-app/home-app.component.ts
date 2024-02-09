@@ -38,6 +38,7 @@ import { ApplicationArea, SignalRService } from 'src/app/services/signalr.servic
 import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
+import { RightSideDisplay } from 'src/app/generated/cite.api/model/rightSideDisplay';
 
 export enum Section {
   dashboard = 'dashboard',
@@ -259,6 +260,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
       this.teamDataService.loadMine(this.selectedEvaluationId);
       this.currentMoveNumber = evaluation.currentMoveNumber;
+      if (evaluation.rightSideDisplay === RightSideDisplay.Scoresheet) {
+        this.selectedSection = Section.dashboard;
+        this.uiDataService.setSection(this.selectedSection);
+      }
     }
     this.isReady = true;
   }
