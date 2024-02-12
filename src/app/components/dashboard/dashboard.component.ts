@@ -177,14 +177,14 @@ export class DashboardComponent implements OnDestroy {
       minute: 'numeric',
       hour12: true
     } as DateTimeFormatOptions;
-    let description = '<h4>' + this.selectedEvaluation.situationTime.toLocaleString('en-US', dateTimeFormatOptions)
-      + '<br /></h4>' + this.selectedEvaluation.situationDescription;
+    let description = '<h2>' + this.selectedEvaluation.situationTime.toLocaleString('en-US', dateTimeFormatOptions)
+      + '<br /></h2>' + this.selectedEvaluation.situationDescription;
     if (this.selectedEvaluation.showPastSituationDescriptions) {
       this.moveList?.forEach(m => {
         if (+m.moveNumber < +this.currentMoveNumber) {
-          description = description + '<br /><hr><hr><h4>'
-            + m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) + '<br /></h4>'
-            + m.situationDescription;
+          description = description + '<br /><div style="border:none;background-color:gray;"><h1 style="margin-left: 50px;">*** Move ' + m.moveNumber + ' Information</h1></div>'
+            + '<div style="border: 3px solid gray; margin-top: -25px; padding-left: 10px; padding-right: 10px;"><h2>' + m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) + '</h2><br />'
+            + m.situationDescription + '</div>';
         }
       });
     }
