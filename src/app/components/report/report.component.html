@@ -1,0 +1,203 @@
+<!--
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license, please see LICENSE.md in the
+project root for license information or contact permission@sei.cmu.edu for full terms.
+-->
+<div class="form-container">
+  <div
+    class="navigation-font"
+  >
+    <span style="transform: scale(0.8)">
+      <!-- User -->
+      <button
+        mat-flat-button
+        color="user"
+        class="background-button move-button"
+        (click)="selectDisplayedSubmissions('User')"
+        *ngIf="displaying === 'User'"
+        [disabled]="myTeamId !== activeTeamId"
+        title="Your personal score"
+      >
+        User
+      </button>
+      <button
+        mat-stroked-button
+        class="plain-button move-button"
+        (click)="selectDisplayedSubmissions('User')"
+        *ngIf="displaying !== 'User'"
+        [disabled]="myTeamId !== activeTeamId"
+        title="Your personal score"
+      >
+        User
+      </button>
+      <!-- Team -->
+      <button
+        mat-flat-button
+        color="team"
+        class="background-button move-button"
+        (click)="selectDisplayedSubmissions('Team')"
+        *ngIf="displaying === 'Team'"
+        title="The team's score"
+      >
+        Team
+      </button>
+      <button
+        mat-stroked-button
+        class="plain-button move-button"
+        (click)="selectDisplayedSubmissions('Team')"
+        *ngIf="displaying !== 'Team' && !userOnly"
+        title="The team's score"
+      >
+        Team
+      </button>
+      <!-- Official -->
+      <button
+        mat-flat-button
+        color="official"
+        class="background-button move-button"
+        (click)="selectDisplayedSubmissions('Official')"
+        *ngIf="displaying === 'official'"
+        title="The official score for this move"
+      >
+        Official
+      </button>
+      <button
+        mat-stroked-button
+        class="plain-button move-button"
+        (click)="selectDisplayedSubmissions('Official')"
+        *ngIf="displaying !== 'Official' && showOfficialScore && !userOnly"
+        title="The official score for this move"
+      >
+        Official
+      </button>
+    </span>
+  </div>
+  <mat-table
+    [dataSource]="getDisplayedScoringCategories(submission.moveNumber) | displayOrder"
+    class="full-width full-height"
+    *ngFor="let submission of displayedSubmissionList"
+  >
+    <!-- Description Definition -->
+    <ng-container matColumnDef="scoringCategoryDescription">
+      <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
+        <div *ngIf="!selectedEvaluation.hideScoresOnScoreSheet">
+          <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}"
+            >{{ submission.moveNumber }} - {{ submission.score | number: '1.2-2' }}</span>
+        </div>
+        <div class="title-font">
+          Move {{ submission.moveNumber }}
+        </div>
+      </mat-header-cell>
+
+      <!-- Report display -->
+      <mat-cell
+        *matCellDef="let scoringCategory"
+        class="form-container"
+        [ngClass]="tableClass"
+      >
+        <div class="scoring-category-description" [ngClass]="tableClass">
+          {{ scoringCategory.displayOrder }}. {{ scoringCategory.description }}
+          <span *ngIf="scoringCategory.calculationMethodId > 0">
+            &nbsp;&nbsp;-&nbsp;&nbsp;[{{
+              categoryScore(submission, scoringCategory.id) | number: '1.0-0'
+            }}]
+          </span>
+        </div>
+        <mat-table
+          [dataSource]="scoringCategory.scoringOptions | displayOrder"
+          class="full-width"
+          [ngClass]="tableClass"
+        >
+          <ng-container
+            matColumnDef="scoringOptionDescription"
+            class="description-cell"
+          >
+            <mat-cell
+              *matCellDef="let scoringOption"
+              class="description-container"
+              [ngClass]="tableClass"
+            >
+              <div [ngClass]="scoringOption.isModifier ? 'indent-div' : 'no-indent-div'">
+                <div class="score-option">
+                  <div class="checkbox-div" *ngIf="scoringCategory.scoringOptionSelection !== 'None'">
+                    <mat-checkbox
+                      [aria-label]="scoringOption.description"
+                      [checked]="isSelected(submission, scoringCategory.id, scoringOption.id)"
+                      [disabled]="true"
+                      [matTooltip]="selectedBy(submission, scoringCategory.id, scoringOption.id)"
+                    >
+                    </mat-checkbox>
+                  </div>
+                  <div class="description-div">
+                    {{ scoringOption.description }} &nbsp;
+                  </div>
+                </div>
+                <div class="comment-list" *ngIf="!selectedEvaluation.displayCommentTextBoxes">
+                  <div
+                    *ngFor="
+                      let comment of optionComments(
+                        submission,
+                        scoringCategory.id,
+                        scoringOption.id
+                      )
+                    "
+                  >
+                    {{ comment.comment }}
+                    <span *ngIf="displaying === 'Team'"> - {{ getUserName(comment.createdBy) }}</span>
+                  </div>
+                </div>
+                <div class="comment-box" *ngIf="selectedEvaluation.displayCommentTextBoxes">
+                  <span class="comment">{{ optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment }}</span>
+                </div>
+              </div>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="value">
+            <mat-cell
+              *matCellDef="let scoringOption"
+              class="value-container"
+              [ngClass]="tableClass"
+            >
+              <div class="value-div" *ngIf="!selectedEvaluation.hideScoresOnScoreSheet">
+                {{
+                  scoringCategory.calculationMethodId == 0 ||
+                  scoringOption.isModifier
+                    ? ' '
+                    : scoringOption.value
+                }}
+              </div>
+            </mat-cell>
+          </ng-container>
+          <mat-row
+            *matRowDef="let row; columns: ['scoringOptionDescription', 'value']"
+          ></mat-row>
+        </mat-table>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Header and Row Declarations -->
+    <mat-header-row
+      *matHeaderRowDef="['scoringCategoryDescription']"
+    ></mat-header-row>
+    <mat-row
+      *matRowDef="let row; columns: ['scoringCategoryDescription']"
+    ></mat-row>
+  </mat-table>
+
+  <div
+    *ngIf="!selectedEvaluation.id || !selectedScoringModel"
+    class="text-center"
+  >
+    <p>&nbsp;</p>
+    <h1>An evaluation has not been properly configured.</h1>
+    <h1>Please contact your administrator.</h1>
+  </div>
+  <div
+    *ngIf="selectedEvaluation.id && selectedScoringModel && !activeTeamId"
+    class="text-center"
+  >
+    <p>&nbsp;</p>
+    <h1>You have not been given appropriate access to this application.</h1>
+    <h1>Please contact your administrator.</h1>
+  </div>
+</div>

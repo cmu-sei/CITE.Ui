@@ -66,6 +66,7 @@
 }
 
 .comment-box {
+  margin-left: 25px;
   margin-bottom: 10px;
   width: 100%;
 }
@@ -77,6 +78,11 @@
 
 .indent-div {
   margin-left: 25px;
+  width: 100%;
+}
+
+.no-indent-div {
+  width: 100%;
 }
 
 .value-div {
@@ -87,6 +93,24 @@
 .scoring-category-description {
   font-weight: bold;
   margin-top: 20px;
+}
+
+.score-option {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  text-wrap: wrap;
+  word-wrap: break-word;
+}
+
+.checkbox-div {
+  display: flex;
+  width: 24px;
+}
+
+.description-div {
+  display: flex;
+  width: calc(100% - 24px);
 }
 
 .small-icon {

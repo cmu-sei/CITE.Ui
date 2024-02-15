@@ -10,10 +10,12 @@ export * from './itemStatus';
 export * from './move';
 export * from './permission';
 export * from './problemDetails';
+export * from './rightSideDisplay'
 export * from './role';
 export * from './scoringCategory';
 export * from './scoringModel';
 export * from './scoringOption';
+export * from './scoringOptionSelection';
 export * from './submission';
 export * from './submissionCategory';
 export * from './submissionComment';

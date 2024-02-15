@@ -16,6 +16,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  * Do not edit the class manually.
  */
 import { ScoringOption } from './scoringOption';
+import { ScoringOptionSelection } from './scoringOptionSelection';
 
 
 export interface ScoringCategory {
@@ -26,7 +27,6 @@ export interface ScoringCategory {
     id?: string;
     displayOrder?: number;
     description?: string;
-    allowMultipleChoices?: boolean;
     calculationEquation?: string;
     isModifierRequired?: boolean;
     scoringWeight?: number;
@@ -34,4 +34,5 @@ export interface ScoringCategory {
     moveNumberLastDisplay?: number;
     scoringModelId?: string;
     scoringOptions?: Array<ScoringOption>;
+    scoringOptionSelection?: ScoringOptionSelection;
 }

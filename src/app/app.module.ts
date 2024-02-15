@@ -86,6 +86,7 @@ import { HomeAppComponent } from './components/home-app/home-app.component';
 import { EvaluationInfoComponent } from './components/evaluation-info/evaluation-info.component';
 import { ScoreSummaryComponent } from './components/score-summary/score-summary.component';
 import { ScoresheetComponent } from './components/scoresheet/scoresheet.component';
+import { ReportComponent } from './components/report/report.component';
 import { ConfirmDialogComponent } from './components/shared/confirm-dialog/confirm-dialog.component';
 import { RightSideHtmlComponent } from './components/right-side-html/right-side-html.component';
 import { RightSideIframeComponent } from './components/right-side-iframe/right-side-iframe.component';
@@ -118,6 +119,7 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     EvaluationInfoComponent,
     ScoreSummaryComponent,
     ScoresheetComponent,
+    ReportComponent,
     SystemMessageComponent,
     ConfirmDialogComponent,
     AdminActionsComponent,

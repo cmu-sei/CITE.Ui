@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Input, Output, OnDestroy, OnInit } from '@angular/core';
-import { ScoringCategory, ItemStatus, Team, User} from 'src/app/generated/cite.api/model/models';
+import { ScoringCategory, ItemStatus, ScoringOptionSelection} from 'src/app/generated/cite.api/model/models';
 import { ScoringCategoryDataService } from 'src/app/data/scoring-category/scoring-category-data.service';
 import { ScoringCategoryQuery } from 'src/app/data/scoring-category/scoring-category.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
@@ -38,6 +38,11 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
     ItemStatus.Cancelled,
     ItemStatus.Complete
   ];
+  scoringOptionSelections = [
+    ScoringOptionSelection.Single,
+    ScoringOptionSelection.Multiple,
+    ScoringOptionSelection.None
+  ];
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -70,7 +75,7 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
         displayOrder: 0,
         calculationEquation: '{max}',
         scoringWeight: 1.0,
-        allowMultipleChoices: false,
+        scoringOptionSelection: ScoringOptionSelection.Single,
         isModifierRequired: false
       };
     } else {
@@ -79,7 +84,8 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(AdminScoringCategoryEditDialogComponent, {
       width: '800px',
       data: {
-        scoringCategory: scoringCategory
+        scoringCategory: scoringCategory,
+        scoringOptionSelections: this.scoringOptionSelections
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

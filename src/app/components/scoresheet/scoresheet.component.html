@@ -218,7 +218,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               [ngClass]="tableClass"
             >
               <div [ngClass]="scoringOption.isModifier ? 'indent-div' : ''" style="width: 100%;">
-                <div>
+                <div *ngIf="scoringCategory.scoringOptionSelection !== 'None'">
                   <mat-checkbox
                     [aria-label]="scoringOption.description"
                     *ngIf="!displayedSubmission.scoreIsAnAverage"
@@ -250,6 +250,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
                       aria-hidden="false"
                     ></mat-icon>
                   </button>
+                </div>
+                <div *ngIf="scoringCategory.scoringOptionSelection === 'None'">
+                  {{ scoringOption.description }}
                 </div>
                 <div class="comment-list" *ngIf="!selectedEvaluation.displayCommentTextBoxes">
                   <div
