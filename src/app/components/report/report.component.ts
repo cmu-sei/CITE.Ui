@@ -219,8 +219,9 @@ export class ReportComponent implements OnDestroy {
     const displayedScoringCategories: ScoringCategory[] = [];
     this.selectedScoringModel.scoringCategories.forEach(scoringCategory => {
       let hideIt = false;
-      if (+moveNumber < +scoringCategory.moveNumberFirstDisplay ||
-          +moveNumber > +scoringCategory.moveNumberLastDisplay) {
+      if (this.selectedScoringModel.displayScoringModelByMoveNumber &&
+          (+moveNumber < +scoringCategory.moveNumberFirstDisplay ||
+          +moveNumber > +scoringCategory.moveNumberLastDisplay)) {
         hideIt = true
       }
     if (!hideIt) {
@@ -235,8 +236,9 @@ export class ReportComponent implements OnDestroy {
     validSubmissions = validSubmissions.filter(vs => vs.submissionType === selection);
     let displayedSubmissions: PopulatedSubmission[] = [];
     validSubmissions.forEach(vs => {
-      const hasScores = this.selectedScoringModel.scoringCategories.some(
-        sc => +vs.moveNumber >= +sc.moveNumberFirstDisplay && +vs.moveNumber <= +sc.moveNumberLastDisplay);
+      const hasScores = !this.selectedScoringModel.displayScoringModelByMoveNumber ||
+        this.selectedScoringModel.scoringCategories.some(
+          sc => +vs.moveNumber >= +sc.moveNumberFirstDisplay && +vs.moveNumber <= +sc.moveNumberLastDisplay);
         if (hasScores && +vs.moveNumber <= +this.selectedEvaluation.currentMoveNumber) {
           displayedSubmissions.push(vs);
         }

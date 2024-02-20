@@ -453,7 +453,7 @@ export class ScoresheetComponent implements OnDestroy {
     const displayedScoringCategories: ScoringCategory[] = [];
     this.selectedScoringModel.scoringCategories.forEach(scoringCategory => {
       let hideIt = false;
-      if (this.selectedEvaluation.displayScoringModelByMoveNumber) {
+      if (this.selectedScoringModel.displayScoringModelByMoveNumber) {
         if (+this.displayedMoveNumber < +scoringCategory.moveNumberFirstDisplay ||
             +this.displayedMoveNumber > +scoringCategory.moveNumberLastDisplay) {
           hideIt = true

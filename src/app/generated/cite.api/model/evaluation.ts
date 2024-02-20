@@ -37,13 +37,10 @@ export interface Evaluation {
     scoringModelId?: string;
     scoringModel?: ScoringModel;
     galleryExhibitId?: string;
-    hideScoresOnScoreSheet?: boolean;
     showPastSituationDescriptions?: boolean;
-    displayCommentTextBoxes?: boolean;
     rightSideDisplay?: RightSideDisplay;
     rightSideHtmlBlock?: string;
     rightSideEmbeddedUrl?: string;
-    displayScoringModelByMoveNumber?: boolean;
     teams?: Array<Team>;
     moves?: Array<Move>;
     submissions?: Array<Submission>;

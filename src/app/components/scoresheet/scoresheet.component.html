@@ -129,7 +129,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             </button>
           </span>
         </div>
-        <div *ngIf="!selectedEvaluation.hideScoresOnScoreSheet && haveSomeScoringCategories">
+        <div *ngIf="!selectedScoringModel.hideScoresOnScoreSheet && haveSomeScoringCategories">
           <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}"
             >{{ displayedSubmission.score | number: '1.2-2' }}</span>
         </div>
@@ -242,7 +242,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     aria-label="Add Comment"
                     mat-icon-button
                     class="small-button"
-                    *ngIf="showModifyControls && myTeamId === activeTeamId && !selectedEvaluation.displayCommentTextBoxes"
+                    *ngIf="showModifyControls && myTeamId === activeTeamId && !selectedScoringModel.displayCommentTextBoxes"
                     (click)="addComment(addCommenttemplate, scoringOption)"
                     title="Add Comment"
                   >
@@ -256,7 +256,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 <div *ngIf="scoringCategory.scoringOptionSelection === 'None'">
                   {{ scoringOption.description }}
                 </div>
-                <div class="comment-list" *ngIf="!selectedEvaluation.displayCommentTextBoxes">
+                <div class="comment-list" *ngIf="!selectedScoringModel.displayCommentTextBoxes">
                   <div
                     *ngFor="
                       let comment of optionComments(
@@ -299,7 +299,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     </button>
                   </div>
                 </div>
-                <div class="comment-box" *ngIf="selectedEvaluation.displayCommentTextBoxes">
+                <div class="comment-box" *ngIf="selectedScoringModel.displayCommentTextBoxes">
                   <textarea
                     matInput
                     [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
@@ -317,7 +317,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               class="value-container"
               [ngClass]="tableClass"
             >
-              <div class="value-div" *ngIf="!selectedEvaluation.hideScoresOnScoreSheet">
+              <div class="value-div" *ngIf="!selectedScoringModel.hideScoresOnScoreSheet">
                 {{
                   scoringCategory.calculationMethodId == 0 ||
                   scoringOption.isModifier

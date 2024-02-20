@@ -30,7 +30,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
         <div class="title-font">
           Move {{ submission.moveNumber }}
-          <span *ngIf="!selectedEvaluation.hideScoresOnScoreSheet" title="{{ displayedScoreHover }}"
+          <span *ngIf="!selectedScoringModel?.hideScoresOnScoreSheet" title="{{ displayedScoreHover }}"
             > - {{ submission.score | number: '1.2-2' }}
           </span>
         </div>
@@ -79,7 +79,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     {{ scoringOption.description }} &nbsp;
                   </div>
                 </div>
-                <div class="comment-list" *ngIf="!selectedEvaluation.displayCommentTextBoxes">
+                <div class="comment-list" *ngIf="!selectedScoringModel.displayCommentTextBoxes">
                   <div
                     *ngFor="
                       let comment of optionComments(
@@ -93,7 +93,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     <span *ngIf="displaying === 'Team'"> - {{ getUserName(comment.createdBy) }}</span>
                   </div>
                 </div>
-                <div class="comment-box" *ngIf="selectedEvaluation.displayCommentTextBoxes">
+                <div class="comment-box" *ngIf="selectedScoringModel.displayCommentTextBoxes">
                   <span class="comment">{{ optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment }}</span>
                 </div>
               </div>
@@ -105,7 +105,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               class="value-container"
               [ngClass]="tableClass"
             >
-              <div class="value-div" *ngIf="!selectedEvaluation.hideScoresOnScoreSheet">
+              <div class="value-div" *ngIf="!selectedScoringModel?.hideScoresOnScoreSheet">
                 {{
                   scoringCategory.calculationMethodId == 0 ||
                   scoringOption.isModifier
