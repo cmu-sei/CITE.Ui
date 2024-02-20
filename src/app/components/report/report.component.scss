@@ -52,7 +52,7 @@
   justify-content: center;
 }
 
-.mat-header-row {
+.title-row {
   position: sticky;
   top: -.5px;
   z-index: 100;
@@ -74,6 +74,9 @@
 .comment {
   width: calc(100% - 32px);
   resize: vertical;
+  text-decoration: underline;
+  font-style: italic;
+
 }
 
 .indent-div {
@@ -125,6 +128,28 @@
   line-height: unset;
 }
 
+.header-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.header-text {
+  display: flex;
+  flex: 15;
+  width: 100%;
+  justify-content: center;
+  align-self: center;
+}
+
+.right-buttons {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+
 .title-font {
   font-size: 30px;
   font-weight: bold;
@@ -163,6 +188,12 @@
   height: 100%;
 }
 
+.header-div {
+  width: 100%;
+  text-align: center;
+  height: 50px;
+}
+
 .black {
   background-color: black;
   color: white;
@@ -188,3 +219,21 @@
   color: black;
 }
 
+@media print {
+  .no-print {
+    display: none;
+  }
+  #printable-area {
+    overflow: visible !important;
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 15px;
+    font-size: 14px;
+    line-height: 18px;
+}
+}

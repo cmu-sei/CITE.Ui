@@ -42,7 +42,8 @@ import { RightSideDisplay } from 'src/app/generated/cite.api/model/rightSideDisp
 
 export enum Section {
   dashboard = 'dashboard',
-  scoresheet = 'scoresheet'
+  scoresheet = 'scoresheet',
+  report = 'report'
 }
 
 @Component({
@@ -205,6 +206,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           const savedSection = this.uiDataService.getSection();
           if (savedSection === 'scoresheet') {
             this.selectedSection =  Section.scoresheet;
+          } else if (savedSection === 'report') {
+            this.selectedSection =  Section.report;
           } else {
             this.selectedSection = Section.dashboard;
           }
@@ -260,10 +263,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
       this.teamDataService.loadMine(this.selectedEvaluationId);
       this.currentMoveNumber = evaluation.currentMoveNumber;
-      if (evaluation.rightSideDisplay === RightSideDisplay.Scoresheet) {
-        this.selectedSection = Section.dashboard;
-        this.uiDataService.setSection(this.selectedSection);
-      }
+      // if (evaluation.rightSideDisplay === RightSideDisplay.Scoresheet) {
+      //   this.selectedSection = Section.dashboard;
+      //   this.uiDataService.setSection(this.selectedSection);
+      // }
     }
     this.isReady = true;
   }
@@ -437,50 +440,54 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   selectDisplayedSubmission(selection: string) {
-    this.uiDataService.setSubmissionType(selection);
-    const submissions = this.submissionQuery.getAll();
-    let newSubmission: Submission = null;
-    switch (selection) {
-      case 'user':
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +this.displayedMoveNumber &&
-          s.userId === this.loggedInUserId);
-        break;
-      case 'team':
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +this.displayedMoveNumber &&
-          s.userId === null &&
-          s.teamId !== null &&
-          !s.scoreIsAnAverage);
-        break;
-      case 'team-avg':
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +this.displayedMoveNumber &&
-          s.userId === null &&
-          s.teamId !== null &&
-          s.scoreIsAnAverage);
-        break;
-      case 'group-avg':
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +this.displayedMoveNumber &&
-          s.userId === null &&
-          s.teamId === null &&
-          s.scoreIsAnAverage);
-        break;
-      case 'official':
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +this.displayedMoveNumber &&
-          s.userId === null &&
-          s.teamId === null &&
-          s.groupId === null);
-        break;
-      default:
-        break;
-    }
-    if (newSubmission) {
-      this.setAndGetActiveSubmission(newSubmission);
+    if (selection === 'report') {
+      this.selectedSection = this.selectedSection === this.section.report ? this.section.dashboard : this.section.report;
     } else {
-      this.makeNewSubmission();
+      this.uiDataService.setSubmissionType(selection);
+      const submissions = this.submissionQuery.getAll();
+      let newSubmission: Submission = null;
+      switch (selection) {
+        case 'user':
+          newSubmission = submissions.find(s =>
+            +s.moveNumber === +this.displayedMoveNumber &&
+            s.userId === this.loggedInUserId);
+          break;
+        case 'team':
+          newSubmission = submissions.find(s =>
+            +s.moveNumber === +this.displayedMoveNumber &&
+            s.userId === null &&
+            s.teamId !== null &&
+            !s.scoreIsAnAverage);
+          break;
+        case 'team-avg':
+          newSubmission = submissions.find(s =>
+            +s.moveNumber === +this.displayedMoveNumber &&
+            s.userId === null &&
+            s.teamId !== null &&
+            s.scoreIsAnAverage);
+          break;
+        case 'group-avg':
+          newSubmission = submissions.find(s =>
+            +s.moveNumber === +this.displayedMoveNumber &&
+            s.userId === null &&
+            s.teamId === null &&
+            s.scoreIsAnAverage);
+          break;
+        case 'official':
+          newSubmission = submissions.find(s =>
+            +s.moveNumber === +this.displayedMoveNumber &&
+            s.userId === null &&
+            s.teamId === null &&
+            s.groupId === null);
+          break;
+        default:
+          break;
+      }
+      if (newSubmission) {
+        this.setAndGetActiveSubmission(newSubmission);
+      } else {
+        this.makeNewSubmission();
+      }
     }
   }
 

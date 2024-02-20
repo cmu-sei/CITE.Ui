@@ -3,96 +3,43 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
-<div class="form-container">
-  <div
-    class="navigation-font"
-  >
-    <span style="transform: scale(0.8)">
-      <!-- User -->
+<div id="printable-area">
+  <div class="header-div">
+    <div class="header-text">
+      <h2>{{ selectedEvaluation.description }} Responses</h2>
+    </div>
+    <div class="right-buttons no-print">
       <button
-        mat-flat-button
-        color="user"
-        class="background-button move-button"
-        (click)="selectDisplayedSubmissions('User')"
-        *ngIf="displaying === 'User'"
-        [disabled]="myTeamId !== activeTeamId"
-        title="Your personal score"
+        aria-label="Print Submission Review"
+        mat-icon-button
+        style="outline: none;"
+        title="Print Submission Review"
+        (click)="printpage()"
       >
-        User
+        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-printer"></mat-icon>
       </button>
-      <button
-        mat-stroked-button
-        class="plain-button move-button"
-        (click)="selectDisplayedSubmissions('User')"
-        *ngIf="displaying !== 'User'"
-        [disabled]="myTeamId !== activeTeamId"
-        title="Your personal score"
-      >
-        User
-      </button>
-      <!-- Team -->
-      <button
-        mat-flat-button
-        color="team"
-        class="background-button move-button"
-        (click)="selectDisplayedSubmissions('Team')"
-        *ngIf="displaying === 'Team'"
-        title="The team's score"
-      >
-        Team
-      </button>
-      <button
-        mat-stroked-button
-        class="plain-button move-button"
-        (click)="selectDisplayedSubmissions('Team')"
-        *ngIf="displaying !== 'Team' && !userOnly"
-        title="The team's score"
-      >
-        Team
-      </button>
-      <!-- Official -->
-      <button
-        mat-flat-button
-        color="official"
-        class="background-button move-button"
-        (click)="selectDisplayedSubmissions('Official')"
-        *ngIf="displaying === 'official'"
-        title="The official score for this move"
-      >
-        Official
-      </button>
-      <button
-        mat-stroked-button
-        class="plain-button move-button"
-        (click)="selectDisplayedSubmissions('Official')"
-        *ngIf="displaying !== 'Official' && showOfficialScore && !userOnly"
-        title="The official score for this move"
-      >
-        Official
-      </button>
-    </span>
+    </div>
   </div>
   <mat-table
     [dataSource]="getDisplayedScoringCategories(submission.moveNumber) | displayOrder"
-    class="full-width full-height"
+    class="full-width"
     *ngFor="let submission of displayedSubmissionList"
   >
     <!-- Description Definition -->
     <ng-container matColumnDef="scoringCategoryDescription">
       <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
-        <div *ngIf="!selectedEvaluation.hideScoresOnScoreSheet">
-          <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}"
-            >{{ submission.moveNumber }} - {{ submission.score | number: '1.2-2' }}</span>
-        </div>
         <div class="title-font">
           Move {{ submission.moveNumber }}
+          <span *ngIf="!selectedEvaluation.hideScoresOnScoreSheet" title="{{ displayedScoreHover }}"
+            > - {{ submission.score | number: '1.2-2' }}
+          </span>
         </div>
       </mat-header-cell>
 
       <!-- Report display -->
       <mat-cell
         *matCellDef="let scoringCategory"
-        class="form-container"
+        class="description-container"
         [ngClass]="tableClass"
       >
         <div class="scoring-category-description" [ngClass]="tableClass">
@@ -183,21 +130,4 @@ project root for license information or contact permission@sei.cmu.edu for full 
       *matRowDef="let row; columns: ['scoringCategoryDescription']"
     ></mat-row>
   </mat-table>
-
-  <div
-    *ngIf="!selectedEvaluation.id || !selectedScoringModel"
-    class="text-center"
-  >
-    <p>&nbsp;</p>
-    <h1>An evaluation has not been properly configured.</h1>
-    <h1>Please contact your administrator.</h1>
-  </div>
-  <div
-    *ngIf="selectedEvaluation.id && selectedScoringModel && !activeTeamId"
-    class="text-center"
-  >
-    <p>&nbsp;</p>
-    <h1>You have not been given appropriate access to this application.</h1>
-    <h1>Please contact your administrator.</h1>
-  </div>
 </div>

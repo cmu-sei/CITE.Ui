@@ -40,9 +40,18 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <button
       mat-icon-button
       style="outline: none;"
+      title="SubmissionReview"
+      (click)="setSection(reportSection)"
+      *ngIf="selectedSection !== reportSection"
+    >
+      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      style="outline: none;"
       title="Dashboard"
-      (click)="setSection('dashboard')"
-      *ngIf="selectedTeamId && selectedSection === scoresheetSection"
+      (click)="setSection(dashboardSection)"
+      *ngIf="selectedTeamId && selectedSection === scoresheetSection || selectedSection === reportSection"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard"></mat-icon>
     </button>
@@ -50,7 +59,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       mat-icon-button
       style="outline: none;"
       title="Scoresheet"
-      (click)="setSection('scoresheet')"
+      (click)="setSection(scoresheetSection)"
       *ngIf="selectedTeamId && selectedSection !== scoresheetSection && !hideScoresheet()"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>

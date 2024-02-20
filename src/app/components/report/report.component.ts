@@ -232,18 +232,26 @@ export class ReportComponent implements OnDestroy {
 
   selectDisplayedSubmissions(selection: string) {
     let validSubmissions = Object.assign([], this.submissionList) as PopulatedSubmission[];
-    validSubmissions = validSubmissions.filter(s => s.submissionType === selection);
+    validSubmissions = validSubmissions.filter(vs => vs.submissionType === selection);
     let displayedSubmissions: PopulatedSubmission[] = [];
     validSubmissions.forEach(vs => {
       const hasScores = this.selectedScoringModel.scoringCategories.some(
         sc => +vs.moveNumber >= +sc.moveNumberFirstDisplay && +vs.moveNumber <= +sc.moveNumberLastDisplay);
-        if (hasScores) {
+        if (hasScores && +vs.moveNumber <= +this.selectedEvaluation.currentMoveNumber) {
           displayedSubmissions.push(vs);
         }
     });
     displayedSubmissions = displayedSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
     this.displaying = selection;
     this.displayedSubmissionList = displayedSubmissions;
+  }
+
+  printpage()
+  {
+     var printContents= document.getElementById('printable-area').innerHTML;
+     document.body.innerHTML = printContents;
+     window.print();
+     location.reload();
   }
 
   ngOnDestroy() {

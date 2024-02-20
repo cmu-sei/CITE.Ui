@@ -20,7 +20,8 @@ import { ItemStatus,
   SubmissionComment,
   Team,
   User,
-  ScoringCategory
+  ScoringCategory,
+  ScoringOptionSelection
 } from 'src/app/generated/cite.api/model/models';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { Title} from '@angular/platform-browser';
@@ -48,7 +49,7 @@ export class ScoresheetComponent implements OnDestroy {
   displayedScoreClass = 'white';
   displayedScoreHover = 'Level 0 - Baseline';
   displaying = 'user';
-  displayedScoringCategories: ScoringCategory[] = [];
+  haveSomeScoringCategories = false;
   hasCanModifyPermission = false;
   hasCanSubmitPermission = false;
   canIncrementMove = false;
@@ -340,9 +341,9 @@ export class ScoresheetComponent implements OnDestroy {
     // if not the curret move, score cannot be reopened, so ask for confirmation
     if (this.displayedMoveNumber !== this.currentMoveNumber) {
       this.dialogService.confirm(
-        'WARNING:  You will not be able to reopen this score!',
+        'WARNING:  You will not be able to reopen this response!',
         'Move ' + this.displayedMoveNumber +
-          ' has ended. You will not be able to reopen this score. Are you sure that you wish to submit this score?'
+          ' has ended. You will not be able to reopen this response. Are you sure that you wish to submit?'
       ).subscribe((result) => {
         if (result['confirm']) {
           this.verifyAndSubmit();
@@ -362,8 +363,8 @@ export class ScoresheetComponent implements OnDestroy {
     } else {
       // there were missing values, so confirm submission
       this.dialogService.confirm(
-        'Submit this score?',
-        errorMessage + '    Are you sure that you want to submit this score?'
+        'Submit this response?',
+        errorMessage + '    Are you sure that you want to submit this response?'
       ).subscribe((result) => {
         if (result['confirm']) {
           this.submit();
@@ -383,21 +384,25 @@ export class ScoresheetComponent implements OnDestroy {
     const noCategoryModifier = [];
     this.displayedSubmission.submissionCategories.forEach(sc => {
       const scoringCategory = this.selectedScoringModel.scoringCategories.find(x => x.id === sc.scoringCategoryId);
-      const scoringOptions = scoringCategory.scoringOptions;
-      const optionIds = scoringOptions.filter(x => !x.isModifier).map(function(x) {
-        return x.id;
-      });
-      const modifierIds = scoringOptions.filter(x => x.isModifier).map(function(x) {
-        return x.id;
-      });
-      const optionSelected = sc.submissionOptions.filter(so => optionIds.includes(so.scoringOptionId)).some(so => so.isSelected);
-      if (!optionSelected) {
-        noCategoryOption.push(scoringCategory.displayOrder);
-      }
-      if (modifierIds.length > 1) {
-        const modifierSelected = sc.submissionOptions.filter(so => modifierIds.includes(so.scoringOptionId)).some(so => so.isSelected);
-        if (!modifierSelected) {
-          noCategoryModifier.push(scoringCategory.displayOrder);
+      if (scoringCategory.scoringOptionSelection !== ScoringOptionSelection.None &&
+          (+scoringCategory.moveNumberFirstDisplay <= +this.displayedSubmission.moveNumber &&
+           +scoringCategory.moveNumberLastDisplay >= +this.displayedSubmission.moveNumber)) {
+        const scoringOptions = scoringCategory.scoringOptions;
+        const optionIds = scoringOptions.filter(x => !x.isModifier).map(function(x) {
+          return x.id;
+        });
+        const modifierIds = scoringOptions.filter(x => x.isModifier).map(function(x) {
+          return x.id;
+        });
+        const optionSelected = sc.submissionOptions.filter(so => optionIds.includes(so.scoringOptionId)).some(so => so.isSelected);
+        if (!optionSelected) {
+          noCategoryOption.push(scoringCategory.displayOrder);
+        }
+        if (modifierIds.length > 1) {
+          const modifierSelected = sc.submissionOptions.filter(so => modifierIds.includes(so.scoringOptionId)).some(so => so.isSelected);
+          if (!modifierSelected) {
+            noCategoryModifier.push(scoringCategory.displayOrder);
+          }
         }
       }
     });
@@ -458,6 +463,7 @@ export class ScoresheetComponent implements OnDestroy {
         displayedScoringCategories.push(scoringCategory);
       }
     });
+    this.haveSomeScoringCategories = displayedScoringCategories.length > 0;
     return displayedScoringCategories;
   }
 

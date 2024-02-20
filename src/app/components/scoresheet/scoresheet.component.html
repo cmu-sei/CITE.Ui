@@ -20,6 +20,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
         <div
           class="navigation-font"
+          *ngIf="!userOnly && haveSomeScoringCategories"
         >
           <span style="transform: scale(0.8)">
             <!-- User -->
@@ -128,13 +129,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
             </button>
           </span>
         </div>
-        <div *ngIf="!selectedEvaluation.hideScoresOnScoreSheet">
+        <div *ngIf="!selectedEvaluation.hideScoresOnScoreSheet && haveSomeScoringCategories">
           <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}"
             >{{ displayedSubmission.score | number: '1.2-2' }}</span>
         </div>
-        <div
-          class="title-font"
-        >
+        <div class="title-font" *ngIf="haveSomeScoringCategories">
           <span
             class="move-buttons"
             *ngIf="myTeamId === activeTeamId"
@@ -186,6 +185,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
           >
             <span *ngIf="!displayedSubmission.scoreIsAnAverage">{{ getSubmissionStatusText() }}</span>
           </span>
+        </div>
+        <div *ngIf="!haveSomeScoringCategories">
+          <h2>No responses required for this move.</h2>
         </div>
       </mat-header-cell>
 
@@ -303,6 +305,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
                     (change)="changeComment(scoringCategory.id, scoringOption.id, $event)"
                     class="comment"
+                    [disabled]="!showSubmitButton"
                   ></textarea>
                 </div>
               </div>
