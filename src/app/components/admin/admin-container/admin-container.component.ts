@@ -91,24 +91,30 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.userDataService.isSuperUser
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((result) => {
-        this.isSuperUser = result;
-        this.canSwitchEvaluations.next(result);
-        if (this.isSuperUser) {
-          this.evaluationDataService.load();
-          this.userDataService.getUsersFromApi();
-          this.userDataService
-            .getPermissionsFromApi()
-            .pipe(takeUntil(this.unsubscribe$))
-            .subscribe();
-          this.permissionList = this.permissionService.getPermissions();
+        if (result !== this.isSuperUser)
+        {
+          this.isSuperUser = result;
+          this.canSwitchEvaluations.next(result);
+          if (this.isSuperUser) {
+            this.evaluationDataService.load();
+            this.userDataService.getUsersFromApi();
+            this.userDataService
+              .getPermissionsFromApi()
+              .pipe(takeUntil(this.unsubscribe$))
+              .subscribe();
+            this.permissionList = this.permissionService.getPermissions();
+          }
         }
       });
     this.userDataService.canAccessAdminSection
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((result) => {
-        this.canAccessAdminSection = result;
-        if (this.canAccessAdminSection && !this.isSuperUser) {
-          this.evaluationDataService.loadMine();
+        if (result !== this.canAccessAdminSection)
+        {
+          this.canAccessAdminSection = result;
+          if (this.canAccessAdminSection && !this.isSuperUser) {
+            this.evaluationDataService.loadMine();
+          }
         }
       });
     this.pageSize = activatedRoute.queryParamMap.pipe(

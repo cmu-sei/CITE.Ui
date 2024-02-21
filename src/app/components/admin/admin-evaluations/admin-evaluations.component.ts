@@ -49,7 +49,9 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   rightSideDisplays = [
     RightSideDisplay.ScoreSummary,
     RightSideDisplay.HtmlBlock,
-    RightSideDisplay.EmbeddedUrl
+    RightSideDisplay.EmbeddedUrl,
+    RightSideDisplay.Scoresheet,
+    RightSideDisplay.None
   ];
   private unsubscribe$ = new Subject();
 

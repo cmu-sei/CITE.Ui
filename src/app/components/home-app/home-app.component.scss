@@ -37,7 +37,7 @@
   flex-flow: row;
   justify-content: center;
   text-align: center;
-  height: 100%;
+  height: calc(100% - 57px);
 }
 
 .app-model-container {
@@ -47,7 +47,7 @@
   text-align: left;
   flex: 65;
   overflow: auto;
-  height: calc(100% - 57px);
+  height: 100%;
 }
 
 .app-model-container-no-topbar {
@@ -57,14 +57,26 @@
   text-align: left;
   flex: 65;
   overflow: auto;
-  height: calc(100% - 19px);
+  height: 100%;
 }
 
 .app-score-container {
   flex-flow: column;
   text-align: center;
-  flex: 35;
   height: 100%;
+  overflow-y: auto;
+}
+
+.flex-65 {
+  flex: 65;
+}
+
+.flex-50 {
+  flex: 50;
+}
+
+.flex-35 {
+  flex: 35;
 }
 
 .cite-logo {

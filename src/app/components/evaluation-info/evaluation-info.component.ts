@@ -27,6 +27,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   @Input() myTeamId: string;
   @Input() evaluationList: Evaluation[];
   @Input() moveList: Move[];
+  @Input() scoresheetOnRight: boolean;
   @Output() incrementActiveMove = new EventEmitter<Move>();
   @Output() decrementActiveMove = new EventEmitter<Move>();
   @Output() changeTeam = new EventEmitter<string>();
@@ -34,12 +35,15 @@ export class EvaluationInfoComponent implements OnDestroy {
   @Output() changeEvaluation = new EventEmitter<string>();
   selectedEvaluationId = '';
   selectedSection = Section.dashboard;
+  dashboardSection = Section.dashboard;
   scoresheetSection = Section.scoresheet;
+  reportSection = Section.report;
   displayedMoveNumber = -1;
   currentMoveNumber = -1;
   selectedTeamId = '';
   canIncrementMove = false;
   waitingForCurrentMoveToAdvance = false;
+  basePageUrl = location.origin + '/report/';
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -93,9 +97,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   isIncrementDisabled(): boolean {
-    const sortedMoves = this.sortedMoveList();
-    const isMaxMove = sortedMoves.length === 0 || +this.displayedMoveNumber === +sortedMoves[sortedMoves.length - 1].moveNumber;
-    return (this.isCurrentMoveNumber() && !this.canIncrementMove) || (this.canIncrementMove && isMaxMove);
+    return (this.isCurrentMoveNumber() && !this.canIncrementMove) || (this.canIncrementMove && +this.displayedMoveNumber === +this.getMaxMoveNumber());
   }
 
   getMinMoveNumber() {
@@ -158,7 +160,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   setSection(section: Section) {
-    if (this.hideScoresheet()) {
+    if (this.hideScoresheet() && section !== Section.report) {
       section = Section.dashboard;
     }
     this.selectedSection = section;
@@ -180,12 +182,16 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   hideScoresheet(): boolean {
-    let hideIt = false;
+    let hideIt = this.scoresheetOnRight;
     const selectedTeam = this.teamList?.find(t => t.id === this.selectedTeamId);
-    if (selectedTeam) {
+    if (!hideIt && selectedTeam) {
       hideIt = selectedTeam.hideScoresheet;
     }
     return hideIt;
+  }
+
+  openReport() {
+    window.open(this.basePageUrl + this.selectedEvaluationId);
   }
 
   ngOnDestroy() {

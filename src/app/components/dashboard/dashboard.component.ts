@@ -55,6 +55,7 @@ export class DashboardComponent implements OnDestroy {
   allActions: Action[] = [];
   roleList: Role[];
   currentMoveNumber: number;
+  displayedMoveNumber: number;
   activeTeamId = '';
   isActionEditMode = false;
   isRoleEditMode = false;
@@ -111,21 +112,23 @@ export class DashboardComponent implements OnDestroy {
       if (moves && moves.length > 0) {
         this.moveList = moves.sort((a, b) => +a.moveNumber < +b.moveNumber ? 1 : -1);
         const currentMove = moves.find(m => +m.moveNumber === +this.selectedEvaluation.currentMoveNumber);
+        this.displayedMoveNumber = currentMove ? currentMove.moveNumber : this.displayedMoveNumber;
         this.currentMoveNumber = currentMove ? currentMove.moveNumber : this.currentMoveNumber;
         this.actionList = this.allActions
-          .filter(a => +a.moveNumber === +this.currentMoveNumber)
+          .filter(a => +a.moveNumber === +this.displayedMoveNumber)
           .sort((a, b) => a.description < b.description ? -1 : 1);
         this.setCompleteSituationDescription();
       } else {
         this.moveList = [];
-        this.currentMoveNumber = -1;
+        this.displayedMoveNumber = -1;
         this.actionList = [];
       }
     });
     // observe the active move
     (this.moveQuery.selectActive() as Observable<Move>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
-        this.currentMoveNumber = active.moveNumber;
+        this.displayedMoveNumber = active.moveNumber;
+        this.setCompleteSituationDescription();
         this.actionList = this.allActions
           .filter(a => +a.moveNumber === +active.moveNumber)
           .sort((a, b) => a.description < b.description ? -1 : 1);
@@ -147,7 +150,7 @@ export class DashboardComponent implements OnDestroy {
     this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(actions => {
       this.allActions = actions;
       this.actionList = actions
-        .filter(a => +a.moveNumber === +this.currentMoveNumber)
+        .filter(a => +a.moveNumber === +this.displayedMoveNumber)
         .sort((a, b) => a.description < b.description ? -1 : 1);
     });
     // observe the Role list
@@ -177,14 +180,21 @@ export class DashboardComponent implements OnDestroy {
       minute: 'numeric',
       hour12: true
     } as DateTimeFormatOptions;
-    let description = '<h4>' + this.selectedEvaluation.situationTime.toLocaleString('en-US', dateTimeFormatOptions)
-      + '<br /></h4>' + this.selectedEvaluation.situationDescription;
+    let description = '';
+    if (+this.displayedMoveNumber === +this.currentMoveNumber) {
+      description = '<h2>' + this.selectedEvaluation.situationTime.toLocaleString('en-US', dateTimeFormatOptions)
+        + '<br /></h2>' + this.selectedEvaluation.situationDescription;
+    } else if (this.moveList && this.moveList.length > 0) {
+      const displayedMove = this.moveList.find(m => +m.moveNumber === +this.displayedMoveNumber);
+      description = '<h2>' + displayedMove.situationTime.toLocaleString('en-US', dateTimeFormatOptions)
+        + '<br /></h2>' + displayedMove.situationDescription;
+    }
     if (this.selectedEvaluation.showPastSituationDescriptions) {
       this.moveList?.forEach(m => {
-        if (+m.moveNumber < +this.currentMoveNumber) {
-          description = description + '<br /><hr><hr><h4>'
-            + m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) + '<br /></h4>'
-            + m.situationDescription;
+        if (+m.moveNumber < +this.displayedMoveNumber) {
+          description = description + '<br /><div style="border:none;background-color:gray;"><h1 style="margin-left: 50px;">*** Move ' + m.moveNumber + ' Information</h1></div>'
+            + '<div style="border: 3px solid gray; margin-top: -25px; padding-left: 10px; padding-right: 10px;"><h2>' + m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) + '</h2><br />'
+            + m.situationDescription + '</div>';
         }
       });
     }
@@ -208,7 +218,7 @@ export class DashboardComponent implements OnDestroy {
       action = {
         description: '',
         evaluationId: this.selectedEvaluation.id,
-        moveNumber: this.currentMoveNumber,
+        moveNumber: this.displayedMoveNumber,
         teamId: this.activeTeamId
       };
     } else {
