@@ -37,7 +37,8 @@
   flex-flow: row;
   justify-content: center;
   text-align: center;
-  height: calc(100% - 57px);
+  //height: calc(100% - 57px);
+  height: 100%
 }
 
 .app-model-container {

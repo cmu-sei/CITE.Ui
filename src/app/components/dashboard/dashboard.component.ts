@@ -171,35 +171,61 @@ export class DashboardComponent implements OnDestroy {
 
   setCompleteSituationDescription() {
     const dateTimeFormatOptions = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      timeZoneName: 'short',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZoneName: 'short',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
     } as DateTimeFormatOptions;
+
     let description = '';
+    let pastMovesBannerAdded = false;
+    let lastDisplayedMoveNumber = 0;
+
     if (+this.displayedMoveNumber === +this.currentMoveNumber) {
-      description = '<h2>' + this.selectedEvaluation.situationTime.toLocaleString('en-US', dateTimeFormatOptions)
-        + '<br /></h2>' + this.selectedEvaluation.situationDescription;
+        description = '<div style="display: flex; align-items: center; font-size: 25px;">' +
+            '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+            'Current Move' +
+            '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+            '</div>' +
+            '<h4>' +
+            this.selectedEvaluation.situationTime.toLocaleString('en-US', dateTimeFormatOptions) +
+            '<br /></h4>' +
+            this.selectedEvaluation.situationDescription;
     } else if (this.moveList && this.moveList.length > 0) {
-      const displayedMove = this.moveList.find(m => +m.moveNumber === +this.displayedMoveNumber);
-      description = '<h2>' + displayedMove.situationTime.toLocaleString('en-US', dateTimeFormatOptions)
-        + '<br /></h2>' + displayedMove.situationDescription;
+        const displayedMove = this.moveList.find(m => +m.moveNumber === +this.displayedMoveNumber);
+        description = '<h2>' + displayedMove.situationTime.toLocaleString('en-US', dateTimeFormatOptions)
+            + '<br /></h2>' + displayedMove.situationDescription;
+        lastDisplayedMoveNumber = +this.displayedMoveNumber;
     }
+
     if (this.selectedEvaluation.showPastSituationDescriptions) {
-      this.moveList?.forEach(m => {
-        if (+m.moveNumber < +this.displayedMoveNumber) {
-          description = description + '<br /><div style="border:none;background-color:gray;"><h1 style="margin-left: 50px;">*** Move ' + m.moveNumber + ' Information</h1></div>'
-            + '<div style="border: 3px solid gray; margin-top: -25px; padding-left: 10px; padding-right: 10px;"><h2>' + m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) + '</h2><br />'
-            + m.situationDescription + '</div>';
-        }
-      });
+        this.moveList?.forEach(m => {
+            if (+m.moveNumber < +this.displayedMoveNumber) {
+                // Add the "Previous Moves" banner only for the first past move number
+                if (!pastMovesBannerAdded) {
+                    description = description + '<br /><div style="display: flex; align-items: center; font-size: 25px;">' +
+                        '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+                        'Previous Moves' +
+                        '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+                        '</div>';
+                    pastMovesBannerAdded = true;
+                } else {
+                    // Add a line separator for past moves without the banner
+                    description = description + '<br><div style="border-bottom: 3px solid grey; margin: 5px;"></div>';
+                }
+
+                // Add the past move details
+                description = description + '<h4>' + m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) + '</h4>'
+                    + m.situationDescription + '</div>';
+            }
+        });
     }
     this.completeSituationDescription = description;
-  }
+}
 
   checkAction(actionId: string, isChecked: boolean) {
     if (isChecked) {
