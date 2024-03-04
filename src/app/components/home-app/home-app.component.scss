@@ -37,7 +37,6 @@
   flex-flow: row;
   justify-content: center;
   text-align: center;
-  //height: calc(100% - 57px);
   height: 100%;
 }
 
@@ -48,7 +47,6 @@
   text-align: left;
   flex: 65;
   overflow: auto;
-  //height: 100%;
   height: calc(100% - 57px);
 }
 
@@ -59,7 +57,6 @@
   text-align: left;
   flex: 65;
   overflow: auto;
-  //height: 100%;
   height: calc(100% - 19px);
 }
 
@@ -67,6 +64,15 @@
   flex-flow: column;
   text-align: center;
   height: 100%;
+  height: calc(100% - 57px);
+  overflow-y: auto;
+}
+
+.app-score-container-no-topbar {
+  flex-flow: column;
+  text-align: center;
+  height: 100%;
+  height: calc(100% - 19px);
   overflow-y: auto;
 }
 

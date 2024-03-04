@@ -90,7 +90,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           [myTeamId]="myTeamId$ | async"
         ></app-report>
       </div>
-      <div *ngIf="(activeEvaluation$ | async)?.rightSideDisplay === 'ScoreSummary' && selectedSection !== section.report" class="app-score-container flex-35 mat-elevation-z8" autosize>
+      <div *ngIf="(activeEvaluation$ | async)?.rightSideDisplay === 'ScoreSummary' && selectedSection !== section.report" class="flex-35" autosize>
         <app-score-summary
           *ngIf="unreadArticles$ && moveList$"
           [selectedScoringModel]="activeScoringModel$ | async"
@@ -98,7 +98,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           [activeSubmission]="activeSubmission$ | async"
         ></app-score-summary>
       </div>
-      <div *ngIf="(activeEvaluation$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeEvaluation$ | async)?.rightSideDisplay !== 'None' && selectedSection !== section.report" class="app-score-container flex-50 mat-elevation-z8" autosize>
+      <div [ngClass]="getAppContentClass()" *ngIf="(activeEvaluation$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeEvaluation$ | async)?.rightSideDisplay !== 'None' && selectedSection !== section.report" class="app-score-container flex-50 mat-elevation-z8" autosize>
         <app-right-side-html
           *ngIf="(activeEvaluation$ | async)?.rightSideDisplay === 'HtmlBlock'"
           [evaluation$]="activeEvaluation$"
