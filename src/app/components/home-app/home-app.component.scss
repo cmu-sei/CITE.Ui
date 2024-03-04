@@ -38,7 +38,7 @@
   justify-content: center;
   text-align: center;
   //height: calc(100% - 57px);
-  height: 100%
+  height: 100%;
 }
 
 .app-model-container {
@@ -48,7 +48,8 @@
   text-align: left;
   flex: 65;
   overflow: auto;
-  height: 100%;
+  //height: 100%;
+  height: calc(100% - 57px);
 }
 
 .app-model-container-no-topbar {
@@ -58,7 +59,8 @@
   text-align: left;
   flex: 65;
   overflow: auto;
-  height: 100%;
+  //height: 100%;
+  height: calc(100% - 19px);
 }
 
 .app-score-container {
