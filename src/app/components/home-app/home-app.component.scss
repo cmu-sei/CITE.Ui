@@ -63,7 +63,6 @@
 .app-score-container {
   flex-flow: column;
   text-align: center;
-  height: 100%;
   height: calc(100% - 57px);
   overflow-y: auto;
 }
@@ -71,7 +70,6 @@
 .app-score-container-no-topbar {
   flex-flow: column;
   text-align: center;
-  height: 100%;
   height: calc(100% - 19px);
   overflow-y: auto;
 }
