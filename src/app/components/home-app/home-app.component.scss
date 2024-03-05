@@ -47,7 +47,7 @@
   text-align: left;
   flex: 65;
   overflow: auto;
-  height: 100%;
+  height: auto;
 }
 
 .app-model-container-no-topbar {
@@ -103,4 +103,10 @@
 .cite-icon {
   transform: scale(2);
   width: 60px;
+}
+
+@media print {
+  .app-events-container {
+    position: static !important;
+  }
 }
