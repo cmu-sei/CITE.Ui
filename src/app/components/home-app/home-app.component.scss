@@ -111,3 +111,9 @@
   transform: scale(2);
   width: 60px;
 }
+
+@media print {
+  .app-events-container {
+    position: static !important;
+  }
+}
