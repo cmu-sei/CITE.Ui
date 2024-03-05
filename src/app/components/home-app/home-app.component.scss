@@ -37,7 +37,7 @@
   flex-flow: row;
   justify-content: center;
   text-align: center;
-  height: calc(100% - 57px);
+  height: 100%;
 }
 
 .app-model-container {
@@ -47,7 +47,7 @@
   text-align: left;
   flex: 65;
   overflow: auto;
-  height: auto;
+  height: calc(100% - 57px);
 }
 
 .app-model-container-no-topbar {
@@ -57,13 +57,20 @@
   text-align: left;
   flex: 65;
   overflow: auto;
-  height: 100%;
+  height: calc(100% - 19px);
 }
 
 .app-score-container {
   flex-flow: column;
   text-align: center;
-  height: 100%;
+  height: calc(100% - 57px);
+  overflow-y: auto;
+}
+
+.app-score-container-no-topbar {
+  flex-flow: column;
+  text-align: center;
+  height: calc(100% - 19px);
   overflow-y: auto;
 }
 

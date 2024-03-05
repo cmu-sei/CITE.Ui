@@ -505,9 +505,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   getAppContentClass() {
     if (this.inIframe()) {
-      return 'app-model-container-no-topbar mat-elevation-z8';
+      return 'app-model-container-no-topbar mat-elevation-z8 app-score-container-no-topbar ';
     } else {
-      return 'app-model-container mat-elevation-z8';
+      return 'app-model-container mat-elevation-z8 app-score-container';
     }
   }
 
