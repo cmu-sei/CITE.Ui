@@ -67,6 +67,108 @@ export class TeamUserService {
 
 
     /**
+     * Clears the selected TeamUser incrementer flag
+     * Clears the TeamUser from being an incrementer.
+     * @param id The Id of the TeamUser to update
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public clearIncrementer(id: string, observe?: 'body', reportProgress?: boolean): Observable<TeamUser>;
+    public clearIncrementer(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TeamUser>>;
+    public clearIncrementer(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TeamUser>>;
+    public clearIncrementer(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling clearIncrementer.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/incrementer/clear`,
+            null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Clears the selected TeamUser Modifier flag
+     * Clears the TeamUser from being an Modifier.
+     * @param id The Id of the TeamUser to update
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public clearModifier(id: string, observe?: 'body', reportProgress?: boolean): Observable<TeamUser>;
+    public clearModifier(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TeamUser>>;
+    public clearModifier(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TeamUser>>;
+    public clearModifier(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling clearModifier.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/modifier/clear`,
+            null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Clears the selected TeamUser observer flag
      * Clears the TeamUser from being an observer.
      * @param id The Id of the TeamUser to update
@@ -107,6 +209,57 @@ export class TeamUserService {
         ];
 
         return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/observer/clear`,
+            null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Clears the selected TeamUser Submitter flag
+     * Clears the TeamUser from being an Submitter.
+     * @param id The Id of the TeamUser to update
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public clearSubmitter(id: string, observe?: 'body', reportProgress?: boolean): Observable<TeamUser>;
+    public clearSubmitter(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TeamUser>>;
+    public clearSubmitter(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TeamUser>>;
+    public clearSubmitter(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling clearSubmitter.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/submitter/clear`,
             null,
             {
                 withCredentials: this.configuration.withCredentials,
@@ -423,6 +576,108 @@ export class TeamUserService {
     }
 
     /**
+     * Sets the selected TeamUser Incrementer flag
+     * Sets the TeamUser to an Incrementer.
+     * @param id The Id of the TeamUser to update
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public setIncrementer(id: string, observe?: 'body', reportProgress?: boolean): Observable<TeamUser>;
+    public setIncrementer(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TeamUser>>;
+    public setIncrementer(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TeamUser>>;
+    public setIncrementer(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling setIncrementer.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/incrementer/set`,
+            null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Sets the selected TeamUser Modifier flag
+     * Sets the TeamUser to an Modifier.
+     * @param id The Id of the TeamUser to update
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public setModifier(id: string, observe?: 'body', reportProgress?: boolean): Observable<TeamUser>;
+    public setModifier(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TeamUser>>;
+    public setModifier(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TeamUser>>;
+    public setModifier(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling setModifier.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/modifier/set`,
+            null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Sets the selected TeamUser observer flag
      * Sets the TeamUser to an observer.
      * @param id The Id of the TeamUser to update
@@ -463,6 +718,57 @@ export class TeamUserService {
         ];
 
         return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/observer/set`,
+            null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Sets the selected TeamUser Submitter flag
+     * Sets the TeamUser to an Submitter.
+     * @param id The Id of the TeamUser to update
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public setSubmitter(id: string, observe?: 'body', reportProgress?: boolean): Observable<TeamUser>;
+    public setSubmitter(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TeamUser>>;
+    public setSubmitter(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TeamUser>>;
+    public setSubmitter(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling setSubmitter.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/submitter/set`,
             null,
             {
                 withCredentials: this.configuration.withCredentials,
