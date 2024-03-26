@@ -6,12 +6,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div class="full-width">
 
-  <div class="user-list-container mat-elevation-z8">
+  <div *ngIf="isAddMode" class="user-list-container mat-elevation-z8">
 
     <div class="sp-icon">
       <mat-icon
         class="mdi-24px"
-        fontIcon="mdi-account-multiple"
+        fontIcon="mdi-account"
       ></mat-icon>
     <span style="margin-left: 10px">
       All Users
@@ -19,23 +19,17 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
 
     <div>
-      <mat-icon
-        style="transform: scale(0.85); margin-right: 5px; margin-left: 10px;"
-        svgIcon="ic_magnify_search"
-      ></mat-icon>
-      <mat-form-field style="width: 220px;">
+      <mat-form-field class="search-box">
         <input matInput [formControl]="filterControl" placeholder="Search" />
       </mat-form-field>
       <button
-        *ngIf="filterString != ''"
         mat-icon-button
         (click)="clearFilter()"
         style="outline: none;"
         title="Clear Search"
       >
         <mat-icon
-          style="transform: scale(0.85);"
-          svgIcon="ic_cancel_circle"
+          class="mdi-18px" fontIcon="mdi-close-circle-outline"
         ></mat-icon>
       </button>
     </div>
@@ -56,7 +50,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     >
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header
-          >User Name</mat-header-cell
+          >User</mat-header-cell
         >
         <mat-cell *matCellDef="let element">
           <div *ngIf="element.name !== null">{{ element.name }}</div>
@@ -68,8 +62,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <button mat-stroked-button (click)="addUserToTeam(element)">
-              Add User
+            <button
+              mat-icon-button
+              (click)="addUserToTeam(element)"
+              style="outline: none;"
+              title="Add {{ element.name }} to Team"
+            >
+              <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline"></mat-icon>
             </button>
           </div>
         </mat-cell>
@@ -82,14 +81,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div *ngIf="userDataSource.filteredData.length === 0">No results found</div>
     <mat-paginator
       #paginator
-      [pageSize]="defaultPageSize"
-      [showFirstLastButtons]="true"
-      (page)="pageEvent = $event"
+      [length]="userDataSource.filteredData.length"
+      [pageSize]="pageSize"
+      [showFirstLastButtons]="false"
+      [pageIndex]="currentPageIndex"
+      [hidePageSize]="true"
+      (page)="handlePageEvent($event)"
     >
     </mat-paginator>
   </div>
-
-  <div class="spacer">&nbsp;</div>
 
   <div class="team-list-container mat-elevation-z8">
 
@@ -101,6 +101,24 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <span style="margin-left: 10px">
         Team Users
       </span>
+      <button
+        *ngIf="!isAddMode"
+        mat-icon-button
+        (click)="toggleAddMode(true)"
+        style="outline: none;"
+        title="Add Users to Team"
+      >
+        <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline"></mat-icon>
+      </button>
+      <button
+        *ngIf="isAddMode"
+        mat-icon-button
+        (click)="toggleAddMode(false)"
+        style="outline: none;"
+        title="Show User Permissions"
+      >
+        <mat-icon class="mdi-24px self-center" fontIcon="mdi-eye-outline"></mat-icon>
+      </button>
     </div>
 
     <mat-card
@@ -119,7 +137,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     >
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header
-          >User Name</mat-header-cell
+          >User</mat-header-cell
         >
         <mat-cell *matCellDef="let element">
           <div>{{ getUserName(element.userId) }}</div>
@@ -138,12 +156,53 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-cell>
       </ng-container>
 
+      <ng-container matColumnDef="canIncrementMove">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Incrementer</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          <mat-checkbox
+            [checked]="element.canIncrementMove"
+            (change)="setIncrementerValue(element.id, $event.checked)"
+          ></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="canModify">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Modfier</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          <mat-checkbox
+            [checked]="element.canModify"
+            (change)="setModifierValue(element.id, $event.checked)"
+          ></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="canSubmit">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Submitter</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          <mat-checkbox
+            [checked]="element.canSubmit"
+            (change)="setSubmitterValue(element.id, $event.checked)"
+          ></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
       <ng-container matColumnDef="id">
         <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <button mat-stroked-button (click)="removeUserFromTeam(element)">
-              Remove
+            <button
+              mat-icon-button
+              (click)="removeUserFromTeam(element)"
+              style="outline: none;"
+              title="Remove {{ element.name }} from Team"
+            >
+              <mat-icon class="mdi-24px self-center" fontIcon="mdi-minus-circle-outline"></mat-icon>
             </button>
           </div>
         </mat-cell>

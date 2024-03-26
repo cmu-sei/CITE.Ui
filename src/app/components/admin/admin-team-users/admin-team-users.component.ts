@@ -28,14 +28,16 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   userList: User[] = [];
   teamUsers: TeamUser[] = [];
   displayedUserColumns: string[] = ['name', 'id'];
-  displayedTeamUserColumns: string[] = ['name', 'isObserver', 'id'];
+  displayedTeamUserColumns: string[] = ['name', 'isObserver', 'canIncrementMove', 'canModify', 'canSubmit', 'id'];
   displayedTeamColumns: string[] = ['name', 'user'];
   userDataSource = new MatTableDataSource<User>(new Array<User>());
   teamUserDataSource = new MatTableDataSource<TeamUser>(new Array<TeamUser>());
   filterControl = this.userDataService.filterControl;
   filterString = '';
-  defaultPageSize = 100;
-  pageEvent: PageEvent;
+  isAddMode = false;
+  currentPageIndex = 0;
+  pageSize = 7;
+  itemCount = 0;
   private unsubscribe$ = new Subject();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -53,9 +55,6 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
       this.teamUsers = tUsers.filter(tu => tu.teamId === this.teamId);
       this.setDataSources();
     });
-    this.pageEvent = new PageEvent();
-    this.pageEvent.pageIndex = 0;
-    this.pageEvent.pageSize = this.defaultPageSize;
   }
 
   ngOnInit() {
@@ -65,7 +64,7 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
     this.filterControl.setValue('');
     this.teamUsers = this.teamUserQuery.getAll().filter(tu => tu.teamId === this.teamId);
     this.setDataSources();
-}
+  }
 
   clearFilter() {
     this.filterControl.setValue('');
@@ -95,7 +94,7 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
     });
     this.userDataSource = new MatTableDataSource(newAllUsers);
     this.userDataSource.sort = this.sort;
-    this.userDataSource.paginator = this.paginator;
+    this.itemCount = this.userDataSource.data.length;
   }
 
   getUserName(id: string) {
@@ -123,12 +122,38 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
     this.teamUserDataService.setObserverValue(teamUserId, value);
   }
 
+  setIncrementerValue(teamUserId: string, value: boolean) {
+    this.teamUserDataService.setIncrementerValue(teamUserId, value);
+  }
+
+  setModifierValue(teamUserId: string, value: boolean) {
+    this.teamUserDataService.setModifierValue(teamUserId, value);
+  }
+
+  setSubmitterValue(teamUserId: string, value: boolean) {
+    this.teamUserDataService.setSubmitterValue(teamUserId, value);
+  }
+
   compare(a: string, b: string, isAsc: boolean) {
     if (a === null || b === null) {
       return 0;
     } else {
       return (a.toLowerCase() < b.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1);
     }
+  }
+
+  toggleAddMode(value: boolean) {
+    this.isAddMode = value;
+    if (value) {
+      this.displayedTeamUserColumns = ['name', 'id'];
+
+    } else {
+      this.displayedTeamUserColumns = ['name', 'isObserver', 'canIncrementMove', 'canModify', 'canSubmit', 'id'];
+    }
+  }
+
+  handlePageEvent(pageEvent: PageEvent) {
+    this.currentPageIndex = pageEvent.pageIndex;
   }
 
   ngOnDestroy() {

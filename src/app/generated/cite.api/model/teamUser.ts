@@ -30,4 +30,7 @@ export interface TeamUser {
     teamId?: string;
     team?: Team;
     isObserver?: boolean;
+    canIcrementMove?: boolean;
+    canModify?: boolean;
+    canSubmit?: boolean;
 }
