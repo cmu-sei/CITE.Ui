@@ -119,6 +119,42 @@ export class TeamUserDataService {
     }
   }
 
+  setIncrementerValue(teamUserId: string, value: boolean) {
+    if (value) {
+      this.teamUserService.setIncrementer(teamUserId).pipe(take(1)).subscribe((tu) => {
+        this.updateStore(tu);
+      });
+    } else {
+      this.teamUserService.clearIncrementer(teamUserId).pipe(take(1)).subscribe((tu) => {
+        this.updateStore(tu);
+      });
+    }
+  }
+
+  setModifierValue(teamUserId: string, value: boolean) {
+    if (value) {
+      this.teamUserService.setModifier(teamUserId).pipe(take(1)).subscribe((tu) => {
+        this.updateStore(tu);
+      });
+    } else {
+      this.teamUserService.clearModifier(teamUserId).pipe(take(1)).subscribe((tu) => {
+        this.updateStore(tu);
+      });
+    }
+  }
+
+  setSubmitterValue(teamUserId: string, value: boolean) {
+    if (value) {
+      this.teamUserService.setSubmitter(teamUserId).pipe(take(1)).subscribe((tu) => {
+        this.updateStore(tu);
+      });
+    } else {
+      this.teamUserService.clearSubmitter(teamUserId).pipe(take(1)).subscribe((tu) => {
+        this.updateStore(tu);
+      });
+    }
+  }
+
   delete(id: string) {
     this.teamUserService
       .deleteTeamUser(id)
