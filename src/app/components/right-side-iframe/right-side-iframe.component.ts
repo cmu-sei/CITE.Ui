@@ -27,7 +27,7 @@ export class RightSideIframeComponent implements OnDestroy {
     // observe active evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
-        this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(active.rightSideEmbeddedUrl);
+        this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(active.scoringModel.rightSideEmbeddedUrl);
       }
     });
   }

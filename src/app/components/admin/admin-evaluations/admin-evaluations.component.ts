@@ -46,13 +46,6 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     ItemStatus.Cancelled,
     ItemStatus.Complete
   ];
-  rightSideDisplays = [
-    RightSideDisplay.ScoreSummary,
-    RightSideDisplay.HtmlBlock,
-    RightSideDisplay.EmbeddedUrl,
-    RightSideDisplay.Scoresheet,
-    RightSideDisplay.None
-  ];
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -97,8 +90,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       data: {
         evaluation: evaluation,
         scoringModels: this.scoringModels,
-        itemStatuses: this.itemStatuses,
-        rightSideDisplays: this.rightSideDisplays
+        itemStatuses: this.itemStatuses
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

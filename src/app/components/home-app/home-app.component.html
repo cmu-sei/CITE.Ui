@@ -60,7 +60,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         [myTeamId]="myTeamId$ | async"
         [evaluationList]="evaluationList$ | async"
         [moveList]="moveList$ | async"
-        [scoresheetOnRight]="(activeEvaluation$ | async)?.rightSideDisplay === 'Scoresheet'"
+        [scoresheetOnRight]="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
         (incrementActiveMove)="incrementActiveMove($event)"
         (decrementActiveMove)="decrementActiveMove($event)"
         (changeTeam)="changeTeam($event)"
@@ -90,7 +90,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           [myTeamId]="myTeamId$ | async"
         ></app-report>
       </div>
-      <div *ngIf="(activeEvaluation$ | async)?.rightSideDisplay === 'ScoreSummary' && selectedSection !== section.report" class="flex-35" autosize>
+      <div *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'ScoreSummary' && selectedSection !== section.report" class="flex-35" autosize>
         <app-score-summary
           *ngIf="unreadArticles$ && moveList$"
           [selectedScoringModel]="activeScoringModel$ | async"
@@ -98,16 +98,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
           [activeSubmission]="activeSubmission$ | async"
         ></app-score-summary>
       </div>
-      <div [ngClass]="getAppContentClass()" *ngIf="(activeEvaluation$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeEvaluation$ | async)?.rightSideDisplay !== 'None' && selectedSection !== section.report" class="app-score-container flex-50 mat-elevation-z8" autosize>
+      <div [ngClass]="getAppContentClass()" *ngIf="(activeScoringModel$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeScoringModel$ | async)?.rightSideDisplay !== 'None' && selectedSection !== section.report" class="app-score-container flex-50 mat-elevation-z8" autosize>
         <app-right-side-html
-          *ngIf="(activeEvaluation$ | async)?.rightSideDisplay === 'HtmlBlock'"
+          *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'HtmlBlock'"
           [evaluation$]="activeEvaluation$"
         ></app-right-side-html>
         <app-right-side-iframe
-          *ngIf="(activeEvaluation$ | async)?.rightSideDisplay === 'EmbeddedUrl'"
+          *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'EmbeddedUrl'"
         ></app-right-side-iframe>
         <app-scoresheet
-          *ngIf="(activeEvaluation$ | async)?.rightSideDisplay === 'Scoresheet'"
+          *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
           [userOnly]="true"
           [myTeamId]="myTeamId$ | async"
           (selectDisplayedSubmission)="selectDisplayedSubmission($event)"

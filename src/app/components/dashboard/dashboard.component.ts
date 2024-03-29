@@ -13,6 +13,7 @@ import {
   Evaluation,
   Move,
   Role,
+  ScoringModel,
   Team,
   User
 } from 'src/app/generated/cite.api/model/models';
@@ -21,6 +22,7 @@ import { ActionQuery } from 'src/app/data/action/action.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { RoleQuery } from 'src/app/data/role/role.query';
+import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { Title } from '@angular/platform-browser';
@@ -50,6 +52,7 @@ export class DashboardComponent implements OnDestroy {
   @Input() myTeamId: string;
   teamUsers: User[];
   selectedEvaluation: Evaluation = {};
+  scoringModel: ScoringModel = {};
   isLoading = false;
   actionList: Action[] = [];
   allActions: Action[] = [];
@@ -89,6 +92,7 @@ export class DashboardComponent implements OnDestroy {
     private moveQuery: MoveQuery,
     private roleDataService: RoleDataService,
     private roleQuery: RoleQuery,
+    private scoringModelQuery: ScoringModelQuery,
     private unreadArticlesDataService: UnreadArticlesDataService,
     public dialogService: DialogService,
     public matDialog: MatDialog,
@@ -167,6 +171,10 @@ export class DashboardComponent implements OnDestroy {
         this.roleList.push(newRole);
       });
     });
+    // observe the scoring model
+    (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModel => {
+      this.scoringModel = scoringModel;
+    });
   }
 
   setCompleteSituationDescription() {
@@ -192,17 +200,17 @@ export class DashboardComponent implements OnDestroy {
             '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
             '</div>' +
             '<h4>' +
-            this.selectedEvaluation.situationTime.toLocaleString('en-US', dateTimeFormatOptions) +
+            this.selectedEvaluation.situationTime?.toLocaleString('en-US', dateTimeFormatOptions) +
             '<br /></h4>' +
             this.selectedEvaluation.situationDescription;
-    } else if (this.moveList && this.moveList.length > 0) {
+    } else if (this.moveList && this.moveList.length > 0 && this.displayedMoveNumber) {
         const displayedMove = this.moveList.find(m => +m.moveNumber === +this.displayedMoveNumber);
-        description = '<h2>' + displayedMove.situationTime.toLocaleString('en-US', dateTimeFormatOptions)
+        description = '<h2>' + displayedMove.situationTime?.toLocaleString('en-US', dateTimeFormatOptions)
             + '<br /></h2>' + displayedMove.situationDescription;
         lastDisplayedMoveNumber = +this.displayedMoveNumber;
     }
 
-    if (this.selectedEvaluation.showPastSituationDescriptions) {
+    if (this.scoringModel.showPastSituationDescriptions) {
         this.moveList?.forEach(m => {
             if (+m.moveNumber < +this.displayedMoveNumber) {
                 // Add the "Previous Moves" banner only for the first past move number

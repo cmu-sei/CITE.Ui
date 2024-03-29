@@ -17,6 +17,7 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  */
 import { ItemStatus } from './itemStatus';
 import { ScoringCategory } from './scoringCategory';
+import { RightSideDisplay } from './rightSideDisplay';
 
 
 export interface ScoringModel {
@@ -32,4 +33,8 @@ export interface ScoringModel {
     hideScoresOnScoreSheet?: boolean;
     displayCommentTextBoxes?: boolean;
     displayScoringModelByMoveNumber?: boolean;
+    showPastSituationDescriptions?: boolean;
+    rightSideDisplay?: RightSideDisplay;
+    rightSideHtmlBlock?: string;
+    rightSideEmbeddedUrl?: string;
 }
