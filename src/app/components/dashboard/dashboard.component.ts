@@ -210,7 +210,7 @@ export class DashboardComponent implements OnDestroy {
         lastDisplayedMoveNumber = +this.displayedMoveNumber;
     }
 
-    if (this.scoringModel.showPastSituationDescriptions) {
+    if (this.scoringModel && this.scoringModel.showPastSituationDescriptions) {
         this.moveList?.forEach(m => {
             if (+m.moveNumber < +this.displayedMoveNumber) {
                 // Add the "Previous Moves" banner only for the first past move number
