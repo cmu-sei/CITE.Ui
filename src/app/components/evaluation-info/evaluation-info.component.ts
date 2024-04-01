@@ -77,8 +77,8 @@ export class EvaluationInfoComponent implements OnDestroy {
         this.setSection(this.selectedSection);
       }
     });
-    this.setSection(this.uiDataService.getSection() as Section);
-    this.selectedTeamId = this.uiDataService.getTeam();
+    this.setSection(this.uiDataService.getSection(this.selectedEvaluationId) as Section);
+    this.selectedTeamId = this.uiDataService.getTeam(this.selectedEvaluationId);
     this.userDataService.canIncrementMove.pipe(takeUntil(this.unsubscribe$)).subscribe(canIncrementMove => {
       this.canIncrementMove = canIncrementMove;
     });

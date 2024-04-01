@@ -425,7 +425,7 @@ export class ScoresheetComponent implements OnDestroy {
   }
 
   setFormatting() {
-    this.displaying = this.uiDataService.getSubmissionType();
+    this.displaying = this.uiDataService.getSubmissionType(this.selectedEvaluation.id);
     // set proper permissions for this selection
     const canModify =
       (this.displaying === 'user') ||
