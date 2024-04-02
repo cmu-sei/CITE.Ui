@@ -67,7 +67,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         [matMenuTriggerFor]="menu"
         style="outline: none;"
       >
-        <strong>{{ currentUser.profile.name }}</strong>
+        <strong *ngIf="currentUser && currentUser.profile">{{ currentUser.profile.name }}</strong>
         <mat-icon aria-hidden="false" class="icon-color" svgIcon="ic_expand_more"></mat-icon>
       </button>
       <mat-menu #menu="matMenu" [overlapTrigger]="false">

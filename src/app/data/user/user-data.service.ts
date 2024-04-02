@@ -146,6 +146,10 @@ export class UserDataService implements OnDestroy {
   }
 
   setLoggedInUser(authUser: AuthUser) {
+    if (!authUser || !authUser.profile) {
+      return;
+    }
+
     this.userService
       .getUser(authUser.profile.sub)
       .pipe(takeUntil(this.unsubscribe$))
