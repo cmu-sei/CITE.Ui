@@ -97,7 +97,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   isIncrementDisabled(): boolean {
-    return (this.isCurrentMoveNumber() && !this.canIncrementMove) || (this.canIncrementMove && +this.displayedMoveNumber === +this.getMaxMoveNumber());
+    return +this.displayedMoveNumber === +this.getMaxMoveNumber();
   }
 
   getMinMoveNumber() {
@@ -122,7 +122,7 @@ export class EvaluationInfoComponent implements OnDestroy {
     if (+nextMoveIndex <= +this.currentMoveNumber) {
       this.displayedMoveNumber = this.sortedMoveList()[nextMoveIndex].moveNumber;
       this.incrementActiveMove.emit(this.sortedMoveList()[nextMoveIndex]);
-    } else if (this.canIncrementMove) {
+    } else if (true || this.canIncrementMove) {
       this.dialogService.confirm(
         'Advance to the next Move?',
         'Are you sure that you want to advance to the next move?'
