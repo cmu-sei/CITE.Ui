@@ -83,14 +83,15 @@ export class ScoresheetComponent implements OnDestroy {
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
         this.selectedEvaluation = active;
-        this.currentMoveNumber = active.currentMoveNumber;
+        this.currentMoveNumber = +active.currentMoveNumber;
+        this.setFormatting();
       }
     });
     // observe the active submission
     (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
         this.displayedSubmission = active;
-        this.displayedMoveNumber = active.moveNumber;
+        this.displayedMoveNumber = +active.moveNumber;
         if (+active.score < 35) {
           this.displayedScoreClass = 'white';
           this.displayedScoreHover = 'Level 0 - Baseline';
@@ -143,6 +144,7 @@ export class ScoresheetComponent implements OnDestroy {
         s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && s.groupId && s.scoreIsAnAverage);
       this.showOfficialScore = this.submissionList.some(
         s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && !s.groupId);
+      this.setFormatting();
     });
     // observe the permissions
     this.userDataService.canModify.pipe(takeUntil(this.unsubscribe$)).subscribe(canModify => {
@@ -339,7 +341,7 @@ export class ScoresheetComponent implements OnDestroy {
 
   completeSubmission() {
     // if not the curret move, score cannot be reopened, so ask for confirmation
-    if (this.displayedMoveNumber !== this.currentMoveNumber) {
+    if (+this.displayedMoveNumber < +this.currentMoveNumber) {
       this.dialogService.confirm(
         'WARNING:  You will not be able to reopen this response!',
         'Move ' + this.displayedMoveNumber +
@@ -359,6 +361,7 @@ export class ScoresheetComponent implements OnDestroy {
     const errorMessage = this.verifySubmission();
     if (errorMessage === '') {
       // all is well, so submit the score
+      console.log('submitting score for move #' + this.displayedSubmission.moveNumber + ' and current move is #' + this.currentMoveNumber);
       this.submit();
     } else {
       // there were missing values, so confirm submission
@@ -438,7 +441,7 @@ export class ScoresheetComponent implements OnDestroy {
     this.showReopenButton = this.displayedSubmission && canSubmit &&
                             !this.displayedSubmission.scoreIsAnAverage &&
                             this.displayedSubmission.status === ItemStatus.Complete &&
-                            this.displayedSubmission.moveNumber === this.currentMoveNumber;
+                            +this.displayedSubmission.moveNumber === +this.currentMoveNumber;
     this.showSubmitButton = this.displayedSubmission && canSubmit &&
                             !this.displayedSubmission.scoreIsAnAverage &&
                             this.displayedSubmission.status === ItemStatus.Active;
