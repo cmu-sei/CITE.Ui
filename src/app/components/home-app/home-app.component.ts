@@ -162,7 +162,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
               }
             }
           }
-          if (teams.length > 0 && user.profile) {
+          if (teams.length > 0 && user && user.profile) {
             this.loggedInUserId = user.profile.sub;
             // set this user's team and the active team
             this.setTeams(teams);
