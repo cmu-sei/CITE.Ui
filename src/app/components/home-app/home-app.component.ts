@@ -34,11 +34,11 @@ import { SubmissionDataService } from 'src/app/data/submission/submission-data.s
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
+import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
 import { ApplicationArea, SignalRService } from 'src/app/services/signalr.service';
 import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
-import { RightSideDisplay } from 'src/app/generated/cite.api/model/rightSideDisplay';
 
 export enum Section {
   dashboard = 'dashboard',
@@ -107,6 +107,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private submissionQuery: SubmissionQuery,
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
+    private teamUserDataService: TeamUserDataService,
     private signalRService: SignalRService,
     private gallerySignalRService: GallerySignalRService,
     private healthCheckService: HealthCheckService,
@@ -263,10 +264,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
       this.teamDataService.loadMine(this.selectedEvaluationId);
       this.currentMoveNumber = evaluation.currentMoveNumber;
-      // if (evaluation.rightSideDisplay === RightSideDisplay.Scoresheet) {
-      //   this.selectedSection = Section.dashboard;
-      //   this.uiDataService.setSection(this.selectedSection);
-      // }
     }
     this.isReady = true;
   }
@@ -357,6 +354,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     });
     if (activeTeamId) {
       this.changeTeam(activeTeamId);
+      this.teamUserDataService.loadByTeam(activeTeamId);
     }
   }
 

@@ -11,6 +11,7 @@ import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.quer
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
+import { TeamUserQuery } from 'src/app/data/team-user/team-user.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { ItemStatus,
   Evaluation,
@@ -72,6 +73,7 @@ export class ScoresheetComponent implements OnDestroy {
     private evaluationQuery: EvaluationQuery,
     private userDataService: UserDataService,
     private teamQuery: TeamQuery,
+    private teamUserQuery: TeamUserQuery,
     private dialogService: DialogService,
     public matDialog: MatDialog,
     private titleService: Title,
@@ -146,15 +148,13 @@ export class ScoresheetComponent implements OnDestroy {
         s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && !s.groupId);
       this.setFormatting();
     });
-    // observe the permissions
-    this.userDataService.canModify.pipe(takeUntil(this.unsubscribe$)).subscribe(canModify => {
-      this.hasCanModifyPermission = canModify;
-    });
-    this.userDataService.canSubmit.pipe(takeUntil(this.unsubscribe$)).subscribe(canSubmit => {
-      this.hasCanSubmitPermission = canSubmit;
-    });
-    this.userDataService.canIncrementMove.pipe(takeUntil(this.unsubscribe$)).subscribe(canIncrementMove => {
-      this.canIncrementMove = canIncrementMove;
+    // observe the team users to get permissions
+    this.teamUserQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamUsers => {
+      const userId = this.userDataService.loggedInUser?.value?.profile?.sub;
+      const currentTeamUser = teamUsers.find(tu => tu.userId === userId);
+      this.canIncrementMove = currentTeamUser ? currentTeamUser.canIncrementMove : false;
+      this.hasCanModifyPermission = currentTeamUser ? currentTeamUser.canModify : false;
+      this.hasCanSubmitPermission = currentTeamUser ? currentTeamUser.canSubmit : false;
     });
   }
 
