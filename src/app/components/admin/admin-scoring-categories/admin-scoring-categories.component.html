@@ -22,6 +22,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
     >
       <div class="mat-header-cell nine-cell center-self"><span style="margin-left: 80px;">Description</span></div>
       <div class="mat-header-cell one-cell center-text center-self">Order</div>
+      <div class="mat-header-cell one-cell center-text center-self">First Move</div>
+      <div class="mat-header-cell one-cell center-text center-self">Last Move</div>
     </section>
 
     <mat-expansion-panel
@@ -52,6 +54,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
         <div class="one-cell center-text center-self">
           {{ scoringCategory.displayOrder }}
+        </div>
+        <div class="one-cell center-text center-self">
+          {{ scoringCategory.moveNumberFirstDisplay }}
+        </div>
+        <div class="one-cell center-text center-self">
+          {{ scoringCategory.moveNumberLastDisplay }}
         </div>
       </mat-expansion-panel-header>
       <div class="sub-container" *ngIf="editScoringCategoryId === scoringCategory.id">

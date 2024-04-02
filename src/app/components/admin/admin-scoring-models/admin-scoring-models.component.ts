@@ -6,7 +6,7 @@ import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angu
 import { UntypedFormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
-import { ScoringModel, ItemStatus, Team, User} from 'src/app/generated/cite.api/model/models';
+import { ScoringModel, ItemStatus, RightSideDisplay} from 'src/app/generated/cite.api/model/models';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
@@ -43,6 +43,13 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     ItemStatus.Cancelled,
     ItemStatus.Complete
   ];
+  rightSideDisplays = [
+    RightSideDisplay.ScoreSummary,
+    RightSideDisplay.HtmlBlock,
+    RightSideDisplay.EmbeddedUrl,
+    RightSideDisplay.Scoresheet,
+    RightSideDisplay.None
+  ];
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -76,7 +83,8 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
       width: '800px',
       data: {
         scoringModel: scoringModel,
-        itemStatuses: this.itemStatuses
+        itemStatuses: this.itemStatuses,
+        rightSideDisplays: this.rightSideDisplays
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

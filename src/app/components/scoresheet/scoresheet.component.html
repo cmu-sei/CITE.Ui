@@ -1,0 +1,379 @@
+<!--
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license, please see LICENSE.md in the
+project root for license information or contact permission@sei.cmu.edu for full terms.
+-->
+
+<div class="form-container">
+  <mat-table
+    [dataSource]="getDisplayedScoringCategories() | displayOrder"
+    class="full-width full-height"
+    *ngIf="
+      selectedEvaluation.id &&
+      activeTeamId &&
+      selectedScoringModel &&
+      displayedMoveNumber >= 0
+    "
+  >
+    <!-- Description Definition -->
+    <ng-container matColumnDef="scoringCategoryDescription">
+      <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
+        <div
+          class="navigation-font"
+          *ngIf="!userOnly && haveSomeScoringCategories"
+        >
+          <span style="transform: scale(0.8)">
+            <!-- User -->
+            <button
+              mat-flat-button
+              color="user"
+              class="background-button move-button"
+              (click)="selectDisplayedSubmission.emit('user')"
+              *ngIf="displaying === 'user'"
+              [disabled]="myTeamId !== activeTeamId"
+              title="Your personal score"
+            >
+              User
+            </button>
+            <button
+              mat-stroked-button
+              class="plain-button move-button"
+              (click)="selectDisplayedSubmission.emit('user')"
+              *ngIf="displaying !== 'user'"
+              [disabled]="myTeamId !== activeTeamId"
+              title="Your personal score"
+            >
+              User
+            </button>
+            <!-- Team -->
+            <button
+              mat-flat-button
+              color="team"
+              class="background-button move-button"
+              (click)="selectDisplayedSubmission.emit('team')"
+              *ngIf="displaying === 'team'"
+              title="The team's score"
+            >
+              Team
+            </button>
+            <button
+              mat-stroked-button
+              class="plain-button move-button"
+              (click)="selectDisplayedSubmission.emit('team')"
+              *ngIf="displaying !== 'team' && !userOnly"
+              title="The team's score"
+            >
+              Team
+            </button>
+            <!-- Team Avg -->
+            <button
+              mat-flat-button
+              color="team-avg"
+              class="background-button move-button"
+              (click)="selectDisplayedSubmission.emit('team-avg')"
+              *ngIf="displaying === 'team-avg'"
+              [disabled]="myTeamId !== activeTeamId"
+              title="The average of all user scores for your team"
+            >
+              Team Avg
+            </button>
+            <button
+              mat-stroked-button
+              class="plain-button move-button"
+              (click)="selectDisplayedSubmission.emit('team-avg')"
+              *ngIf="displaying !== 'team-avg' && !userOnly"
+              [disabled]="myTeamId !== activeTeamId && !userOnly"
+              title="The average of all user scores for your team"
+            >
+              Team Avg
+            </button>
+            <!-- Group Avg -->
+            <button
+              mat-flat-button
+              color="group-avg"
+              class="background-button move-button"
+              (click)="selectDisplayedSubmission.emit('group-avg')"
+              *ngIf="displaying === 'group-avg'"
+              title="The average of all team scores for your group"
+            >
+              Group Avg
+            </button>
+            <button
+              mat-stroked-button
+              class="plain-button move-button"
+              (click)="selectDisplayedSubmission.emit('group-avg')"
+              *ngIf="displaying !== 'group-avg' && showGroupAvgScore && !userOnly"
+              title="The average of all team scores for your group"
+            >
+              Group Avg
+            </button>
+            <!-- Official -->
+            <button
+              mat-flat-button
+              color="official"
+              class="background-button move-button"
+              (click)="selectDisplayedSubmission.emit('official')"
+              *ngIf="displaying === 'official'"
+              title="The official score for this move"
+            >
+              Official
+            </button>
+            <button
+              mat-stroked-button
+              class="plain-button move-button"
+              (click)="selectDisplayedSubmission.emit('official')"
+              *ngIf="displaying !== 'official' && showOfficialScore && !userOnly"
+              title="The official score for this move"
+            >
+              Official
+            </button>
+          </span>
+        </div>
+        <div *ngIf="!selectedScoringModel.hideScoresOnScoreSheet && haveSomeScoringCategories">
+          <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}"
+            >{{ displayedSubmission.score | number: '1.2-2' }}</span>
+        </div>
+        <div class="title-font" *ngIf="haveSomeScoringCategories">
+          <span
+            class="move-buttons"
+            *ngIf="myTeamId === activeTeamId"
+          >
+            <button
+              mat-raised-button
+              [ngClass]="buttonClass"
+              class="move-button background-button"
+              *ngIf="showSubmitButton"
+              (click)="completeSubmission()"
+              title="Submit completed score"
+            >
+              Submit
+            </button>
+            <button
+              mat-raised-button
+              [ngClass]="buttonClass"
+              class="move-button background-button"
+              *ngIf="showReopenButton"
+              (click)="activateSubmission()"
+              title="Reopen to change score"
+            >
+              Reopen
+            </button>
+            <button
+              mat-raised-button
+              [ngClass]="buttonClass"
+              class="move-button background-button"
+              *ngIf="showModifyControls"
+              (click)="clearSelections()"
+              title="Clear all selections"
+            >
+              Clear
+            </button>
+            <button
+              mat-raised-button
+              [ngClass]="buttonClass"
+              class="move-button background-button"
+              *ngIf="showModifyControls && !userOnly"
+              (click)="presetSelections()"
+              title="Preset selections to the previous move"
+            >
+              Preset
+            </button>
+          </span>
+          <span
+            class="move-buttons status-font"
+            *ngIf="myTeamId !== activeTeamId"
+          >
+            <span *ngIf="!displayedSubmission.scoreIsAnAverage">{{ getSubmissionStatusText() }}</span>
+          </span>
+        </div>
+        <div *ngIf="!haveSomeScoringCategories">
+          <h2>No responses required for this move.</h2>
+        </div>
+      </mat-header-cell>
+
+      <!-- scoresheet display -->
+      <mat-cell
+        *matCellDef="let scoringCategory"
+        class="form-container"
+        [ngClass]="tableClass"
+      >
+        <div class="scoring-category-description" [ngClass]="tableClass">
+          {{ scoringCategory.displayOrder }}. {{ scoringCategory.description }}
+          <span *ngIf="scoringCategory.calculationMethodId > 0">
+            &nbsp;&nbsp;-&nbsp;&nbsp;[{{
+              categoryScore(scoringCategory.id) | number: '1.0-0'
+            }}]
+          </span>
+        </div>
+        <mat-table
+          [dataSource]="scoringCategory.scoringOptions | displayOrder"
+          class="full-width"
+          [ngClass]="tableClass"
+        >
+          <ng-container
+            matColumnDef="scoringOptionDescription"
+            class="description-cell"
+          >
+            <mat-cell
+              *matCellDef="let scoringOption"
+              class="description-container"
+              [ngClass]="tableClass"
+            >
+              <div [ngClass]="scoringOption.isModifier ? 'indent-div' : ''" style="width: 100%;">
+                <div *ngIf="scoringCategory.scoringOptionSelection !== 'None'">
+                  <mat-checkbox
+                    [aria-label]="scoringOption.description"
+                    *ngIf="!displayedSubmission.scoreIsAnAverage"
+                    [checked]="isSelected(scoringCategory.id, scoringOption.id)"
+                    [disabled]="!showModifyControls || myTeamId !== activeTeamId"
+                    [matTooltip]="selectedBy(scoringCategory.id, scoringOption.id)"
+                    (change)="
+                      toggleOption($event, scoringCategory.id, scoringOption.id)
+                    "
+                  >
+                    {{ scoringOption.description }} &nbsp;
+                  </mat-checkbox>
+                  <span *ngIf="displayedSubmission.scoreIsAnAverage">
+                    [{{ selectedCount(scoringCategory.id, scoringOption.id) }}]
+                  &nbsp;&nbsp;{{ scoringOption.description }}
+                  </span>
+                  <button
+                    id="add-comment"
+                    aria-label="Add Comment"
+                    mat-icon-button
+                    class="small-button"
+                    *ngIf="showModifyControls && myTeamId === activeTeamId && !selectedScoringModel.displayCommentTextBoxes"
+                    (click)="addComment(addCommenttemplate, scoringOption)"
+                    title="Add Comment"
+                  >
+                    <mat-icon
+                      class="icon-color small-icon"
+                      svgIcon="add-comment"
+                      aria-hidden="false"
+                    ></mat-icon>
+                  </button>
+                </div>
+                <div *ngIf="scoringCategory.scoringOptionSelection === 'None'">
+                  {{ scoringOption.description }}
+                </div>
+                <div class="comment-list" *ngIf="!selectedScoringModel.displayCommentTextBoxes">
+                  <div
+                    *ngFor="
+                      let comment of optionComments(
+                        scoringCategory.id,
+                        scoringOption.id
+                      )
+                    "
+                  >
+                    {{ comment.comment }}
+                    <span *ngIf="displaying === 'team'"> - {{ getUserName(comment.createdBy) }}</span>
+                    <button
+                      aria-label="Edit Comment"
+                      mat-icon-button
+                      class="small-button"
+                      *ngIf="showModifyControls && myTeamId === activeTeamId"
+                      (click)="
+                        editComment(addCommenttemplate, scoringOption, comment)
+                      "
+                      title="Edit Comment"
+                    >
+                      <mat-icon
+                        class="icon-color small-icon"
+                        svgIcon="ic_square_edit_outline"
+                        aria-hidden="false"
+                      ></mat-icon>
+                    </button>
+                    <button
+                      aria-label="Delete Comment"
+                      mat-icon-button
+                      class="small-button"
+                      *ngIf="showModifyControls && myTeamId === activeTeamId"
+                      (click)="deleteComment(comment)"
+                      title="Delete Comment"
+                    >
+                      <mat-icon
+                        class="icon-color small-icon"
+                        svgIcon="ic_trash_can"
+                        aria-hidden="false"
+                      ></mat-icon>
+                    </button>
+                  </div>
+                </div>
+                <div class="comment-box" *ngIf="selectedScoringModel.displayCommentTextBoxes">
+                  <textarea
+                    matInput
+                    [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
+                    (change)="changeComment(scoringCategory.id, scoringOption.id, $event)"
+                    class="comment"
+                    [disabled]="!showSubmitButton"
+                  ></textarea>
+                </div>
+              </div>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="value">
+            <mat-cell
+              *matCellDef="let scoringOption"
+              class="value-container"
+              [ngClass]="tableClass"
+            >
+              <div class="value-div" *ngIf="!selectedScoringModel.hideScoresOnScoreSheet">
+                {{
+                  scoringCategory.calculationMethodId == 0 ||
+                  scoringOption.isModifier
+                    ? ' '
+                    : scoringOption.value
+                }}
+              </div>
+            </mat-cell>
+          </ng-container>
+          <mat-row
+            *matRowDef="let row; columns: ['scoringOptionDescription', 'value']"
+          ></mat-row>
+        </mat-table>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Header and Row Declarations -->
+    <mat-header-row
+      *matHeaderRowDef="['scoringCategoryDescription']"
+    ></mat-header-row>
+    <mat-row
+      *matRowDef="let row; columns: ['scoringCategoryDescription']"
+    ></mat-row>
+  </mat-table>
+
+  <div
+    *ngIf="!selectedEvaluation.id || !selectedScoringModel"
+    class="text-center"
+  >
+    <p>&nbsp;</p>
+    <h1>An evaluation has not been properly configured.</h1>
+    <h1>Please contact your administrator.</h1>
+  </div>
+  <div
+    *ngIf="selectedEvaluation.id && selectedScoringModel && !activeTeamId"
+    class="text-center"
+  >
+    <p>&nbsp;</p>
+    <h1>You have not been given appropriate access to this application.</h1>
+    <h1>Please contact your administrator.</h1>
+  </div>
+</div>
+
+<ng-template #addCommenttemplate>
+  <h1>Add a comment ...</h1>
+  <mat-form-field class="full-width">
+    <textarea
+      matInput
+      placeholder="{{ commentOptionDescription }}"
+      [(ngModel)]="currentComment"
+    ></textarea>
+  </mat-form-field>
+
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cancel</button>
+    <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+    <button mat-button [mat-dialog-close]="true">Save</button>
+  </mat-dialog-actions>
+</ng-template>

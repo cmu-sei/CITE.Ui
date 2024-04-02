@@ -6,24 +6,28 @@
   display: flex;
   flex-direction: column;
   flex: 8;
-  min-width: 300px;
+  min-width: 250px;
   margin-top: 10px;
   min-height: 600px;
+}
+
+.collapsed-div {
+  width: 50px;
 }
 
 .team-list-container {
   display: flex;
   flex-direction: column;
   flex: 8;
-  min-width: 300px;
+  margin-left: 20px;
   margin-top: 10px;
   min-height: 600px;
+  min-width: 250px;
 }
 
-.spacer {
-  display: flex;
-  flex: 1;
-  min-width: 40px;
+.search-box {
+  margin-left: 30px;
+  width: 150px;
 }
 
 .mat-table-all-users {

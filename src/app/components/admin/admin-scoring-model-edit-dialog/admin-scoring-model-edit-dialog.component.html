@@ -45,6 +45,50 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-form-field>
     </div>
   </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.scoringModel.hideScoresOnScoreSheet">Hide Scores On Scoresheet</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.scoringModel.displayCommentTextBoxes">Display Comments as Textboxes</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.scoringModel.displayScoringModelByMoveNumber">Display Scoring Categories by Move Number</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.scoringModel.showPastSituationDescriptions">Show Past Situation Descriptions</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-form-field class="description-field full-width">
+        <mat-label>Right Side Display</mat-label>
+        <mat-select placeholder="Select a Right Side Display Option" [(ngModel)]="data.scoringModel.rightSideDisplay">
+          <mat-option *ngFor="let item of data.rightSideDisplays" [value]="item">
+            {{ item }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="add-margin" *ngIf="data.scoringModel.rightSideDisplay === 'HtmlBlock'">
+    <mat-label class="gray">Right Side HTML Block</mat-label>
+    <angular-editor [placeholder]="'Enter content here...'" [(ngModel)]="data.scoringModel.rightSideHtmlBlock" [config]="editorConfig"></angular-editor>
+  </div>
+  <div class="add-margin" *ngIf="data.scoringModel.rightSideDisplay === 'EmbeddedUrl'">
+    <div>
+      <mat-form-field class="description-field full-width">
+        <mat-label>Right Side URL</mat-label>
+        <input matInput [(ngModel)]="data.scoringModel.rightSideEmbeddedUrl" />
+      </mat-form-field>
+    </div>
+  </div>
   <div class="cssLayoutRowStartCenter bottom-button">
     <div class="delete-button">
       <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>

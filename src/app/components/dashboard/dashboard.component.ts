@@ -13,6 +13,7 @@ import {
   Evaluation,
   Move,
   Role,
+  ScoringModel,
   Team,
   User
 } from 'src/app/generated/cite.api/model/models';
@@ -21,6 +22,7 @@ import { ActionQuery } from 'src/app/data/action/action.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { RoleQuery } from 'src/app/data/role/role.query';
+import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { Title } from '@angular/platform-browser';
@@ -30,6 +32,7 @@ import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialo
 import { AdminRoleEditDialogComponent } from '../admin/admin-role-edit-dialog/admin-role-edit-dialog.component';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { ComnSettingsService } from '@cmusei/crucible-common';
+import { DateTimeFormatOptions } from 'luxon';
 
 @Component({
   selector: 'app-dashboard',
@@ -49,11 +52,13 @@ export class DashboardComponent implements OnDestroy {
   @Input() myTeamId: string;
   teamUsers: User[];
   selectedEvaluation: Evaluation = {};
+  scoringModel: ScoringModel = {};
   isLoading = false;
   actionList: Action[] = [];
   allActions: Action[] = [];
   roleList: Role[];
   currentMoveNumber: number;
+  displayedMoveNumber: number;
   activeTeamId = '';
   isActionEditMode = false;
   isRoleEditMode = false;
@@ -75,6 +80,9 @@ export class DashboardComponent implements OnDestroy {
     sanitize: true,
   };
   galleryUrl = '';
+  originalRole: Role = {};
+  modifiedRole: Role = {};
+  completeSituationDescription = '';
 
   constructor(
     private evaluationQuery: EvaluationQuery,
@@ -84,6 +92,7 @@ export class DashboardComponent implements OnDestroy {
     private moveQuery: MoveQuery,
     private roleDataService: RoleDataService,
     private roleQuery: RoleQuery,
+    private scoringModelQuery: ScoringModelQuery,
     private unreadArticlesDataService: UnreadArticlesDataService,
     public dialogService: DialogService,
     public matDialog: MatDialog,
@@ -99,26 +108,31 @@ export class DashboardComponent implements OnDestroy {
         this.selectedEvaluation = active;
         this.unreadArticlesDataService.loadById(activeId);
         this.galleryUrl = this.settingsService.settings.GalleryUiUrl + '?exhibit=' + active.galleryExhibitId + '&section=archive';
+        this.setCompleteSituationDescription();
       }
     });
     // observe the move list
     (this.moveQuery.selectAll() as Observable<Move[]>).pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
-      this.moveList = moves;
       if (moves && moves.length > 0) {
+        this.moveList = moves.sort((a, b) => +a.moveNumber < +b.moveNumber ? 1 : -1);
         const currentMove = moves.find(m => +m.moveNumber === +this.selectedEvaluation.currentMoveNumber);
+        this.displayedMoveNumber = currentMove ? currentMove.moveNumber : this.displayedMoveNumber;
         this.currentMoveNumber = currentMove ? currentMove.moveNumber : this.currentMoveNumber;
         this.actionList = this.allActions
-          .filter(a => +a.moveNumber === +this.currentMoveNumber)
+          .filter(a => +a.moveNumber === +this.displayedMoveNumber)
           .sort((a, b) => a.description < b.description ? -1 : 1);
+        this.setCompleteSituationDescription();
       } else {
-        this.currentMoveNumber = -1;
+        this.moveList = [];
+        this.displayedMoveNumber = -1;
         this.actionList = [];
       }
     });
     // observe the active move
     (this.moveQuery.selectActive() as Observable<Move>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
-        this.currentMoveNumber = active.moveNumber;
+        this.displayedMoveNumber = active.moveNumber;
+        this.setCompleteSituationDescription();
         this.actionList = this.allActions
           .filter(a => +a.moveNumber === +active.moveNumber)
           .sort((a, b) => a.description < b.description ? -1 : 1);
@@ -140,7 +154,7 @@ export class DashboardComponent implements OnDestroy {
     this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(actions => {
       this.allActions = actions;
       this.actionList = actions
-        .filter(a => +a.moveNumber === +this.currentMoveNumber)
+        .filter(a => +a.moveNumber === +this.displayedMoveNumber)
         .sort((a, b) => a.description < b.description ? -1 : 1);
     });
     // observe the Role list
@@ -157,7 +171,69 @@ export class DashboardComponent implements OnDestroy {
         this.roleList.push(newRole);
       });
     });
+    // observe the scoring model
+    (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModel => {
+      this.scoringModel = scoringModel;
+    });
   }
+
+  setCompleteSituationDescription() {
+    const dateTimeFormatOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZoneName: 'short',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+    } as DateTimeFormatOptions;
+
+    let description = '';
+    let pastMovesBannerAdded = false;
+    let lastDisplayedMoveNumber = 0;
+
+    if (+this.displayedMoveNumber === +this.currentMoveNumber) {
+        description = '<div style="display: flex; align-items: center; font-size: 25px;">' +
+            '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+            'Current Move' +
+            '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+            '</div>' +
+            '<h4>' +
+            this.selectedEvaluation.situationTime?.toLocaleString('en-US', dateTimeFormatOptions) +
+            '<br /></h4>' +
+            this.selectedEvaluation.situationDescription;
+    } else if (this.moveList && this.moveList.length > 0 && this.displayedMoveNumber) {
+        const displayedMove = this.moveList.find(m => +m.moveNumber === +this.displayedMoveNumber);
+        description = '<h2>' + displayedMove.situationTime?.toLocaleString('en-US', dateTimeFormatOptions)
+            + '<br /></h2>' + displayedMove.situationDescription;
+        lastDisplayedMoveNumber = +this.displayedMoveNumber;
+    }
+
+    if (this.scoringModel && this.scoringModel.showPastSituationDescriptions) {
+        this.moveList?.forEach(m => {
+            if (+m.moveNumber < +this.displayedMoveNumber) {
+                // Add the "Previous Moves" banner only for the first past move number
+                if (!pastMovesBannerAdded) {
+                    description = description + '<br /><div style="display: flex; align-items: center; font-size: 25px;">' +
+                        '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+                        'Previous Moves' +
+                        '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+                        '</div>';
+                    pastMovesBannerAdded = true;
+                } else {
+                    // Add a line separator for past moves without the banner
+                    description = description + '<br><div style="border-bottom: 3px solid grey; margin: 5px;"></div>';
+                }
+
+                // Add the past move details
+                description = description + '<h4>' + m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) + '</h4>'
+                    + m.situationDescription + '</div>';
+            }
+        });
+    }
+    this.completeSituationDescription = description;
+}
 
   checkAction(actionId: string, isChecked: boolean) {
     if (isChecked) {
@@ -176,7 +252,7 @@ export class DashboardComponent implements OnDestroy {
       action = {
         description: '',
         evaluationId: this.selectedEvaluation.id,
-        moveNumber: this.currentMoveNumber,
+        moveNumber: this.displayedMoveNumber,
         teamId: this.activeTeamId
       };
     } else {
@@ -290,21 +366,34 @@ export class DashboardComponent implements OnDestroy {
     });
   }
 
-  updateRoleUsers(role: Role, event: any) {
-    const newRoleUsers = event.value;
-    if (role.users.length < newRoleUsers.length) {
-      newRoleUsers.forEach(nru => {
-        if (!role.users.some(ru => ru.id === nru.id)) {
-          this.roleDataService.addRoleUser(role.id, nru.id);
-        }
-      });
-    } else {
-      role.users.forEach(ru => {
-        if (!newRoleUsers.some(nru => ru.id === nru.id)) {
-          this.roleDataService.removeRoleUser(role.id, ru.id);
-        }
-      });
+  openRoleUsers(role: Role) {
+    Object.assign(this.originalRole, role);
+    Object.assign(this.modifiedRole, role);
+  }
+
+  updateRoleUsers(roleId: string, event: any) {
+    if (roleId !== this.originalRole.id || roleId !== this.modifiedRole.id) {
+      alert('There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.');
     }
+    this.modifiedRole.users = event.value;
+  }
+
+  closeRoleUsers(roleId: string) {
+    if (roleId !== this.originalRole.id || roleId !== this.modifiedRole.id) {
+      alert('There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.');
+    }
+    const newUserIds = this.modifiedRole.users.map(({ id }) => id);
+    const oldUserIds = this.originalRole.users.map(({ id }) => id);
+    newUserIds.forEach(nru => {
+      if (!oldUserIds.some(ru => ru === nru)) {
+        this.roleDataService.addRoleUser(roleId, nru);
+      }
+    });
+    oldUserIds.forEach(ru => {
+      if (!newUserIds.some(nru => ru === nru)) {
+        this.roleDataService.removeRoleUser(roleId, ru);
+      }
+    });
   }
 
   ngOnDestroy() {

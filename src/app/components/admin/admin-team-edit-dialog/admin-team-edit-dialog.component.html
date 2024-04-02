@@ -60,6 +60,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
 
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.team.hideScoresheet">Hide Scoresheet</mat-checkbox>
+    </div>
+  </div>
+
   <div class="cssLayoutRowStartCenter bottom-button">
     <div class="delete-button">
       <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>

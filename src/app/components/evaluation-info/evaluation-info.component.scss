@@ -63,3 +63,9 @@
 .bold-text {
   font-weight: bold;
 }
+
+@media print {
+  .evaluation-info {
+    display: none !important;
+  }
+}

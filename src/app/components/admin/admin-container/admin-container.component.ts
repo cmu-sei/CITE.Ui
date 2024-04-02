@@ -18,6 +18,7 @@ import {
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
+import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { TopbarView } from 'src/app/components/shared/top-bar/topbar.models';
 import {
@@ -44,6 +45,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   submissionsText = 'Submissions';
   groupsText = 'Groups';
   teamsText = 'Teams';
+  teamTypesText = 'Team Types'
   topbarText = 'Set AppTopBarText in Settings';
   showSection: Observable<string>;
   displayedSection = '';
@@ -74,6 +76,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     private evaluationDataService: EvaluationDataService,
     private evaluationQuery: EvaluationQuery,
     private scoringModelDataService: ScoringModelDataService,
+    private teamTypeDataService: TeamTypeDataService,
     private userDataService: UserDataService,
     activatedRoute: ActivatedRoute,
     private permissionService: PermissionService,
@@ -88,24 +91,30 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.userDataService.isSuperUser
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((result) => {
-        this.isSuperUser = result;
-        this.canSwitchEvaluations.next(result);
-        if (this.isSuperUser) {
-          this.evaluationDataService.load();
-          this.userDataService.getUsersFromApi();
-          this.userDataService
-            .getPermissionsFromApi()
-            .pipe(takeUntil(this.unsubscribe$))
-            .subscribe();
-          this.permissionList = this.permissionService.getPermissions();
+        if (result !== this.isSuperUser)
+        {
+          this.isSuperUser = result;
+          this.canSwitchEvaluations.next(result);
+          if (this.isSuperUser) {
+            this.evaluationDataService.load();
+            this.userDataService.getUsersFromApi();
+            this.userDataService
+              .getPermissionsFromApi()
+              .pipe(takeUntil(this.unsubscribe$))
+              .subscribe();
+            this.permissionList = this.permissionService.getPermissions();
+          }
         }
       });
     this.userDataService.canAccessAdminSection
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((result) => {
-        this.canAccessAdminSection = result;
-        if (this.canAccessAdminSection && !this.isSuperUser) {
-          this.evaluationDataService.loadMine();
+        if (result !== this.canAccessAdminSection)
+        {
+          this.canAccessAdminSection = result;
+          if (this.canAccessAdminSection && !this.isSuperUser) {
+            this.evaluationDataService.loadMine();
+          }
         }
       });
     this.pageSize = activatedRoute.queryParamMap.pipe(
@@ -119,7 +128,8 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
       map((params) => params.get('section') || this.evaluationsText)
     );
     this.originalEvaluationId = this.evaluationQuery.getActiveId();
-
+    // load and subscribe to TeamTypes
+    this.teamTypeDataService.load();
     // Set the display settings from config file
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor

@@ -78,14 +78,18 @@ import {
 import { AdminSubmissionsComponent } from './components/admin/admin-submissions/admin-submissions.component';
 import { AdminTeamsComponent } from './components/admin/admin-teams/admin-teams.component';
 import { AdminTeamEditDialogComponent } from './components/admin/admin-team-edit-dialog/admin-team-edit-dialog.component';
+import { AdminTeamTypesComponent } from './components/admin/admin-teamtypes/admin-teamtypes.component';
 import { AdminTeamUsersComponent } from './components/admin/admin-team-users/admin-team-users.component';
 import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HomeAppComponent } from './components/home-app/home-app.component';
 import { EvaluationInfoComponent } from './components/evaluation-info/evaluation-info.component';
-import { ScoreCardComponent } from './components/score-card/score-card.component';
-import { ScoringModelComponent } from './components/scoring-model/scoring-model.component';
+import { ScoreSummaryComponent } from './components/score-summary/score-summary.component';
+import { ScoresheetComponent } from './components/scoresheet/scoresheet.component';
+import { ReportComponent } from './components/report/report.component';
 import { ConfirmDialogComponent } from './components/shared/confirm-dialog/confirm-dialog.component';
+import { RightSideHtmlComponent } from './components/right-side-html/right-side-html.component';
+import { RightSideIframeComponent } from './components/right-side-iframe/right-side-iframe.component';
 import { SystemMessageComponent } from './components/shared/system-message/system-message.component';
 import { TopbarComponent } from './components/shared/top-bar/topbar.component';
 import { UserDataService } from './data/user/user-data.service';
@@ -113,8 +117,9 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     AppComponent,
     HomeAppComponent,
     EvaluationInfoComponent,
-    ScoreCardComponent,
-    ScoringModelComponent,
+    ScoreSummaryComponent,
+    ScoresheetComponent,
+    ReportComponent,
     SystemMessageComponent,
     ConfirmDialogComponent,
     AdminActionsComponent,
@@ -136,9 +141,12 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     AdminSubmissionsComponent,
     AdminTeamsComponent,
     AdminTeamEditDialogComponent,
+    AdminTeamTypesComponent,
     AdminTeamUsersComponent,
     AdminUsersComponent,
     DashboardComponent,
+    RightSideHtmlComponent,
+    RightSideIframeComponent,
     TopbarComponent,
     DisplayOrderPipe,
     SortByPipe

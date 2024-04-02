@@ -33,4 +33,5 @@ export interface Team {
     teamType?: TeamType;
     users?: Array<User>;
     submissions?: Array<Submission>;
+    hideScoresheet?: boolean;
 }

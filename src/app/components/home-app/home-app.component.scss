@@ -63,6 +63,26 @@
 .app-score-container {
   flex-flow: column;
   text-align: center;
+  height: calc(100% - 57px);
+  overflow-y: auto;
+}
+
+.app-score-container-no-topbar {
+  flex-flow: column;
+  text-align: center;
+  height: calc(100% - 19px);
+  overflow-y: auto;
+}
+
+.flex-65 {
+  flex: 65;
+}
+
+.flex-50 {
+  flex: 50;
+}
+
+.flex-35 {
   flex: 35;
 }
 
@@ -90,4 +110,10 @@
 .cite-icon {
   transform: scale(2);
   width: 60px;
+}
+
+@media print {
+  .app-events-container {
+    position: static !important;
+  }
 }

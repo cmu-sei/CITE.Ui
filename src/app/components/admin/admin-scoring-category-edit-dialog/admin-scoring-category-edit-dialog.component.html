@@ -35,6 +35,22 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   <div class="add-margin">
     <div>
+      <mat-form-field class="description-field">
+        <mat-label>First Move to Display</mat-label>
+        <input matInput [(ngModel)]="data.scoringCategory.moveNumberFirstDisplay" />
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-form-field class="description-field">
+        <mat-label>Last Move to Display</mat-label>
+        <input matInput [(ngModel)]="data.scoringCategory.moveNumberLastDisplay" />
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
       <mat-form-field class="description-field full-width">
         <mat-label>Calculation Equation</mat-label>
         <textarea matInput [(ngModel)]="data.scoringCategory.calculationEquation"></textarea>
@@ -51,7 +67,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   <div class="add-margin">
     <div>
-      <mat-checkbox [(ngModel)]="data.scoringCategory.allowMultipleChoices">Allow Multiple Selections</mat-checkbox>
+      <mat-form-field class="description-field full-width">
+        <mat-label>Scoring Option Selection Type</mat-label>
+        <mat-select placeholder="Select a Scoring Option Selection Type" [(ngModel)]="data.scoringCategory.scoringOptionSelection">
+          <mat-option *ngFor="let item of data.scoringOptionSelections" [value]="item">
+            {{ item }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
   </div>
   <div class="add-margin">

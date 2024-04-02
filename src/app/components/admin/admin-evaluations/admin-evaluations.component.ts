@@ -17,6 +17,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dialog/admin-evaluation-edit-dialog.component';
+import { RightSideDisplay } from 'src/app/generated/cite.api/model/rightSideDisplay';
 
 @Component({
   selector: 'app-admin-evaluations',

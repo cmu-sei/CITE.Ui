@@ -6,10 +6,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <div class="top-level-container">
   <div class="row-container">
     <div class="section-container">
-      <h4 *ngIf="selectedEvaluation && selectedEvaluation.situationTime">
-        Exercise Time: {{ selectedEvaluation.situationTime.toLocaleString('en-US', {timeZone: 'America/New_York'}) | date : 'EEEE, MMMM d, y  h:mm:ss a' }} ET
-      </h4>
-      <angular-editor class="angular-editor" [ngModel]="selectedEvaluation.situationDescription" [config]="editorConfig"></angular-editor>
+      <angular-editor class="angular-editor" [ngModel]="completeSituationDescription" [config]="editorConfig"></angular-editor>
     </div>
   </div>
   <div class="row-container" *ngIf="unreadArticles && +unreadArticles.count > 0">
@@ -23,7 +20,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="section-container mat-elevation-z8 four-cell">
       <div class="row-container">
         <div class="five-cell center-self">
-          <b>Actions:</b>
+          <b title="Participant Actions during an Exercise">Actions:</b>
         </div>
         <div class="right-cell" *ngIf="myTeamId === activeTeamId">
           <button
@@ -100,7 +97,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="section-container mat-elevation-z8 four-cell">
       <div class="row-container">
         <div class="five-cell center-self">
-          <b>Roles:</b>
+          <b title="Participant Responsibilities during an Exercise">Roles:</b>
         </div>
         <div class="right-cell" *ngIf="myTeamId === activeTeamId">
           <button
@@ -169,10 +166,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
             placeholder="Assign Users"
             [value]="role.users"
             multiple
-            (selectionChange)="updateRoleUsers(role, $event)"
+            (opened)="openRoleUsers(role)"
+            (selectionChange)="updateRoleUsers(role.id, $event)"
+            (closed)="closeRoleUsers(role.id)"
             [disabled]="myTeamId !== activeTeamId"
+            title="Select a Team Member"
           >
-            <mat-option *ngFor="let user of teamUsers" [value]="user">{{ user.name }}</mat-option>
+            <mat-option
+              *ngFor="let user of teamUsers" [value]="user"
+            >{{ user.name }}
+            </mat-option>
           </mat-select>
           <span *ngIf="isRoleEditMode">{{ getUserNames(role.users) }}</span>
         </div>
