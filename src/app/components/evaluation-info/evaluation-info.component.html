@@ -6,13 +6,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div class="evaluation-info">
   <h2 *ngIf="!selectedEvaluationId">&nbsp;</h2>    <!-- Adds spacing to the selection box before a selection is made -->
-  <div class="evaluation-selector-div mat-elevation-z8 background text" *ngIf="evaluationList && evaluationList.length > 0">
-    <mat-select placeholder="Select an active incident" [value]="selectedEvaluationId" (selectionChange)="selectEvaluation($event.value)" title="Select an Active Incident">
-      <mat-option *ngFor="let evaluation of activeEvaluations()" [value]="evaluation.id">
-        {{ evaluation.description }}
-      </mat-option>
-    </mat-select>
-  </div>
   <div class="move-div" *ngIf="selectedEvaluationId && displayedMoveNumber > -1">
     <h1 class="nowrap">Move:&nbsp;</h1>
     <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="isMinMoveNumber()" (click)="decrementDisplayedMove()" title="Decrement Move">
@@ -29,10 +22,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
     &nbsp;
   </div>
   <div class="right-buttons" *ngIf="selectedTeamId">
-    <span *ngIf="selectedTeamId && selectedTeamId === myTeamId" class="mat-select center-self bold-text">Team:&nbsp;&nbsp;</span>
-    <span *ngIf="selectedTeamId && selectedTeamId !== myTeamId" class="mat-select center-self bold-text">Observing:&nbsp;&nbsp;</span>
-    <span *ngIf="teamList && teamList.length <= 1" class="mat-select center-self">{{ getTeamShortName() }}</span>
-    <mat-select *ngIf="teamList && teamList.length > 1" class="center-self" placeholder="Team" [value]="selectedTeamId" (selectionChange)="setActiveTeam($event.value)">
+    <span *ngIf="selectedTeamId && selectedTeamId === myTeamId && selectedEvaluationId" class="mat-select center-self bold-text">Team:&nbsp;&nbsp;</span>
+    <span *ngIf="selectedTeamId && selectedTeamId !== myTeamId && selectedEvaluationId" class="mat-select center-self bold-text">Observing:&nbsp;&nbsp;</span>
+    <span *ngIf="teamList && teamList.length <= 1 && selectedEvaluationId" class="mat-select center-self">{{ getTeamShortName() }}</span>
+    <mat-select *ngIf="teamList && teamList.length > 1 && selectedEvaluationId" class="center-self" placeholder="Team" [value]="selectedTeamId" (selectionChange)="setActiveTeam($event.value)">
       <mat-option *ngFor="let team of teamList" [value]="team.id">
         {{ team.shortName }}
       </mat-option>
@@ -42,7 +35,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       style="outline: none;"
       title="SubmissionReview"
       (click)="setSection(reportSection)"
-      *ngIf="selectedSection !== reportSection"
+      *ngIf="selectedSection !== reportSection && selectedEvaluationId"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
     </button>
@@ -51,7 +44,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       style="outline: none;"
       title="Dashboard"
       (click)="setSection(dashboardSection)"
-      *ngIf="selectedTeamId && selectedSection === scoresheetSection || selectedSection === reportSection"
+      *ngIf="selectedTeamId && selectedSection === scoresheetSection || selectedSection === reportSection && selectedEvaluationId"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard"></mat-icon>
     </button>
@@ -60,7 +53,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       style="outline: none;"
       title="Scoresheet"
       (click)="setSection(scoresheetSection)"
-      *ngIf="selectedTeamId && selectedSection !== scoresheetSection && !hideScoresheet()"
+      *ngIf="selectedTeamId && selectedSection !== scoresheetSection && !hideScoresheet() && selectedEvaluationId"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>
     </button>

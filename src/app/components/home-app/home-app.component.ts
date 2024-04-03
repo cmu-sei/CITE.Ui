@@ -191,8 +191,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       if (evaluationId) {
         this.evaluationDataService.setActive(evaluationId);
         this.uiDataService.setEvaluation(evaluationId);
-      } else {
-        this.evaluationDataService.setActive(this.uiDataService.getEvaluation());
       }
       const section = params.get('section');
       switch (section) {

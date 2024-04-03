@@ -67,7 +67,37 @@ project root for license information or contact permission@sei.cmu.edu for full 
         (changeSection)="changeSection($event)"
         (changeEvaluation)="changeEvaluation($event)"
         ></app-evaluation-info>
-    </div>
+    </div> 
+    <div class="select-evaluation">
+      <div class="evaluation-selector-div mat-elevation-z8 background text" *ngIf="evaluationList && evaluationList.length > 0 && !selectedEvaluationId">
+        <mat-table [dataSource]="evaluationList">
+          <!-- Description Column -->
+          <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">
+              <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }">
+                {{ evaluation.description }}
+              </a>  
+            </mat-cell>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ evaluation.status }}</mat-cell>
+          </ng-container>
+      
+          <!-- Select Column -->
+          <ng-container matColumnDef="select">
+            <mat-header-cell *matHeaderCellDef>Evaluation ID</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ evaluation.id }}</mat-cell>
+          </ng-container>
+    
+          <mat-header-row *matHeaderRowDef="['description', 'status', 'select']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['description', 'status', 'select']"></mat-row>
+        </mat-table>
+      </div>      
+    </div>  
     <div class="app-content-container"
       *ngIf="isReady"
     >
