@@ -34,11 +34,11 @@ import { SubmissionDataService } from 'src/app/data/submission/submission-data.s
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
+import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
 import { ApplicationArea, SignalRService } from 'src/app/services/signalr.service';
 import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
-import { RightSideDisplay } from 'src/app/generated/cite.api/model/rightSideDisplay';
 
 export enum Section {
   dashboard = 'dashboard',
@@ -107,6 +107,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private submissionQuery: SubmissionQuery,
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
+    private teamUserDataService: TeamUserDataService,
     private signalRService: SignalRService,
     private gallerySignalRService: GallerySignalRService,
     private healthCheckService: HealthCheckService,
@@ -149,7 +150,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
         if (evaluation) {
           this.selectedEvaluationId = evaluation.id;
-          this.displayedMoveNumber = uiDataService.getMoveNumber();
+          this.displayedMoveNumber = uiDataService.getMoveNumber(this.selectedEvaluationId);
           this.displayedMoveNumber =
             this.displayedMoveNumber >= 0 && this.displayedMoveNumber <= evaluation.currentMoveNumber ?
               this.displayedMoveNumber :
@@ -162,7 +163,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
               }
             }
           }
-          if (teams.length > 0 && user.profile) {
+          if (teams.length > 0 && user && user.profile) {
             this.loggedInUserId = user.profile.sub;
             // set this user's team and the active team
             this.setTeams(teams);
@@ -203,7 +204,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           this.selectedSection = Section.dashboard;
           break;
         default:
-          const savedSection = this.uiDataService.getSection();
+          const savedSection = this.uiDataService.getSection(this.selectedEvaluationId);
           if (savedSection === 'scoresheet') {
             this.selectedSection =  Section.scoresheet;
           } else if (savedSection === 'report') {
@@ -213,7 +214,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
           break;
       }
-      this.uiDataService.setSection(this.selectedSection);
+      this.uiDataService.setSection(this.selectedEvaluationId, this.selectedSection);
     });
     // observe the submissions
     this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
@@ -263,10 +264,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
       this.teamDataService.loadMine(this.selectedEvaluationId);
       this.currentMoveNumber = evaluation.currentMoveNumber;
-      // if (evaluation.rightSideDisplay === RightSideDisplay.Scoresheet) {
-      //   this.selectedSection = Section.dashboard;
-      //   this.uiDataService.setSection(this.selectedSection);
-      // }
     }
     this.isReady = true;
   }
@@ -283,7 +280,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   incrementActiveMove(move: Move) {
     this.moveDataService.setActive(move.id);
-    this.uiDataService.setMoveNumber(move.moveNumber);
+    this.uiDataService.setMoveNumber(this.selectedEvaluationId, move.moveNumber);
     this.displayedMoveNumber = move.moveNumber;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const submissions = this.submissionQuery.getAll();
@@ -325,7 +322,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   decrementActiveMove(move: Move) {
     this.moveDataService.setActive(move.id);
-    this.uiDataService.setMoveNumber(move.moveNumber);
+    this.uiDataService.setMoveNumber(this.selectedEvaluationId, move.moveNumber);
     this.displayedMoveNumber = move.moveNumber;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const newSubmission = this.submissionQuery.getAll()
@@ -341,7 +338,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   setTeams(teams: Team[]) {
     // check if saved teamId is in the list of teams
-    const savedTeamId = this.uiDataService.getTeam();
+    const savedTeamId = this.uiDataService.getTeam(this.selectedEvaluationId);
     let activeTeamId = teams.some(t => t.id === savedTeamId) ? savedTeamId : '';
     // find the user's team
     teams.forEach(t => {
@@ -351,12 +348,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         // if the saved team wasn't in the list, set the user's team to the active team
         if (!activeTeamId) {
           activeTeamId = t.id;
-          this.uiDataService.setTeam(activeTeamId);
+          this.uiDataService.setTeam(this.selectedEvaluationId, activeTeamId);
         }
       }
     });
     if (activeTeamId) {
       this.changeTeam(activeTeamId);
+      this.teamUserDataService.loadByTeam(activeTeamId);
     }
   }
 
@@ -369,13 +367,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.signalRService.switchTeam(oldTeamId, teamId);
     }
     // when observing a team, you can't see the user or the team average
-    if (teamId !== this.myTeamId) {
-      if (this.uiDataService.getSubmissionType() === 'user' || this.uiDataService.getSubmissionType() === 'team-avg') {
-        this.uiDataService.setSubmissionType('team');
+    if (teamId && this.myTeamId && teamId !== this.myTeamId) {
+      if (this.uiDataService.getSubmissionType(this.selectedEvaluationId) === 'user' || this.uiDataService.getSubmissionType(this.selectedEvaluationId) === 'team-avg') {
+        this.uiDataService.setSubmissionType(this.selectedEvaluationId, 'team');
       }
     }
     this.teamDataService.setActive(teamId);
-    this.uiDataService.setTeam(teamId);
+    this.uiDataService.setTeam(this.selectedEvaluationId, teamId);
     this.submissionDataService.setActive('');
     this.submissionDataService.unload();
     this.submissionDataService.loadByEvaluationTeam(this.selectedEvaluationId, teamId);
@@ -383,7 +381,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   changeSection(section: string) {
     this.selectedSection = section as Section;
-    this.uiDataService.setSection(section);
+    this.uiDataService.setSection(this.selectedEvaluationId, section);
   }
 
   processSubmissions(submissions) {
@@ -400,8 +398,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       let activeSubmission = this.submissionQuery.getActive() as Submission;
       activeSubmission = activeSubmission ? submissions.find(s => s.id === activeSubmission.id) : null;
       if (!activeSubmission || activeSubmission.submissionCategories.length === 0) {
-        let savedSubmission = this.uiDataService.getSubmissionType();
-        savedSubmission = savedSubmission ? savedSubmission : 'team';
+        let savedSubmission = this.uiDataService.getSubmissionType(this.selectedEvaluationId);
+        savedSubmission = savedSubmission ? savedSubmission : 'user';
         this.selectDisplayedSubmission(savedSubmission);
       }
     }
@@ -443,7 +441,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (selection === 'report') {
       this.selectedSection = this.selectedSection === this.section.report ? this.section.dashboard : this.section.report;
     } else {
-      this.uiDataService.setSubmissionType(selection);
+      this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
       const submissions = this.submissionQuery.getAll();
       let newSubmission: Submission = null;
       switch (selection) {

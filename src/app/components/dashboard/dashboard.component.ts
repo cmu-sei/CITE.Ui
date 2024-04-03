@@ -109,6 +109,8 @@ export class DashboardComponent implements OnDestroy {
         this.unreadArticlesDataService.loadById(activeId);
         this.galleryUrl = this.settingsService.settings.GalleryUiUrl + '?exhibit=' + active.galleryExhibitId + '&section=archive';
         this.setCompleteSituationDescription();
+        // load the team data
+        this.loadTeamData();
       }
     });
     // observe the move list
@@ -122,6 +124,8 @@ export class DashboardComponent implements OnDestroy {
           .filter(a => +a.moveNumber === +this.displayedMoveNumber)
           .sort((a, b) => a.description < b.description ? -1 : 1);
         this.setCompleteSituationDescription();
+        // load the team data
+        this.loadTeamData();
       } else {
         this.moveList = [];
         this.displayedMoveNumber = -1;
@@ -143,11 +147,8 @@ export class DashboardComponent implements OnDestroy {
       if (active) {
         this.teamUsers = active.users;
         this.activeTeamId = active.id;
-        if (active.id) {
-          // load the team data for this team
-          this.actionDataService.loadByEvaluationTeam(active.evaluationId, active.id);
-          this.roleDataService.loadByEvaluationTeam(active.evaluationId, active.id);
-        }
+        // load the team data for this team
+        this.loadTeamData();
       }
     });
     // observe the Action list
@@ -233,7 +234,15 @@ export class DashboardComponent implements OnDestroy {
         });
     }
     this.completeSituationDescription = description;
-}
+  }
+
+  loadTeamData() {
+    // load the team data for this team
+    if (this.activeTeamId && this.selectedEvaluation.id) {
+      this.actionDataService.loadByEvaluationTeam(this.selectedEvaluation.id, this.activeTeamId);
+      this.roleDataService.loadByEvaluationTeam(this.selectedEvaluation.id, this.activeTeamId);
+    }
+  }
 
   checkAction(actionId: string, isChecked: boolean) {
     if (isChecked) {
