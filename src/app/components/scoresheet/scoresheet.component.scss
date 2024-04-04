@@ -13,6 +13,7 @@
   text-align: left;
   height: 100%;
   width: 100%;
+  font-size: 18px;
 }
 
 .description-container {
@@ -21,6 +22,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   text-align: left;
+  font-size: 16px;
 }
 
 .value-container {
@@ -163,4 +165,6 @@
   background-color: white;
   color: black;
 }
-
+.mat-column-description{
+  font-size: 100px;
+}
