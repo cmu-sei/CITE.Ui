@@ -1,7 +1,7 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,7 +24,8 @@ import {
   ScoringModel,
   Submission,
   Team,
-  UnreadArticles
+  UnreadArticles,
+  User
 } from 'src/app/generated/cite.api';
 import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
@@ -39,6 +40,9 @@ import { GallerySignalRService } from 'src/app/services/gallery-signalr.service'
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { RightSideDisplay } from 'src/app/generated/cite.api/model/rightSideDisplay';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatSort, MatSortable } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
 
 export enum Section {
   dashboard = 'dashboard',
@@ -53,6 +57,7 @@ export enum Section {
 })
 export class HomeAppComponent implements OnDestroy, OnInit {
   @ViewChild('sidenav') sidenav: MatSidenav;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   apiIsSick = false;
   apiMessage = 'The API web service is not responding.';
   topbarTextBase = 'Set AppTopBarText in Settings';
@@ -91,6 +96,12 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   myTeamId$ = new BehaviorSubject<string>('');
   activeSubmission$ = this.submissionQuery.selectActive() as Observable<Submission>;
   waitingForActiveTeam = false;
+  public filterString: string;
+  userList: User[] = [];
+  Evaluation: Evaluation[] = [];
+  evaluationDataSource = new MatTableDataSource<Evaluation>(new Array<Evaluation>());
+  public displayedColumns: string[] = ['description', 'status', 'createdBy', 'dateCreated'];
+  public isLoading: boolean;
 
   constructor(
     activatedRoute: ActivatedRoute,
@@ -185,6 +196,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       .subscribe((isAuthorized) => {
         this.isAuthorizedUser = isAuthorized;
       });
+    //get users
+    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+      this.userList = users;
+    });
+    this.userDataService.getUsersFromApi();
     // observe route changes
     activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       const evaluationId = params.get('evaluation');
@@ -226,6 +242,25 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.topbarTextColor = this.settingsService.settings.AppTopBarHexTextColor
       ? this.settingsService.settings.AppTopBarHexTextColor
       : this.topbarTextColor;
+    
+    this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
+      this.evaluationList = evaluations
+        .sort((a, b) => {
+          const aDescription = a.description.toLowerCase();
+          const bDescription = b.description.toLowerCase();
+    
+          if (aDescription < bDescription) {
+            return -1;
+          } else if (aDescription > bDescription) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+      // Assuming setDataSources() updates your data source for the table
+      this.setDataSources(); // Update your MatTableDataSource with this.evaluationList
+    });
+      
   }
 
   ngOnInit() {
@@ -251,8 +286,17 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     setTimeout(function() {
       thisScope.waitedLongEnough = true;
     }, 10000);
-  }
+    this.filterString = '';
 
+    this.sort.sort(<MatSortable>{ id: 'description', start: 'asc' });
+    this.evaluationDataSource.sort = this.sort;
+  }
+  
+  setDataSources() {
+    // Assuming this.evaluationList already contains your sorted evaluations
+    this.evaluationDataSource.data = this.evaluationList;
+  }
+  
   loadEvaluationData() {
     const evaluation = this.evaluationQuery.getAll().find(e => e.id === this.selectedEvaluationId);
     if (evaluation) {
@@ -531,10 +575,53 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       );
   }
 
-  ngOnDestroy() {
-    this.unsubscribe$.next(null);
-    this.unsubscribe$.complete();
-    this.signalRService.leave();
-    this.gallerySignalRService.leave();
+  getUsername(userId: string): string {
+    const user = this.userList.find(u => u.id === userId);
+    return user ? user.name : ' ';
   }
+
+ //Filter evaluation based on description value
+ applyFilter(filterValue: string) {
+  this.filterString = filterValue;
+  filterValue = filterValue.trim(); // Remove whitespace
+  filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+  this.evaluationDataSource.filter = filterValue;
+}
+
+clearFilter() {
+  this.applyFilter('');
+}
+
+// Inside your component
+
+sortData(sort: Sort) {
+  const data = this.evaluationList.slice(); // Create a copy of the data
+  if (!sort.active || sort.direction === '') {
+    this.evaluationDataSource.data = data;
+    return;
+  }
+
+  this.evaluationDataSource.data = data.sort((a, b) => {
+    const isAsc = sort.direction === 'asc';
+    switch (sort.active) {
+      case 'description': return this.compare(a.description, b.description, isAsc);
+      // Add other cases here for different columns if necessary
+      default: return 0;
+    }
+  });
+}
+
+// Helper function for comparing values during sorting
+compare(a: number | string, b: number | string, isAsc: boolean) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+}
+
+
+ngOnDestroy() {
+  this.unsubscribe$.next(null);
+  this.unsubscribe$.complete();
+  this.signalRService.leave();
+  this.gallerySignalRService.leave();
+}
+
 }
