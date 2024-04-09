@@ -7,13 +7,15 @@
 import { Injectable } from '@angular/core';
 
 export class UIState {
+  // global items
   selectedTheme = '';
   selectedEvaluation = '';
-  selectedMoveNumber = -1;
-  selectedSection = '';
-  selectedSubmissionType = '';
-  selectedTeam = '';
   expandedItems: string[] = [];
+  // per evaluation items
+  evaluationMoveNumber: {[ key: string ]: number} = {};
+  evaluationSection: {[ key: string ]: string} = {};
+  evaluationSubmissionType: {[ key: string ]: string} = {};
+  evaluationTeam: {[ key: string ]: string} = {};
 }
 
 @Injectable({
@@ -45,6 +47,7 @@ export class UIDataService {
   //
   // Evaluation selection
   setEvaluation(evaluationId: string) {
+    evaluationId = evaluationId ? evaluationId : 'blank';
     this.uiState.selectedEvaluation = evaluationId;
     this.saveChanges();
   }
@@ -56,49 +59,51 @@ export class UIDataService {
 
   //
   // Move selection
-  setMoveNumber(selectedMoveNumber: number) {
-    this.uiState.selectedMoveNumber = selectedMoveNumber;
+  setMoveNumber(evaluationId: string, selectedMoveNumber: number) {
+    evaluationId = evaluationId ? evaluationId : 'blank';
+    this.uiState.evaluationMoveNumber[evaluationId] = selectedMoveNumber;
     this.saveChanges();
   }
 
-  getMoveNumber(): number {
-    return this.uiState.selectedMoveNumber;
+  getMoveNumber(evaluationId: string): number {
+    return this.uiState.evaluationMoveNumber[evaluationId];
   }
-  // end Evaluation selection
+  // end Move selection
 
   //
   // section selection
-  setSection(section: string) {
-    this.uiState.selectedSection = section;
+  setSection(evaluationId: string, section: string) {
+    this.uiState.evaluationSection[evaluationId] = section;
     this.saveChanges();
   }
 
-  getSection(): string {
-    return this.uiState.selectedSection;
+  getSection(evaluationId: string): string {
+    evaluationId = evaluationId ? evaluationId : 'blank';
+    return this.uiState.evaluationSection[evaluationId];
   }
   // end section selection
 
   //
   // Team selection
-  setTeam(team: string) {
-    this.uiState.selectedTeam = team;
+  setTeam(evaluationId: string, team: string) {
+    this.uiState.evaluationTeam[evaluationId] = team;
     this.saveChanges();
   }
 
-  getTeam(): string {
-    return this.uiState.selectedTeam;
+  getTeam(evaluationId: string): string {
+    return this.uiState.evaluationTeam[evaluationId];
   }
   // end Team selection
 
   //
   // SubmissionType selection
-  setSubmissionType(submissionType: string) {
-    this.uiState.selectedSubmissionType = submissionType;
+  setSubmissionType(evaluationId: string, submissionType: string) {
+    this.uiState.evaluationSubmissionType[evaluationId] = submissionType;
     this.saveChanges();
   }
 
-  getSubmissionType(): string {
-    return this.uiState.selectedSubmissionType;
+  getSubmissionType(evaluationId: string): string {
+    return this.uiState.evaluationSubmissionType[evaluationId];
   }
   // end Submission selection
 

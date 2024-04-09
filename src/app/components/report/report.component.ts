@@ -46,9 +46,6 @@ export class ReportComponent implements OnDestroy {
   displayedScoreHover = 'Level 0 - Baseline';
   displaying = 'User';
   displayedScoringCategories: ScoringCategory[] = [];
-  hasCanModifyPermission = false;
-  hasCanSubmitPermission = false;
-  canIncrementMove = false;
   isLoading = false;
   showOfficialScore = false;
   showGroupAvgScore = false;
@@ -112,16 +109,6 @@ export class ReportComponent implements OnDestroy {
       this.showOfficialScore = this.submissionList.some(
         s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && !s.groupId);
       this.selectDisplayedSubmissions(this.displaying);
-    });
-    // observe the permissions
-    this.userDataService.canModify.pipe(takeUntil(this.unsubscribe$)).subscribe(canModify => {
-      this.hasCanModifyPermission = canModify;
-    });
-    this.userDataService.canSubmit.pipe(takeUntil(this.unsubscribe$)).subscribe(canSubmit => {
-      this.hasCanSubmitPermission = canSubmit;
-    });
-    this.userDataService.canIncrementMove.pipe(takeUntil(this.unsubscribe$)).subscribe(canIncrementMove => {
-      this.canIncrementMove = canIncrementMove;
     });
   }
 

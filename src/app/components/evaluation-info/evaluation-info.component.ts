@@ -9,6 +9,7 @@ import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.s
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
+import { TeamUserQuery } from 'src/app/data/team-user/team-user.query';
 import { Observable, Subject } from 'rxjs';
 import { Section } from 'src/app/components/home-app/home-app.component';
 import { takeUntil } from 'rxjs';
@@ -50,6 +51,7 @@ export class EvaluationInfoComponent implements OnDestroy {
     private evaluationQuery: EvaluationQuery,
     private moveQuery: MoveQuery,
     private teamQuery: TeamQuery,
+    private teamUserQuery: TeamUserQuery,
     private uiDataService: UIDataService,
     private evaluationDataService: EvaluationDataService,
     public dialogService: DialogService,
@@ -77,11 +79,14 @@ export class EvaluationInfoComponent implements OnDestroy {
         this.setSection(this.selectedSection);
       }
     });
-    this.setSection(this.uiDataService.getSection() as Section);
-    this.selectedTeamId = this.uiDataService.getTeam();
-    this.userDataService.canIncrementMove.pipe(takeUntil(this.unsubscribe$)).subscribe(canIncrementMove => {
-      this.canIncrementMove = canIncrementMove;
+    // observe the team users to get permissions
+    this.teamUserQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamUsers => {
+      const userId = this.userDataService.loggedInUser?.value?.profile?.sub;
+      const currentTeamUser = teamUsers.find(tu => tu.userId === userId);
+      this.canIncrementMove = currentTeamUser ? currentTeamUser.canIncrementMove : false;
     });
+    this.setSection(this.uiDataService.getSection(this.selectedEvaluationId) as Section);
+    this.selectedTeamId = this.uiDataService.getTeam(this.selectedEvaluationId);
   }
 
   sortedMoveList() {
@@ -97,7 +102,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   isIncrementDisabled(): boolean {
-    return (this.isCurrentMoveNumber() && !this.canIncrementMove) || (this.canIncrementMove && +this.displayedMoveNumber === +this.getMaxMoveNumber());
+    return (this.isCurrentMoveNumber() && !this.canIncrementMove) || (this.canIncrementMove && +this.displayedMoveNumber === +this.getMaxMoveNumber()) || (this.currentMoveNumber === this.displayedMoveNumber);
   }
 
   getMinMoveNumber() {

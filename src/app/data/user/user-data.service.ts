@@ -41,9 +41,6 @@ export class UserDataService implements OnDestroy {
     new BehaviorSubject<AuthUser>(null);
   readonly isAuthorizedUser = new BehaviorSubject<boolean>(false);
   readonly isSuperUser = new ReplaySubject<boolean>(1);
-  readonly canModify = new BehaviorSubject<boolean>(false);
-  readonly canSubmit = new BehaviorSubject<boolean>(false);
-  readonly canIncrementMove = new BehaviorSubject<boolean>(false);
   readonly isContentDeveloper = new BehaviorSubject<boolean>(false);
   readonly canAccessAdminSection = new BehaviorSubject<boolean>(false);
   private loggedInUserPermissions: Permission[] = [];
@@ -146,6 +143,10 @@ export class UserDataService implements OnDestroy {
   }
 
   setLoggedInUser(authUser: AuthUser) {
+    if (!authUser || !authUser.profile) {
+      return;
+    }
+
     this.userService
       .getUser(authUser.profile.sub)
       .pipe(takeUntil(this.unsubscribe$))
@@ -157,15 +158,9 @@ export class UserDataService implements OnDestroy {
         this.isAuthorizedUser.next(authUser.profile.sub.length === 36);
         const isSuperUser = permissions.some((p) => p.key === 'SystemAdmin');
         const isContentDeveloper = permissions.some((p) => p.key === 'ContentDeveloper');
-        const canIncrementMove = permissions.some((p) => p.key === 'CanIncrementMove');
-        const canSubmit = permissions.some((p) => p.key === 'CanSubmit');
-        const canModify = permissions.some((p) => p.key === 'CanModify');
         authUser.profile.isSystemAdmin = isSuperUser;
         this.isSuperUser.next(isSuperUser);
         this.isContentDeveloper.next(isContentDeveloper || isSuperUser);
-        this.canIncrementMove.next(canIncrementMove || isSuperUser || isContentDeveloper);
-        this.canSubmit.next(canSubmit || isSuperUser || isContentDeveloper || canIncrementMove);
-        this.canModify.next(canModify || isSuperUser || isContentDeveloper || canIncrementMove || canSubmit);
         this.canAccessAdminSection.next(isSuperUser || isContentDeveloper);
         // Emit the modified user.
         this.loggedInUser.next(authUser);
