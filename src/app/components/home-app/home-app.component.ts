@@ -257,8 +257,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             return 0;
           }
         });
-      // Assuming setDataSources() updates your data source for the table
-      this.setDataSources(); // Update your MatTableDataSource with this.evaluationList
+      this.setDataSources();
     });
       
   }
@@ -293,7 +292,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
   
   setDataSources() {
-    // Assuming this.evaluationList already contains your sorted evaluations
     this.evaluationDataSource.data = this.evaluationList;
   }
   
@@ -583,39 +581,33 @@ export class HomeAppComponent implements OnDestroy, OnInit {
  //Filter evaluation based on description value
  applyFilter(filterValue: string) {
   this.filterString = filterValue;
-  filterValue = filterValue.trim(); // Remove whitespace
-  filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+  filterValue = filterValue.trim();
+  filterValue = filterValue.toLowerCase(); 
   this.evaluationDataSource.filter = filterValue;
 }
 
+//clear text on filter search bar
 clearFilter() {
   this.applyFilter('');
 }
 
-// Inside your component
-
+//sort data based on evaluation's description
 sortData(sort: Sort) {
-  const data = this.evaluationList.slice(); // Create a copy of the data
-  if (!sort.active || sort.direction === '') {
-    this.evaluationDataSource.data = data;
-    return;
-  }
-
+  const data = this.evaluationList.slice();
   this.evaluationDataSource.data = data.sort((a, b) => {
     const isAsc = sort.direction === 'asc';
-    switch (sort.active) {
-      case 'description': return this.compare(a.description, b.description, isAsc);
-      // Add other cases here for different columns if necessary
-      default: return 0;
-    }
+    return this.compare(a.description, b.description, isAsc); 
   });
 }
 
-// Helper function for comparing values during sorting
-compare(a: number | string, b: number | string, isAsc: boolean) {
-  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+//compare function for evaluation's descriptions
+compare(a: string, b: string, isAsc: boolean) {
+  if (a === null || b === null) {
+    return 0;
+  } else {
+    return (a.toLowerCase() < b.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1);
+  }
 }
-
 
 ngOnDestroy() {
   this.unsubscribe$.next(null);

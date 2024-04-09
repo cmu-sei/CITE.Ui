@@ -103,7 +103,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-table #table class="width-100 mat-table" [dataSource]="evaluationDataSource" matSort  (matSortChange)="sortData($event)">
           <!-- Name Column -->
           <ng-container matColumnDef="description">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="description">Description</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header="description">Name</mat-header-cell>
             <mat-cell *matCellDef="let evaluation">
               <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }">
                 {{ evaluation.description }}
