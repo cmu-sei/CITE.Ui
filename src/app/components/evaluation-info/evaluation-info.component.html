@@ -16,11 +16,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
     </button>
     <h1>&nbsp;of&nbsp;&nbsp;&nbsp;{{ getMaxMoveNumber() }}</h1>
-    <div class="move-div" *ngIf="selectedEvaluationId && canIncrementMove && displayedMoveNumber === currentMoveNumber">
-      <button aria-label="Next Move" mat-button class=" blue-button mat-focus-indicator move-button background-button mat-raised-button mat-button-base mat-user ng-star-inserted" (click)="incrementDisplayedMove()" title="Next Move">
+    <div class="move-div" *ngIf="selectedEvaluationId && canIncrementMove && displayedMoveNumber === currentMoveNumber && displayedMoveNumber < getMaxMoveNumber()">
+      <button aria-label="Next Move" mat-button class="blue-button mat-focus-indicator move-button background-button mat-raised-button mat-button-base mat-user ng-star-inserted" (click)="incrementDisplayedMove()" title="Next Move">
         Advance Move
       </button>
-    </div>
+    </div>   
     <span class="description-span"><h1 [ngStyle]='getMoveStyle()'>{{ getMoveDescription() }}</h1></span>
   </div>
   <div class="move-div" *ngIf="!selectedEvaluationId || displayedMoveNumber < 0">
