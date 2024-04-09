@@ -244,13 +244,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.topbarTextColor = this.settingsService.settings.AppTopBarHexTextColor
       ? this.settingsService.settings.AppTopBarHexTextColor
       : this.topbarTextColor;
-    
+
     this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
       this.evaluationList = evaluations
         .sort((a, b) => {
           const aDescription = a.description.toLowerCase();
           const bDescription = b.description.toLowerCase();
-    
+
           if (aDescription < bDescription) {
             return -1;
           } else if (aDescription > bDescription) {
@@ -261,7 +261,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         });
       this.setDataSources();
     });
-      
+
   }
 
   ngOnInit() {
@@ -288,15 +288,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       thisScope.waitedLongEnough = true;
     }, 10000);
     this.filterString = '';
-
-    this.sort.sort(<MatSortable>{ id: 'description', start: 'asc' });
     this.evaluationDataSource.sort = this.sort;
   }
-  
+
   setDataSources() {
     this.evaluationDataSource.data = this.evaluationList;
   }
-  
+
   loadEvaluationData() {
     const evaluation = this.evaluationQuery.getAll().find(e => e.id === this.selectedEvaluationId);
     if (evaluation) {
@@ -581,7 +579,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
  applyFilter(filterValue: string) {
   this.filterString = filterValue;
   filterValue = filterValue.trim();
-  filterValue = filterValue.toLowerCase(); 
+  filterValue = filterValue.toLowerCase();
   this.evaluationDataSource.filter = filterValue;
 }
 
@@ -595,7 +593,7 @@ sortData(sort: Sort) {
   const data = this.evaluationList.slice();
   this.evaluationDataSource.data = data.sort((a, b) => {
     const isAsc = sort.direction === 'asc';
-    return this.compare(a.description, b.description, isAsc); 
+    return this.compare(a.description, b.description, isAsc);
   });
 }
 

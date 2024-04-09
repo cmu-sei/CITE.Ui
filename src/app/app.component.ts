@@ -355,6 +355,12 @@ export class AppComponent implements OnDestroy {
         'assets/svg-icons/add-comment.svg'
       )
     );
+    iconRegistry.addSvgIcon(
+      'crucible-icon-cite',
+      sanitizer.bypassSecurityTrustResourceUrl(
+        'assets/svg-icons/crucible-icon-cite.svg'
+      )
+    );
   }
 
   setTheme(theme: Theme) {
