@@ -25,7 +25,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <h2>Please refresh this page.</h2>
     <h2>If the problem persists, please contact the site administrator.</h2>
   </div>
-
   <div
     *ngIf="!apiIsSick && waitedLongEnough && evaluationList.length === 0"
     class="app-header-container"
@@ -47,7 +46,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
       Goto Administration Pages
     </button>
   </div>
-
   <div
     class="content-under-topbar"
     *ngIf="!apiIsSick && isAuthorizedUser && evaluationList.length > 0"
@@ -67,7 +65,77 @@ project root for license information or contact permission@sei.cmu.edu for full 
         (changeSection)="changeSection($event)"
         (changeEvaluation)="changeEvaluation($event)"
         ></app-evaluation-info>
-    </div>
+    </div> 
+
+    <div class="mat-elevation-z8 evaluation-list-container" *ngIf="evaluationList.length > 0 && !selectedEvaluationId"> 
+      <div class="icon-text-container">
+        <mat-icon class="crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
+        <span class="evaluation-title text">My Evaluations</span>
+        <div class="searchBox d-flex align-items-center">
+          <!-- Search Bar -->
+          <mat-icon
+            class="text"
+            style="transform: scale(0.85); margin-right: 5px"
+            svgIcon="ic_magnify_search"
+          ></mat-icon>
+          <mat-form-field style="width: 320px">
+            <input
+              matInput
+              [(ngModel)]="filterString"
+              (keyup)="applyFilter($event.target.value)"
+              placeholder="Search"
+            />
+            <button
+              *ngIf="filterString !== ''"
+              mat-icon-button
+              matSuffix
+              (click)="clearFilter()"
+              title="Clear Search"
+            >
+              <mat-icon
+                style="transform: scale(0.85)"
+                svgIcon="ic_clear"
+              ></mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+      </div>
+        <mat-table #table class="width-100 mat-table" [dataSource]="evaluationDataSource" matSort  (matSortChange)="sortData($event)">
+          <!-- Name Column -->
+          <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="description">Name</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">
+              <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }">
+                {{ evaluation.description }}
+              </a>  
+            </mat-cell>
+          </ng-container>
+  
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ evaluation.status }}</mat-cell>
+          </ng-container>
+      
+          <!-- Created By Column -->
+          <ng-container matColumnDef="createdBy">
+            <mat-header-cell *matHeaderCellDef>Created By</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ getUsername(evaluation.createdBy)}}</mat-cell>
+          </ng-container>
+
+           <!-- Date Created Column -->
+           <ng-container matColumnDef="dateCreated">
+            <mat-header-cell *matHeaderCellDef>Date Created</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"MM/dd/yyyy HH:mm" }}</mat-cell>
+          </ng-container>
+    
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+        </mat-table> 
+        <div class="text no-results" *ngIf="evaluationDataSource.filteredData.length === 0">
+          No results found
+        </div>
+    </div>  
     <div class="app-content-container"
       *ngIf="isReady"
     >
@@ -116,3 +184,4 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
 </div>
+

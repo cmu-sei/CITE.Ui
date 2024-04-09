@@ -18,6 +18,7 @@
   right: 0;
   position: fixed;
   height: 100%;
+  text-align: center;
 }
 
 .content-under-topbar {
@@ -111,6 +112,41 @@
   transform: scale(2);
   width: 60px;
 }
+
+.evaluation-list-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-height: 800px;
+  min-width: 300px;
+  margin: auto;
+  width: 80%;
+}
+
+.crucible-icon-cite {
+  transform: scale(2);
+  height: auto;
+  margin-right: 10px;
+}
+
+.icon-text-container {
+  display: flex;
+  align-items: center;
+  padding-top: 20px;
+  margin-left: 20px;
+}
+
+.evaluation-title {
+  font-size: x-large;
+  text-align: left;
+  padding-left: 20px;
+}
+
+.searchBox {
+  margin-right: 10px;
+  margin-left: auto !important;
+}
+
 
 @media print {
   .app-events-container {
