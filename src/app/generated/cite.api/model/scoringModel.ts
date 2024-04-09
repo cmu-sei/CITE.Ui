@@ -34,6 +34,12 @@ export interface ScoringModel {
     displayCommentTextBoxes?: boolean;
     displayScoringModelByMoveNumber?: boolean;
     showPastSituationDescriptions?: boolean;
+    useSubmit?: boolean;
+    useUserScore?: boolean;
+    useTeamScore?: boolean;
+    useTeamAverageScore?: boolean;
+    useTypeAverageScore?: boolean;
+    useOfficialScore?: boolean;
     rightSideDisplay?: RightSideDisplay;
     rightSideHtmlBlock?: string;
     rightSideEmbeddedUrl?: string;

@@ -12,12 +12,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
       selectedEvaluation.id &&
       activeTeamId &&
       selectedScoringModel &&
-      displayedMoveNumber >= 0
+      displayedMoveNumber >= 0 &&
+      submissionList.length > 0
     "
   >
     <!-- Description Definition -->
     <ng-container matColumnDef="scoringCategoryDescription">
-      <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
+      <mat-header-cell *matHeaderCellDef [ngClass]="matHeaderClass()">
         <div
           class="navigation-font"
           *ngIf="!userOnly && haveSomeScoringCategories"
@@ -133,7 +134,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}"
             >{{ displayedSubmission.score | number: '1.2-2' }}</span>
         </div>
-        <div class="title-font" *ngIf="haveSomeScoringCategories">
+        <div class="title-font" *ngIf="selectedScoringModel.useSubmit && haveSomeScoringCategories">
           <span
             class="move-buttons"
             *ngIf="myTeamId === activeTeamId"
@@ -305,7 +306,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
                     (change)="changeComment(scoringCategory.id, scoringOption.id, $event)"
                     class="comment"
-                    [disabled]="!showSubmitButton"
+                    [disabled]="selectedScoringModel.useSubmit && !showSubmitButton"
                   ></textarea>
                 </div>
               </div>
@@ -337,6 +338,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <!-- Header and Row Declarations -->
     <mat-header-row
       *matHeaderRowDef="['scoringCategoryDescription']"
+      [ngClass]="matHeaderClass()"
     ></mat-header-row>
     <mat-row
       *matRowDef="let row; columns: ['scoringCategoryDescription']"

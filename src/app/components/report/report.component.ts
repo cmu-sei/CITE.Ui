@@ -44,7 +44,7 @@ export class ReportComponent implements OnDestroy {
   submissionList: PopulatedSubmission[] = [];
   displayedScoreClass = 'white';
   displayedScoreHover = 'Level 0 - Baseline';
-  displaying = 'User';
+  displaying = '';
   displayedScoringCategories: ScoringCategory[] = [];
   isLoading = false;
   showOfficialScore = false;
@@ -77,7 +77,7 @@ export class ReportComponent implements OnDestroy {
       if (active) {
         this.selectedEvaluation = active;
         this.currentMoveNumber = active.currentMoveNumber;
-      }
+        this.displaying = this.uiDataService.getSubmissionType(active.id).toLowerCase();      }
     });
     // observe the selected scoring model
     (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
@@ -108,7 +108,7 @@ export class ReportComponent implements OnDestroy {
         s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && s.groupId && s.scoreIsAnAverage);
       this.showOfficialScore = this.submissionList.some(
         s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && !s.groupId);
-      this.selectDisplayedSubmissions(this.displaying);
+      this.selectDisplayedSubmissions();
     });
   }
 
@@ -171,7 +171,7 @@ export class ReportComponent implements OnDestroy {
   }
 
   selectedBy(submission: PopulatedSubmission, scoringCategoryId: string, scoringOptionId: string) {
-    if (this.displaying !== 'Team') {
+    if (this.displaying !== 'team') {
       return;
     }
     let selectedBy = null;
@@ -218,9 +218,9 @@ export class ReportComponent implements OnDestroy {
     return displayedScoringCategories;
   }
 
-  selectDisplayedSubmissions(selection: string) {
+  selectDisplayedSubmissions() {
     let validSubmissions = Object.assign([], this.submissionList) as PopulatedSubmission[];
-    validSubmissions = validSubmissions.filter(vs => vs.submissionType === selection);
+    validSubmissions = validSubmissions.filter(vs => vs.submissionType.toLowerCase() === this.displaying);
     let displayedSubmissions: PopulatedSubmission[] = [];
     validSubmissions.forEach(vs => {
       const hasScores = !this.selectedScoringModel.displayScoringModelByMoveNumber ||
@@ -231,7 +231,6 @@ export class ReportComponent implements OnDestroy {
         }
     });
     displayedSubmissions = displayedSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
-    this.displaying = selection;
     this.displayedSubmissionList = displayedSubmissions;
   }
 
