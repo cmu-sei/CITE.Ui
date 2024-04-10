@@ -64,6 +64,7 @@ export class ScoresheetComponent implements OnDestroy {
   currentComment = 'current comment';
   tableClass = 'user-text';
   buttonClass = 'mat-user';
+  showHeader = false;
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -121,6 +122,7 @@ export class ScoresheetComponent implements OnDestroy {
     (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
         this.selectedScoringModel = active;
+        this.showHeader = (active.useUserScore && active.useTeamScore) || active.useTeamAverageScore || active.useTypeAverageScore || active.useOfficialScore;
       }
     });
     // observe the active team
@@ -468,6 +470,14 @@ export class ScoresheetComponent implements OnDestroy {
     });
     this.haveSomeScoringCategories = displayedScoringCategories.length > 0;
     return displayedScoringCategories;
+  }
+
+  matHeaderClass() {
+    if (this.showHeader) {
+      return 'cssLayoutRowSpaceBetween';
+    } else {
+      return 'no-display';
+    }
   }
 
   ngOnDestroy() {

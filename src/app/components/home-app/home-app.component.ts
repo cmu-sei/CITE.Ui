@@ -96,7 +96,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   myTeamId = '';
   myTeamId$ = new BehaviorSubject<string>('');
   activeSubmission$ = this.submissionQuery.selectActive() as Observable<Submission>;
-  waitingForActiveTeam = false;
   public filterString: string;
   userList: User[] = [];
   Evaluation: Evaluation[] = [];
@@ -426,8 +425,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   processSubmissions(submissions) {
     // process submissions
     const activeTeam = this.teamQuery.getActive() as Team;
-    if (!activeTeam) {
-      this.waitingForActiveTeam = true;
+    const scoringModel = this.scoringModelQuery.getActive() as ScoringModel;
+    if (!activeTeam || !scoringModel) {
       return;
     }
     if (submissions.length === 0) {
@@ -437,20 +436,26 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       let activeSubmission = this.submissionQuery.getActive() as Submission;
       activeSubmission = activeSubmission ? submissions.find(s => s.id === activeSubmission.id) : null;
       if (!activeSubmission || activeSubmission.submissionCategories.length === 0) {
-        let savedSubmission = this.uiDataService.getSubmissionType(this.selectedEvaluationId);
-        savedSubmission = savedSubmission ? savedSubmission : 'user';
-        this.selectDisplayedSubmission(savedSubmission);
+        let submissionType = this.uiDataService.getSubmissionType(this.selectedEvaluationId);
+        if (!submissionType) {
+          submissionType = 'user';
+        }
+        if (submissionType == 'user' && !scoringModel.useUserScore) {
+          submissionType = 'team';
+        }
+        this.selectDisplayedSubmission(submissionType);
       }
     }
   }
 
   makeNewSubmission() {
     const evaluation = this.evaluationQuery.getAll().find(e => e.id === this.selectedEvaluationId);
-    if (!evaluation) {
+    const scoringModel = this.scoringModelQuery.getActive() as ScoringModel;
+    const activeTeam = this.teamQuery.getActive() as Team;
+    if (!evaluation || ! scoringModel || !activeTeam) {
       return;
     }
-    const activeTeam = this.teamQuery.getActive() as Team;
-    const userId = activeTeam && activeTeam.id !== this.myTeamId ? null : this.loggedInUserId;
+    const userId = !scoringModel.useUserScore || activeTeam.id !== this.myTeamId ? null : this.loggedInUserId;
     const submission = {
       teamId: activeTeam ? activeTeam.id : this.myTeamId,
       evaluationId: evaluation.id,

@@ -47,6 +47,36 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   <div class="add-margin">
     <div>
+      <mat-checkbox [(ngModel)]="data.scoringModel.useUserScore">Use Individual User Scoring</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.scoringModel.useTeamScore">Use Team Scoring</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.scoringModel.useOfficialScore">Use Official Scoring</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.scoringModel.useTeamAverageScore" [disabled]="!data.scoringModel.useUserScore">Use Team Average Scoring</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.scoringModel.useTypeAverageScore" [disabled]="!data.scoringModel.useTeamScore">Use Type Average Scoring</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
+      <mat-checkbox [(ngModel)]="data.scoringModel.useSubmit">Use Submit</mat-checkbox>
+    </div>
+  </div>
+  <div class="add-margin">
+    <div>
       <mat-checkbox [(ngModel)]="data.scoringModel.hideScoresOnScoreSheet">Hide Scores On Scoresheet</mat-checkbox>
     </div>
   </div>

@@ -228,8 +228,10 @@ export class SubmissionDataService {
         take(1)
       )
       .subscribe((s) => {
-        this.submissionStore.upsert(s.id, s);
-        this.setActive(s.id);
+        if (s) {
+          this.submissionStore.upsert(s.id, s);
+          this.setActive(s.id);
+        }
       });
   }
 
