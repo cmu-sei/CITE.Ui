@@ -101,8 +101,8 @@ export class EvaluationInfoComponent implements OnDestroy {
     return +this.displayedMoveNumber === +this.currentMoveNumber;
   }
 
-  isIncrementDisabled(): boolean {
-    return (this.isCurrentMoveNumber() && !this.canIncrementMove) || (this.canIncrementMove && +this.displayedMoveNumber === +this.getMaxMoveNumber()) || (this.currentMoveNumber === this.displayedMoveNumber);
+  showAdvanceMove(): boolean {
+    return this.canIncrementMove && this.selectedEvaluationId && +this.displayedMoveNumber === +this.currentMoveNumber && +this.displayedMoveNumber < +this.getMaxMoveNumber();
   }
 
   getMinMoveNumber() {
