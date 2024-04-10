@@ -232,7 +232,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     });
     // observe the submissions
     this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
-      console.log('submission list update');
       this.processSubmissions(submissions);
     });
     // load the user's evaluations
@@ -431,7 +430,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       return;
     }
     if (submissions.length === 0) {
-      console.log('No submissions, so calling makeNewSubmission');
       this.makeNewSubmission();
     // don't process the submissions if the selected team has changed, but the new submissions haven't been loaded yet
     } else if (submissions.some(s => s.teamId && s.teamId === activeTeam.id)) {
@@ -530,7 +528,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       if (newSubmission) {
         this.setAndGetActiveSubmission(newSubmission);
       } else {
-        console.log('Selected submission for "' + selection + '" does not exist, so calling makeNewSubmission');
         this.makeNewSubmission();
       }
     }

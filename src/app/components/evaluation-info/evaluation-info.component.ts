@@ -59,12 +59,10 @@ export class EvaluationInfoComponent implements OnDestroy {
   ) {
     // observe the active evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(e => {
-      console.log('active evaluation update');
       if (e) {
         this.selectedEvaluationId = e.id;
         this.currentMoveNumber = e.currentMoveNumber;
         if (this.waitingForCurrentMoveToAdvance) {
-          console.log('waiting for current move to advance');
           this.waitingForCurrentMoveToAdvance = false;
           this.incrementDisplayedMove();
         }
@@ -72,12 +70,10 @@ export class EvaluationInfoComponent implements OnDestroy {
     });
     // observe the active move
     (this.moveQuery.selectActive() as Observable<Move>).pipe(takeUntil(this.unsubscribe$)).subscribe(m => {
-      console.log('active move update');
       this.displayedMoveNumber = m ? m.moveNumber : this.displayedMoveNumber;
     });
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(t => {
-      console.log('activeteam update');
       if (t) {
         this.selectedTeamId = t ? t.id : this.selectedTeamId;
         this.setSection(this.selectedSection);
@@ -85,7 +81,6 @@ export class EvaluationInfoComponent implements OnDestroy {
     });
     // observe the team users to get permissions
     this.teamUserQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamUsers => {
-      console.log('team users update');
       const userId = this.userDataService.loggedInUser?.value?.profile?.sub;
       const currentTeamUser = teamUsers.find(tu => tu.userId === userId);
       this.canIncrementMove = currentTeamUser ? currentTeamUser.canIncrementMove : false;
