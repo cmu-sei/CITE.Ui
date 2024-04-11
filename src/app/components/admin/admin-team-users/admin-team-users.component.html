@@ -71,7 +71,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             >
               <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline"></mat-icon>
             </button>
-            <label>{{ getUserTeamName(element.id) }}</label>
+            <label *ngIf="onAnotherTeam(element.id)">{{ getUserTeamName(element.id) }}</label>
           </div>
         </mat-cell>
       </ng-container>
