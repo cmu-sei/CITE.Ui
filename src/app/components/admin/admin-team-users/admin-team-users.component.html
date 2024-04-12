@@ -67,9 +67,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
               (click)="addUserToTeam(element)"
               style="outline: none;"
               title="Add {{ element.name }} to Team"
+              *ngIf="!onAnotherTeam(element.id)"
             >
               <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline"></mat-icon>
             </button>
+            <label *ngIf="onAnotherTeam(element.id)">{{ getUserTeamName(element.id) }}</label>
           </div>
         </mat-cell>
       </ng-container>

@@ -77,7 +77,6 @@ export class AdminObserversComponent implements OnDestroy, OnInit {
   ngOnInit() {
     this.sort.sort(<MatSortable>{ id: 'name', start: 'asc' });
     this.observerDataSource.sort = this.sort;
-    // this.teamUserDataService.loadByEvaluation(this.evaluationId);
   }
 
   setDataSources() {
