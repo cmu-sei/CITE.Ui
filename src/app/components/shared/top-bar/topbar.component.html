@@ -30,7 +30,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
         *ngIf="!!imageFilePath"
         class="no-sidenav"
         [src]="imageFilePath"
-        title="Application Image"
+        title="Home"
+        (click)="goToUrl('/')"
       />
     </span>
     <span class="view-text">{{ title }}</span>

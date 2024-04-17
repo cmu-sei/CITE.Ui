@@ -11,6 +11,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { ComnAuthQuery, ComnAuthService, Theme } from '@cmusei/crucible-common';
 import { User as AuthUser } from 'oidc-client';
 import { Observable, Subject } from 'rxjs';
@@ -36,6 +37,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   @Input() imageFilePath: string;
   @Output() sidenavToggle?: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() setTeam?: EventEmitter<string> = new EventEmitter<string>();
+  @Output() urlNavigate?: EventEmitter<string> = new EventEmitter<string>();
   @Output() editView?: EventEmitter<any> = new EventEmitter<any>();
   currentUser$: Observable<AuthUser>;
   theme$: Observable<Theme>;
@@ -45,6 +47,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private authService: ComnAuthService,
     private loggedInUserService: UserDataService,
     private authQuery: ComnAuthQuery,
+    private router: Router,
     private uiDataService: UIDataService
   ) {}
 
@@ -70,6 +73,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
   editFn(event) {
     this.editView.emit(event);
+  }
+
+  goToUrl(url): void {
+    this.urlNavigate.emit(url);
   }
 
   sidenavToggleFn() {
