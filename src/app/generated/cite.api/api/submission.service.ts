@@ -26,6 +26,7 @@ import { Observable }                                        from 'rxjs';
 
 import { ProblemDetails } from '../model/problemDetails';
 import { Submission } from '../model/submission';
+import { SubmissionComment } from '../model/submissionComment';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -65,6 +66,122 @@ export class SubmissionService {
         return false;
     }
 
+
+    /**
+     * Adds a new SubmissionComment
+     * Adds a new SubmissionComment with the attributes specified
+     * @param SubmissionId The ID of the Submission to add the comment
+     * @param SubmissionComment The data used to create the SubmissionComment
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public addSubmissionComment(submissionId: string, SubmissionComment?: SubmissionComment, observe?: 'body', reportProgress?: boolean): Observable<Submission>;
+    public addSubmissionComment(submissionId: string, SubmissionComment?: SubmissionComment, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Submission>>;
+    public addSubmissionComment(submissionId: string, SubmissionComment?: SubmissionComment, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Submission>>;
+    public addSubmissionComment(submissionId: string, SubmissionComment?: SubmissionComment, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.post<Submission>(`${this.configuration.basePath}/api/submissions/${encodeURIComponent(String(submissionId))}/comments`,
+            SubmissionComment,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Changes a  SubmissionComment
+     * Changes a SubmissionComment with the attributes specified.  The ID from the route MUST MATCH the ID contained in the submission parameter
+     * @param submissionId The Id of the Submission to update
+     * @param submissionCommentId The Id of the SubmissionComment to update
+     * @param submissionComment The updated SubmissionComment values
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public changeSubmissionComment(submissionId: string, submissionCommentId: string, SubmissionComment?: Submission, observe?: 'body', reportProgress?: boolean): Observable<Submission>;
+    public changeSubmissionComment(submissionId: string, submissionCommentId: string, SubmissionComment?: Submission, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Submission>>;
+    public changeSubmissionComment(submissionId: string, submissionCommentId: string, SubmissionComment?: Submission, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Submission>>;
+    public changeSubmissionComment(submissionId: string, submissionCommentId: string, SubmissionComment?: Submission, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (submissionId === null || submissionId === undefined || submissionCommentId === null || submissionCommentId === undefined) {
+            throw new Error('Required parameter was null or undefined when calling changeSubmissionComment.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.put<Submission>(`${this.configuration.basePath}/api/submissions/${encodeURIComponent(String(submissionId))}/comments/${encodeURIComponent(String(submissionCommentId))}`,
+            SubmissionComment,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
 
     /**
      * Clears Submission Selections
@@ -588,6 +705,55 @@ export class SubmissionService {
 
         return this.httpClient.put<Submission>(`${this.configuration.basePath}/api/submissions/${encodeURIComponent(String(id))}/preset`,
             null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Removes a  SubmissionComment
+     * Removes a  SubmissionComment with the specified id
+     * @param submissionId The id of the Submission
+     * @param submissionCommentId The id of the SubmissionComment to delete
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public removeSubmissionComment(submissionId: string, submissionCommentId: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public removeSubmissionComment(submissionId: string, submissionCommentId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public removeSubmissionComment(submissionId: string, submissionCommentId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public removeSubmissionComment(submissionId: string, submissionCommentId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (submissionId === null || submissionId === undefined || submissionCommentId === null || submissionCommentId === undefined) {
+            throw new Error('Required parameter was null or undefined when calling removeSubmissionComment.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.delete<Submission>(`${this.configuration.basePath}/api/submissions/${encodeURIComponent(String(submissionId))}/comments/${encodeURIComponent(String(submissionCommentId))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

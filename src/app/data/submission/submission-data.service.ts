@@ -298,28 +298,28 @@ export class SubmissionDataService {
     }
   }
 
-  addSubmissionComment(submissionOptionId: string, comment: string) {
+  addSubmissionComment(submissionId: string, submissionOptionId: string, comment: string) {
     const submissionComment = {
       submissionOptionId: submissionOptionId,
       comment: comment
     } as SubmissionComment;
-    this.submissionCommentService.createSubmissionComment(submissionComment).pipe(take(1)).subscribe(result => {
-      this.loadById(this.submissionQuery.getActiveId());
+    this.submissionService.addSubmissionComment(submissionId, submissionComment).pipe(take(1)).subscribe(s => {
+      this.submissionStore.upsert(s.id, { ...s });
     });
   }
 
-  updateSubmissionComment(submissionComment: SubmissionComment) {
-    this.submissionCommentService.updateSubmissionComment(submissionComment.id, submissionComment).pipe(take(1)).subscribe(result => {
-      this.loadById(this.submissionQuery.getActiveId());
+  changeSubmissionComment(submissionId: string, submissionComment: SubmissionComment) {
+    this.submissionService.changeSubmissionComment(submissionId, submissionComment.id, submissionComment).pipe(take(1)).subscribe(s => {
+      this.submissionStore.upsert(s.id, { ...s });
     });
   }
 
-  deleteSubmissionComment(id: string) {
-    this.submissionCommentService
-      .deleteSubmissionComment(id)
+  removeSubmissionComment(submissionId: string, submissionCommentId: string) {
+    this.submissionService
+      .removeSubmissionComment(submissionId, submissionCommentId)
       .pipe(take(1))
-      .subscribe((r) => {
-        this.loadById(this.submissionQuery.getActiveId());
+      .subscribe(s => {
+        this.submissionStore.upsert(s.id, { ...s });
       });
   }
 

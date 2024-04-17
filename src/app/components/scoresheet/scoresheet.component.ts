@@ -231,7 +231,7 @@ export class ScoresheetComponent implements OnDestroy {
     dialogRef.disableClose = true;
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.submissionDataService.addSubmissionComment(submissionOption.id, this.currentComment);
+        this.submissionDataService.addSubmissionComment(this.displayedSubmission.id, submissionOption.id, this.currentComment);
       }
       this.currentComment = '';
       this.commentOptionDescription = '';
@@ -249,7 +249,7 @@ export class ScoresheetComponent implements OnDestroy {
       if (result) {
         const newComment = { ...submissionComment};
         newComment.comment = this.currentComment;
-        this.submissionDataService.updateSubmissionComment(newComment);
+        this.submissionDataService.changeSubmissionComment(this.displayedSubmission.id, newComment);
       }
       this.currentComment = '';
       this.commentOptionDescription = '';
@@ -264,9 +264,9 @@ export class ScoresheetComponent implements OnDestroy {
       if (commentText) {
         const newComment = { ...comment} as SubmissionComment;
         newComment.comment = event.target.value;
-        this.submissionDataService.updateSubmissionComment(newComment);
+        this.submissionDataService.changeSubmissionComment(this.displayedSubmission.id, newComment);
       } else {
-        this.submissionDataService.deleteSubmissionComment(comment.id);
+        this.submissionDataService.removeSubmissionComment(this.displayedSubmission.id, comment.id);
       }
     } else {
       const submissionCategory = this.displayedSubmission.submissionCategories
@@ -274,7 +274,7 @@ export class ScoresheetComponent implements OnDestroy {
       if (submissionCategory) {
         const submissionOption = submissionCategory.submissionOptions.find(so => so.scoringOptionId === scoringOptionId);
         if (submissionOption) {
-          this.submissionDataService.addSubmissionComment(submissionOption.id, commentText);
+          this.submissionDataService.addSubmissionComment(this.displayedSubmission.id, submissionOption.id, commentText);
         }
       }
     }
@@ -286,7 +286,7 @@ export class ScoresheetComponent implements OnDestroy {
       submissionComment.comment
     ).subscribe((result) => {
       if (result['confirm']) {
-        this.submissionDataService.deleteSubmissionComment(submissionComment.id);
+        this.submissionDataService.removeSubmissionComment(this.displayedSubmission.id, submissionComment.id);
       }
     });
   }
