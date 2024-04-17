@@ -611,6 +611,12 @@ compare(a: string, b: string, isAsc: boolean) {
   }
 }
 
+topBarNavigate(url): void {
+  this.router.navigate(['/']).then(() => {
+    window.location.reload();
+  });
+}
+
 ngOnDestroy() {
   this.unsubscribe$.next(null);
   this.unsubscribe$.complete();
