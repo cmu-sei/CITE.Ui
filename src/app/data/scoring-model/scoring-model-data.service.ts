@@ -13,16 +13,13 @@ import {
   ScoringModelService
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, Subject } from 'rxjs';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScoringModelDataService {
-  // private _requestedScoringModelId: string;
-  // private _requestedScoringModelId$ = this.activatedRoute.queryParamMap.pipe(
-  //   map((params) => params.get('scoringModelId') || '')
-  // );
   readonly scoringModelList: Observable<ScoringModel[]>;
   readonly selected: Observable<ScoringModel>;
   readonly filterControl = new UntypedFormControl();
@@ -33,6 +30,7 @@ export class ScoringModelDataService {
   readonly pageEvent = new BehaviorSubject<PageEvent>(this._pageEvent);
   private pageSize: Observable<number>;
   private pageIndex: Observable<number>;
+  public uploadProgress = new Subject<number>();
 
   constructor(
     private scoringModelStore: ScoringModelStore,
@@ -210,6 +208,24 @@ export class ScoringModelDataService {
       });
   }
 
+  copy(id: string) {
+    this.scoringModelStore.setLoading(true);
+    this.scoringModelService
+      .copyScoringModel(id)
+      .pipe(
+        tap(() => {
+          this.scoringModelStore.setLoading(false);
+        }),
+        take(1)
+      )
+      .subscribe((s) => {
+        this.scoringModelStore.add(s);
+      },
+      (error) => {
+        this.scoringModelStore.setLoading(false);
+      });
+  }
+
   updateScoringModel(scoringModel: ScoringModel) {
     this.scoringModelStore.setLoading(true);
     this.scoringModelService
@@ -232,6 +248,33 @@ export class ScoringModelDataService {
       .subscribe((r) => {
         this.deleteFromStore(id);
         this.setActive('');
+      });
+  }
+
+  downloadJson(id: string) {
+    return this.scoringModelService.downloadJson(id);
+  }
+
+  uploadJson(file: File, observe: any, reportProgress: boolean) {
+    this.scoringModelStore.setLoading(true);
+    this.scoringModelService
+      .uploadJson(file, observe, reportProgress)
+      .subscribe((event) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          const uploadProgress = Math.round((100 * event.loaded) / event.total);
+          this.uploadProgress.next(uploadProgress);
+        } else if (event instanceof HttpResponse) {
+          this.uploadProgress.next(0);
+          this.scoringModelStore.setLoading(false);
+          if (event.status === 200) {
+            const scoringModel = event.body;
+            this.scoringModelStore.upsert(scoringModel.id, scoringModel);
+          }
+        }
+      },
+      (error) => {
+        this.scoringModelStore.setLoading(false);
+        this.uploadProgress.next(0);
       });
   }
 
