@@ -144,7 +144,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection !== section.scoresheet && selectedSection !== section.report">
         <app-dashboard
           *ngIf="unreadArticles$ && moveList$"
-          [moveList]="moveList$ | async"
           [unreadArticles]="unreadArticles$ | async"
           [myTeamId]="myTeamId$ | async"
         ></app-dashboard>

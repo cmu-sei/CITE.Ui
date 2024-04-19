@@ -343,7 +343,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
     );
     if (newSubmission) {
-      console.log('nextDisplayedMove - a move ' + newSubmission.moveNumber);
       this.setAndGetActiveSubmission(newSubmission);
     } else {
       // the new submission would not be allowed, so select the default submission
@@ -367,7 +366,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         );
       }
       if (newSubmission) {
-        console.log('nextDisplayedMove - b move ' + newSubmission.moveNumber);
         this.setAndGetActiveSubmission(newSubmission);
       }
     }
@@ -385,7 +383,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         && s.groupId === displayedSubmission.groupId
         && s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage);
     if (newSubmission) {
-      console.log('previousDisplayedMove move ' + newSubmission.moveNumber);
       this.setAndGetActiveSubmission(newSubmission);
     }
   }
@@ -508,7 +505,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.submissionDataService.loadTeamTypeAverageSubmission(submission);
       }
     }
-    console.log('setting active submission to move ' + submission.moveNumber);
     this.submissionDataService.setActive(submission.id);
   }
 
@@ -557,7 +553,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           break;
       }
       if (newSubmission) {
-        console.log('selectDisplayedSubmission move ' + newSubmission.moveNumber);
         this.setAndGetActiveSubmission(newSubmission);
       } else {
         this.makeNewSubmission();
