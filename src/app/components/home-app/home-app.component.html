@@ -60,8 +60,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
         [evaluationList]="evaluationList$ | async"
         [moveList]="moveList$ | async"
         [scoresheetOnRight]="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
-        (incrementActiveMove)="incrementActiveMove($event)"
-        (decrementActiveMove)="decrementActiveMove($event)"
+        (nextDisplayedMove)="nextDisplayedMove($event)"
+        (previousDisplayedMove)="previousDisplayedMove($event)"
+        (nextEvaluationMove)="nextEvaluationMove($event)"
         (changeTeam)="changeTeam($event)"
         (changeSection)="changeSection($event)"
         (changeEvaluation)="changeEvaluation($event)"
@@ -143,6 +144,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection !== section.scoresheet && selectedSection !== section.report">
         <app-dashboard
           *ngIf="unreadArticles$ && moveList$"
+          [moveList]="moveList$ | async"
           [unreadArticles]="unreadArticles$ | async"
           [myTeamId]="myTeamId$ | async"
         ></app-dashboard>

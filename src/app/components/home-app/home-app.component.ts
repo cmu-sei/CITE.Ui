@@ -87,10 +87,12 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   isReady = false;
   currentMoveNumber = -1;
   displayedMoveNumber = -1;
+  requestedMoveNumber = -1;
   userCurrentSubmission: Submission;
   unreadArticles$ = this.unreadArticlesQuery.selectActive() as Observable<UnreadArticles>;
   evaluationForLoadedSubmissions: Evaluation;
   moveList$ = this.moveQuery.selectAll() as Observable<Move[]>;
+  sortedMoveList: Move[] = [];
   loggedInUser$ = this.userDataService.loggedInUser;
   teamList$ = this.teamQuery.selectAll();
   myTeamId = '';
@@ -102,6 +104,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   evaluationDataSource = new MatTableDataSource<Evaluation>(new Array<Evaluation>());
   public displayedColumns: string[] = ['description', 'status', 'createdBy', 'dateCreated'];
   public isLoading: boolean;
+  waitingForCurrentMoveNumber = 0;
 
   constructor(
     activatedRoute: ActivatedRoute,
@@ -142,6 +145,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       .pipe(takeUntil(this.unsubscribe$)).subscribe(([evaluations, moves, user, teams]) => {
         // set the top bar text
         this.evaluationList = evaluations;
+        this.sortedMoveList = moves.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
         const numberOfEvaluations = evaluations ? evaluations.length : 0;
         this.topbarText = numberOfEvaluations !== 1 ?
           this.topbarTextBase + ' (' + numberOfEvaluations + ' Active Incidents)' :
@@ -161,11 +165,12 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
         if (evaluation) {
           this.selectedEvaluationId = evaluation.id;
-          this.displayedMoveNumber = uiDataService.getMoveNumber(this.selectedEvaluationId);
+          this.displayedMoveNumber = this.uiDataService.getMoveNumber(this.selectedEvaluationId);
           this.displayedMoveNumber =
             this.displayedMoveNumber >= 0 && this.displayedMoveNumber <= evaluation.currentMoveNumber ?
               this.displayedMoveNumber :
               evaluation.currentMoveNumber;
+          this.uiDataService.setMoveNumber(this.selectedEvaluationId, this.displayedMoveNumber);
           if (moves.length > 0 && !this.moveQuery.getActive()) {
             if (!this.moveQuery.getActive()) {
               const move = this.moveQuery.getAll().find(m => m.moveNumber === this.displayedMoveNumber);
@@ -178,6 +183,14 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             this.loggedInUserId = user.profile.sub;
             // set this user's team and the active team
             this.setTeams(teams);
+          }
+          // if we intiated advancing to next evaluation move, then display it
+          if (this.waitingForCurrentMoveNumber > 0) {
+            const newMove = this.sortedMoveList.find(m => +m.moveNumber === +this.waitingForCurrentMoveNumber);
+            if (newMove) {
+              this.waitingForCurrentMoveNumber = 0;
+              this.nextDisplayedMove(newMove);
+            }
           }
         }
         if (user) {
@@ -316,7 +329,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     });
   }
 
-  incrementActiveMove(move: Move) {
+  nextDisplayedMove(move: Move) {
     this.moveDataService.setActive(move.id);
     this.uiDataService.setMoveNumber(this.selectedEvaluationId, move.moveNumber);
     this.displayedMoveNumber = move.moveNumber;
@@ -330,6 +343,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
     );
     if (newSubmission) {
+      console.log('nextDisplayedMove - a move ' + newSubmission.moveNumber);
       this.setAndGetActiveSubmission(newSubmission);
     } else {
       // the new submission would not be allowed, so select the default submission
@@ -353,12 +367,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         );
       }
       if (newSubmission) {
+        console.log('nextDisplayedMove - b move ' + newSubmission.moveNumber);
         this.setAndGetActiveSubmission(newSubmission);
       }
     }
   }
 
-  decrementActiveMove(move: Move) {
+  previousDisplayedMove(move: Move) {
     this.moveDataService.setActive(move.id);
     this.uiDataService.setMoveNumber(this.selectedEvaluationId, move.moveNumber);
     this.displayedMoveNumber = move.moveNumber;
@@ -370,8 +385,23 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         && s.groupId === displayedSubmission.groupId
         && s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage);
     if (newSubmission) {
+      console.log('previousDisplayedMove move ' + newSubmission.moveNumber);
       this.setAndGetActiveSubmission(newSubmission);
     }
+  }
+
+  nextEvaluationMove(moveNumber: number) {
+    const evaluation = this.evaluationList.find(e => e.id === this.selectedEvaluationId);
+    if (+moveNumber <= +this.getMaxMoveNumber()) {
+      const updateEvaluation = { ...evaluation };
+      updateEvaluation.currentMoveNumber = moveNumber;
+      this.evaluationDataService.changeCurrentMove(updateEvaluation);
+      this.waitingForCurrentMoveNumber = moveNumber;
+    }
+  }
+
+  getMaxMoveNumber() {
+    return this.sortedMoveList.length > 0 ? this.sortedMoveList[this.sortedMoveList.length - 1].moveNumber : +this.currentMoveNumber;
   }
 
   setTeams(teams: Team[]) {
@@ -478,6 +508,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.submissionDataService.loadTeamTypeAverageSubmission(submission);
       }
     }
+    console.log('setting active submission to move ' + submission.moveNumber);
     this.submissionDataService.setActive(submission.id);
   }
 
@@ -526,6 +557,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           break;
       }
       if (newSubmission) {
+        console.log('selectDisplayedSubmission move ' + newSubmission.moveNumber);
         this.setAndGetActiveSubmission(newSubmission);
       } else {
         this.makeNewSubmission();
