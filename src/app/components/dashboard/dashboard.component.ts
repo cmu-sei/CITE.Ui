@@ -48,7 +48,6 @@ import { DateTimeFormatOptions } from 'luxon';
 })
 export class DashboardComponent implements OnDestroy {
   @Input() unreadArticles: UnreadArticles;
-  @Input() moveList: Move[];
   @Input() myTeamId: string;
   teamUsers: User[];
   selectedEvaluation: Evaluation = {};
@@ -57,6 +56,7 @@ export class DashboardComponent implements OnDestroy {
   actionList: Action[] = [];
   allActions: Action[] = [];
   roleList: Role[];
+  moveList: Move[] = [];
   currentMoveNumber: number;
   displayedMoveNumber: number;
   activeTeamId = '';
@@ -106,6 +106,7 @@ export class DashboardComponent implements OnDestroy {
       active = active ? active : { id: ''} as Evaluation;
       if (active.id === activeId) {
         this.selectedEvaluation = active;
+        this.currentMoveNumber = active.currentMoveNumber;
         this.unreadArticlesDataService.loadById(activeId);
         this.galleryUrl = this.settingsService.settings.GalleryUiUrl + '?exhibit=' + active.galleryExhibitId + '&section=archive';
         this.setCompleteSituationDescription();
@@ -114,33 +115,20 @@ export class DashboardComponent implements OnDestroy {
       }
     });
     // observe the move list
-    (this.moveQuery.selectAll() as Observable<Move[]>).pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
-      if (moves && moves.length > 0) {
-        this.moveList = moves.sort((a, b) => +a.moveNumber < +b.moveNumber ? 1 : -1);
-        const currentMove = moves.find(m => +m.moveNumber === +this.selectedEvaluation.currentMoveNumber);
-        this.displayedMoveNumber = currentMove ? currentMove.moveNumber : this.displayedMoveNumber;
-        this.currentMoveNumber = currentMove ? currentMove.moveNumber : this.currentMoveNumber;
-        this.actionList = this.allActions
-          .filter(a => +a.moveNumber === +this.displayedMoveNumber)
-          .sort((a, b) => a.description < b.description ? -1 : 1);
-        this.setCompleteSituationDescription();
-        // load the team data
-        this.loadTeamData();
-      } else {
-        this.moveList = [];
-        this.displayedMoveNumber = -1;
-        this.actionList = [];
-      }
+    this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
+      this.moveList = moves;
     });
     // observe the active move
     (this.moveQuery.selectActive() as Observable<Move>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
         this.displayedMoveNumber = active.moveNumber;
-        this.setCompleteSituationDescription();
         this.actionList = this.allActions
           .filter(a => +a.moveNumber === +active.moveNumber)
           .sort((a, b) => a.description < b.description ? -1 : 1);
       }
+      this.setCompleteSituationDescription();
+      // load the team data
+      this.loadTeamData();
     });
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
@@ -175,10 +163,14 @@ export class DashboardComponent implements OnDestroy {
     // observe the scoring model
     (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModel => {
       this.scoringModel = scoringModel;
+      this.setCompleteSituationDescription();
     });
   }
 
   setCompleteSituationDescription() {
+    if (!this.selectedEvaluation) {
+      return;
+    }
     const dateTimeFormatOptions = {
         weekday: 'long',
         year: 'numeric',
@@ -189,7 +181,6 @@ export class DashboardComponent implements OnDestroy {
         minute: 'numeric',
         hour12: true
     } as DateTimeFormatOptions;
-
     let description = '';
     let pastMovesBannerAdded = false;
     let lastDisplayedMoveNumber = 0;

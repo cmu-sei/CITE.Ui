@@ -29,8 +29,9 @@ export class EvaluationInfoComponent implements OnDestroy {
   @Input() evaluationList: Evaluation[];
   @Input() moveList: Move[];
   @Input() scoresheetOnRight: boolean;
-  @Output() incrementActiveMove = new EventEmitter<Move>();
-  @Output() decrementActiveMove = new EventEmitter<Move>();
+  @Output() nextDisplayedMove = new EventEmitter<Move>();
+  @Output() previousDisplayedMove = new EventEmitter<Move>();
+  @Output() nextEvaluationMove = new EventEmitter<number>();
   @Output() changeTeam = new EventEmitter<string>();
   @Output() changeSection = new EventEmitter<string>();
   @Output() changeEvaluation = new EventEmitter<string>();
@@ -43,7 +44,6 @@ export class EvaluationInfoComponent implements OnDestroy {
   currentMoveNumber = -1;
   selectedTeamId = '';
   canIncrementMove = false;
-  waitingForCurrentMoveToAdvance = false;
   basePageUrl = location.origin + '/report/';
   private unsubscribe$ = new Subject();
 
@@ -62,10 +62,6 @@ export class EvaluationInfoComponent implements OnDestroy {
       if (e) {
         this.selectedEvaluationId = e.id;
         this.currentMoveNumber = e.currentMoveNumber;
-        if (this.waitingForCurrentMoveToAdvance) {
-          this.waitingForCurrentMoveToAdvance = false;
-          this.incrementDisplayedMove();
-        }
       }
     });
     // observe the active move
@@ -126,16 +122,7 @@ export class EvaluationInfoComponent implements OnDestroy {
     const nextMoveIndex = this.sortedMoveList().findIndex(m => +m.moveNumber === +this.displayedMoveNumber) + 1;
     if (+nextMoveIndex <= +this.currentMoveNumber) {
       this.displayedMoveNumber = this.sortedMoveList()[nextMoveIndex].moveNumber;
-      this.incrementActiveMove.emit(this.sortedMoveList()[nextMoveIndex]);
-    } else if (this.canIncrementMove) {
-      this.dialogService.confirm(
-        'Advance to the next Move?',
-        'Are you sure that you want to advance to the next move?'
-      ).subscribe((result) => {
-        if (result['confirm']) {
-          this.advanceCurrentMove(nextMoveIndex);
-        }
-      });
+      this.nextDisplayedMove.emit(this.sortedMoveList()[nextMoveIndex]);
     }
   }
 
@@ -143,18 +130,19 @@ export class EvaluationInfoComponent implements OnDestroy {
     const nextMoveIndex = this.sortedMoveList().findIndex(m => +m.moveNumber === +this.displayedMoveNumber) - 1;
     if (nextMoveIndex >= 0) {
       this.displayedMoveNumber = this.sortedMoveList()[nextMoveIndex].moveNumber;
-      this.decrementActiveMove.emit(this.sortedMoveList()[nextMoveIndex]);
+      this.previousDisplayedMove.emit(this.sortedMoveList()[nextMoveIndex]);
     }
   }
 
-  advanceCurrentMove(nextMoveIndex: number) {
-    const evaluation = this.evaluationList.find(e => e.id === this.selectedEvaluationId);
-    if (+nextMoveIndex <= +this.getMaxMoveNumber()) {
-      const updateEvaluation = { ...evaluation };
-      updateEvaluation.currentMoveNumber = nextMoveIndex;
-      this.evaluationDataService.changeCurrentMove(updateEvaluation);
-      this.waitingForCurrentMoveToAdvance = true;
-    }
+  advanceCurrentMove() {
+    this.dialogService.confirm(
+      'Advance to the next Move?',
+      'Are you sure that you want to advance to the next move?'
+    ).subscribe((result) => {
+      if (result['confirm']) {
+        this.nextEvaluationMove.emit(+this.displayedMoveNumber + 1);
+      }
+    });
   }
 
   selectEvaluation(evaluationId: string) {
