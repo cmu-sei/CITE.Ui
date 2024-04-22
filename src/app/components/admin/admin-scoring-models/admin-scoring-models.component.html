@@ -20,14 +20,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
   >
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
-    <button
-      mat-icon-button
-      (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
-      title="Upload Scoring Model"
-      [disabled]="isBusy"
-    >
-      <mat-icon class="mdi-18px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
-    </button>
+  <button
+    mat-icon-button
+    (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
+    title="Upload Scoring Model"
+    [disabled]="isBusy"
+  >
+    <mat-icon class="mdi-18px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
+  </button>
   <mat-form-field style="width: 300px; margin-left: 20px;">
     <input matInput [formControl]="filterControl" placeholder="Search" />
   </mat-form-field>
@@ -78,7 +78,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           title="Edit {{ scoringModel.description }}"
           [disabled]="isBusy"
         >
-          <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline" alt="Edit"></mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline" alt="Edit"></mat-icon>
         </button>
         <button
           mat-icon-button

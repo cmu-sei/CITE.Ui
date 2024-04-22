@@ -14,7 +14,8 @@ import {
   ItemStatus
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, Subject } from 'rxjs';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +34,7 @@ export class EvaluationDataService {
   readonly pageEvent = new BehaviorSubject<PageEvent>(this._pageEvent);
   private pageSize: Observable<number>;
   private pageIndex: Observable<number>;
+  public uploadProgress = new Subject<number>();
 
   constructor(
     private evaluationStore: EvaluationStore,
@@ -211,6 +213,24 @@ export class EvaluationDataService {
       });
   }
 
+  copy(id: string) {
+    this.evaluationStore.setLoading(true);
+    this.evaluationService
+      .copyEvaluation(id)
+      .pipe(
+        tap(() => {
+          this.evaluationStore.setLoading(false);
+        }),
+        take(1)
+      )
+      .subscribe((s) => {
+        this.evaluationStore.add(s);
+      },
+      (error) => {
+        this.evaluationStore.setLoading(false);
+      });
+  }
+
   updateEvaluation(evaluation: Evaluation) {
     this.evaluationStore.setLoading(true);
     this.evaluationService
@@ -250,6 +270,33 @@ export class EvaluationDataService {
           this.evaluationStore.setActive('');
         }
         this.deleteFromStore(id);
+      });
+  }
+
+  downloadJson(id: string) {
+    return this.evaluationService.downloadJson(id);
+  }
+
+  uploadJson(file: File, observe: any, reportProgress: boolean) {
+    this.evaluationStore.setLoading(true);
+    this.evaluationService
+      .uploadJson(file, observe, reportProgress)
+      .subscribe((event) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          const uploadProgress = Math.round((100 * event.loaded) / event.total);
+          this.uploadProgress.next(uploadProgress);
+        } else if (event instanceof HttpResponse) {
+          this.uploadProgress.next(0);
+          this.evaluationStore.setLoading(false);
+          if (event.status === 200) {
+            const evaluation = event.body;
+            this.evaluationStore.upsert(evaluation.id, evaluation);
+          }
+        }
+      },
+      (error) => {
+        this.evaluationStore.setLoading(false);
+        this.uploadProgress.next(0);
       });
   }
 

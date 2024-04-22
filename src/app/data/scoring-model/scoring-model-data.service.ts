@@ -97,36 +97,6 @@ export class ScoringModelDataService {
             : []
       )
     );
-    // this.selected = combineLatest([
-    //   this.scoringModelList,
-    //   this._requestedScoringModelId$,
-    // ]).pipe(
-    //   map(([scoringModelList, requestedScoringModelId]) => {
-    //     let selectedScoringModel: ScoringModel = null;
-    //     if (
-    //       scoringModelList &&
-    //       scoringModelList.length > 0 &&
-    //       requestedScoringModelId
-    //     ) {
-    //       selectedScoringModel = scoringModelList.find(
-    //         (scoringModel) =>
-    //           scoringModel.id === requestedScoringModelId
-    //       );
-    //       if (
-    //         selectedScoringModel &&
-    //         selectedScoringModel.id !== this._requestedScoringModelId
-    //       ) {
-    //         this.scoringModelStore.setActive(requestedScoringModelId);
-    //         this._requestedScoringModelId = requestedScoringModelId;
-    //       }
-    //     } else {
-    //       this._requestedScoringModelId = '';
-    //       this.scoringModelStore.setActive('');
-    //       this.scoringModelStore.update({ scoringModelList: [] });
-    //     }
-    //     return selectedScoringModel;
-    //   })
-    // );
   }
 
   private sortScoringModels(
