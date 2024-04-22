@@ -66,8 +66,12 @@
   width: 80%;
 }
 
-.nine-cell {
-  flex: 9;
+.description-cell {
+  flex: 5;
+}
+
+.date-cell {
+  flex: 2;
 }
 
 .one-cell {

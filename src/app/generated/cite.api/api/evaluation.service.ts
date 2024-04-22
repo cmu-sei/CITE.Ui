@@ -67,6 +67,61 @@ export class EvaluationService {
 
 
     /**
+     * Creates a new Evaluation by copying an existing Evaluation
+     * Creates a new Evaluation from the specified existing Evaluation
+     * @param Evaluation The data used to create the Evaluation
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public copyEvaluation(id?: string, observe?: 'body', reportProgress?: boolean): Observable<Evaluation>;
+    public copyEvaluation(id?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Evaluation>>;
+    public copyEvaluation(id?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Evaluation>>;
+    public copyEvaluation(id?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.post<Evaluation>(`${this.configuration.basePath}/api/evaluations/${encodeURIComponent(String(id))}/copy`,
+            null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Creates a new Evaluation
      * Creates a new Evaluation with the attributes specified  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
      * @param Evaluation The data used to create the Evaluation
@@ -161,6 +216,57 @@ export class EvaluationService {
 
         return this.httpClient.delete<any>(`${this.configuration.basePath}/api/evaluations/${encodeURIComponent(String(id))}`,
             {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Download a evaluation by id as json file
+     *
+     * @param id The id of the evaluation
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public downloadJson(id: string, observe?: 'body', reportProgress?: boolean): Observable<Blob>;
+    public downloadJson(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Blob>>;
+    public downloadJson(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Blob>>;
+    public downloadJson(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling download.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.get(`${this.configuration.basePath}/api/evaluations/${encodeURIComponent(String(id))}/json`,
+            {
+                responseType: "blob",
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
@@ -431,6 +537,71 @@ export class EvaluationService {
 
         return this.httpClient.put<Evaluation>(`${this.configuration.basePath}/api/evaluations/${encodeURIComponent(String(id))}`,
             Evaluation,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Upload json file
+     * File objects will be returned in the same order as their respective files within the form.
+     * @param ToUpload
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public uploadJson(ToUpload?: Blob, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public uploadJson(ToUpload?: Blob, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public uploadJson(ToUpload?: Blob, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public uploadJson(ToUpload?: Blob, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'multipart/form-data'
+        ];
+
+        const canConsumeForm = this.canConsumeForm(consumes);
+
+        let formParams: { append(param: string, value: any): void; };
+        let useForm = false;
+        let convertFormParamsToString = false;
+        // use FormData to transmit files using content-type "multipart/form-data"
+        // see https://stackoverflow.com/questions/4007969/application-x-www-form-urlencoded-or-multipart-form-data
+        useForm = canConsumeForm;
+        if (useForm) {
+            formParams = new FormData();
+        } else {
+            formParams = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        }
+
+        if (ToUpload !== undefined) {
+            formParams.append('ToUpload', <any>ToUpload);
+        }
+
+        return this.httpClient.post<any>(`${this.configuration.basePath}/api/evaluations/json`,
+            convertFormParamsToString ? formParams.toString() : formParams,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
