@@ -260,49 +260,34 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <span *ngIf="isSuperUser && ((showSection | async) === scoringModelsText)">
         <app-admin-scoring-models
           [scoringModelList]="scoringModelList | async"
-          [pageSize]="pageSize | async"
-          [pageIndex]="pageIndex | async"
-          (sortChange)="sortChangeHandler($event)"
-          (pageChange)="pageChangeHandler($event)"
         >
         </app-admin-scoring-models>
       </span>
       <span *ngIf="isSuperUser && ((showSection | async) === evaluationsText)">
         <app-admin-evaluations
           [evaluationList]="evaluationList | async"
-          [pageSize]="pageSize | async"
-          [pageIndex]="pageIndex | async"
         >
         </app-admin-evaluations>
       </span>
       <span *ngIf="canAccessAdminSection && ((showSection | async) === actionsText)">
         <app-admin-actions
           [showSelectionControls]="canSwitchEvaluations | async"
-          [pageSize]="pageSize | async"
         >
         </app-admin-actions>
       </span>
       <span *ngIf="canAccessAdminSection && ((showSection | async) === rolesText)">
         <app-admin-roles
           [showSelectionControls]="canSwitchEvaluations | async"
-          [pageSize]="pageSize | async"
         >
         </app-admin-roles>
       </span>
       <span *ngIf="isSuperUser && ((showSection | async) === submissionsText)">
         <app-admin-submissions
-          [pageSize]="pageSize | async"
-          [pageIndex]="pageIndex | async"
-          (sortChange)="sortChangeHandler($event)"
-          (pageChange)="pageChangeHandler($event)"
         >
         </app-admin-submissions>
       </span>
       <span *ngIf="isSuperUser && ((showSection | async) === teamTypesText)">
         <app-admin-teamtypes
-          [pageSize]="pageSize | async"
-          [pageIndex]="pageIndex | async"
-          (pageChange)="pageChangeHandler($event)"
         >
         </app-admin-teamtypes>
       </span>

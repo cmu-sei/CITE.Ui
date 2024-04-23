@@ -39,8 +39,8 @@ import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admi
 })
 export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() showSelectionControls: boolean;
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
+  pageIndex: number = 0;
+  pageSize: number = 10;
   isLoading = false;
   topbarColor = '#ef3a47';
   actionList: Action[] = [];

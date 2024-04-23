@@ -4,17 +4,14 @@
 
 import {
   Component,
-  EventEmitter,
-  Input,
   OnInit,
-  Output,
   OnDestroy,
   ViewChild,
   AfterViewInit,
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
 import { Evaluation, Submission, User } from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
@@ -33,10 +30,13 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
   styleUrls: ['./admin-submissions.component.scss'],
 })
 export class AdminSubmissionsComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
-  @Output() sortChange = new EventEmitter<Sort>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
+  sort: Sort = {
+    active: 'name',
+    direction: 'asc'
+  };
+  pageIndex: number = 0;
+  pageSize: number = 10;
+  displayedSubmissions: PopulatedSubmission[] = [];
   filterControl: UntypedFormControl = this.submissionDataService.filterControl;
   filterString = '';
   isLoading = false;
@@ -51,7 +51,6 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy, AfterViewIn
   moveList: number[] = [];
   userList$: User[] = [];
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = [
     'name',
     'submissionType',
@@ -104,14 +103,12 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy, AfterViewIn
         distinctUntilChanged(),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe((filter) => this.onFilterChanged(filter));
+      .subscribe((filter) => this.applyFilter(filter));
   }
 
   ngAfterViewInit() {
-    this.applyFilter(this.filterString);
-
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.criteriaChanged();
   }
 
   selectEvaluation(evaluationId: string) {
@@ -134,36 +131,60 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy, AfterViewIn
     });
   }
 
-  onFilterChanged(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
   applyFilter(filterValue: string) {
     this.filterControl.setValue(filterValue);
   }
 
   sortChanged(sort: Sort) {
-    this.sortChange.emit(sort);
+    this.sort = sort;
+    this.sortSubmissions();
+  }
+
+  sortSubmissions() {
+    if (this.sort.active && this.sort.direction !== '') {
+      this.dataSource.data = this.dataSource.data.sort((a, b) => {
+        const isAsc = this.sort.direction === 'asc';
+        switch (this.sort.active) {
+          case 'name':
+            return this.compare(a.name, b.name, isAsc);
+          case 'submissionType':
+            return this.compare(a.submissionType, b.submissionType, isAsc);
+          case 'moveNumber':
+            return this.compare(a.moveNumber, b.moveNumber, isAsc);
+          case 'score':
+            return this.compare(a.score, b.score, isAsc);
+          case 'status':
+            return this.compare(a.status, b.status, isAsc);
+          default:
+            return 0;
+        }
+      });
+    }
+  }
+
+  compare(a: number | string, b: number | string, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
   criteriaChanged() {
-    const includedSubmissions: PopulatedSubmission[] = [];
-    this.populatedSubmissions.forEach(submission => {
-      if ( this.selectedSubmissionTypes.includes(submission.submissionType) &&
-           (this.selectedMove === -1 || this.selectedMove === submission.moveNumber)) {
-        includedSubmissions.push(submission);
-      }
-    });
-    this.dataSource.data = includedSubmissions;
-  }
+    this.dataSource.data = this.populatedSubmissions.filter(submission =>
+      this.selectedSubmissionTypes.includes(submission.submissionType) &&
+      (this.selectedMove === -1 || +submission.moveNumber === this.selectedMove)
+    );
+  }  
 
-  paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
+  paginatorEvent(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.paginateSubmissions();
   }
+  
+  paginateSubmissions() {
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.displayedSubmissions = this.dataSource.data.slice(startIndex, endIndex);
+  }
+  
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);

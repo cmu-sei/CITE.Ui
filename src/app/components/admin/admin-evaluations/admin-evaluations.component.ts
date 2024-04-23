@@ -27,8 +27,10 @@ import { UserDataService } from 'src/app/data/user/user-data.service';
 })
 export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   @Input() evaluationList: Evaluation[];
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
+  // @Input() pageSize: number;
+  // @Input() pageIndex: number;
+  pageIndex: number = 0;
+  pageSize: number = 10;
   filterControl: UntypedFormControl = this.evaluationDataService.filterControl;
   filterString = '';
   newEvaluation: Evaluation = { id: '', description: '' };

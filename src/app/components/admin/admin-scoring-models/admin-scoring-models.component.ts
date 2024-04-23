@@ -86,6 +86,11 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.filterControl.setValue(this.filterString);
+
+    this.filterControl.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(value => {
+      this.filterString = value;
+      this.sortedScoringModelList = this.getSortedScoringModels();
+    })
   }
 
   addOrEditScoringModel(scoringModel: ScoringModel) {
@@ -140,6 +145,11 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.filterControl.setValue(filterValue);
+  }
+
+  clearFilter() {
+    this.filterString = '';
+    this.filterControl.setValue('');
   }
 
   sortChanged(sort: Sort) {

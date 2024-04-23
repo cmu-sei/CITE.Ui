@@ -29,14 +29,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-icon class="mdi-18px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
   </button>
   <mat-form-field style="width: 300px; margin-left: 20px;">
-    <input matInput [formControl]="filterControl" placeholder="Search" />
+    <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter('')" />
   </mat-form-field>
   <div style="width: 30px;">
     <button
       mat-icon-button
-      (click)="applyFilter('')"
       style="outline: none;"
       title="Clear Search"
+      (click)="clearFilter()"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
     </button>

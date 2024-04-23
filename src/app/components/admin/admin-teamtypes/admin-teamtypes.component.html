@@ -21,12 +21,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
   <mat-form-field style="width: 200px; margin-left: 10px;">
-    <input matInput [formControl]="filterControl" placeholder="Search" />
+    <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter('')"/>
   </mat-form-field>
   <div style="width: 30px;">
     <button
       mat-icon-button
-      (click)="applyFilter('')"
+      (click)="clearFilter()"
       style="outline: none;"
       title="Clear Search"
     >
