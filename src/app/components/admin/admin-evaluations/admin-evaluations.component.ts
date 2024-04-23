@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
@@ -29,8 +29,6 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   @Input() evaluationList: Evaluation[];
   @Input() pageSize: number;
   @Input() pageIndex: number;
-  @Output() sortChange = new EventEmitter<Sort>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
   filterControl: UntypedFormControl = this.evaluationDataService.filterControl;
   filterString = '';
   newEvaluation: Evaluation = { id: '', description: '' };
@@ -41,6 +39,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   editEvaluation: Evaluation = {};
   scoringModels = [];
   selectedScoringModelId = '';
+  displayedEvaluations: Evaluation[] = [];
   itemStatuses = [
     ItemStatus.Pending,
     ItemStatus.Active,
@@ -48,6 +47,10 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     ItemStatus.Complete
   ];
   private unsubscribe$ = new Subject();
+  sort: Sort = {
+    active: 'description',
+    direction: 'asc'
+  };
   userList: User[] = [];
   isBusy = false;
   uploadProgress = 0;
@@ -197,11 +200,44 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
-    this.filterControl.setValue(filterValue);
+    this.filterString = filterValue.trim().toLowerCase();
+
+    this.evaluationList = this.evaluationList.filter(evaluation =>
+      evaluation.description.toLowerCase().includes(this.filterString)
+    );
+
+    this.sortChanged(this.sort);
+  }
+
+  clearFilter() {
+    this.filterString = '';
+    this.filterControl.setValue('');
   }
 
   sortChanged(sort: Sort) {
-    this.sortChange.emit(sort);
+    if (sort.active && sort.direction !== '') {
+      this.evaluationList.sort((a, b) => {
+        const isAsc = sort.direction === 'asc';
+        switch(sort.active) {
+          case 'description':
+            return this.compare(a.description, b.description, isAsc);
+          case 'currentMoveNumber':
+            return this.compare(a.currentMoveNumber, b.currentMoveNumber, isAsc);
+          case 'createdBy':
+            return this.compare(a.createdBy, b.createdBy, isAsc);
+          case 'status':
+            return this.compare(a.status, b.status, isAsc);
+          case 'dateCreated':
+            return this.compare(a.dateCreated, b.dateCreated, isAsc);
+          default:
+            return 0;
+        }
+      });
+    }
+  }
+
+  compare(a: any, b: any, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
   getUserName(id: string) {
@@ -255,17 +291,17 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
+    this.pageIndex = page.pageIndex;
+    this.pageSize = page.pageSize;
+    this.displayedEvaluations = this.paginateEvaluations(this.evaluationList, this.pageIndex, this.pageSize);
   }
 
   paginateEvaluations(evaluations: Evaluation[], pageIndex: number, pageSize: number) {
-    if (!evaluations) {
-      return [];
-    }
     const startIndex = pageIndex * pageSize;
-    const copy = evaluations.slice();
-    return copy.splice(startIndex, pageSize);
+    const endIndex = startIndex + pageSize;
+    return evaluations.slice(startIndex, endIndex);
   }
+  
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);

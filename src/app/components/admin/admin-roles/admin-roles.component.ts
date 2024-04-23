@@ -4,9 +4,7 @@
 
 import {
   Component,
-  EventEmitter,
   Input,
-  Output,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -14,7 +12,7 @@ import {
 } from '@angular/core';
 import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { ActivatedRoute } from '@angular/router';
-import { MatSort, Sort } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
 import { Evaluation, Role, Team, User } from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
@@ -38,12 +36,10 @@ export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() showSelectionControls: boolean;
   @Input() pageSize: number;
   @Input() pageIndex: number;
-  @Output() sortChange = new EventEmitter<Sort>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
-
   isLoading = false;
   topbarColor = '#ef3a47';
   roleList: Role[] = [];
+  displayedRoles: Role[] = [];
   dataSource = new MatTableDataSource<Role>();
   selectedEvaluationId = '';
   evaluationList: Evaluation[] = [];
@@ -51,7 +47,10 @@ export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
   teamList: Team[] = [];
   userList$: User[] = [];
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  sort: Sort = {
+    active: 'name',
+    direction: 'asc'
+  };
   displayedColumns: string[] = [
     'name',
     'teamId',
@@ -109,7 +108,6 @@ export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
   }
 
   selectEvaluation(evaluationId: string) {
@@ -182,10 +180,34 @@ export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
     } else {
       this.dataSource.data = this.roleList;
     }
+    this.paginateRoles();
   }
 
   sortChanged(sort: Sort) {
-    this.sortChange.emit(sort);
+    this.sort = sort;
+    this.sortRoles();
+  }
+
+  sortRoles() {
+    if (this.sort.active && this.sort.direction !== '') {
+      this.dataSource.data = this.dataSource.data.sort((a, b) => {
+        const isAsc = this.sort.direction === 'asc';
+        switch (this.sort.active) {
+          case 'name':
+            return this.compare(a.name, b.name, isAsc);
+          case 'teamId':
+            return this.compare(this.getTeamName(a.teamId), this.getTeamName(b.teamId), isAsc);
+          case 'users':
+            return this.compare(a.users, b.users, isAsc);
+          default:
+            return 0;
+        }
+      });
+    }
+  }
+
+  compare(a: any, b: any, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
   getTeamName(teamId: string) {
@@ -199,8 +221,16 @@ export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
     return teamName;
   }
 
-  paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
+  paginatorEvent(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.paginateRoles();
+  }
+
+  paginateRoles() {
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.displayedRoles = this.dataSource.data.slice(startIndex, endIndex);
   }
 
   ngOnDestroy() {

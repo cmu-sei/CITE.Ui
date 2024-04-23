@@ -41,22 +41,24 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() showSelectionControls: boolean;
   @Input() pageSize: number;
   @Input() pageIndex: number;
-  @Output() sortChange = new EventEmitter<Sort>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
-
   isLoading = false;
   topbarColor = '#ef3a47';
   actionList: Action[] = [];
   dataSource = new MatTableDataSource<Action>();
   selectedEvaluationId = '';
   evaluationList: Evaluation[] = [];
+  filterString = '';
   selectedTeamId = '';
   teamList: Team[] = [];
+  displayedActions: Action[] = [];
   selectedMoveNumber = -1;
   moveList: Move[] = [];
   userList$: User[] = [];
+  sort: Sort = {
+    active: 'description',
+    direction: 'asc'
+  };
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = [
     'description',
     'teamId',
@@ -122,11 +124,11 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
         this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
       }
     }
+    
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
   }
 
   selectEvaluation(evaluationId: string) {
@@ -208,11 +210,34 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     } else {
       this.dataSource.data = this.actionList;
     }
+    this.paginateActions();
   }
 
   sortChanged(sort: Sort) {
-    this.sortChange.emit(sort);
+    this.sort = sort;
+    this.sortActions();
   }
+
+  sortActions() {
+    if (this.sort.active && this.sort.direction !== '') {
+      this.dataSource.data = this.dataSource.data.sort((a, b) => {
+        const isAsc = this.sort.direction === 'asc';
+        switch (this.sort.active) {
+          case 'description':
+            return this.compare(a.description, b.description, isAsc);
+          case 'teamId':
+            return this.compare(this.getTeamName(a.teamId), this.getTeamName(b.teamId), isAsc);
+          default:
+            return 0;
+        }
+      });
+    }
+  }
+
+  compare(a: any, b: any, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+  
 
   getTeamName(teamId: string) {
     let teamName = '';
@@ -225,8 +250,16 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     return teamName;
   }
 
-  paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
+  paginatorEvent(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.paginateActions();
+  }
+
+  paginateActions() {
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.displayedActions = this.dataSource.data.slice(startIndex, endIndex);
   }
 
   ngOnDestroy() {
