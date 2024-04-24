@@ -259,7 +259,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-sidenav-content style="margin-left: 265px">
       <span *ngIf="isSuperUser && ((showSection | async) === scoringModelsText)">
         <app-admin-scoring-models
-          [scoringModelList]="scoringModelList | async"
         >
         </app-admin-scoring-models>
       </span>
@@ -295,14 +294,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <app-admin-users
           [userList]="userList | async"
           [permissionList]="permissionList | async"
-          [pageSize]="pageSize | async"
-          [pageIndex]="pageIndex | async"
           (removeUserPermission)="removeUserPermissionHandler($event)"
           (addUserPermission)="addUserPermissionHandler($event)"
           (addUser)="addUserHandler($event)"
           (deleteUser)="deleteUserHandler($event)"
-          (sortChange)="sortChangeHandler($event)"
-          (pageChange)="pageChangeHandler($event)"
         >
         </app-admin-users>
       </span>

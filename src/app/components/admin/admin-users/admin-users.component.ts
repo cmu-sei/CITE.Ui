@@ -13,6 +13,8 @@ import {
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UntypedFormControl } from '@angular/forms';
+import { Observable} from 'rxjs';
 
 @Component({
   selector: 'app-admin-users',
@@ -22,15 +24,14 @@ import { UserDataService } from 'src/app/data/user/user-data.service';
 export class AdminUsersComponent implements OnInit {
   @Input() userList: User[];
   @Input() permissionList: Permission[];
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
+  pageSize: number = 10;
+  pageIndex: number = 0;
   @Output() removeUserPermission = new EventEmitter<UserPermission>();
   @Output() addUserPermission = new EventEmitter<UserPermission>();
   @Output() addUser = new EventEmitter<User>();
   @Output() deleteUser = new EventEmitter<User>();
-  @Output() sortChange = new EventEmitter<Sort>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
-  filterControl = this.userDataService.filterControl;
+  filterControl: UntypedFormControl = this.userDataService.filterControl;
+  filterString: Observable<string>;
   addingNewUser = false;
   newUser: User = { id: '', name: '' };
   isLoading = false;
@@ -47,7 +48,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.filterControl.setValue('');
+    this.filterControl.setValue(this.filterString);
   }
 
   hasPermission(permissionId: string, user: User) {
@@ -93,20 +94,31 @@ export class AdminUsersComponent implements OnInit {
   }
 
   sortChanged(sort: Sort) {
-    this.sortChange.emit(sort);
+    this.userList.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      const compareResult = this.compare(a.name.toLowerCase(), b.name.toLowerCase());
+      return isAsc ? compareResult : -compareResult;
+    });
   }
 
   paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
+    this.pageIndex = page.pageIndex;
+    this.pageSize = page.pageSize;
   }
 
-  paginateUsers(users: User[], pageIndex: number, pageSize: number) {
-    if (!users) {
-      return [];
+  paginateUsers() {
+    const startIndex = this.pageIndex * this.pageSize;
+    return this.userList.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  private compare(a: string, b: string) {
+    if (a < b) {
+      return -1;
     }
-    const startIndex = pageIndex * pageSize;
-    const copy = users.slice();
-    return copy.splice(startIndex, pageSize);
+    if (a > b) {
+      return 1;
+    }
+    return 0;
   }
 
 }

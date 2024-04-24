@@ -34,8 +34,6 @@ import { AdminRoleEditDialogComponent } from '../admin-role-edit-dialog/admin-ro
 })
 export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() showSelectionControls: boolean;
-  // @Input() pageSize: number;
-  // @Input() pageIndex: number;
   pageIndex: number = 0;
   pageSize: number = 10;
   isLoading = false;

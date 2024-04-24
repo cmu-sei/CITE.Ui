@@ -99,7 +99,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </section>
 
   <mat-expansion-panel
-    *ngFor="let user of paginateUsers(userList, pageIndex, pageSize)"
+    *ngFor="let user of paginateUsers()"
     [disabled]="true"
   >
     <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading">
