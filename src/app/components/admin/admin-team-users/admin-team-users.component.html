@@ -20,7 +20,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
     <div>
       <mat-form-field class="search-box">
-        <input matInput [formControl]="filterControl" placeholder="Search" />
+        <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()" />
       </mat-form-field>
       <button
         mat-icon-button
@@ -45,8 +45,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-table
       class="mat-table-all-users"
       #table
-      [dataSource]="userDataSource"
+      [dataSource]="displayedUserList"
       matSort
+      (matSortChange)="sortChanged($event)"
     >
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header
@@ -80,15 +81,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-row *matRowDef="let row; columns: displayedUserColumns"></mat-row>
     </mat-table>
 
-    <div *ngIf="userDataSource.filteredData.length === 0">No results found</div>
+    <div *ngIf="filteredUserList.length === 0">No results found</div>
     <mat-paginator
       #paginator
-      [length]="userDataSource.filteredData.length"
+      [length]="filteredUserList.length"
       [pageSize]="pageSize"
       [showFirstLastButtons]="false"
-      [pageIndex]="currentPageIndex"
+      [pageIndex]="pageIndex"
       [hidePageSize]="true"
-      (page)="handlePageEvent($event)"
+      (page)="paginatorEvent($event)"
     >
     </mat-paginator>
   </div>
@@ -134,7 +135,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-table
       class="mat-table-all-users"
       #table
-      [dataSource]="teamUserDataSource"
+      [dataSource]="teamList"
       matSort
     >
       <ng-container matColumnDef="name">

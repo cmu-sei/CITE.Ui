@@ -7,10 +7,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  ViewChild,
-  AfterViewInit,
 } from '@angular/core';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { ActivatedRoute } from '@angular/router';
 import { Sort } from '@angular/material/sort';
 import { Evaluation, Role, Team, User } from 'src/app/generated/cite.api/model/models';
@@ -32,7 +30,7 @@ import { AdminRoleEditDialogComponent } from '../admin-role-edit-dialog/admin-ro
   templateUrl: './admin-roles.component.html',
   styleUrls: ['./admin-roles.component.scss'],
 })
-export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
+export class AdminRolesComponent implements OnDestroy, OnInit {
   @Input() showSelectionControls: boolean;
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -40,13 +38,13 @@ export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
   topbarColor = '#ef3a47';
   roleList: Role[] = [];
   displayedRoles: Role[] = [];
+  filteredRoleList: Role [] = [];
   dataSource = new MatTableDataSource<Role>();
   selectedEvaluationId = '';
   evaluationList: Evaluation[] = [];
   selectedTeamId = '';
   teamList: Team[] = [];
   userList$: User[] = [];
-  @ViewChild(MatPaginator) paginator: MatPaginator;
   sort: Sort = {
     active: 'name',
     direction: 'asc'
@@ -104,10 +102,6 @@ export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
     } else if (this.showSelectionControls && this.selectedEvaluationId) {
       this.selectEvaluation(this.selectedEvaluationId);
     }
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
   }
 
   selectEvaluation(evaluationId: string) {
@@ -176,38 +170,41 @@ export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
 
   criteriaChanged() {
     if (this.selectedTeamId && this.roleList && this.roleList.length > 0) {
-      this.dataSource.data = this.roleList.filter(r => r.teamId === this.selectedTeamId);
+      this.filteredRoleList = this.roleList.filter(r => r.teamId === this.selectedTeamId);
     } else {
-      this.dataSource.data = this.roleList;
+      this.filteredRoleList= this.roleList;
     }
-    this.paginateRoles();
+    this.applyPagination();
   }
 
   sortChanged(sort: Sort) {
     this.sort = sort;
-    this.sortRoles();
+    this.filteredRoleList.sort((a, b) => this.sortRoles(a, b, sort.active, sort.direction));
+    this.applyPagination();
   }
 
-  sortRoles() {
-    if (this.sort.active && this.sort.direction !== '') {
-      this.dataSource.data = this.dataSource.data.sort((a, b) => {
-        const isAsc = this.sort.direction === 'asc';
-        switch (this.sort.active) {
-          case 'name':
-            return this.compare(a.name, b.name, isAsc);
-          case 'teamId':
-            return this.compare(this.getTeamName(a.teamId), this.getTeamName(b.teamId), isAsc);
-          case 'users':
-            return this.compare(a.users, b.users, isAsc);
-          default:
-            return 0;
-        }
-      });
+  private sortRoles(a: Role, b: Role, column: string, direction: string)
+  {
+    const isAsc = direction !== 'desc';
+    switch (column) {
+      case 'name':
+        return (
+          (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'teamId':
+        return (
+          (this.getTeamName(a.teamId) < this.getTeamName(b.teamId) ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'users':
+        return (
+          (a.users < b.users ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      default: 
+        return 0; 
     }
-  }
-
-  compare(a: any, b: any, isAsc: boolean) {
-    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
   getTeamName(teamId: string) {
@@ -224,13 +221,12 @@ export class AdminRolesComponent implements OnDestroy, OnInit, AfterViewInit {
   paginatorEvent(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.paginateRoles();
+    this.applyPagination();
   }
 
-  paginateRoles() {
+  applyPagination() {
     const startIndex = this.pageIndex * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    this.displayedRoles = this.dataSource.data.slice(startIndex, endIndex);
+    this.displayedRoles = this.filteredRoleList.slice(startIndex, startIndex + this.pageSize);
   }
 
   ngOnDestroy() {

@@ -4,18 +4,12 @@
 
 import {
   Component,
-  EventEmitter,
   Input,
-  Output,
   OnDestroy,
   OnInit,
-  ViewChild,
-  AfterViewInit,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
-import { ActivatedRoute } from '@angular/router';
-import { MatSort, Sort } from '@angular/material/sort';
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { Sort } from '@angular/material/sort';
 import { Evaluation, Action, Move, Team, User } from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
@@ -37,7 +31,7 @@ import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admi
   templateUrl: './admin-actions.component.html',
   styleUrls: ['./admin-actions.component.scss'],
 })
-export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
+export class AdminActionsComponent implements OnDestroy, OnInit {
   @Input() showSelectionControls: boolean;
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -47,6 +41,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Action>();
   selectedEvaluationId = '';
   evaluationList: Evaluation[] = [];
+  filteredActionList: Action [] = [];
   filterString = '';
   selectedTeamId = '';
   teamList: Team[] = [];
@@ -58,7 +53,6 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     active: 'description',
     direction: 'asc'
   };
-  @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns: string[] = [
     'description',
     'teamId',
@@ -125,10 +119,6 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
       }
     }
     
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
   }
 
   selectEvaluation(evaluationId: string) {
@@ -206,38 +196,37 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
 
   criteriaChanged() {
     if (this.selectedTeamId) {
-      this.dataSource.data = this.actionList.filter(r => r.teamId === this.selectedTeamId);
+      this.filteredActionList= this.actionList.filter(r => r.teamId === this.selectedTeamId);
     } else {
-      this.dataSource.data = this.actionList;
+      this.filteredActionList= this.actionList;
     }
-    this.paginateActions();
+    this.applyPagination();
   }
 
   sortChanged(sort: Sort) {
     this.sort = sort;
-    this.sortActions();
+    this.filteredActionList.sort((a, b) => this.sortActions(a, b, sort.active, sort.direction));
+    this.applyPagination();
   }
 
-  sortActions() {
-    if (this.sort.active && this.sort.direction !== '') {
-      this.dataSource.data = this.dataSource.data.sort((a, b) => {
-        const isAsc = this.sort.direction === 'asc';
-        switch (this.sort.active) {
-          case 'description':
-            return this.compare(a.description, b.description, isAsc);
-          case 'teamId':
-            return this.compare(this.getTeamName(a.teamId), this.getTeamName(b.teamId), isAsc);
-          default:
-            return 0;
-        }
-      });
+  private sortActions(a: Action, b: Action, column: string, direction: string)
+  {
+    const isAsc = direction !== 'desc';
+    switch (column) {
+      case 'description':
+        return (
+          (a.description.toLowerCase() < b.description.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'teamId':
+        return (
+          (this.getTeamName(a.teamId) < this.getTeamName(b.teamId) ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      default: 
+        return 0; 
     }
   }
-
-  compare(a: any, b: any, isAsc: boolean) {
-    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-  }
-  
 
   getTeamName(teamId: string) {
     let teamName = '';
@@ -253,13 +242,12 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
   paginatorEvent(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.paginateActions();
+    this.applyPagination();
   }
 
-  paginateActions() {
+  applyPagination() {
     const startIndex = this.pageIndex * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    this.displayedActions = this.dataSource.data.slice(startIndex, endIndex);
+    this.displayedActions = this.filteredActionList.slice(startIndex, startIndex + this.pageSize);
   }
 
   ngOnDestroy() {

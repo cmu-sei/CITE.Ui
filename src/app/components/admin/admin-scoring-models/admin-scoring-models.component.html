@@ -29,7 +29,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-icon class="mdi-18px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
   </button>
   <mat-form-field style="width: 300px; margin-left: 20px;">
-    <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter('')" />
+    <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()" />
   </mat-form-field>
   <div style="width: 30px;">
     <button
@@ -44,7 +44,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <div *ngIf="!addingNewScoringModel">
     <mat-paginator
       #paginator
-      [length]="scoringModelList?.length"
+      [length]="filteredScoringModelList.length"
       [pageIndex]="pageIndex"
       [pageSize]="pageSize"
       [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"
@@ -66,7 +66,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </section>
 
   <mat-expansion-panel
-    *ngFor="let scoringModel of paginateScoringModels(pageIndex, pageSize)"
+    *ngFor="let scoringModel of displayedScoringModels"
     [expanded]="editScoringModel.id === scoringModel.id"
   >
     <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading" (click)="togglePanel(scoringModel); $event.stopPropagation()">
