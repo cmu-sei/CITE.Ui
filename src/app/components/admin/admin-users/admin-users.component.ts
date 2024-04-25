@@ -32,7 +32,6 @@ export class AdminUsersComponent implements OnInit {
   @Output() addUser = new EventEmitter<User>();
   @Output() deleteUser = new EventEmitter<User>();
   filterControl = new UntypedFormControl();
-  //filterControl: UntypedFormControl = this.userDataService.filterControl;
   filterString: Observable<string>;
   addingNewUser = false;
   newUser: User = { id: '', name: '' };
@@ -95,16 +94,10 @@ export class AdminUsersComponent implements OnInit {
       });
   }
 
-  // applyFilter(filterValue: string) {
-  //   this.filterControl.setValue(filterValue);
-  // }
-  
   applyFilter(filterValue: string) {
-    // If filterValue is empty, reset filteredUserList to the initial userList
     if (!filterValue || filterValue.trim().length === 0) {
       this.filteredUserList = this.userList.slice();
     } else {
-      // Filter userList based on filterValue
       this.filteredUserList = this.userList.filter(user => user.name.toLowerCase().includes(filterValue.toLowerCase()));
     }
   }
