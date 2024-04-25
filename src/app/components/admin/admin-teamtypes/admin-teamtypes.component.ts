@@ -14,6 +14,7 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 import { Subject } from 'rxjs';
+import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -27,7 +28,8 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   teamTypeList: TeamType[] = [];
   filteredTeamTypeList: TeamType[] = [];
   sortedTeamTypeList: TeamType[] = [];
-  filterControl = this.teamTypeDataService.filterControl;
+  //filterControl = this.teamTypeDataService.filterControl;
+  filterControl = new UntypedFormControl();
   filterString = '';
   sort: Sort = {active: 'name', direction: 'asc'};
   addingNewTeamType = false;
