@@ -26,11 +26,13 @@ export class AdminUsersComponent implements OnInit {
   @Input() permissionList: Permission[];
   pageSize: number = 10;
   pageIndex: number = 0;
+  filteredUserList: User [] = [];
   @Output() removeUserPermission = new EventEmitter<UserPermission>();
   @Output() addUserPermission = new EventEmitter<UserPermission>();
   @Output() addUser = new EventEmitter<User>();
   @Output() deleteUser = new EventEmitter<User>();
-  filterControl: UntypedFormControl = this.userDataService.filterControl;
+  filterControl = new UntypedFormControl();
+  //filterControl: UntypedFormControl = this.userDataService.filterControl;
   filterString: Observable<string>;
   addingNewUser = false;
   newUser: User = { id: '', name: '' };
@@ -48,7 +50,11 @@ export class AdminUsersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.filterControl.setValue(this.filterString);
+    // this.filterControl.setValue(this.filterString);
+    this.filteredUserList = this.userList.slice();
+    this.filterControl.valueChanges.subscribe((filterValue: string) => {
+      this.applyFilter(filterValue);
+    });
   }
 
   hasPermission(permissionId: string, user: User) {
@@ -89,8 +95,18 @@ export class AdminUsersComponent implements OnInit {
       });
   }
 
+  // applyFilter(filterValue: string) {
+  //   this.filterControl.setValue(filterValue);
+  // }
+  
   applyFilter(filterValue: string) {
-    this.filterControl.setValue(filterValue);
+    // If filterValue is empty, reset filteredUserList to the initial userList
+    if (!filterValue || filterValue.trim().length === 0) {
+      this.filteredUserList = this.userList.slice();
+    } else {
+      // Filter userList based on filterValue
+      this.filteredUserList = this.userList.filter(user => user.name.toLowerCase().includes(filterValue.toLowerCase()));
+    }
   }
 
   sortChanged(sort: Sort) {
@@ -108,7 +124,7 @@ export class AdminUsersComponent implements OnInit {
 
   paginateUsers() {
     const startIndex = this.pageIndex * this.pageSize;
-    return this.userList.slice(startIndex, startIndex + this.pageSize);
+    return this.filteredUserList.slice(startIndex, startIndex + this.pageSize);
   }
 
   private compare(a: string, b: string) {
