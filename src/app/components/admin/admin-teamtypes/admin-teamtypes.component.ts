@@ -28,7 +28,6 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   teamTypeList: TeamType[] = [];
   filteredTeamTypeList: TeamType[] = [];
   sortedTeamTypeList: TeamType[] = [];
-  //filterControl = this.teamTypeDataService.filterControl;
   filterControl = new UntypedFormControl();
   filterString = '';
   sort: Sort = {active: 'name', direction: 'asc'};
