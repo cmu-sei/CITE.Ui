@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { LegacyPageEvent as PageEvent, MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MatSort, MatSortable } from '@angular/material/sort';
+import { Sort, MatSort, MatSortable } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { Team, TeamUser, User } from 'src/app/generated/cite.api';
@@ -19,6 +19,8 @@ import { TeamUserQuery } from 'src/app/data/team-user/team-user.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { UntypedFormControl } from '@angular/forms';
+
 @Component({
   selector: 'app-admin-team-users',
   templateUrl: './admin-team-users.component.html',
@@ -35,15 +37,14 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   displayedTeamColumns: string[] = ['name', 'user'];
   userDataSource = new MatTableDataSource<User>(new Array<User>());
   teamUserDataSource = new MatTableDataSource<TeamUser>(new Array<TeamUser>());
-  filterControl = this.userDataService.filterControl;
+  filterControl = new UntypedFormControl();
   filterString = '';
   isAddMode = false;
   currentPageIndex = 0;
   pageSize = 7;
   itemCount = 0;
   private unsubscribe$ = new Subject();
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  sort: Sort = {active: 'name', direction: 'asc'};
 
   constructor(
     private teamQuery: TeamQuery,
@@ -67,8 +68,14 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.sort.sort(<MatSortable>{ id: 'name', start: 'asc' });
-    this.userDataSource.sort = this.sort;
+    this.filterControl.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+      this.filterString = this.filterControl.value;
+      this.applyFilter();
+    });
+    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+      this.userList = users;
+      this.applyFilter();
+    });
     this.filterControl.setValue('');
     this.teamUsers = this.teamUserQuery.getAll().filter(tu => tu.teamId === this.teamId);
     this.otherTeamUsers = this.teamUserQuery.getAll().filter(tu => tu.teamId !== this.teamId);
@@ -80,9 +87,6 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   }
 
   setDataSources() {
-    // Now that all of the observables are returned, process accordingly.
-    // get users from the TeamUsers
-    // sort the list and add it as the data source
     this.teamUserDataSource.data = this.teamUsers.sort((a, b) => {
       const aName = this.getUserName(a.userId).toLowerCase();
       const bName = this.getUserName(b.userId).toLowerCase();
@@ -102,13 +106,71 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
       }
     });
     this.userDataSource = new MatTableDataSource(newAllUsers);
-    this.userDataSource.sort = this.sort;
-    this.itemCount = this.userDataSource.data.length;
   }
 
   getUserName(id: string) {
     const user = this.userList.find(u => u.id === id);
     return user ? user.name : '?';
+  }
+
+  applyFilter() {
+    const searchTerm = this.filterControl.value ? this.filterControl.value.toLowerCase() : '';
+    const filteredData = this.userList.filter(user =>
+      !searchTerm || user.name.toLowerCase().includes(searchTerm)
+    );
+    this.sortUserData(filteredData);
+  }
+
+  sortUserData(data: User[]) {
+    data.sort((a, b) => {
+      let isAsc = this.sort.direction === 'asc';
+      switch (this.sort.active) {
+        case 'name':
+          return this.compare(a.name, b.name, isAsc);
+        case 'id':
+          return this.compare(a.id, b.id, isAsc);
+        default:
+          return 0;
+      }
+    });
+    this.userDataSource.data = data;
+  }
+
+  sortTeamUserData(teamUserData: TeamUser[]) {
+    teamUserData.sort((a, b) => {
+        const aName = this.getUserName(a.userId).toLowerCase(); // Assumption: getUserName resolves the user's name by ID
+        const bName = this.getUserName(b.userId).toLowerCase();
+        let isAsc = this.sort.direction === 'asc';
+        switch (this.sort.active) {
+            case 'name':
+                return this.compare(aName, bName, isAsc);
+            case 'isObserver':
+                return this.compare(String(a.isObserver), String(b.isObserver), isAsc);
+            case 'canIncrementMove':
+                return this.compare(String(a.canIncrementMove), String(b.canIncrementMove), isAsc);
+            case 'canModify':
+                return this.compare(String(a.canModify), String(b.canModify), isAsc);
+            case 'canSubmit':
+                return this.compare(String(a.canSubmit), String(b.canSubmit), isAsc);
+            default:
+                return 0;
+        }
+    });
+    this.teamUserDataSource.data = teamUserData;
+}
+
+  compare(a: string, b: string, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  onSortChange(sort: Sort) {
+    this.sort = sort;
+    this.applyFilter();
+  }
+
+  onSortTeamChange(sort: Sort) {
+    this.sort = sort;
+    this.sortTeamUserData(this.teamUsers);
   }
 
   addUserToTeam(user: User): void {
@@ -143,14 +205,6 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
     this.teamUserDataService.setSubmitterValue(teamUserId, value);
   }
 
-  compare(a: string, b: string, isAsc: boolean) {
-    if (a === null || b === null) {
-      return 0;
-    } else {
-      return (a.toLowerCase() < b.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1);
-    }
-  }
-
   toggleAddMode(value: boolean) {
     this.isAddMode = value;
     if (value) {
@@ -159,10 +213,6 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
     } else {
       this.displayedTeamUserColumns = ['name', 'isObserver', 'canIncrementMove', 'canModify', 'canSubmit', 'id'];
     }
-  }
-
-  handlePageEvent(pageEvent: PageEvent) {
-    this.currentPageIndex = pageEvent.pageIndex;
   }
 
   onAnotherTeam(userId: string): boolean {

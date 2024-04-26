@@ -2,17 +2,19 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
 import {
   TeamType,
 } from 'src/app/generated/cite.api/model/models';
 import { ComnSettingsService } from '@cmusei/crucible-common';
+import { MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 import { Subject } from 'rxjs';
+import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -21,13 +23,12 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./admin-teamtypes.component.scss'],
 })
 export class AdminTeamTypesComponent implements OnInit, OnDestroy {
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
-  @Output() pageChange = new EventEmitter<PageEvent>();
+  pageIndex: number = 0;
+  pageSize: number = 10;
   teamTypeList: TeamType[] = [];
   filteredTeamTypeList: TeamType[] = [];
   sortedTeamTypeList: TeamType[] = [];
-  filterControl = this.teamTypeDataService.filterControl;
+  filterControl = new UntypedFormControl();
   filterString = '';
   sort: Sort = {active: 'name', direction: 'asc'};
   addingNewTeamType = false;
@@ -35,6 +36,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   isLoading = false;
   topbarColor = '#ef3a47';
   private unsubscribe$ = new Subject<void>();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     public dialogService: DialogService,
@@ -57,7 +59,11 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.filterControl.setValue('');
+    this.filterControl.valueChanges.pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe(newValue => {
+      this.applyFilter(newValue);
+  });
   }
 
   addTeamTypeRequest(isAdd: boolean) {
@@ -91,8 +97,23 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
-    this.filterControl.setValue(filterValue);
+    this.filterString = filterValue.toLowerCase(); 
+    this.updateFilteredData(); 
   }
+
+  clearFilter() {
+    this.filterControl.setValue('');
+  }
+
+  updateFilteredData() {
+    this.filteredTeamTypeList = this.getFilteredTeamTypes(this.teamTypeList);
+    this.sortedTeamTypeList = this.getSortedTeamTypes(this.filteredTeamTypeList);
+    this.paginator.length = this.sortedTeamTypeList.length; 
+    this.pageIndex = 0; 
+    this.paginator.pageIndex = 0; 
+    this.paginateTeamtypes();
+  }
+
 
   sortChanged(sort: Sort) {
     this.sort = sort && sort.direction ? sort : {active: 'name', direction: 'asc'};
@@ -100,21 +121,11 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   }
 
   getFilteredTeamTypes(teamTypes: TeamType[]): TeamType[] {
-    let filteredTeamTypes: TeamType[] = [];
-    if (teamTypes) {
-      teamTypes.forEach(t => {
-        filteredTeamTypes.push({... t});
-      });
-      if (filteredTeamTypes && filteredTeamTypes.length > 0 && this.filterString) {
-        const filterString = this.filterString.toLowerCase();
-        filteredTeamTypes = filteredTeamTypes
-          .filter((a) =>
-            a.name.toLowerCase().includes(filterString)
-          );
-      }
-    }
-    return filteredTeamTypes;
+    if (!teamTypes) return [];
+
+    return teamTypes.filter(t => t.name.toLowerCase().includes(this.filterString));
   }
+
 
   getSortedTeamTypes(teamTypes: TeamType[]) {
     if (teamTypes) {
@@ -143,8 +154,11 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     }
   }
 
-  paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
+
+  paginatorEvent(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.paginateTeamtypes();
   }
 
   paginateTeamtypes() {

@@ -39,7 +39,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <div>
     <mat-paginator
       #paginator
-      [length]="dataSource.filteredData.length"
+      [length]="filteredSubmission.length"
       [pageIndex]="pageIndex"
       [pageSize]="pageSize"
       [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"
@@ -52,7 +52,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <div class="mat-elevation-z8">
   <table
     mat-table
-    [dataSource]="dataSource"
+    [dataSource]="displayedSubmissions"
     matSort
     (matSortChange)="sortChanged($event)"
   >

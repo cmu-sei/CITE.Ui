@@ -4,18 +4,12 @@
 
 import {
   Component,
-  EventEmitter,
   Input,
-  Output,
   OnDestroy,
   OnInit,
-  ViewChild,
-  AfterViewInit,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
-import { ActivatedRoute } from '@angular/router';
-import { MatSort, Sort } from '@angular/material/sort';
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { Sort } from '@angular/material/sort';
 import { Evaluation, Action, Move, Team, User } from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
@@ -37,26 +31,28 @@ import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admi
   templateUrl: './admin-actions.component.html',
   styleUrls: ['./admin-actions.component.scss'],
 })
-export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
+export class AdminActionsComponent implements OnDestroy, OnInit {
   @Input() showSelectionControls: boolean;
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
-  @Output() sortChange = new EventEmitter<Sort>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
-
+  pageIndex: number = 0;
+  pageSize: number = 10;
   isLoading = false;
   topbarColor = '#ef3a47';
   actionList: Action[] = [];
   dataSource = new MatTableDataSource<Action>();
   selectedEvaluationId = '';
   evaluationList: Evaluation[] = [];
+  filteredActionList: Action [] = [];
+  filterString = '';
   selectedTeamId = '';
   teamList: Team[] = [];
+  displayedActions: Action[] = [];
   selectedMoveNumber = -1;
   moveList: Move[] = [];
   userList$: User[] = [];
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  sort: Sort = {
+    active: 'description',
+    direction: 'asc'
+  };
   displayedColumns: string[] = [
     'description',
     'teamId',
@@ -122,11 +118,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
         this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
       }
     }
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    
   }
 
   selectEvaluation(evaluationId: string) {
@@ -204,14 +196,36 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
 
   criteriaChanged() {
     if (this.selectedTeamId) {
-      this.dataSource.data = this.actionList.filter(r => r.teamId === this.selectedTeamId);
+      this.filteredActionList= this.actionList.filter(r => r.teamId === this.selectedTeamId);
     } else {
-      this.dataSource.data = this.actionList;
+      this.filteredActionList= this.actionList;
     }
+    this.applyPagination();
   }
 
   sortChanged(sort: Sort) {
-    this.sortChange.emit(sort);
+    this.sort = sort;
+    this.filteredActionList.sort((a, b) => this.sortActions(a, b, sort.active, sort.direction));
+    this.applyPagination();
+  }
+
+  private sortActions(a: Action, b: Action, column: string, direction: string)
+  {
+    const isAsc = direction !== 'desc';
+    switch (column) {
+      case 'description':
+        return (
+          (a.description.toLowerCase() < b.description.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'teamId':
+        return (
+          (this.getTeamName(a.teamId) < this.getTeamName(b.teamId) ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      default: 
+        return 0; 
+    }
   }
 
   getTeamName(teamId: string) {
@@ -225,8 +239,15 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     return teamName;
   }
 
-  paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
+  paginatorEvent(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.applyPagination();
+  }
+
+  applyPagination() {
+    const startIndex = this.pageIndex * this.pageSize;
+    this.displayedActions = this.filteredActionList.slice(startIndex, startIndex + this.pageSize);
   }
 
   ngOnDestroy() {

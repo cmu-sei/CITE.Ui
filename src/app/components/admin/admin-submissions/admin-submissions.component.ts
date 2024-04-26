@@ -4,24 +4,18 @@
 
 import {
   Component,
-  EventEmitter,
-  Input,
   OnInit,
-  Output,
   OnDestroy,
-  ViewChild,
-  AfterViewInit,
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { Sort } from '@angular/material/sort';
 import { Evaluation, Submission, User } from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
@@ -32,13 +26,16 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
   templateUrl: './admin-submissions.component.html',
   styleUrls: ['./admin-submissions.component.scss'],
 })
-export class AdminSubmissionsComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
-  @Output() sortChange = new EventEmitter<Sort>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
-  filterControl: UntypedFormControl = this.submissionDataService.filterControl;
+export class AdminSubmissionsComponent implements OnInit, OnDestroy {
+  sort: Sort = {
+    active: 'name',
+    direction: 'asc'
+  };
+  pageIndex: number = 0;
+  pageSize: number = 10;
+  displayedSubmissions: PopulatedSubmission[] = [];
   filterString = '';
+  filteredSubmission: PopulatedSubmission [] = [];
   isLoading = false;
   topbarColor = '#ef3a47';
   populatedSubmissions: PopulatedSubmission[] = [];
@@ -50,8 +47,6 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy, AfterViewIn
   selectedMove = -1;
   moveList: number[] = [];
   userList$: User[] = [];
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = [
     'name',
     'submissionType',
@@ -94,24 +89,12 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy, AfterViewIn
         this.moveList = moves;
         this.populatedSubmissions = submissions;
         this.criteriaChanged();
+        this.applyPagination();
       });
   }
 
   ngOnInit() {
-    this.filterControl.valueChanges
-      .pipe(
-        debounceTime(250),
-        distinctUntilChanged(),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe((filter) => this.onFilterChanged(filter));
-  }
-
-  ngAfterViewInit() {
-    this.applyFilter(this.filterString);
-
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.criteriaChanged();
   }
 
   selectEvaluation(evaluationId: string) {
@@ -134,36 +117,65 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy, AfterViewIn
     });
   }
 
-  onFilterChanged(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  sortChanged(sort: Sort) {
+    this.sort = sort;
+    this.filteredSubmission.sort((a, b) => this.sortSubmissions(a, b, sort.active, sort.direction));
+    this.applyPagination();
+  }
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  private sortSubmissions(a: PopulatedSubmission, b: PopulatedSubmission, column: string, direction: string)
+  {
+    const isAsc = direction !== 'desc';
+    switch (column) {
+      case 'name':
+        return (
+          (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'submissionType':
+        return (
+          (a.submissionType.toLowerCase() < b.submissionType.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'moveNumber':
+        return (
+          (a.moveNumber < b.moveNumber ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'score':
+        return (
+          (a.score < b.score ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'status':
+        return (
+          (a.status.toLowerCase() < b.status.toLowerCase() ? -1 : 1 ) *
+          (isAsc ? 1 : -1)
+        );
+      default: 
+        return 0; 
     }
   }
 
-  applyFilter(filterValue: string) {
-    this.filterControl.setValue(filterValue);
-  }
-
-  sortChanged(sort: Sort) {
-    this.sortChange.emit(sort);
-  }
-
   criteriaChanged() {
-    const includedSubmissions: PopulatedSubmission[] = [];
-    this.populatedSubmissions.forEach(submission => {
-      if ( this.selectedSubmissionTypes.includes(submission.submissionType) &&
-           (this.selectedMove === -1 || this.selectedMove === submission.moveNumber)) {
-        includedSubmissions.push(submission);
-      }
-    });
-    this.dataSource.data = includedSubmissions;
+    this.filteredSubmission= this.populatedSubmissions.filter(submission =>
+      this.selectedSubmissionTypes.includes(submission.submissionType) &&
+      (this.selectedMove === -1 || +submission.moveNumber === this.selectedMove)
+    );
+    this.applyPagination();
+  }  
+
+  paginatorEvent(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.applyPagination();
   }
 
-  paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
+  applyPagination() {
+    const startIndex = this.pageIndex * this.pageSize;
+    this.displayedSubmissions = this.filteredSubmission.slice(startIndex, startIndex + this.pageSize);
   }
+  
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);

@@ -25,7 +25,7 @@ import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
   @Input() evaluationId: string;
-  filterControl: UntypedFormControl = this.teamDataService.filterControl;
+  filterControl = new UntypedFormControl();
   filterString = '';
   newTeam: Team = { id: '', name: '' };
   isLoading = false;
@@ -78,7 +78,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.filterControl.setValue(this.filterString);
+    this.filterControl.setValue(this.filterString);
     this.teamDataService.loadByEvaluationId(this.evaluationId);
   }
 

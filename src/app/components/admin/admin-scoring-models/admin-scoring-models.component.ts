@@ -28,11 +28,13 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   userList: User[] = [];
   pageSize: number = 50;
   pageIndex: number = 0;
-  filterControl: UntypedFormControl = this.scoringModelDataService.filterControl;
+  filterControl = new UntypedFormControl();
   filterString = '';
+  filteredScoringModelList: ScoringModel[] = [];
   newScoringModel: ScoringModel = { id: '', description: '' };
   isLoading = false;
   topbarColor = '#ef3a47';
+  displayedScoringModels: ScoringModel[] = [];
   addingNewScoringModel = false;
   newScoringModelDescription = '';
   editScoringModel: ScoringModel = {};
@@ -72,7 +74,6 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     // observe the scoring models
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {
       this.scoringModelList = scoringModels;
-      this.sortedScoringModelList = this.getSortedScoringModels();
     });
     // oberve the users
     this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
@@ -82,10 +83,26 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     this.scoringModelQuery.selectLoading().pipe(takeUntil(this.unsubscribe$)).subscribe((isLoading) => {
       this.isBusy = isLoading;
     });
+
+    this.filterControl.valueChanges
+      .pipe(
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((term) => {
+        this.filterString = term.trim().toLowerCase();
+        this.applyFilter();
+      });
   }
 
   ngOnInit() {
-    this.filterControl.setValue(this.filterString);
+    this.loadInitialData();
+  }
+
+  loadInitialData() {
+    this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(models => {
+      this.scoringModelList = Array.from(models);
+      this.applyFilter();
+    })
   }
 
   addOrEditScoringModel(scoringModel: ScoringModel) {
@@ -138,36 +155,22 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  applyFilter(filterValue: string) {
-    this.filterControl.setValue(filterValue);
+  applyFilter() {
+    this.filteredScoringModelList = this.scoringModelList.filter(model =>
+        !this.filterString ||
+        model.description.toLowerCase().includes(this.filterString)
+    );
+    this.sortChanged(this.sort);
+  }
+
+  clearFilter() {
+    this.filterControl.setValue('');
   }
 
   sortChanged(sort: Sort) {
-    this.sort = sort && sort.direction ? sort : {active: 'description', direction: 'asc'};
-    this.sortedScoringModelList = this.getSortedScoringModels();
-  }
-
-  getFilteredScoringModels(): ScoringModel[] {
-    let filteredScoringModels: ScoringModel[] = [];
-    if (this.scoringModelList) {
-      this.scoringModelList.forEach(se => {
-        filteredScoringModels.push({... se});
-      });
-      if (filteredScoringModels && filteredScoringModels.length > 0 && this.filterString) {
-        const filterString = this.filterString.toLowerCase();
-        filteredScoringModels = filteredScoringModels
-          .filter((a) =>
-            a.description.toLowerCase().includes(filterString)
-          );
-      }
-    }
-    return filteredScoringModels;
-  }
-
-  getSortedScoringModels() {
-    const scoringModels = this.getFilteredScoringModels();
-    scoringModels.sort((a, b) => this.sortScoringModels(a, b, this.sort.active, this.sort.direction));
-    return scoringModels;
+    this.sort = sort;
+    this.filteredScoringModelList.sort((a, b) => this.sortScoringModels(a, b, sort.active, sort.direction));
+    this.applyPagination();
   }
 
   private sortScoringModels(
@@ -249,12 +252,12 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   paginatorEvent(page: PageEvent) {
     this.pageSize = page.pageSize;
     this.pageIndex = page.pageIndex;
+    this.applyPagination();
   }
 
-  paginateScoringModels(pageIndex: number, pageSize: number) {
-    const startIndex = pageIndex * pageSize;
-    const copy = this.sortedScoringModelList.slice();
-    return copy.splice(startIndex, pageSize);
+  applyPagination() {
+    const startIndex = this.pageIndex * this.pageSize;
+    this.displayedScoringModels = this.filteredScoringModelList.slice(startIndex, startIndex + this.pageSize);
   }
 
   ngOnDestroy() {

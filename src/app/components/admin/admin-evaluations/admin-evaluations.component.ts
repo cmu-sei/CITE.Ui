@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
@@ -25,13 +25,12 @@ import { UserDataService } from 'src/app/data/user/user-data.service';
   templateUrl: './admin-evaluations.component.html',
   styleUrls: ['./admin-evaluations.component.scss'],
 })
+
 export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   @Input() evaluationList: Evaluation[];
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
-  @Output() sortChange = new EventEmitter<Sort>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
-  filterControl: UntypedFormControl = this.evaluationDataService.filterControl;
+  pageIndex: number = 0;
+  pageSize: number = 10;
+  filterControl = new UntypedFormControl();
   filterString = '';
   newEvaluation: Evaluation = { id: '', description: '' };
   isLoading = false;
@@ -41,6 +40,8 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   editEvaluation: Evaluation = {};
   scoringModels = [];
   selectedScoringModelId = '';
+  filteredEvaluationList: Evaluation[] = [];
+  displayedEvaluations: Evaluation[] = [];
   itemStatuses = [
     ItemStatus.Pending,
     ItemStatus.Active,
@@ -48,6 +49,10 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     ItemStatus.Complete
   ];
   private unsubscribe$ = new Subject();
+  sort: Sort = {
+    active: 'description',
+    direction: 'asc'
+  };
   userList: User[] = [];
   isBusy = false;
   uploadProgress = 0;
@@ -82,10 +87,26 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     this.evaluationQuery.selectLoading().pipe(takeUntil(this.unsubscribe$)).subscribe((isLoading) => {
       this.isBusy = isLoading;
     });
+
+    this.filterControl.valueChanges
+      .pipe(
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((term) => {
+        this.filterString = term.trim().toLowerCase();
+        this.applyFilter();
+      });
   }
 
   ngOnInit() {
-    this.filterControl.setValue(this.filterString);
+    this.loadInitialData();
+  }
+
+  loadInitialData() {
+    this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
+      this.evaluationList = Array.from(evaluations);
+      this.applyFilter();
+    });
   }
 
   addOrEditEvaluation(evaluation: Evaluation) {
@@ -196,12 +217,57 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  applyFilter(filterValue: string) {
-    this.filterControl.setValue(filterValue);
+  applyFilter() {
+    this.filteredEvaluationList = this.evaluationList.filter(evaluation =>
+      !this.filterString ||
+      evaluation.description.toLowerCase().includes(this.filterString)
+    );
+
+    this.sortChanged(this.sort);
+  }
+
+  clearFilter() {
+    this.filterControl.setValue('');
   }
 
   sortChanged(sort: Sort) {
-    this.sortChange.emit(sort);
+    this.sort = sort;
+    this.filteredEvaluationList.sort((a, b) => this.sortEvaluations(a, b, sort.active, sort.direction));
+    this.applyPagination();
+  }
+
+  private sortEvaluations(a: Evaluation, b: Evaluation, column: string, direction: string)
+  {
+    const isAsc = direction !== 'desc';
+    switch (column) {
+      case 'description':
+        return (
+          (a.description.toLowerCase() < b.description.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'currentMoveNumber':
+        return (
+          (a.currentMoveNumber < b.currentMoveNumber ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'createdBy':
+        return (
+          (a.createdBy.toLowerCase() < b.createdBy.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'status':
+        return (
+          (a.status.toLowerCase() < b.status.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      case 'dateCreated':
+        return (
+          (a.dateCreated < b.dateCreated ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
+      default: 
+        return 0; 
+    }
   }
 
   getUserName(id: string) {
@@ -255,18 +321,16 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   paginatorEvent(page: PageEvent) {
-    this.pageChange.emit(page);
+    this.pageIndex = page.pageIndex;
+    this.pageSize = page.pageSize;
+    this.applyPagination();
   }
 
-  paginateEvaluations(evaluations: Evaluation[], pageIndex: number, pageSize: number) {
-    if (!evaluations) {
-      return [];
-    }
-    const startIndex = pageIndex * pageSize;
-    const copy = evaluations.slice();
-    return copy.splice(startIndex, pageSize);
+  applyPagination() {
+    const startIndex = this.pageIndex * this.pageSize;
+    this.displayedEvaluations = this.filteredEvaluationList.slice(startIndex, startIndex + this.pageSize);
   }
-
+  
   ngOnDestroy() {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
