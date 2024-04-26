@@ -112,7 +112,6 @@ export class AdminUsersComponent implements OnInit {
   }
 
   clearFilter() {
-    this.filterString = '';
     this.filterControl.setValue('');
   }
 
