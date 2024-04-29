@@ -66,6 +66,11 @@
   margin-bottom: 20px;
 }
 
+.first-cell {
+  flex: 2;
+  min-width: 160px;
+}
+
 .description-field {
   width: 80%;
 }
