@@ -11,12 +11,16 @@
   font-family: open_sansbold;
 }
 
+.evaluation-list-container {
+  overflow-y: auto;
+}
+
 .app-events-container {
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  position: fixed;
+  position: absolute;
   height: 100%;
   text-align: center;
 }
@@ -145,6 +149,11 @@
 .searchBox {
   margin-right: 10px;
   margin-left: auto !important;
+}
+
+.mat-table {
+  max-height: 600px;
+  overflow-y: auto;
 }
 
 
