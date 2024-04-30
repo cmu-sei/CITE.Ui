@@ -34,7 +34,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
   <div class="add-margin">
-    <div>
+    <div *ngIf="data.displayScoringModelbyMoveNumber">
       <mat-form-field class="description-field">
         <mat-label>First Move to Display</mat-label>
         <input matInput [(ngModel)]="data.scoringCategory.moveNumberFirstDisplay" />
@@ -42,7 +42,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
   <div class="add-margin">
-    <div>
+    <div *ngIf="data.displayScoringModelbyMoveNumber">
       <mat-form-field class="description-field">
         <mat-label>Last Move to Display</mat-label>
         <input matInput [(ngModel)]="data.scoringCategory.moveNumberLastDisplay" />
