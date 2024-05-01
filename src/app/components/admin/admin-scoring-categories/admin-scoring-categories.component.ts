@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Input, Output, OnDestroy, OnInit } from '@angular/core';
-import { ScoringCategory, ItemStatus, ScoringOptionSelection} from 'src/app/generated/cite.api/model/models';
+import { ScoringCategory, ItemStatus, ScoringOptionSelection, ScoringModel} from 'src/app/generated/cite.api/model/models';
 import { ScoringCategoryDataService } from 'src/app/data/scoring-category/scoring-category-data.service';
 import { ScoringCategoryQuery } from 'src/app/data/scoring-category/scoring-category.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
@@ -24,6 +24,7 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   @Input() scoringModelId: string;
   @Input() editScoringCategoryId: string;
   @Output() scoringCategoryClick = new EventEmitter<string>();
+  @Input() displayScoringModelbyMoveNumber: boolean;
   newScoringCategory: ScoringCategory = { id: '', description: '' };
   scoringCategoryList: ScoringCategory[];
   isLoading = false;
@@ -85,6 +86,7 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
       width: '800px',
       data: {
         scoringCategory: scoringCategory,
+        displayScoringModelbyMoveNumber: this.displayScoringModelbyMoveNumber,
         scoringOptionSelections: this.scoringOptionSelections
       },
     });
