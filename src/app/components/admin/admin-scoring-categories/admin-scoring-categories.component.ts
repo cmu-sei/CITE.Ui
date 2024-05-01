@@ -39,7 +39,6 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
     ItemStatus.Cancelled,
     ItemStatus.Complete
   ];
-  scoringModel: ScoringModel[];
   scoringOptionSelections = [
     ScoringOptionSelection.Single,
     ScoringOptionSelection.Multiple,
