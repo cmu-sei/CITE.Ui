@@ -11,10 +11,6 @@
   font-family: open_sansbold;
 }
 
-.evaluation-list-container {
-  overflow-y: auto;
-}
-
 .app-events-container {
   top: 0;
   bottom: 0;
@@ -23,6 +19,7 @@
   position: absolute;
   height: 100%;
   text-align: center;
+  overflow: hidden;
 }
 
 .content-under-topbar {
@@ -152,10 +149,9 @@
 }
 
 .mat-table {
-  max-height: calc(100% - 50px);
   overflow-y: auto;
+  max-height: calc(100vh - 300px);
 }
-
 
 @media print {
   .app-events-container {
