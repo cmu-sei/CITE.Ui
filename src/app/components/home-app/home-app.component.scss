@@ -23,6 +23,7 @@
   position: absolute;
   height: 100%;
   text-align: center;
+  overflow: hidden;
 }
 
 .content-under-topbar {
@@ -152,10 +153,9 @@
 }
 
 .mat-table {
-  max-height: 600px;
   overflow-y: auto;
+  max-height: calc(100vh - 300px);
 }
-
 
 @media print {
   .app-events-container {
