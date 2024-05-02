@@ -17,6 +17,7 @@ export class GallerySignalRService implements OnDestroy {
   private hubConnection: signalR.HubConnection;
   private connectionPromise: Promise<void>;
   private isJoined = false;
+  private token = '';
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -36,9 +37,7 @@ export class GallerySignalRService implements OnDestroy {
 
     const accessToken = this.authService.getAuthorizationToken();
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(
-        `${this.settingsService.settings.GalleryApiUrl}/hubs/cite?bearer=${accessToken}`
-      )
+      .withUrl(this.getHubUrlWithAuth())
       .withAutomaticReconnect(new RetryPolicy(60, 0, 5))
       .build();
 
@@ -53,12 +52,27 @@ export class GallerySignalRService implements OnDestroy {
     return this.connectionPromise;
   }
 
+  private getHubUrlWithAuth(): string {
+    const accessToken = this.authService.getAuthorizationToken();
+    if (accessToken !== this.token) {
+      this.token = accessToken;
+    }
+    const hubUrl = `${this.settingsService.settings.GalleryApiUrl}/hubs/cite?bearer=${accessToken}`;
+    return hubUrl;
+  }
+
   private reconnect() {
     if (this.hubConnection != null) {
       this.hubConnection.stop().then(() => {
-        console.log('Reconnecting to the gallery hub.');
+        this.hubConnection.baseUrl = this.getHubUrlWithAuth();
         this.connectionPromise = this.hubConnection.start();
-        this.connectionPromise.then(() => this.join());
+        this.connectionPromise.then(() => {
+          if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
+            setTimeout(() => this.reconnect(), 500);
+          } else {
+            this.join();
+          }
+        });
       });
     }
   }

@@ -67,12 +67,14 @@
 }
 
 .first-cell {
-  flex: 2;
-  min-width: 160px;
+  flex: 1;
+  min-width: 100px;
 }
 
-.description-field {
-  width: 80%;
+.first-cell-button {
+  width: 24px;
+  height: 24px;
+  outline: none;
 }
 
 .description-cell {
@@ -81,10 +83,17 @@
 
 .date-cell {
   flex: 2;
+  min-width: 75px;
+}
+
+.move-cell {
+  flex: 1;
+  min-width: 100px;
 }
 
 .one-cell {
   flex: 1;
+  min-width: 70px;
 }
 
 .center-self {
