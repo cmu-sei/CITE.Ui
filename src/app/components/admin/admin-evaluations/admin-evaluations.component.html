@@ -63,7 +63,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </button>
     </span>
     <span class="mat-header-cell description-cell" mat-sort-header="description">Evaluation Description</span>
-    <span class="mat-header-cell one-cell" mat-sort-header="currentMoveNumber">Current Move</span>
+    <span class="mat-header-cell move-cell" mat-sort-header="currentMoveNumber">Current Move</span>
     <span class="mat-header-cell one-cell" mat-sort-header="status">Status</span>
     <span class="mat-header-cell one-cell" mat-sort-header="createdBy">Created By</span>
     <span class="mat-header-cell date-cell" mat-sort-header="dateCreated">Date</span>
@@ -74,11 +74,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
     [expanded]="editEvaluation.id === evaluation.id"
   >
     <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading" (click)="togglePanel(evaluation); $event.stopPropagation()">
-      <span class="mat-cell first-cell">
+      <span class="mat-cell first-cell center-self">
         <button
           mat-icon-button
           (click)="addOrEditEvaluation(evaluation); $event.stopPropagation()"
-          style="outline: none;"
+          class="first-cell-button"
           title="Edit Evaluation"
           [disabled]="isBusy"
         >
@@ -87,6 +87,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <button
           mat-icon-button
           (click)="copyEvaluation(evaluation.id); $event.stopPropagation();"
+          class="first-cell-button"
           title="Copy {{ evaluation.description }}"
           [disabled]="isBusy"
         >
@@ -95,6 +96,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <button
           mat-icon-button
           (click)="downloadEvaluation(evaluation); $event.stopPropagation();"
+          class="first-cell-button"
           title="Download {{ evaluation.description }}"
           [disabled]="isBusy"
         >
@@ -103,7 +105,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <button
           mat-icon-button
           (click)="deleteEvaluationRequest(evaluation); $event.stopPropagation()"
-          style="outline: none;"
+          class="first-cell-button"
           title="Delete Evaluation"
           [disabled]="isBusy"
         >
@@ -111,7 +113,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </button>
       </span>
       <span class="mat-cell description-cell center-self">{{ evaluation.description }}</span>
-      <span class="mat-cell one-cell">
+      <span class="mat-cell move-cell center-self">
         <button aria-label="Decrement Current Move" mat-icon-button
           [disabled]="evaluation.currentMoveNumber <= getLowestMoveNumber(evaluation)"
           (click)="decrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Decrement Move">
@@ -177,6 +179,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <input
   hidden
   (change)="selectFile($event)"
+  (cancel)="isBusy = false"
   #jsonInput
   type="file"
   accept=".json"

@@ -216,7 +216,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
         const link = document.createElement('a');
         link.href = url;
         link.target = '_blank';
-        link.download = scoringModel.description.endsWith('.json') ? scoringModel.description : scoringModel.description + '.json';
+        link.download = scoringModel.description + '-scoring-model.json';
         link.click();
         this.isBusy = false;
       },

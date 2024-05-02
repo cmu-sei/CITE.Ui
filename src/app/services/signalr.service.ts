@@ -30,6 +30,8 @@ export class SignalRService implements OnDestroy {
   private applicationArea: ApplicationArea;
   private connectionPromise: Promise<void>;
   private isJoined = false;
+  private teamId = '';
+  private token = '';
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -58,10 +60,9 @@ export class SignalRService implements OnDestroy {
     this.applicationArea = applicationArea;
     const accessToken = this.authService.getAuthorizationToken();
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(
-        `${this.settingsService.settings.ApiUrl}/hubs/main?bearer=${accessToken}`
-      )
+      .withUrl(this.getHubUrlWithAuth())
       .withAutomaticReconnect(new RetryPolicy(120, 0, 5))
+      .configureLogging(signalR.LogLevel.Information)
       .build();
 
     this.hubConnection.onreconnected(() => {
@@ -75,10 +76,22 @@ export class SignalRService implements OnDestroy {
     return this.connectionPromise;
   }
 
+  private getHubUrlWithAuth(): string {
+    const accessToken = this.authService.getAuthorizationToken();
+    if (accessToken !== this.token) {
+      this.token = accessToken;
+      if (!this.token) {
+        location.reload();
+      }
+    }
+    const hubUrl = `${this.settingsService.settings.ApiUrl}/hubs/main?bearer=${accessToken}`;
+    return hubUrl;
+  }
+
   private reconnect() {
     if (this.hubConnection != null) {
       this.hubConnection.stop().then(() => {
-        console.log('Reconnecting to the hub.');
+        this.hubConnection.baseUrl = this.getHubUrlWithAuth();
         this.connectionPromise = this.hubConnection.start();
         this.connectionPromise.then(() => {
           if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
@@ -95,6 +108,9 @@ export class SignalRService implements OnDestroy {
     if (this.hubConnection.state === signalR.HubConnectionState.Connected) {
       this.hubConnection.invoke('Join' + this.applicationArea);
       this.isJoined = true;
+      if (this.teamId) {
+        setTimeout(() => this.switchTeam(this.teamId, this.teamId), 100);
+      }
     }
   }
 
@@ -108,9 +124,10 @@ export class SignalRService implements OnDestroy {
   public switchTeam(oldTeamId: string, newTeamId: string) {
     if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
       setTimeout(() => this.switchTeam(oldTeamId, newTeamId), 500);
-    } else {
-      if (this.isJoined) {
+    } else if (this.isJoined) {
+      if (this.applicationArea !== ApplicationArea.admin) {
         this.hubConnection.invoke('switchTeam', [oldTeamId, newTeamId]);
+        this.teamId = newTeamId;
       }
     }
   }

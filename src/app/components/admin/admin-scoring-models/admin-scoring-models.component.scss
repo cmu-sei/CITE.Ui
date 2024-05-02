@@ -64,23 +64,32 @@
 
 .first-cell {
   flex: 2;
-  min-width: 160px;
+  align-self: center;
+  min-width: 100px;
+  max-width: 120px;
 }
 
-.description-field {
-  width: 80%;
+.first-cell-button {
+  width: 24px;
+  height: 24px;
+  outline: none;
 }
 
 .description-cell {
   flex: 5;
+  align-self: center;
 }
 
 .date-cell {
   flex: 2;
+  align-self: center;
+  min-width: 80px;
 }
 
 .one-cell {
   flex: 1;
+  align-self: center;
+  min-width: 70px;
 }
 
 .center-self {

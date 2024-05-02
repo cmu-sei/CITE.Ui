@@ -265,8 +265,8 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
           (a.dateCreated < b.dateCreated ? -1 : 1) *
           (isAsc ? 1 : -1)
         );
-      default: 
-        return 0; 
+      default:
+        return 0;
     }
   }
 
@@ -287,7 +287,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
         const link = document.createElement('a');
         link.href = url;
         link.target = '_blank';
-        link.download = evaluation.description.endsWith('.json') ? evaluation.description : evaluation.description + '.json';
+        link.download = evaluation.description + '-evaluation.json';
         link.click();
         this.isBusy = false;
       },
@@ -330,7 +330,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     const startIndex = this.pageIndex * this.pageSize;
     this.displayedEvaluations = this.filteredEvaluationList.slice(startIndex, startIndex + this.pageSize);
   }
-  
+
   ngOnDestroy() {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
