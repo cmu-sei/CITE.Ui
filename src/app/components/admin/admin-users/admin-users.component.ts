@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Sort } from '@angular/material/sort';
 import {
@@ -22,7 +22,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './admin-users.component.html',
   styleUrls: ['./admin-users.component.scss'],
 })
-export class AdminUsersComponent implements OnInit {
+export class AdminUsersComponent implements OnInit, OnDestroy{
   @Input() userList: User[];
   @Input() permissionList: Permission[];
   pageSize: number = 10;
@@ -50,18 +50,19 @@ export class AdminUsersComponent implements OnInit {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
-    this.filterControl.valueChanges
-    .pipe(
-      takeUntil(this.unsubscribe$)
-    )
-    .subscribe((term) => {
-      this.filterString = term.trim().toLowerCase();
-      this.applyFilter();
-    });
   }
 
   ngOnInit() {
-    this.applyFilter();
+    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+      this.userList = users;
+      this.applyFilter(this.filterString);
+    });
+
+    this.filterControl.valueChanges.pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe(value => {
+      this.applyFilter(value);
+    });
   }
 
   hasPermission(permissionId: string, user: User) {
@@ -102,13 +103,12 @@ export class AdminUsersComponent implements OnInit {
       });
   }
 
-  applyFilter() {
+  applyFilter(filterValue: string) {
+    this.filterString = filterValue.trim().toLowerCase();
     this.filteredUserList = this.userList.filter(user =>
-      !this.filterString ||
       user.name.toLowerCase().includes(this.filterString)
     );
-
-    this.sortChanged(this.sort);
+    this.pageIndex = 0;
   }
 
   clearFilter() {
@@ -117,32 +117,42 @@ export class AdminUsersComponent implements OnInit {
 
   sortChanged(sort: Sort) {
     this.sort = sort;
-    this.filteredUserList.sort((a, b) => this.sortUsers(a, b, sort.active, sort.direction));
-    this.paginateUsers();
+    this.applyFilter(this.filterString);
   }
 
-  sortUsers(a: User, b: User, column: string, direction: string) {
-    const isAsc = direction !== 'desc';
-    switch (column) {
-      case 'name':
-        return (
-          (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
-      default:
-        return 0;
+  sortUsers(a: User, b: User): number {
+    const dir = this.sort.direction === 'desc' ? -1 : 1;
+    if (!this.sort.direction || this.sort.active === 'name') {
+      this.sort = { active: 'name', direction: 'asc' };
+      return a.name.toLowerCase() < b.name.toLowerCase() ? -dir : dir;
+    } else {
+      const aValue = this.hasPermission(this.sort.active, a).toString();
+      const bValue = this.hasPermission(this.sort.active, b).toString();
+      if (aValue === bValue) {
+        return a.name.toLowerCase() < b.name.toLowerCase() ? -dir : dir;
+      } else {
+        return aValue < bValue ? dir : -dir;
+      }
     }
   }
+
+  handleInput(event: KeyboardEvent): void{
+    event.stopPropagation();
+  } 
 
   paginatorEvent(page: PageEvent) {
     this.pageIndex = page.pageIndex;
     this.pageSize = page.pageSize;
-    this.paginateUsers();
   }
 
-  paginateUsers() {
-    const startIndex = this.pageIndex * this.pageSize;
-    this.displayedUsers = this.filteredUserList.slice(startIndex, startIndex + this.pageSize);
+  paginateUsers(pageIndex: number, pageSize: number): User[] {
+    const startIndex = pageIndex * pageSize;
+    return this.filteredUserList.slice(startIndex, startIndex + pageSize);
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next(null);
+    this.unsubscribe$.complete();
   }
 
 }
