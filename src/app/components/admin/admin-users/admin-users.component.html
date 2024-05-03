@@ -21,7 +21,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
   <mat-form-field style="width: 300px; margin-left: 10px;">
-    <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()"/>
+    <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter($event.target.value)"/>
   </mat-form-field>
   <div style="width: 30px;">
     <button
@@ -64,6 +64,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             placeholder="User Name"
             [(ngModel)]="newUser.name"
             matTooltip="Must have a minimum of 4 characters"
+            (keydown)="handleInput($event)"
           />
         </mat-form-field>
         <button
@@ -99,7 +100,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </section>
 
   <mat-expansion-panel
-    *ngFor="let user of displayedUsers"
+    *ngFor="let user of paginateUsers(pageIndex, pageSize)"
     [disabled]="true"
   >
     <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading">
