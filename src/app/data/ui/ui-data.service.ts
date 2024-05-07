@@ -22,9 +22,12 @@ export class UIState {
   providedIn: 'root',
 })
 export class UIDataService {
-  private uiState = JSON.parse(localStorage.getItem('uiState')) || new UIState();
+  private uiState = new UIState();
 
-  constructor() {}
+  constructor() {
+    const savedState = JSON.parse(localStorage.getItem('uiState'));
+    this.uiState = Object.assign(this.uiState, savedState);
+  }
 
   //
   // Item Expansion

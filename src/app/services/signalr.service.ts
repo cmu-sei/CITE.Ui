@@ -58,7 +58,6 @@ export class SignalRService implements OnDestroy {
     }
 
     this.applicationArea = applicationArea;
-    const accessToken = this.authService.getAuthorizationToken();
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(this.getHubUrlWithAuth())
       .withAutomaticReconnect(new RetryPolicy(120, 0, 5))
