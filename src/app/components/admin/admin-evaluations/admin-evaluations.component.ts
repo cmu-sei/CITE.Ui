@@ -48,6 +48,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     ItemStatus.Cancelled,
     ItemStatus.Complete
   ];
+  selectedStatuses = [ ItemStatus.Pending,ItemStatus.Active ];
   private unsubscribe$ = new Subject();
   sort: Sort = {
     active: 'description',
@@ -148,6 +149,10 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     }
   }
 
+  evaluationFrozen(evaluation: Evaluation) {
+    return evaluation.status === ItemStatus.Cancelled || evaluation.status === ItemStatus.Complete;
+  }
+
   saveEvaluation(evaluation: Evaluation) {
     if (evaluation.id) {
       this.evaluationDataService.updateEvaluation(evaluation);
@@ -219,18 +224,20 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
 
   applyFilter() {
     this.filteredEvaluationList = this.evaluationList.filter(evaluation =>
-      !this.filterString ||
-      evaluation.description.toLowerCase().includes(this.filterString)
+      (
+        !this.filterString ||
+        evaluation.description.toLowerCase().includes(this.filterString)
+      ) &&
+      this.selectedStatuses.some(status => status === evaluation.status)
     );
-
-    this.sortChanged(this.sort);
+    this.sortList(this.sort);
   }
 
   clearFilter() {
     this.filterControl.setValue('');
   }
 
-  sortChanged(sort: Sort) {
+  sortList(sort: Sort) {
     this.sort = sort;
     this.filteredEvaluationList.sort((a, b) => this.sortEvaluations(a, b, sort.active, sort.direction));
     this.applyPagination();

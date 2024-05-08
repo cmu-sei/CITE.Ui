@@ -66,6 +66,21 @@
   margin-bottom: 20px;
 }
 
+.nator-div {
+  min-width: 375px;
+}
+
+.status-ff {
+  margin-left: 20px;
+  margin-right: 20px;
+  min-width: 250px;
+}
+
+.status-dd {
+  font-size: smaller !important;
+  width: 100%;
+}
+
 .first-cell {
   flex: 1;
   min-width: 100px;

@@ -16,6 +16,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         (click)="addOrEditMove(null)"
         style="outline: none;"
         title="Add Move"
+        [disabled]="noChanges"
       >
         <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
       </button>
@@ -52,14 +53,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
           (click)="addOrEditMove(move); $event.stopPropagation()"
           style="outline: none;"
           title="Edit Move"
-        >
+          >
           <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
         </button>
         <button
           mat-icon-button
           (click)="deleteMoveRequest(move); $event.stopPropagation()"
           title="Delete Move"
-        >
+          [disabled]="noChanges"
+          >
           <mat-icon
             class="mdi-24px"
             fontIcon="mdi-trash-can"

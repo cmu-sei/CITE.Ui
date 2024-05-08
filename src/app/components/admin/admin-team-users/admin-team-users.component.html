@@ -68,6 +68,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               (click)="addUserToTeam(element)"
               style="outline: none;"
               title="Add {{ element.name }} to Team"
+              [disabled]="noChanges"
               *ngIf="!onAnotherTeam(element.id)"
             >
               <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline"></mat-icon>
@@ -100,6 +101,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         (click)="toggleAddMode(true)"
         style="outline: none;"
         title="Add Users to Team"
+        [disabled]="noChanges"
       >
         <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline"></mat-icon>
       </button>
@@ -146,6 +148,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <mat-checkbox
             [checked]="element.isObserver"
             (change)="setObserverValue(element.id, $event.checked)"
+            [disabled]="noChanges"
           ></mat-checkbox>
         </mat-cell>
       </ng-container>
@@ -158,6 +161,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <mat-checkbox
             [checked]="element.canIncrementMove"
             (change)="setIncrementerValue(element.id, $event.checked)"
+            [disabled]="noChanges"
           ></mat-checkbox>
         </mat-cell>
       </ng-container>
@@ -170,6 +174,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <mat-checkbox
             [checked]="element.canModify"
             (change)="setModifierValue(element.id, $event.checked)"
+            [disabled]="noChanges"
           ></mat-checkbox>
         </mat-cell>
       </ng-container>
@@ -182,6 +187,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <mat-checkbox
             [checked]="element.canSubmit"
             (change)="setSubmitterValue(element.id, $event.checked)"
+            [disabled]="noChanges"
           ></mat-checkbox>
         </mat-cell>
       </ng-container>
@@ -195,6 +201,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               (click)="removeUserFromTeam(element)"
               style="outline: none;"
               title="Remove {{ element.name }} from Team"
+              [disabled]="noChanges"
             >
               <mat-icon class="mdi-24px self-center" fontIcon="mdi-minus-circle-outline"></mat-icon>
             </button>

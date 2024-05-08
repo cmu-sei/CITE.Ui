@@ -16,6 +16,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         (click)="addOrEditTeam(null)"
         style="outline: none;"
         title="Add Team"
+        [disabled]="noChanges"
       >
         <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
       </button>
@@ -58,6 +59,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             (click)="addOrEditTeam(team); $event.stopPropagation()"
             style="outline: none;"
             title="Edit {{ team.name }}"
+            [disabled]="noChanges"
           >
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
           </button>
@@ -66,6 +68,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             (click)="deleteTeam(team); $event.stopPropagation()"
             style="outline: none;"
             title="Delete {{ team.name }}"
+            [disabled]="noChanges"
           >
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can"></mat-icon>
           </button>
@@ -91,6 +94,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="user-div">
         <app-admin-team-users *ngIf="team.id === editTeam.id"
           [teamId]="team.id"
+          [noChanges]="noChanges"
         ></app-admin-team-users>
       </div>
     </div>
