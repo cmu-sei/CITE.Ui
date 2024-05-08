@@ -46,9 +46,10 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     ItemStatus.Pending,
     ItemStatus.Active,
     ItemStatus.Cancelled,
-    ItemStatus.Complete
+    ItemStatus.Complete,
+    ItemStatus.Archived
   ];
-  selectedStatuses = [ ItemStatus.Pending,ItemStatus.Active ];
+  selectedStatuses = [ ItemStatus.Pending, ItemStatus.Active, ItemStatus.Complete ];
   private unsubscribe$ = new Subject();
   sort: Sort = {
     active: 'description',
@@ -150,7 +151,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   evaluationFrozen(evaluation: Evaluation) {
-    return evaluation.status === ItemStatus.Cancelled || evaluation.status === ItemStatus.Complete;
+    return evaluation.status !== ItemStatus.Pending && evaluation.status !== ItemStatus.Active;
   }
 
   saveEvaluation(evaluation: Evaluation) {

@@ -44,7 +44,8 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     ItemStatus.Pending,
     ItemStatus.Active,
     ItemStatus.Cancelled,
-    ItemStatus.Complete
+    ItemStatus.Complete,
+    ItemStatus.Archived
   ];
   rightSideDisplays = [
     RightSideDisplay.ScoreSummary,

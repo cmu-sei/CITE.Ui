@@ -29,6 +29,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   @Input() evaluationList: Evaluation[];
   @Input() moveList: Move[];
   @Input() scoresheetOnRight: boolean;
+  @Input() noChanges: boolean;
   @Output() nextDisplayedMove = new EventEmitter<Move>();
   @Output() previousDisplayedMove = new EventEmitter<Move>();
   @Output() nextEvaluationMove = new EventEmitter<number>();

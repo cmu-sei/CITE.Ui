@@ -28,6 +28,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             ngxClipboard
             (click)="isActionEditMode = true"
             title="Edit Actions"
+            [disabled]="noChanges"
             *ngIf="!isActionEditMode"
           >
             <mat-icon
@@ -86,7 +87,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             (change)="checkAction(action.id, $event.checked)"
             [matTooltip]="changedBy(action.id)"
             *ngIf="!isActionEditMode"
-            [disabled]="myTeamId !== activeTeamId"
+            [disabled]="noChanges || myTeamId !== activeTeamId"
           ></mat-checkbox>{{ action.description }}
         </div>
       </div>
@@ -106,6 +107,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             (click)="isRoleEditMode = true"
             title="Edit Roles"
             *ngIf="!isRoleEditMode"
+            [disabled]="noChanges"
           >
             <mat-icon
               class="mdi-24px"
@@ -169,7 +171,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             (opened)="openRoleUsers(role)"
             (selectionChange)="updateRoleUsers(role.id, $event)"
             (closed)="closeRoleUsers(role.id)"
-            [disabled]="myTeamId !== activeTeamId"
+            [disabled]="noChanges || myTeamId !== activeTeamId"
             title="Select a Team Member"
           >
             <mat-option

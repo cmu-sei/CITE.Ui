@@ -105,6 +105,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   public displayedColumns: string[] = ['description', 'status', 'createdBy', 'dateCreated'];
   public isLoading: boolean;
   waitingForCurrentMoveNumber = 0;
+  noChanges$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     activatedRoute: ActivatedRoute,
@@ -202,6 +203,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       if (active) {
         this.selectedEvaluationId = active.id;
         this.loadEvaluationData();
+        this.noChanges$.next(active.status === ItemStatus.Complete);
       }
     });
     // observe authorizedUser

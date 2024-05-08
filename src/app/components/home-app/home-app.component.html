@@ -60,6 +60,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         [evaluationList]="evaluationList$ | async"
         [moveList]="moveList$ | async"
         [scoresheetOnRight]="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
+        [noChanges]="noChanges$ | async"
         (nextDisplayedMove)="nextDisplayedMove($event)"
         (previousDisplayedMove)="previousDisplayedMove($event)"
         (nextEvaluationMove)="nextEvaluationMove($event)"
@@ -146,12 +147,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
           *ngIf="unreadArticles$ && moveList$"
           [unreadArticles]="unreadArticles$ | async"
           [myTeamId]="myTeamId$ | async"
+          [noChanges]="noChanges$ | async"
         ></app-dashboard>
       </div>
       <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.scoresheet">
         <app-scoresheet
           [myTeamId]="myTeamId$ | async"
           (selectDisplayedSubmission)="selectDisplayedSubmission($event)"
+          [noChanges]="noChanges$ | async"
         ></app-scoresheet>
       </div>
       <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.report">
@@ -180,6 +183,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
           [userOnly]="true"
           [myTeamId]="myTeamId$ | async"
+          [noChanges]="noChanges$ | async"
           (selectDisplayedSubmission)="selectDisplayedSubmission($event)"
         ></app-scoresheet>
       </div>
