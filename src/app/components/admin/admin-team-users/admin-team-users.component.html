@@ -153,6 +153,19 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-cell>
       </ng-container>
 
+      <ng-container matColumnDef="canManageTeam">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Manager</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
+          <mat-checkbox
+            [checked]="element.canManageTeam"
+            (change)="setManagerValue(element.id, $event.checked)"
+            [disabled]="noChanges"
+          ></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
       <ng-container matColumnDef="canIncrementMove">
         <mat-header-cell *matHeaderCellDef mat-sort-header
           >Incrementer</mat-header-cell

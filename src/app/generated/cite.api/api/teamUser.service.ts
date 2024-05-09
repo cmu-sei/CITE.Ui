@@ -118,6 +118,57 @@ export class TeamUserService {
     }
 
     /**
+     * Clears the selected TeamUser Manager flag
+     * Clears the TeamUser from being an Manager.
+     * @param id The Id of the TeamUser to update
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public clearManager(id: string, observe?: 'body', reportProgress?: boolean): Observable<TeamUser>;
+    public clearManager(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TeamUser>>;
+    public clearManager(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TeamUser>>;
+    public clearManager(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling clearManager.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/manager/clear`,
+            null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Clears the selected TeamUser Modifier flag
      * Clears the TeamUser from being an Modifier.
      * @param id The Id of the TeamUser to update
@@ -616,6 +667,57 @@ export class TeamUserService {
         ];
 
         return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/incrementer/set`,
+            null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Sets the selected TeamUser Manager flag
+     * Sets the TeamUser to an Manager.
+     * @param id The Id of the TeamUser to update
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public setManager(id: string, observe?: 'body', reportProgress?: boolean): Observable<TeamUser>;
+    public setManager(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TeamUser>>;
+    public setManager(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TeamUser>>;
+    public setManager(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling setManager.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.put<TeamUser>(`${this.configuration.basePath}/api/teamusers/${encodeURIComponent(String(id))}/manager/set`,
             null,
             {
                 withCredentials: this.configuration.withCredentials,

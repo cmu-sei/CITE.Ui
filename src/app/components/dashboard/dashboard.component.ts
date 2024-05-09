@@ -6,8 +6,6 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { animate, state, style, transition, trigger} from '@angular/animations';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
-import { TeamQuery } from 'src/app/data/team/team.query';
 import {
   Action,
   Evaluation,
@@ -15,14 +13,19 @@ import {
   Role,
   ScoringModel,
   Team,
+  TeamUser,
   User
 } from 'src/app/generated/cite.api/model/models';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { ActionQuery } from 'src/app/data/action/action.query';
+import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { RoleQuery } from 'src/app/data/role/role.query';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
+import { TeamQuery } from 'src/app/data/team/team.query';
+import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
+import { TeamUserQuery } from 'src/app/data/team-user/team-user.query';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { Title } from '@angular/platform-browser';
@@ -33,6 +36,7 @@ import { AdminRoleEditDialogComponent } from '../admin/admin-role-edit-dialog/ad
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { DateTimeFormatOptions } from 'luxon';
+import { UserDataService } from 'src/app/data/user/user-data.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -50,13 +54,14 @@ export class DashboardComponent implements OnDestroy {
   @Input() unreadArticles: UnreadArticles;
   @Input() myTeamId: string;
   @Input() noChanges: boolean;
-  teamUsers: User[];
+  usersOnTheTeam: User[] = [];
+  teamUsers: TeamUser[] = [];
   selectedEvaluation: Evaluation = {};
   scoringModel: ScoringModel = {};
   isLoading = false;
   actionList: Action[] = [];
   allActions: Action[] = [];
-  roleList: Role[];
+  roleList: Role[] = [];
   moveList: Move[] = [];
   currentMoveNumber: number;
   displayedMoveNumber: number;
@@ -84,20 +89,24 @@ export class DashboardComponent implements OnDestroy {
   originalRole: Role = {};
   modifiedRole: Role = {};
   completeSituationDescription = '';
+  loggedInUserId = '';
 
   constructor(
-    private evaluationQuery: EvaluationQuery,
-    private teamQuery: TeamQuery,
     private actionDataService: ActionDataService,
     private actionQuery: ActionQuery,
+    private evaluationQuery: EvaluationQuery,
     private moveQuery: MoveQuery,
     private roleDataService: RoleDataService,
     private roleQuery: RoleQuery,
     private scoringModelQuery: ScoringModelQuery,
+    private teamQuery: TeamQuery,
+    private teamUserDataService: TeamUserDataService,
+    private teamUserQuery: TeamUserQuery,
     private unreadArticlesDataService: UnreadArticlesDataService,
     public dialogService: DialogService,
     public matDialog: MatDialog,
     private titleService: Title,
+    private userDataService: UserDataService,
     private settingsService: ComnSettingsService
   ) {
     this.titleService.setTitle('CITE Dashboard');
@@ -134,7 +143,7 @@ export class DashboardComponent implements OnDestroy {
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
-        this.teamUsers = active.users;
+        this.usersOnTheTeam = active.users;
         this.activeTeamId = active.id;
         // load the team data for this team
         this.loadTeamData();
@@ -154,7 +163,7 @@ export class DashboardComponent implements OnDestroy {
         const newRole = {... role};
         const newUsers: User[] = [];
         newRole.users.forEach(user => {
-          const addUser = this.teamUsers?.find(tu => tu.id === user.id);
+          const addUser = this.usersOnTheTeam?.find(tu => tu.id === user.id);
           newUsers.push(addUser);
         });
         newRole.users = newUsers;
@@ -166,6 +175,18 @@ export class DashboardComponent implements OnDestroy {
       this.scoringModel = scoringModel;
       this.setCompleteSituationDescription();
     });
+    // observe the TeamUsers
+    this.teamUserQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(tUsers => {
+      this.teamUsers = tUsers;
+    });
+    // observe the logged in user ID
+    this.userDataService.loggedInUser
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((user) => {
+        if (user && user.profile && user.profile.sub !== this.loggedInUserId) {
+          this.loggedInUserId = user.profile.sub;
+        }
+      });
   }
 
   setCompleteSituationDescription() {
@@ -233,6 +254,7 @@ export class DashboardComponent implements OnDestroy {
     if (this.activeTeamId && this.selectedEvaluation.id) {
       this.actionDataService.loadByEvaluationTeam(this.selectedEvaluation.id, this.activeTeamId);
       this.roleDataService.loadByEvaluationTeam(this.selectedEvaluation.id, this.activeTeamId);
+      this.teamUserDataService.loadByTeam(this.activeTeamId);
     }
   }
 
@@ -311,7 +333,7 @@ export class DashboardComponent implements OnDestroy {
   }
 
   getUserName(id) {
-    const theUser = this.teamUsers?.find(tu => tu.id === id);
+    const theUser = this.usersOnTheTeam?.find(u => u.id === id);
     return theUser ? theUser.name : '';
   }
 
@@ -395,6 +417,26 @@ export class DashboardComponent implements OnDestroy {
         this.roleDataService.removeRoleUser(roleId, ru);
       }
     });
+  }
+
+  setManagerValue(teamUserId: string, value: boolean) {
+    this.teamUserDataService.setManagerValue(teamUserId, value);
+  }
+
+  setIncrementerValue(teamUserId: string, value: boolean) {
+    this.teamUserDataService.setIncrementerValue(teamUserId, value);
+  }
+
+  setModifierValue(teamUserId: string, value: boolean) {
+    this.teamUserDataService.setModifierValue(teamUserId, value);
+  }
+
+  setSubmitterValue(teamUserId: string, value: boolean) {
+    this.teamUserDataService.setSubmitterValue(teamUserId, value);
+  }
+
+  loggedInUserCanManageTeam(): boolean {
+    return this.teamUsers.some(tu => tu.userId === this.loggedInUserId && tu.canManageTeam)
   }
 
   ngOnDestroy() {

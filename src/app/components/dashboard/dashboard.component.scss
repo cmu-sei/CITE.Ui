@@ -135,6 +135,13 @@
   width: 100%;
 }
 
+.checkboxes-cell {
+  display: flex;
+  flex-direction: row;
+  flex: 5;
+  align-self: center;
+}
+
 .five-cell {
   flex: 5;
 }

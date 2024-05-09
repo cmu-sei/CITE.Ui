@@ -175,11 +175,62 @@ project root for license information or contact permission@sei.cmu.edu for full 
             title="Select a Team Member"
           >
             <mat-option
-              *ngFor="let user of teamUsers" [value]="user"
+              *ngFor="let user of usersOnTheTeam" [value]="user"
             >{{ user.name }}
             </mat-option>
           </mat-select>
           <span *ngIf="isRoleEditMode">{{ getUserNames(role.users) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Permissions Section -->
+  <div class="row-container">
+    <div class="section-container mat-elevation-z8 four-cell">
+      <div class="row-container">
+        <div class="two-cell center-self">
+          <b title="Participant permissions for this Exercise">Permissions:</b>
+        </div>
+        <div class="checkboxes-cell">
+          <div class="one-cell center-self">Manage</div>
+          <div class="one-cell center-self">Advance</div>
+          <div class="one-cell center-self">Submit</div>
+          <div class="one-cell center-self">Modify</div>
+        </div>
+      </div>
+      <div class="row-container" *ngFor="let teamUser of teamUsers">
+        <div class="two-cell center-self">
+          <label>{{ getUserName(teamUser.userId) }}</label>
+        </div>
+        <div class="checkboxes-cell">
+          <div class="one-cell center-self">
+            <mat-checkbox
+              [checked]="teamUser.canManageTeam"
+              (change)="setManagerValue(teamUser.id, $event.checked)"
+              [disabled]="noChanges || teamUser.userId === loggedInUserId || !loggedInUserCanManageTeam()"
+            ></mat-checkbox>
+          </div>
+          <div class="one-cell center-self">
+            <mat-checkbox
+              [checked]="teamUser.canIncrementMove"
+              (change)="setIncrementerValue(teamUser.id, $event.checked)"
+              [disabled]="noChanges || !loggedInUserCanManageTeam()"
+            ></mat-checkbox>
+          </div>
+          <div class="one-cell center-self">
+            <mat-checkbox
+              [checked]="teamUser.canModify"
+              (change)="setModifierValue(teamUser.id, $event.checked)"
+              [disabled]="noChanges || !loggedInUserCanManageTeam()"
+            ></mat-checkbox>
+          </div>
+          <div class="one-cell center-self">
+            <mat-checkbox
+              [checked]="teamUser.canSubmit"
+              (change)="setSubmitterValue(teamUser.id, $event.checked)"
+              [disabled]="noChanges || !loggedInUserCanManageTeam()"
+            ></mat-checkbox>
+          </div>
         </div>
       </div>
     </div>

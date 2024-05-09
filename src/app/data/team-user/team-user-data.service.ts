@@ -119,6 +119,18 @@ export class TeamUserDataService {
     }
   }
 
+  setManagerValue(teamUserId: string, value: boolean) {
+    if (value) {
+      this.teamUserService.setManager(teamUserId).pipe(take(1)).subscribe((tu) => {
+        this.updateStore(tu);
+      });
+    } else {
+      this.teamUserService.clearManager(teamUserId).pipe(take(1)).subscribe((tu) => {
+        this.updateStore(tu);
+      });
+    }
+  }
+
   setIncrementerValue(teamUserId: string, value: boolean) {
     if (value) {
       this.teamUserService.setIncrementer(teamUserId).pipe(take(1)).subscribe((tu) => {

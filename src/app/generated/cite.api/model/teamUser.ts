@@ -33,4 +33,5 @@ export interface TeamUser {
     canIncrementMove?: boolean;
     canModify?: boolean;
     canSubmit?: boolean;
+    canManageTeam?: boolean;
 }
