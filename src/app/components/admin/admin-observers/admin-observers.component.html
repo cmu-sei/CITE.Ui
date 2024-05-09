@@ -56,7 +56,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <button mat-stroked-button (click)="addObserver(element.id)">
+            <button mat-stroked-button (click)="addObserver(element.id)" [disabled]="noChanges">
               Add
             </button>
           </div>
@@ -120,7 +120,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <button mat-stroked-button (click)="removeObserver(element.id)">
+            <button mat-stroked-button (click)="removeObserver(element.id)" [disabled]="noChanges">
               Remove
             </button>
           </div>

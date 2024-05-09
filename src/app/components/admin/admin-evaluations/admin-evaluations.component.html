@@ -12,20 +12,26 @@ project root for license information or contact permission@sei.cmu.edu for full 
       [ngStyle]="{'color': topbarColor}"
     ></mat-icon>
   </div>
-  <mat-form-field style="width: 300px; margin-left: 10px;">
+  <mat-form-field style="width: 200px; margin-left: 10px;">
     <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()"/>
   </mat-form-field>
-  <div style="width: 30px;">
+  <div style="width: 24px;">
     <button
       mat-icon-button
       style="outline: none;"
       title="Clear Search"
       (click)="clearFilter()"
     >
-      <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+      <mat-icon class="mdi-18px" fontIcon="mdi-close-circle-outline"></mat-icon>
     </button>
   </div>
-  <div *ngIf="!addingNewEvaluation">
+  <mat-form-field class="status-ff" *ngIf="!addingNewEvaluation">
+    <mat-label>Statuses</mat-label>
+    <mat-select class="status-dd" placeholder="Statuses" [(ngModel)]="selectedStatuses" multiple (selectionChange)="applyFilter()">
+      <mat-option *ngFor="let status of itemStatuses" [value]="status">{{ status }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="nator-div" *ngIf="!addingNewEvaluation">
     <mat-paginator
       #paginator
       [length]="filteredEvaluationList?.length"
@@ -40,7 +46,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <mat-accordion displayMode="flat">
   <section
     matSort
-    (matSortChange)="sortChanged($event)"
+    (matSortChange)="sortList($event)"
     class="mat-elevation-z2 mat-header-row"
   >
     <span class="mat-header-cell first-cell">
@@ -115,13 +121,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <span class="mat-cell description-cell center-self">{{ evaluation.description }}</span>
       <span class="mat-cell move-cell center-self">
         <button aria-label="Decrement Current Move" mat-icon-button
-          [disabled]="evaluation.currentMoveNumber <= getLowestMoveNumber(evaluation)"
+          [disabled]="evaluationFrozen(evaluation) || evaluation.currentMoveNumber <= getLowestMoveNumber(evaluation)"
           (click)="decrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Decrement Move">
           <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
         </button>
         {{ evaluation.currentMoveNumber }}
         <button aria-label="Increment Current Move" mat-icon-button
-          [disabled]="evaluation.currentMoveNumber >= getHighestMoveNumber(evaluation)"
+          [disabled]="evaluationFrozen(evaluation) || evaluation.currentMoveNumber >= getHighestMoveNumber(evaluation)"
           (click)="incrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Increment Move">
           <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
         </button>
@@ -143,6 +149,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-expansion-panel-header>
         <app-admin-moves
           [evaluationId]="evaluation.id"
+          [noChanges]="evaluationFrozen(evaluation)"
         ></app-admin-moves>
       </mat-expansion-panel>
       <mat-expansion-panel class="bottom-space">
@@ -151,6 +158,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-expansion-panel-header>
         <app-admin-teams
           [evaluationId]="evaluation.id"
+          [noChanges]="evaluationFrozen(evaluation)"
         >
         </app-admin-teams>
       </mat-expansion-panel>
@@ -160,6 +168,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-expansion-panel-header>
         <app-admin-observers
           [evaluationId]="evaluation.id"
+          [noChanges]="evaluationFrozen(evaluation)"
         >
         </app-admin-observers>
       </mat-expansion-panel>

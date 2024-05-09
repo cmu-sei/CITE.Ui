@@ -49,6 +49,7 @@ import { DateTimeFormatOptions } from 'luxon';
 export class DashboardComponent implements OnDestroy {
   @Input() unreadArticles: UnreadArticles;
   @Input() myTeamId: string;
+  @Input() noChanges: boolean;
   teamUsers: User[];
   selectedEvaluation: Evaluation = {};
   scoringModel: ScoringModel = {};

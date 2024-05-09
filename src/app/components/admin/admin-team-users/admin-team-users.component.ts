@@ -28,6 +28,7 @@ import { UntypedFormControl } from '@angular/forms';
 })
 export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   @Input() teamId: string;
+  @Input() noChanges: boolean;
   userList: User[] = [];
   teamUsers: TeamUser[] = [];
   otherTeamUsers: TeamUser[] = [];

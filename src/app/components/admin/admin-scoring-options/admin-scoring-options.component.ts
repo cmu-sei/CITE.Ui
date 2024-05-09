@@ -31,7 +31,8 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
     ItemStatus.Pending,
     ItemStatus.Active,
     ItemStatus.Cancelled,
-    ItemStatus.Complete
+    ItemStatus.Complete,
+    ItemStatus.Archived
   ];
   private unsubscribe$ = new Subject();
 

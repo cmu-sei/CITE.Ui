@@ -146,6 +146,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               *ngIf="showSubmitButton"
               (click)="completeSubmission()"
               title="Submit completed score"
+              [disabled]="noChanges"
             >
               Submit
             </button>
@@ -156,6 +157,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               *ngIf="showReopenButton"
               (click)="activateSubmission()"
               title="Reopen to change score"
+              [disabled]="noChanges"
             >
               Reopen
             </button>
@@ -166,6 +168,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               *ngIf="showModifyControls"
               (click)="clearSelections()"
               title="Clear all selections"
+              [disabled]="noChanges"
             >
               Clear
             </button>
@@ -176,6 +179,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               *ngIf="showModifyControls && !userOnly"
               (click)="presetSelections()"
               title="Preset selections to the previous move"
+              [disabled]="noChanges"
             >
               Preset
             </button>
@@ -226,7 +230,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     [aria-label]="scoringOption.description"
                     *ngIf="!displayedSubmission.scoreIsAnAverage"
                     [checked]="isSelected(scoringCategory.id, scoringOption.id)"
-                    [disabled]="!showModifyControls || myTeamId !== activeTeamId"
+                    [disabled]="noChanges || !showModifyControls || myTeamId !== activeTeamId"
                     [matTooltip]="selectedBy(scoringCategory.id, scoringOption.id)"
                     (change)="
                       toggleOption($event, scoringCategory.id, scoringOption.id)
@@ -246,6 +250,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     *ngIf="showModifyControls && myTeamId === activeTeamId && !selectedScoringModel.displayCommentTextBoxes"
                     (click)="addComment(addCommenttemplate, scoringOption)"
                     title="Add Comment"
+                    [disabled]="noChanges"
                   >
                     <mat-icon
                       class="icon-color small-icon"
@@ -277,6 +282,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                         editComment(addCommenttemplate, scoringOption, comment)
                       "
                       title="Edit Comment"
+                      [disabled]="noChanges"
                     >
                       <mat-icon
                         class="icon-color small-icon"
@@ -291,6 +297,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                       *ngIf="showModifyControls && myTeamId === activeTeamId"
                       (click)="deleteComment(comment)"
                       title="Delete Comment"
+                      [disabled]="noChanges"
                     >
                       <mat-icon
                         class="icon-color small-icon"
@@ -306,7 +313,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
                     (change)="changeComment(scoringCategory.id, scoringOption.id, $event)"
                     class="comment"
-                    [disabled]="selectedScoringModel.useSubmit && !showSubmitButton"
+                    [disabled]="noChanges || (selectedScoringModel.useSubmit && !showSubmitButton)"
                   ></textarea>
                 </div>
               </div>
@@ -376,6 +383,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>Cancel</button>
     <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
-    <button mat-button [mat-dialog-close]="true">Save</button>
+    <button mat-button [mat-dialog-close]="true" [disabled]="noChanges">Save</button>
   </mat-dialog-actions>
 </ng-template>

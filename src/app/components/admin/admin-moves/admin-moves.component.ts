@@ -22,6 +22,7 @@ import { UntypedFormControl } from '@angular/forms';
 })
 export class AdminMovesComponent implements OnInit, OnDestroy {
   @Input() evaluationId: string;
+  @Input() noChanges: boolean;
   filterControl: UntypedFormControl = this.moveDataService.filterControl;
   filterString = '';
   sort: Sort = {active: 'moveNumber', direction: 'asc'};
@@ -73,7 +74,8 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(AdminMoveEditDialogComponent, {
       width: '800px',
       data: {
-        move: move
+        move: move,
+        noChanges: this.noChanges
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
