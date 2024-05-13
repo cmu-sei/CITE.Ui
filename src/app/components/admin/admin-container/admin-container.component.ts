@@ -157,13 +157,9 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   gotoSection(section: string) {
     this.router.navigate([], {
       queryParams: {
-        section: section,
-        filter: '',
-        sorton: '',
-        sortdir: '',
-        pageindex: ''
-      },
-      queryParamsHandling: 'merge',
+        evaluation: this.originalEvaluationId,
+        section: section
+      }
     });
   }
 
@@ -177,13 +173,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
 
   logout() {
     this.userDataService.logout();
-  }
-
-  selectUser(userId: string) {
-    this.router.navigate([], {
-      queryParams: { userId: userId },
-      queryParamsHandling: 'merge',
-    });
   }
 
   addUserHandler(user: User) {
@@ -200,20 +189,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
 
   removeUserPermissionHandler(userPermission: UserPermission) {
     this.userDataService.deleteUserPermission(userPermission);
-  }
-
-  sortChangeHandler(sort: Sort) {
-    this.router.navigate([], {
-      queryParams: { sorton: sort.active, sortdir: sort.direction },
-      queryParamsHandling: 'merge',
-    });
-  }
-
-  pageChangeHandler(page: PageEvent) {
-    this.router.navigate([], {
-      queryParams: { pageindex: page.pageIndex, pagesize: page.pageSize },
-      queryParamsHandling: 'merge',
-    });
   }
 
   inIframe() {
@@ -240,7 +215,9 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
 
   exitAdminPages() {
     this.evaluationDataService.setActive(this.originalEvaluationId);
-    this.router.navigate(['/']);
+    this.router.navigate(['/'], {
+      queryParams: { evaluation: this.originalEvaluationId }
+    });
   }
 
   ngOnDestroy() {

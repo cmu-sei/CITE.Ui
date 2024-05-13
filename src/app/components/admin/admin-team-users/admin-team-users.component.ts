@@ -34,7 +34,7 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   otherTeamUsers: TeamUser[] = [];
   teamList: Team[] = [];
   displayedUserColumns: string[] = ['name', 'id'];
-  displayedTeamUserColumns: string[] = ['name', 'isObserver', 'canIncrementMove', 'canModify', 'canSubmit', 'id'];
+  displayedTeamUserColumns: string[] = ['name', 'isObserver', 'canManageTeam', 'canIncrementMove', 'canModify', 'canSubmit', 'id'];
   displayedTeamColumns: string[] = ['name', 'user'];
   userDataSource = new MatTableDataSource<User>(new Array<User>());
   teamUserDataSource = new MatTableDataSource<TeamUser>(new Array<TeamUser>());
@@ -196,6 +196,10 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
 
   setIncrementerValue(teamUserId: string, value: boolean) {
     this.teamUserDataService.setIncrementerValue(teamUserId, value);
+  }
+
+  setManagerValue(teamUserId: string, value: boolean) {
+    this.teamUserDataService.setManagerValue(teamUserId, value);
   }
 
   setModifierValue(teamUserId: string, value: boolean) {
