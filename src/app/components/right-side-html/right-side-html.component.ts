@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, Input, OnDestroy } from '@angular/core';
-import { Evaluation } from 'src/app/generated/cite.api/model/models';
+import { ScoringModel } from 'src/app/generated/cite.api';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { Subject, Observable } from 'rxjs';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
@@ -15,7 +15,8 @@ import { AngularEditorConfig } from '@kolkov/angular-editor';
 })
 export class RightSideHtmlComponent implements OnDestroy {
   isLoading = false;
-  @Input() evaluation$: Observable<Evaluation>;
+  @Input() scoringModel$: Observable<ScoringModel>;
+  @Input() hideTopbar: boolean;
   editorConfig: AngularEditorConfig = {
     editable: false,
     height: 'auto',
@@ -37,6 +38,14 @@ export class RightSideHtmlComponent implements OnDestroy {
   constructor(
     private submissionQuery: SubmissionQuery
   ) {}
+
+  getTopClass() {
+    if (this.hideTopbar) {
+      return 'top-level-container in-player'
+    } else {
+      return 'top-level-container out-of-player'
+    }
+  }
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);

@@ -8,13 +8,20 @@
   justify-content: flex-start;
   align-self: flex-start;
   text-align: left;
-  width: 99%;
-  height: calc(100% - 53px);
+  width: 100%;
   overflow-y: auto;
+}
+
+.in-player {
+  height: calc(100vh - 60px);
+}
+
+.out-of-player {
+  height: calc(100vh - 100px);
 }
 
 .focused-app-iframe {
   height: 100%;
-  width: 100%;
+  width: 99%;
 }
 
