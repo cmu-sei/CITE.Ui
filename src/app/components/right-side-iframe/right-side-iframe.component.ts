@@ -3,12 +3,11 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, Input, OnDestroy } from '@angular/core';
-import { Evaluation } from 'src/app/generated/cite.api';
+import { ScoringModel } from 'src/app/generated/cite.api';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
-import { map, takeUntil } from 'rxjs/operators';
-import { Subject, Observable } from 'rxjs';
-import { AngularEditorConfig } from '@kolkov/angular-editor';
-import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
+import { takeUntil } from 'rxjs/operators';
+import { Subject, Observable, combineLatest } from 'rxjs';
+import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 
 @Component({
   selector: 'app-right-side-iframe',
@@ -16,20 +15,29 @@ import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
   styleUrls: ['./right-side-iframe.component.scss'],
 })
 export class RightSideIframeComponent implements OnDestroy {
+  @Input() hideTopbar: boolean;
   safeUrl: SafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
   private unsubscribe$ = new Subject();
 
 
   constructor(
     private sanitizer: DomSanitizer,
-    private evaluationQuery: EvaluationQuery
+    private scoringModelQuery: ScoringModelQuery
   ) {
     // observe active evaluation
-    (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
+    (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
-        this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(active.scoringModel.rightSideEmbeddedUrl);
+        this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(active.rightSideEmbeddedUrl);
       }
     });
+  }
+
+  getTopClass() {
+    if (this.hideTopbar) {
+      return 'top-level-container in-player'
+    } else {
+      return 'top-level-container out-of-player'
+    }
   }
 
   ngOnDestroy() {
