@@ -9,8 +9,16 @@
   align-self: flex-start;
   text-align: left;
   width: 99%;
-  height: calc(100% - 53px);
   overflow-y: auto;
   margin-top: -6px;
   margin-left: -2px;
 }
+
+.in-player {
+  height: calc(100vh - 60px);
+}
+
+.out-of-player {
+  height: calc(100vh - 100px);
+}
+
