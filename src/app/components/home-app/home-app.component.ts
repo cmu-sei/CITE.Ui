@@ -442,6 +442,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.teamDataService.setActive(teamId);
     this.uiDataService.setTeam(this.selectedEvaluationId, teamId);
     this.submissionDataService.setActive('');
+    this.moveDataService.setActive('');
     this.submissionDataService.unload();
     this.submissionDataService.loadByEvaluationTeam(this.selectedEvaluationId, teamId);
   }
@@ -508,6 +509,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       }
     }
     this.submissionDataService.setActive(submission.id);
+    const activeMove = this.sortedMoveList.find(m => +m.moveNumber === +submission.moveNumber);
+    this.moveDataService.setActive(activeMove.id);
   }
 
   selectDisplayedSubmission(selection: string) {
