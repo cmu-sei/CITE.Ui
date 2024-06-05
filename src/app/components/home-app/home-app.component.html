@@ -61,6 +61,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         [moveList]="moveList$ | async"
         [scoresheetOnRight]="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
         [noChanges]="noChanges$ | async"
+        [selectedSection]="selectedSection"
         (nextDisplayedMove)="nextDisplayedMove($event)"
         (previousDisplayedMove)="previousDisplayedMove($event)"
         (nextEvaluationMove)="nextEvaluationMove($event)"
