@@ -30,6 +30,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   @Input() moveList: Move[];
   @Input() scoresheetOnRight: boolean;
   @Input() noChanges: boolean;
+  @Input() selectedSection: Section;
   @Output() nextDisplayedMove = new EventEmitter<Move>();
   @Output() previousDisplayedMove = new EventEmitter<Move>();
   @Output() nextEvaluationMove = new EventEmitter<number>();
@@ -37,7 +38,6 @@ export class EvaluationInfoComponent implements OnDestroy {
   @Output() changeSection = new EventEmitter<string>();
   @Output() changeEvaluation = new EventEmitter<string>();
   selectedEvaluationId = '';
-  selectedSection = Section.dashboard;
   dashboardSection = Section.dashboard;
   scoresheetSection = Section.scoresheet;
   reportSection = Section.report;
@@ -73,7 +73,6 @@ export class EvaluationInfoComponent implements OnDestroy {
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(t => {
       if (t) {
         this.selectedTeamId = t ? t.id : this.selectedTeamId;
-        this.setSection(this.selectedSection);
       }
     });
     // observe the team users to get permissions
@@ -82,7 +81,6 @@ export class EvaluationInfoComponent implements OnDestroy {
       const currentTeamUser = teamUsers.find(tu => tu.userId === userId);
       this.canIncrementMove = currentTeamUser ? currentTeamUser.canIncrementMove : false;
     });
-    this.setSection(this.uiDataService.getSection(this.selectedEvaluationId) as Section);
     this.selectedTeamId = this.uiDataService.getTeam(this.selectedEvaluationId);
   }
 

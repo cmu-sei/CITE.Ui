@@ -219,21 +219,36 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.userDataService.getUsersFromApi();
     // observe route changes
     activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
+      // get and set the evaluation
       const evaluationId = params.get('evaluation');
       if (evaluationId) {
         this.evaluationDataService.setActive(evaluationId);
         this.uiDataService.setEvaluation(evaluationId);
       }
+      // get the requested section or set the saved section
       const section = params.get('section');
       switch (section) {
         case 'scoresheet':
+          // set scoresheet
           this.selectedSection = Section.scoresheet;
+          this.uiDataService.setSection(evaluationId, Section.scoresheet);
+          // now remove the section from the url, so that refreshes work properly
+          this.router.navigate([], {
+            queryParams: { evaluation: evaluationId },
+          });
           break;
         case 'dashboard':
+          // set dashboard
           this.selectedSection = Section.dashboard;
+          this.uiDataService.setSection(evaluationId, Section.dashboard);
+          // now remove the section from the url, so that refreshes work properly
+          this.router.navigate([], {
+            queryParams: { evaluation: evaluationId },
+          });
           break;
         default:
-          const savedSection = this.uiDataService.getSection(this.selectedEvaluationId);
+          // get the saved section
+          const savedSection = this.uiDataService.getSection(evaluationId);
           if (savedSection === 'scoresheet') {
             this.selectedSection =  Section.scoresheet;
           } else if (savedSection === 'report') {
@@ -243,7 +258,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
           break;
       }
-      this.uiDataService.setSection(this.selectedEvaluationId, this.selectedSection);
     });
     // observe the submissions
     this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
