@@ -148,20 +148,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.evaluationList = evaluations;
         this.sortedMoveList = moves.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
         const numberOfEvaluations = evaluations ? evaluations.length : 0;
-        this.topbarText = numberOfEvaluations !== 1 ?
-          this.topbarTextBase + ' (' + numberOfEvaluations + ' Active Incidents)' :
-          this.topbarTextBase + ' (1 Active Incident)';
         let evaluation: Evaluation;
         // if an evaluation has been selected, make it the active one
         if (this.selectedEvaluationId && evaluations && evaluations.length > 0) {
           evaluation = evaluations.find(e => e.id === this.selectedEvaluationId);
           this.currentMoveNumber = evaluation.currentMoveNumber;
-          this.evaluationDataService.setActive(evaluation.id);
-        // if there is only one evaluation, make it the active one, so that the user doesn't have to select it
-        } else if (evaluations && evaluations.length === 1) {
-          evaluation = evaluations[0];
-          this.currentMoveNumber = evaluation.currentMoveNumber;
-          this.selectedEvaluationId = evaluation.id;
           this.evaluationDataService.setActive(evaluation.id);
         }
         if (evaluation) {
