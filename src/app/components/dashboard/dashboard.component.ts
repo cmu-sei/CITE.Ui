@@ -208,9 +208,10 @@ export class DashboardComponent implements OnDestroy {
     let lastDisplayedMoveNumber = 0;
 
     if (+this.displayedMoveNumber === +this.currentMoveNumber) {
+      const displayedMove = this.moveList.find(m => +m.moveNumber === +this.displayedMoveNumber);
         description = '<div style="display: flex; align-items: center; font-size: 25px;">' +
             '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
-            'Current Move' +
+            'Current Move: ' + displayedMove.description +
             '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
             '</div>' +
             '<h4>' +
@@ -248,7 +249,7 @@ export class DashboardComponent implements OnDestroy {
     }
     this.completeSituationDescription = description;
   }
-
+  
   loadTeamData() {
     // load the team data for this team
     if (this.activeTeamId && this.selectedEvaluation.id) {

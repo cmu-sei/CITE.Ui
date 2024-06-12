@@ -27,7 +27,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         Advance Move
       </button>
     </div>
-    <span class="description-span"><h1 [ngStyle]='getMoveStyle()'>&nbsp;{{ getMoveDescription() }}</h1></span>
+    <span class="description-span"><h1>&nbsp;{{ getEvaluationDescriptionById(selectedEvaluationId) }}</h1></span>
   </div>
   <div class="move-div" *ngIf="!selectedEvaluationId || displayedMoveNumber < 0">
     &nbsp;
