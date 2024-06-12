@@ -504,7 +504,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     const submission = {
       teamId: activeTeam ? activeTeam.id : this.myTeamId,
       evaluationId: evaluation.id,
-      moveNumber: evaluation.currentMoveNumber,
+      moveNumber: this.displayedMoveNumber,
       score: 0,
       scoringModelId: evaluation.scoringModelId,
       status: ItemStatus.Active,
