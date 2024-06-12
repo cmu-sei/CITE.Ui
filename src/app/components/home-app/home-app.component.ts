@@ -474,6 +474,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       return;
     }
     if (submissions.length === 0) {
+      console.log('make new in processSubmissions() with no submissions');
       this.makeNewSubmission();
     // don't process the submissions if the selected team has changed, but the new submissions haven't been loaded yet
     } else if (submissions.some(s => s.teamId && s.teamId === activeTeam.id)) {
@@ -574,6 +575,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
         this.setAndGetActiveSubmission(newSubmission);
       } else {
+        console.log('make new in selectDisplayedSubmission() with selection="' + selection + '" and displayedMoveNumber=' + this.displayedMoveNumber);
         this.makeNewSubmission();
       }
     }
