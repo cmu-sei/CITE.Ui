@@ -117,6 +117,11 @@ export class EvaluationInfoComponent implements OnDestroy {
     return move ? move.description : 'Move not found in list (description)!';
   }
 
+  getEvaluationDescriptionById(evaluationId: string): string {
+    const evaluation = this.evaluationList.find(e => e.id === evaluationId);
+    return evaluation ? evaluation.description : 'Evaluation not found';
+  }  
+
   incrementDisplayedMove() {
     const nextMoveIndex = this.sortedMoveList().findIndex(m => +m.moveNumber === +this.displayedMoveNumber) + 1;
     if (+nextMoveIndex <= +this.currentMoveNumber) {
