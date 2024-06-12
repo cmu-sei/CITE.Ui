@@ -484,7 +484,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         if (!submissionType) {
           submissionType = 'user';
         }
-        if (submissionType == 'user' && !scoringModel.useUserScore) {
+        if (submissionType === 'user' && !scoringModel.useUserScore) {
           submissionType = 'team';
         }
         this.selectDisplayedSubmission(submissionType);
@@ -531,7 +531,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (selection === 'report') {
       this.selectedSection = this.selectedSection === this.section.report ? this.section.dashboard : this.section.report;
     } else {
-      this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
       const submissions = this.submissionQuery.getAll();
       let newSubmission: Submission = null;
       switch (selection) {
@@ -572,6 +571,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           break;
       }
       if (newSubmission) {
+        this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
         this.setAndGetActiveSubmission(newSubmission);
       } else {
         this.makeNewSubmission();
