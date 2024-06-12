@@ -154,6 +154,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           evaluation = evaluations.find(e => e.id === this.selectedEvaluationId);
           this.currentMoveNumber = evaluation.currentMoveNumber;
           this.evaluationDataService.setActive(evaluation.id);
+        } else if (evaluations && evaluations.length === 1) {
+          evaluation = evaluations[0];
+          this.currentMoveNumber = evaluation.currentMoveNumber;
+          this.selectedEvaluationId = evaluation.id;
+          this.evaluationDataService.setActive(evaluation.id);
         }
         if (evaluation) {
           this.selectedEvaluationId = evaluation.id;
