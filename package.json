@@ -1,6 +1,6 @@
 {
   "name": "cite-ui",
-  "version": "1.6.5-rc1",
+  "version": "1.7.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -37,7 +37,7 @@
     "@datorama/akita-ngdevtools": "^7.0.0",
     "@kolkov/angular-editor": "^3.0.0-beta.0",
     "@mdi/font": "^5.9.55",
-    "@microsoft/signalr": "^5.0.7",
+    "@microsoft/signalr": "^8.0.7",
     "@types/luxon": "^3.2.0",
     "ajv": "^8.6.0",
     "core-js": "^3.14.0",
