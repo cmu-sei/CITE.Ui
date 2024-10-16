@@ -38,6 +38,7 @@ export class GallerySignalRService implements OnDestroy {
     const accessToken = this.authService.getAuthorizationToken();
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(this.getHubUrlWithAuth())
+      .withStatefulReconnect()
       .withAutomaticReconnect(new RetryPolicy(60, 0, 5))
       .build();
 
