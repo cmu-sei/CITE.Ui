@@ -70,28 +70,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-form-field>
         <input
           matInput
-          [ngxMatDatetimePicker]="picker"
+          id = "[ngxMatDatetimePicker]='picker'"
           placeholder="Situation Date / Time"
           [formControl]="situationDateFormControl"
           (inputChange)="saveEvaluation('situationDate')"
           (dateChange)="saveEvaluation('situationDate')"
         >
-        <mat-datepicker-toggle
-          matSuffix
-          title="Choose Date/Time"
-          [for]="$any(picker)">
-        </mat-datepicker-toggle>
-        <ngx-mat-datetime-picker #picker
-           [showSpinners]=true
-           [showSeconds]=true
-           [stepHour]=1
-           [stepMinute]=1
-           [stepSecond]=1
-           [touchUi]=false
-           [enableMeridian]=true
-           [disableMinute]=false
-           [hideTime]=false>
-        </ngx-mat-datetime-picker>
      </mat-form-field>
     </div>
   </div>
