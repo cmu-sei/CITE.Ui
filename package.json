@@ -20,7 +20,6 @@
   "private": true,
   "dependencies": {
     "@angular-devkit/core": "^16.2.16",
-    "@angular-material-components/datetime-picker": "^9.0.0",
     "@angular/animations": "^16.2.12",
     "@angular/cdk": "^15.2.3",
     "@angular/common": "^16.2.12",
