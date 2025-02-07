@@ -72,19 +72,19 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "cite-ui:build",
-            "port": 4721
+            "port": 4721,
+            "buildTarget": "cite-ui:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "cite-ui:build:production"
+              "buildTarget": "cite-ui:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "cite-ui:build"
+            "buildTarget": "cite-ui:build"
           }
         },
         "test": {
