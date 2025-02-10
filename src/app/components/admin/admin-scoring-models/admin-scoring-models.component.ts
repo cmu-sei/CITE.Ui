@@ -23,9 +23,10 @@ import { AdminScoringModelEditDialogComponent } from '../admin-scoring-model-edi
 import { UserDataService } from 'src/app/data/user/user-data.service';
 
 @Component({
-  selector: 'app-admin-scoring-models',
-  templateUrl: './admin-scoring-models.component.html',
-  styleUrls: ['./admin-scoring-models.component.scss'],
+    selector: 'app-admin-scoring-models',
+    templateUrl: './admin-scoring-models.component.html',
+    styleUrls: ['./admin-scoring-models.component.scss'],
+    standalone: false
 })
 export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   scoringModelList: ScoringModel[] = [];

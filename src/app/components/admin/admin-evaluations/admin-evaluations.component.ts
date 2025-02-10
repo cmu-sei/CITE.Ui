@@ -26,9 +26,10 @@ import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dia
 import { UserDataService } from 'src/app/data/user/user-data.service';
 
 @Component({
-  selector: 'app-admin-evaluations',
-  templateUrl: './admin-evaluations.component.html',
-  styleUrls: ['./admin-evaluations.component.scss'],
+    selector: 'app-admin-evaluations',
+    templateUrl: './admin-evaluations.component.html',
+    styleUrls: ['./admin-evaluations.component.scss'],
+    standalone: false
 })
 
 export class AdminEvaluationsComponent implements OnInit, OnDestroy {

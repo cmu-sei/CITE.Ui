@@ -31,9 +31,10 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminRoleEditDialogComponent } from '../admin-role-edit-dialog/admin-role-edit-dialog.component';
 
 @Component({
-  selector: 'app-admin-roles',
-  templateUrl: './admin-roles.component.html',
-  styleUrls: ['./admin-roles.component.scss'],
+    selector: 'app-admin-roles',
+    templateUrl: './admin-roles.component.html',
+    styleUrls: ['./admin-roles.component.scss'],
+    standalone: false
 })
 export class AdminRolesComponent implements OnDestroy, OnInit {
   @Input() showSelectionControls: boolean;

@@ -25,9 +25,10 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-  selector: 'app-admin-scoring-model-edit-dialog',
-  templateUrl: './admin-scoring-model-edit-dialog.component.html',
-  styleUrls: ['./admin-scoring-model-edit-dialog.component.scss'],
+    selector: 'app-admin-scoring-model-edit-dialog',
+    templateUrl: './admin-scoring-model-edit-dialog.component.html',
+    styleUrls: ['./admin-scoring-model-edit-dialog.component.scss'],
+    standalone: false
 })
 
 export class AdminScoringModelEditDialogComponent {

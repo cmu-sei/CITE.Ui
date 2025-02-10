@@ -16,9 +16,10 @@ import { AdminMoveEditDialogComponent } from '../admin-move-edit-dialog/admin-mo
 import { UntypedFormControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-admin-moves',
-  templateUrl: './admin-moves.component.html',
-  styleUrls: ['./admin-moves.component.scss'],
+    selector: 'app-admin-moves',
+    templateUrl: './admin-moves.component.html',
+    styleUrls: ['./admin-moves.component.scss'],
+    standalone: false
 })
 export class AdminMovesComponent implements OnInit, OnDestroy {
   @Input() evaluationId: string;

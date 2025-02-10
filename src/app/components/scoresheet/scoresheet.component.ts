@@ -29,9 +29,10 @@ import { Title} from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 
 @Component({
-  selector: 'app-scoresheet',
-  templateUrl: './scoresheet.component.html',
-  styleUrls: ['./scoresheet.component.scss'],
+    selector: 'app-scoresheet',
+    templateUrl: './scoresheet.component.html',
+    styleUrls: ['./scoresheet.component.scss'],
+    standalone: false
 })
 export class ScoresheetComponent implements OnDestroy {
   @Input() myTeamId: string;

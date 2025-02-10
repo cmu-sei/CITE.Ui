@@ -28,9 +28,10 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-  selector: 'app-admin-move-edit-dialog',
-  templateUrl: './admin-move-edit-dialog.component.html',
-  styleUrls: ['./admin-move-edit-dialog.component.scss'],
+    selector: 'app-admin-move-edit-dialog',
+    templateUrl: './admin-move-edit-dialog.component.html',
+    styleUrls: ['./admin-move-edit-dialog.component.scss'],
+    standalone: false
 })
 
 export class AdminMoveEditDialogComponent {

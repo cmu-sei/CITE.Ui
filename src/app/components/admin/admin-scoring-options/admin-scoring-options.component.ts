@@ -14,9 +14,10 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminScoringOptionEditDialogComponent } from '../admin-scoring-option-edit-dialog/admin-scoring-option-edit-dialog.component';
 
 @Component({
-  selector: 'app-admin-scoring-options',
-  templateUrl: './admin-scoring-options.component.html',
-  styleUrls: ['./admin-scoring-options.component.scss'],
+    selector: 'app-admin-scoring-options',
+    templateUrl: './admin-scoring-options.component.html',
+    styleUrls: ['./admin-scoring-options.component.scss'],
+    standalone: false
 })
 export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
   @Input() scoringCategoryId: string;

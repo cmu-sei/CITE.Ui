@@ -16,9 +16,10 @@ import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-admin-teamtypes',
-  templateUrl: './admin-teamtypes.component.html',
-  styleUrls: ['./admin-teamtypes.component.scss'],
+    selector: 'app-admin-teamtypes',
+    templateUrl: './admin-teamtypes.component.html',
+    styleUrls: ['./admin-teamtypes.component.scss'],
+    standalone: false
 })
 export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   pageIndex: number = 0;

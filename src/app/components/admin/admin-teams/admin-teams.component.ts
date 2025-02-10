@@ -19,9 +19,10 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 
 @Component({
-  selector: 'app-admin-teams',
-  templateUrl: './admin-teams.component.html',
-  styleUrls: ['./admin-teams.component.scss'],
+    selector: 'app-admin-teams',
+    templateUrl: './admin-teams.component.html',
+    styleUrls: ['./admin-teams.component.scss'],
+    standalone: false
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
   @Input() evaluationId: string;

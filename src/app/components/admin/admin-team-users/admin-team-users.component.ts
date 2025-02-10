@@ -22,9 +22,10 @@ import { takeUntil } from 'rxjs/operators';
 import { UntypedFormControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-admin-team-users',
-  templateUrl: './admin-team-users.component.html',
-  styleUrls: ['./admin-team-users.component.scss'],
+    selector: 'app-admin-team-users',
+    templateUrl: './admin-team-users.component.html',
+    styleUrls: ['./admin-team-users.component.scss'],
+    standalone: false
 })
 export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   @Input() teamId: string;

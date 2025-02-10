@@ -3,7 +3,8 @@
 
 /* VENDER IMPORTS */
 @use '@angular/material' as mat;
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 $mdi-font-path: '@mdi/font/fonts';
 @import '@mdi/font/scss/materialdesignicons';
 @import 'material-design-icons/iconfont/material-icons.css';    // added for ngx-mat-datetimepicker

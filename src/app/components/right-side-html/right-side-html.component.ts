@@ -9,9 +9,10 @@ import { Subject, Observable } from 'rxjs';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 
 @Component({
-  selector: 'app-right-side-html',
-  templateUrl: './right-side-html.component.html',
-  styleUrls: ['./right-side-html.component.scss'],
+    selector: 'app-right-side-html',
+    templateUrl: './right-side-html.component.html',
+    styleUrls: ['./right-side-html.component.scss'],
+    standalone: false
 })
 export class RightSideHtmlComponent implements OnDestroy {
   isLoading = false;

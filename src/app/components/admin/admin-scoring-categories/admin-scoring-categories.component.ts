@@ -16,9 +16,10 @@ import {
 } from '../admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
 
 @Component({
-  selector: 'app-admin-scoring-categories',
-  templateUrl: './admin-scoring-categories.component.html',
-  styleUrls: ['./admin-scoring-categories.component.scss'],
+    selector: 'app-admin-scoring-categories',
+    templateUrl: './admin-scoring-categories.component.html',
+    styleUrls: ['./admin-scoring-categories.component.scss'],
+    standalone: false
 })
 export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   @Input() scoringModelId: string;

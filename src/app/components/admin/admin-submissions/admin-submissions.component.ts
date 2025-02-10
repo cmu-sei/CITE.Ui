@@ -29,9 +29,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 
 @Component({
-  selector: 'app-admin-submissions',
-  templateUrl: './admin-submissions.component.html',
-  styleUrls: ['./admin-submissions.component.scss'],
+    selector: 'app-admin-submissions',
+    templateUrl: './admin-submissions.component.html',
+    styleUrls: ['./admin-submissions.component.scss'],
+    standalone: false
 })
 export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   sort: Sort = {

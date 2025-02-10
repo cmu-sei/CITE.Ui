@@ -8,9 +8,10 @@ import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'app-score-summary',
-  templateUrl: './score-summary.component.html',
-  styleUrls: ['./score-summary.component.scss'],
+    selector: 'app-score-summary',
+    templateUrl: './score-summary.component.html',
+    styleUrls: ['./score-summary.component.scss'],
+    standalone: false
 })
 export class ScoreSummaryComponent implements OnDestroy {
   isLoading = false;

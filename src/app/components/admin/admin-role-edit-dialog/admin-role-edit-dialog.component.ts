@@ -24,9 +24,10 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-  selector: 'app-admin-role-edit-dialog',
-  templateUrl: './admin-role-edit-dialog.component.html',
-  styleUrls: ['./admin-role-edit-dialog.component.scss'],
+    selector: 'app-admin-role-edit-dialog',
+    templateUrl: './admin-role-edit-dialog.component.html',
+    styleUrls: ['./admin-role-edit-dialog.component.scss'],
+    standalone: false
 })
 
 export class AdminRoleEditDialogComponent {

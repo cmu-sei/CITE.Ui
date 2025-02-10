@@ -33,9 +33,10 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admin-action-edit-dialog.component';
 
 @Component({
-  selector: 'app-admin-actions',
-  templateUrl: './admin-actions.component.html',
-  styleUrls: ['./admin-actions.component.scss'],
+    selector: 'app-admin-actions',
+    templateUrl: './admin-actions.component.html',
+    styleUrls: ['./admin-actions.component.scss'],
+    standalone: false
 })
 export class AdminActionsComponent implements OnDestroy, OnInit {
   @Input() showSelectionControls: boolean;
