@@ -41,7 +41,7 @@ import { GallerySignalRService } from 'src/app/services/gallery-signalr.service'
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { RightSideDisplay } from 'src/app/generated/cite.api/model/rightSideDisplay';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
 

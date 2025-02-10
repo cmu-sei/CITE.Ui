@@ -29,7 +29,7 @@ import { TeamUserQuery } from 'src/app/data/team-user/team-user.query';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { Title } from '@angular/platform-browser';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialog/admin-action-edit-dialog.component';
 import { AdminRoleEditDialogComponent } from '../admin/admin-role-edit-dialog/admin-role-edit-dialog.component';
@@ -249,7 +249,7 @@ export class DashboardComponent implements OnDestroy {
     }
     this.completeSituationDescription = description;
   }
-  
+
   loadTeamData() {
     // load the team data for this team
     if (this.activeTeamId && this.selectedEvaluation.id) {

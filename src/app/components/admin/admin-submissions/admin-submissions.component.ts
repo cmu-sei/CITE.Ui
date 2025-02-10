@@ -7,18 +7,25 @@ import {
   OnInit,
   OnDestroy,
 } from '@angular/core';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import { Evaluation, Submission, User } from 'src/app/generated/cite.api/model/models';
+import {
+  Evaluation,
+  Submission,
+  User,
+} from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import {
+  PopulatedSubmission,
+  SubmissionType,
+} from 'src/app/data/submission/submission.models';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 
 @Component({
@@ -29,21 +36,25 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
 export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   sort: Sort = {
     active: 'name',
-    direction: 'asc'
+    direction: 'asc',
   };
   pageIndex: number = 0;
   pageSize: number = 10;
   displayedSubmissions: PopulatedSubmission[] = [];
   filterString = '';
-  filteredSubmission: PopulatedSubmission [] = [];
+  filteredSubmission: PopulatedSubmission[] = [];
   isLoading = false;
   topbarColor = '#ef3a47';
   populatedSubmissions: PopulatedSubmission[] = [];
   dataSource = new MatTableDataSource<PopulatedSubmission>();
   selectedEvaluation: Evaluation = { id: '', description: '' };
   evaluationList: Evaluation[] = [];
-  submissionTypes = [ SubmissionType.official, SubmissionType.team, SubmissionType.user ];
-  selectedSubmissionTypes = [ SubmissionType.official, SubmissionType.team ];
+  submissionTypes = [
+    SubmissionType.official,
+    SubmissionType.team,
+    SubmissionType.user,
+  ];
+  selectedSubmissionTypes = [SubmissionType.official, SubmissionType.team];
   selectedMove = -1;
   moveList: number[] = [];
   userList$: User[] = [];
@@ -71,7 +82,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
     this.evaluationQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(evaluations => {
+      .subscribe((evaluations) => {
         this.evaluationList = evaluations;
       });
 
@@ -81,7 +92,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((submissions) => {
         const moves: number[] = [];
-        submissions.forEach(submission => {
+        submissions.forEach((submission) => {
           if (!moves.includes(+submission.moveNumber)) {
             moves.push(+submission.moveNumber);
           }
@@ -107,24 +118,32 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   }
 
   deleteSubmissionRequest(submission: Submission) {
-    this.dialogService.confirm(
-      'Delete this submission?',
-      'Are you sure that you want to delete this submission?'
-    ).subscribe((result) => {
-      if (result['confirm']) {
-        this.submissionDataService.delete(submission.id);
-      }
-    });
+    this.dialogService
+      .confirm(
+        'Delete this submission?',
+        'Are you sure that you want to delete this submission?'
+      )
+      .subscribe((result) => {
+        if (result['confirm']) {
+          this.submissionDataService.delete(submission.id);
+        }
+      });
   }
 
   sortChanged(sort: Sort) {
     this.sort = sort;
-    this.filteredSubmission.sort((a, b) => this.sortSubmissions(a, b, sort.active, sort.direction));
+    this.filteredSubmission.sort((a, b) =>
+      this.sortSubmissions(a, b, sort.active, sort.direction)
+    );
     this.applyPagination();
   }
 
-  private sortSubmissions(a: PopulatedSubmission, b: PopulatedSubmission, column: string, direction: string)
-  {
+  private sortSubmissions(
+    a: PopulatedSubmission,
+    b: PopulatedSubmission,
+    column: string,
+    direction: string
+  ) {
     const isAsc = direction !== 'desc';
     switch (column) {
       case 'name':
@@ -134,36 +153,33 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
         );
       case 'submissionType':
         return (
-          (a.submissionType.toLowerCase() < b.submissionType.toLowerCase() ? -1 : 1) *
-          (isAsc ? 1 : -1)
+          (a.submissionType.toLowerCase() < b.submissionType.toLowerCase()
+            ? -1
+            : 1) * (isAsc ? 1 : -1)
         );
       case 'moveNumber':
-        return (
-          (a.moveNumber < b.moveNumber ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
+        return (a.moveNumber < b.moveNumber ? -1 : 1) * (isAsc ? 1 : -1);
       case 'score':
-        return (
-          (a.score < b.score ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
+        return (a.score < b.score ? -1 : 1) * (isAsc ? 1 : -1);
       case 'status':
         return (
-          (a.status.toLowerCase() < b.status.toLowerCase() ? -1 : 1 ) *
+          (a.status.toLowerCase() < b.status.toLowerCase() ? -1 : 1) *
           (isAsc ? 1 : -1)
         );
-      default: 
-        return 0; 
+      default:
+        return 0;
     }
   }
 
   criteriaChanged() {
-    this.filteredSubmission= this.populatedSubmissions.filter(submission =>
-      this.selectedSubmissionTypes.includes(submission.submissionType) &&
-      (this.selectedMove === -1 || +submission.moveNumber === this.selectedMove)
+    this.filteredSubmission = this.populatedSubmissions.filter(
+      (submission) =>
+        this.selectedSubmissionTypes.includes(submission.submissionType) &&
+        (this.selectedMove === -1 ||
+          +submission.moveNumber === this.selectedMove)
     );
     this.applyPagination();
-  }  
+  }
 
   paginatorEvent(event: PageEvent) {
     this.pageIndex = event.pageIndex;
@@ -173,9 +189,11 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
 
   applyPagination() {
     const startIndex = this.pageIndex * this.pageSize;
-    this.displayedSubmissions = this.filteredSubmission.slice(startIndex, startIndex + this.pageSize);
+    this.displayedSubmissions = this.filteredSubmission.slice(
+      startIndex,
+      startIndex + this.pageSize
+    );
   }
-  
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);
