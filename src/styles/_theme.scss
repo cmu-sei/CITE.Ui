@@ -1,7 +1,6 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 @use '@angular/material' as mat;
-@import '@angular/material/theming';
 
 $mat-cmu-tartan: (
   50: #ff3838,
@@ -155,10 +154,10 @@ $custom-colors: (
   );
 }
 
-$custom-typography: mat.define-legacy-typography-config(
+$custom-typography: mat.define-typography-config(
   $font-family: '"Open Sans", sans-serif',
 );
-@include mat.all-legacy-component-typographies($custom-typography);
+@include mat.all-component-typographies($custom-typography);
 
 //globals mixin for edge cases.
 @mixin globals($theme) {
@@ -218,7 +217,7 @@ $custom-typography: mat.define-legacy-typography-config(
     color: map-get($foreground, 'text');
   }
 
-  .mat-tooltip {
+  .mat-mdc-tooltip {
     background-color: map-get($background, hover);
     color: map-get($foreground, text);
   }
@@ -240,19 +239,19 @@ $custom-typography: mat.define-legacy-typography-config(
     background: map-get($background, background);
   }
 */
-  .mat-paginator {
+  .mat-mdc-paginator {
     color: map-get($foreground, text);
     background: map-get($background, background);
   }
 
-  .mat-form-field {
+  .mat-mdc-form-field {
     color: map-get($foreground, text);
   }
 
-  .mat-header-cell {
+  .mat-mdc-header-cell {
     color: map-get($foreground, text);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
   .mat-form-field-label {
     color: map-get($foreground, text) !important;
   }

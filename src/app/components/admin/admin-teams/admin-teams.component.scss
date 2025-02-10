@@ -35,16 +35,16 @@
   width: 150px;
 }
 
-.mat-header-row {
+.mat-mdc-header-row {
   min-height: 56px;
   font-family: "open_sansregular";
 }
 
-.mat-row {
+.mat-mdc-row {
   min-height: 48px;
 }
 
-.mat-row, .mat-header-row {
+.mat-mdc-row, .mat-mdc-header-row {
   display: flex;
   border-bottom-width: 1px;
   border-bottom-style: solid;
@@ -53,7 +53,7 @@
   box-sizing: border-box;
 }
 
-.mat-cell, .mat-header-cell {
+.mat-mdc-cell, .mat-mdc-header-cell {
   flex: 1;
   overflow: hidden;
   word-wrap: break-word;
@@ -68,13 +68,13 @@
   margin-left: 10px;
 }
 
-.mat-accordion .mat-header-row {
+.mat-accordion .mat-mdc-header-row {
   padding-left: 1.5rem;
   padding-right: 2rem;
   border-bottom: none;
 }
 
-.mat-expansion-panel-header.mat-row {
+.mat-expansion-panel-header.mat-mdc-row {
   border-bottom: none;
 }
 

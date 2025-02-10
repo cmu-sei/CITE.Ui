@@ -7,11 +7,11 @@
   margin-left: 5%;
 }
 
-.mat-header-row {
+.mat-mdc-header-row {
   min-height: 36px;
 }
 
-.mat-row, .mat-header-row {
+.mat-mdc-row, .mat-mdc-header-row {
   display: flex;
   flex-direction: row;
   border-bottom-width: 1px;
@@ -28,13 +28,13 @@
   margin-left: 10px;
 }
 
-.mat-accordion .mat-header-row {
+.mat-accordion .mat-mdc-header-row {
   padding-left: 1.5rem;
   padding-right: 2rem;
   border-bottom: none;
 }
 
-.mat-expansion-panel-header.mat-row {
+.mat-expansion-panel-header.mat-mdc-row {
   border-bottom: none;
 }
 
@@ -42,7 +42,7 @@
   text-align: left;
 }
 
-.mat-cell {
+.mat-mdc-cell {
   display: flex;
   flex-direction: row;
 }

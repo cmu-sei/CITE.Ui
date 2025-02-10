@@ -25,21 +25,22 @@
   flex: 1;
 }
 
-.mat-table-all-users {
+.mat-mdc-table-all-users {
   overflow: auto;
   max-height: 400px;
 }
 
-.mat-table-observers {
+.mat-mdc-table-observers {
   overflow: auto;
   max-height: 600px;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version.*/
 .mat-button-focus-overlay {
   background-color: transparent;
 }
 
-.mat-cell {
+.mat-mdc-cell {
   padding-right: 0;
 }
 

@@ -3,51 +3,33 @@
 
 /* VENDER IMPORTS */
 @use '@angular/material' as mat;
-@import '@angular/material/theming';
-// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
-//  The following line adds:
-//    1. Default typography styles for all components
-//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
-//  If you specify typography styles for the components you use elsewhere, you should delete this line.
-//  If you don't need the default component typographies but still want the hierarchy styles,
-//  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
-@include mat.all-legacy-component-typographies();
-@include mat.legacy-core();
+@include mat.core();
 $mdi-font-path: '~@mdi/font/fonts';
 @import '@mdi/font/scss/materialdesignicons';
 @import '~material-design-icons/iconfont/material-icons.css';    // added for ngx-mat-datetimepicker
 
 /* END VENDER IMPORTS */
 
-/* LOCAL IMPORTS */
-@import 'theme';
-/* END LOCAL IMPORTS */
-
 .light-theme {
-  @include mat.all-legacy-component-themes($light-theme);
-  @include globals($light-theme);
 }
 
 .dark-theme {
-  @include mat.all-legacy-component-themes($dark-theme);
-  @include globals($dark-theme);
 }
 
 /* The following overrides transparent select options after upgrading to Angular 7 */
-.mat-select-panel {
+.mat-mdc-select-panel {
   background: #fff;
 }
-.mat-select-panel:not([class*='mat-elevation-z']) {
+.mat-mdc-select-panel:not([class*='mat-elevation-z']) {
   box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
     0 1px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
-.ngx-mat-timepicker form .ngx-mat-timepicker-table .ngx-mat-timepicker-tbody tr td .mat-icon-button .mat-icon {
+.ngx-mat-timepicker form .ngx-mat-timepicker-table .ngx-mat-timepicker-tbody tr td .mat-mdc-icon-button .mat-icon {
   font-family: 'Material Icons';
 }
 
-.mat-datepicker-content .mat-stroked-button {
+.mat-datepicker-content .mat-mdc-outlined-button {
   font-family: 'Material Icons';
 }
 

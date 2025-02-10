@@ -33,11 +33,11 @@
   text-align: right;
 }
 
-.mat-cell {
+.mat-mdc-cell {
   border: none !important;
 }
 
-.mat-row {
+.mat-mdc-row {
   border: none !important;
 }
 
@@ -54,7 +54,7 @@
   justify-content: center;
 }
 
-.mat-header-row {
+.mat-mdc-header-row {
   position: sticky;
   top: -.5px;
   z-index: 100;
