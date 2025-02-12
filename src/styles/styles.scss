@@ -1,37 +1,27 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
-/* VENDER IMPORTS */
-@use '@angular/material' as mat;
-@include mat.elevation-classes();
-@include mat.app-background();
-$mdi-font-path: '@mdi/font/fonts';
-@import '@mdi/font/scss/materialdesignicons';
-@import 'material-design-icons/iconfont/material-icons.css';    // added for ngx-mat-datetimepicker
+@use "@angular/material" as mat;
+@include mat.core();
 
-/* END VENDER IMPORTS */
-
-.light-theme {
+html {
+  @include mat.theme((color: mat.$azure-palette,
+      typography: '"Open Sans", sans-serif',
+    ),
+    $overrides: ((background: #f1f1f2, surface: #f1f1f2)));
 }
 
-.dark-theme {
+.darkMode {
+  @include mat.theme((color: (primary: mat.$azure-palette,
+        theme-type: dark,
+      ),
+    ),
+    $overrides: ((background: #313131, surface: #373737)));
 }
 
-/* The following overrides transparent select options after upgrading to Angular 7 */
-.mat-mdc-select-panel {
-  background: #fff;
-}
-.mat-mdc-select-panel:not([class*='mat-elevation-z']) {
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
-    0 1px 10px 0 rgba(0, 0, 0, 0.12);
-}
-
-.ngx-mat-timepicker form .ngx-mat-timepicker-table .ngx-mat-timepicker-tbody tr td .mat-mdc-icon-button .mat-icon {
-  font-family: 'Material Icons';
-}
-
-.mat-datepicker-content .mat-mdc-outlined-button {
-  font-family: 'Material Icons';
+html,
+body {
+  height: 100%;
 }
 
 /* The following acts as drop in replacement for the deprecation of Angular FlexLayout */

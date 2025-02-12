@@ -5,7 +5,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <div
-  class="app-events-container background text"
+  class="app-events-container"
 >
   <app-topbar
     *ngIf="!hideTopbar"
@@ -19,7 +19,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
   <div
     *ngIf="apiIsSick && waitedLongEnough"
-    class="app-header-container background text"
+    class="app-header-container"
     autosize
   >
     <h1>{{ apiMessage }}</h1>
@@ -193,4 +193,3 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
 </div>
-
