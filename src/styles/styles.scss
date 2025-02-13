@@ -2,21 +2,21 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
 @use "@angular/material" as mat;
+@use "./theme-colors" as theme;
 @include mat.core();
 
 html {
-  @include mat.theme((color: mat.$azure-palette,
+  @include mat.theme((color: theme.$primary-palette,
       typography: '"Open Sans", sans-serif',
-    ),
-    $overrides: ((background: #f1f1f2, surface: #f1f1f2)));
+    ));
 }
 
 .darkMode {
-  @include mat.theme((color: (primary: mat.$azure-palette,
+  @include mat.theme((color: (primary: theme.$primary-palette,
         theme-type: dark,
       ),
     ),
-    $overrides: ((background: #313131, surface: #373737)));
+    $overrides: ((background: #313131, surface: #313131, surface-variant: #313131)));
 }
 
 html,

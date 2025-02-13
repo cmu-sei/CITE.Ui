@@ -10,8 +10,6 @@
 .toolbar {
   max-height: 38px;
   min-height: 38px;
-  background-color: var(--mat-sys-primary);
-    color: var(--mat-sys-on-primary);
 }
 .options-text {
   text-align: right;
@@ -27,4 +25,8 @@
   width: 32px;
   margin-top: 3px;
   cursor: pointer;
+}
+
+.menu-trigger {
+  color: white !important;
 }
