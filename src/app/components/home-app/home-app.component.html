@@ -21,7 +21,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </span>
     <button aria-label="Show Administration Page" mat-icon-button *ngIf="canAccessAdminSection$ | async"
       [routerLink]="['/admin']" [queryParams]="{section: 'Evaluations'}" style="outline: none; align-self: center;"
-      title="Administration">
+      title="Administration" color="primary">
       <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
       Goto Administration Pages
     </button>

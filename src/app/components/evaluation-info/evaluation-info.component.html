@@ -4,92 +4,68 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="evaluation-info">
-  <h2 *ngIf="!selectedEvaluationId">&nbsp;</h2>    <!-- Adds spacing to the selection box before a selection is made -->
+<div class="evaluation-info-container">
+  <h2 *ngIf="!selectedEvaluationId">&nbsp;</h2> <!-- Adds spacing to the selection box before a selection is made -->
   <div class="move-div" *ngIf="selectedEvaluationId && displayedMoveNumber > -1">
     <h1 class="nowrap">Move:&nbsp;</h1>
-    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="isMinMoveNumber()" (click)="decrementDisplayedMove()" title="Decrement Move">
+    <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="isMinMoveNumber()"
+      (click)="decrementDisplayedMove()" title="Decrement Move">
       <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
     </button>
     <h1 class="nowrap" [ngStyle]='getMoveStyle()'>{{ displayedMoveNumber }}</h1>
-    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isCurrentMoveNumber()" (click)="incrementDisplayedMove()" title="Increment Move">
+    <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isCurrentMoveNumber()"
+      (click)="incrementDisplayedMove()" title="Increment Move">
       <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
     </button>
     <h1>&nbsp;of&nbsp;&nbsp;&nbsp;{{ getMaxMoveNumber() }}</h1>
     <div class="move-div" *ngIf="showAdvanceMove()">
-      <button
-        aria-label="Next Move"
-        mat-button class="blue-button mat-focus-indicator move-button background-button mat-raised-button mat-button-base mat-user ng-star-inserted"
-        (click)="advanceCurrentMove()"
-        title="Next Move"
-        [disabled]="noChanges"
-      >
+      <button aria-label="Advance Move" mat-flat-button (click)="advanceCurrentMove()" class="advance-button"
+        title="Advance the evaluation to the next move for all participants" [disabled]="noChanges">
         Advance Move
       </button>
     </div>
-    <span class="description-span"><h1>&nbsp;{{ getEvaluationDescriptionById(selectedEvaluationId) }}</h1></span>
+    <span class="description-span">
+      <h1>&nbsp;{{ getEvaluationDescriptionById(selectedEvaluationId) }}</h1>
+    </span>
   </div>
   <div class="move-div" *ngIf="!selectedEvaluationId || displayedMoveNumber < 0">
     &nbsp;
   </div>
   <div class="right-buttons" *ngIf="selectedTeamId">
-    <span *ngIf="selectedTeamId && selectedTeamId === myTeamId && selectedEvaluationId" class="mat-select center-self bold-text">Team:&nbsp;&nbsp;</span>
-    <span *ngIf="selectedTeamId && selectedTeamId !== myTeamId && selectedEvaluationId" class="mat-select center-self bold-text">Observing:&nbsp;&nbsp;</span>
-    <span *ngIf="teamList && teamList.length <= 1 && selectedEvaluationId" class="mat-select center-self">{{ getTeamShortName() }}</span>
-    <mat-select *ngIf="teamList && teamList.length > 1 && selectedEvaluationId" class="center-self" placeholder="Team" [value]="selectedTeamId" (selectionChange)="setActiveTeam($event.value)">
+    <span *ngIf="selectedTeamId && selectedTeamId === myTeamId && selectedEvaluationId"
+      class="mat-select center-self bold-text">Team:&nbsp;&nbsp;</span>
+    <span *ngIf="selectedTeamId && selectedTeamId !== myTeamId && selectedEvaluationId"
+      class="mat-select center-self bold-text">Observing:&nbsp;&nbsp;</span>
+    <span *ngIf="teamList && teamList.length <= 1 && selectedEvaluationId" class="mat-select center-self">{{
+      getTeamShortName() }}</span>
+    <mat-select *ngIf="teamList && teamList.length > 1 && selectedEvaluationId" class="center-self" placeholder="Team"
+      [value]="selectedTeamId" (selectionChange)="setActiveTeam($event.value)">
       <mat-option *ngFor="let team of teamList" [value]="team.id">
         {{ team.shortName }}
       </mat-option>
     </mat-select>
-    <button
-      mat-icon-button
-      style="outline: none;"
-      title="SubmissionReview"
-      (click)="setSection(reportSection)"
-      *ngIf="selectedSection !== reportSection && selectedEvaluationId"
-    >
+    <button mat-icon-button style="outline: none;" title="SubmissionReview" (click)="setSection(reportSection)"
+      *ngIf="selectedSection !== reportSection && selectedEvaluationId">
       <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
     </button>
-    <button
-      mat-icon-button
-      style="outline: none;"
-      title="Dashboard"
-      (click)="setSection(dashboardSection)"
-      *ngIf="selectedTeamId && selectedSection === scoresheetSection || selectedSection === reportSection && selectedEvaluationId"
-    >
+    <button mat-icon-button style="outline: none;" title="Dashboard" (click)="setSection(dashboardSection)"
+      *ngIf="selectedTeamId && selectedSection === scoresheetSection || selectedSection === reportSection && selectedEvaluationId">
       <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard"></mat-icon>
     </button>
-    <button
-      mat-icon-button
-      style="outline: none;"
-      title="Scoresheet"
-      (click)="setSection(scoresheetSection)"
-      *ngIf="selectedTeamId && selectedSection !== scoresheetSection && !hideScoresheet() && selectedEvaluationId"
-    >
+    <button mat-icon-button style="outline: none;" title="Scoresheet" (click)="setSection(scoresheetSection)"
+      *ngIf="selectedTeamId && selectedSection !== scoresheetSection && !hideScoresheet() && selectedEvaluationId">
       <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>
     </button>
-    <button
-      aria-label="Show Administration Page"
-      mat-icon-button
-      *ngIf="showAdminButton"
-      [routerLink]="['/admin']"
-      [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}"
-      style="outline: none;"
-      title="Administration"
-    >
+    <button aria-label="Show Administration Page" mat-icon-button *ngIf="showAdminButton" [routerLink]="['/admin']"
+      [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}" style="outline: none;"
+      title="Administration">
       <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
     </button>
   </div>
   <div class="right-buttons" *ngIf="!selectedTeamId">
-    <button
-      aria-label="Show Administration Page"
-      mat-icon-button
-      *ngIf="showAdminButton"
-      [routerLink]="['/admin']"
-      [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}"
-      style="outline: none;"
-      title="Administration"
-    >
+    <button aria-label="Show Administration Page" mat-icon-button *ngIf="showAdminButton" [routerLink]="['/admin']"
+      [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}" style="outline: none;"
+      title="Administration">
       <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
     </button>
   </div>

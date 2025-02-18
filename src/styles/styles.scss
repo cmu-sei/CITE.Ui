@@ -4,11 +4,20 @@
 @use "@angular/material" as mat;
 @use "./theme-colors" as theme;
 @include mat.core();
+@import '@mdi/font';
 
 html {
   @include mat.theme((color: theme.$primary-palette,
       typography: '"Open Sans", sans-serif',
-    ));
+    ),
+    $overrides: ((surface: var(--mat-sys-background), surface-variant: var(--mat-sys-background))));
+  --background-button: white;
+  --plain-button: black;
+  --user-text: #c2d5f8;
+  --team-text: #f7d5a6;
+  --team-avg-text: #e2d6f5;
+  --group-text: #dce8ee;
+  --official-text: #fcbbb5;
 }
 
 .darkMode {
@@ -16,12 +25,28 @@ html {
         theme-type: dark,
       ),
     ),
-    $overrides: ((background: #313131, surface: #313131, surface-variant: #313131)));
+    $overrides: ((background: #313131, surface: #393939, surface-variant: #292929)));
+  --background-button: white;
+  --plain-button: white;
+  --user-text: #052a61;
+  --team-text: #583605;
+  --team-avg-text: #270858;
+  --group-text: #073c57;
+  --official-text: #4d0a05;
 }
 
 html,
 body {
-  height: 100%;
+  height: calc(100% - 5px);
+  overflow-y: auto;
+}
+
+// prevent table header rows from scrolling
+.mat-mdc-header-row {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  z-index: 9 !important;
 }
 
 /* The following acts as drop in replacement for the deprecation of Angular FlexLayout */
@@ -96,3 +121,5 @@ body {
   align-items: center;
   align-content: center;
 }
+
+/* end of FlexLayout replacements */

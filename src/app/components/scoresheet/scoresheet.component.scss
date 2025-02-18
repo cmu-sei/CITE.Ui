@@ -42,22 +42,17 @@
 }
 
 .mat-column-value {
-  flex: 0 0 5% !important;
-  width: 5% !important;
+  flex: 0 0 10% !important;
+  width: 10% !important;
+  min-width: 80px !important;
   justify-content: center;
 }
 
 .mat-column-description {
-  flex: 0 0 95% !important;
-  width: 95% !important;
+  flex: 0 0 90% !important;
+  width: 90% !important;
   flex-direction: column;
   justify-content: center;
-}
-
-.mat-mdc-header-row {
-  position: sticky;
-  top: -.5px;
-  z-index: 100;
 }
 
 .comment-list {
@@ -145,30 +140,36 @@
   background-color: black;
   color: white;
 }
+
 .red {
   background-color: darkred;
   color: white;
 }
+
 .orange {
   background-color: darkorange;
   color: black;
 }
+
 .yellow {
   background-color: yellow;
   color: black;
 }
+
 .green {
   background-color: lightgreen;
   color: black;
 }
+
 .white {
   background-color: white;
   color: black;
 }
-.mat-column-description{
+
+.mat-column-description {
   font-size: 100px;
 }
 
 .no-display {
-  display:none;
+  display: none;
 }
