@@ -4,6 +4,10 @@
 @use "@angular/material" as mat;
 @include mat.core();
 
+.elevate {
+  @include mat.elevation(2);
+}
+
 .icon-text {
   margin-left: 10px;
   font-family: open_sansbold;

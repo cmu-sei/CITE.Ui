@@ -1,7 +1,7 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
-import { Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,7 +25,7 @@ import {
   Submission,
   Team,
   UnreadArticles,
-  User
+  User,
 } from 'src/app/generated/cite.api';
 import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
@@ -36,7 +36,10 @@ import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
-import { ApplicationArea, SignalRService } from 'src/app/services/signalr.service';
+import {
+  ApplicationArea,
+  SignalRService,
+} from 'src/app/services/signalr.service';
 import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
@@ -48,14 +51,14 @@ import { Sort } from '@angular/material/sort';
 export enum Section {
   dashboard = 'dashboard',
   scoresheet = 'scoresheet',
-  report = 'report'
+  report = 'report',
 }
 
 @Component({
-    selector: 'app-home-app',
-    templateUrl: './home-app.component.html',
-    styleUrls: ['./home-app.component.scss'],
-    standalone: false
+  selector: 'app-home-app',
+  templateUrl: './home-app.component.html',
+  styleUrls: ['./home-app.component.scss'],
+  standalone: false,
 })
 export class HomeAppComponent implements OnDestroy, OnInit {
   @ViewChild('sidenav') sidenav: MatSidenav;
@@ -78,8 +81,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   TopbarView = TopbarView;
   theme$: Observable<Theme>;
   selectedEvaluationId = '';
-  activeEvaluation$ = this.evaluationQuery.selectActive() as Observable<Evaluation>;
-  activeScoringModel$ = this.scoringModelQuery.selectActive() as Observable<ScoringModel>;
+  activeEvaluation$ =
+    this.evaluationQuery.selectActive() as Observable<Evaluation>;
+  activeScoringModel$ =
+    this.scoringModelQuery.selectActive() as Observable<ScoringModel>;
   evaluationList: Evaluation[] = [];
   evaluationList$ = this.evaluationQuery.selectAll();
   submissionList$ = this.submissionQuery.selectAll();
@@ -90,7 +95,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   displayedMoveNumber = -1;
   requestedMoveNumber = -1;
   userCurrentSubmission: Submission;
-  unreadArticles$ = this.unreadArticlesQuery.selectActive() as Observable<UnreadArticles>;
+  unreadArticles$ =
+    this.unreadArticlesQuery.selectActive() as Observable<UnreadArticles>;
   evaluationForLoadedSubmissions: Evaluation;
   moveList$ = this.moveQuery.selectAll() as Observable<Move[]>;
   sortedMoveList: Move[] = [];
@@ -98,12 +104,20 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   teamList$ = this.teamQuery.selectAll();
   myTeamId = '';
   myTeamId$ = new BehaviorSubject<string>('');
-  activeSubmission$ = this.submissionQuery.selectActive() as Observable<Submission>;
+  activeSubmission$ =
+    this.submissionQuery.selectActive() as Observable<Submission>;
   public filterString: string;
   userList: User[] = [];
   Evaluation: Evaluation[] = [];
-  evaluationDataSource = new MatTableDataSource<Evaluation>(new Array<Evaluation>());
-  public displayedColumns: string[] = ['description', 'status', 'createdBy', 'dateCreated'];
+  evaluationDataSource = new MatTableDataSource<Evaluation>(
+    new Array<Evaluation>()
+  );
+  public displayedColumns: string[] = [
+    'description',
+    'status',
+    'createdBy',
+    'dateCreated',
+  ];
   public isLoading: boolean;
   waitingForCurrentMoveNumber = 0;
   noChanges$ = new BehaviorSubject<boolean>(false);
@@ -133,9 +147,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     titleService: Title
   ) {
     this.healthCheck();
-    const appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
+    const appTitle =
+      this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
     titleService.setTitle(appTitle);
-    this.topbarTextBase = this.settingsService.settings.AppTopBarText || this.topbarTextBase;
+    this.topbarTextBase =
+      this.settingsService.settings.AppTopBarText || this.topbarTextBase;
     this.topbarText = this.topbarTextBase;
     this.theme$ = this.authQuery.userTheme$;
     this.hideTopbar = this.inIframe();
@@ -143,19 +159,33 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.scoringModelDataService.unload();
     this.teamDataService.unload();
     // observe the vital information and process it when it is all present
-    combineLatest([this.evaluationList$, this.moveList$, this.loggedInUser$, this.teamList$])
-      .pipe(takeUntil(this.unsubscribe$)).subscribe(([evaluations, moves, user, teams]) => {
+    combineLatest([
+      this.evaluationList$,
+      this.moveList$,
+      this.loggedInUser$,
+      this.teamList$,
+    ])
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(([evaluations, moves, user, teams]) => {
         // set the top bar text
         this.evaluationList = evaluations;
-        this.sortedMoveList = moves.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
+        this.sortedMoveList = moves.sort((a, b) =>
+          +a.moveNumber < +b.moveNumber ? -1 : 1
+        );
         const numberOfEvaluations = evaluations ? evaluations.length : 0;
         let evaluation: Evaluation;
         // if an evaluation has been selected, make it the active one
-        if (this.selectedEvaluationId && evaluations && evaluations.length > 0) {
-          evaluation = evaluations.find(e => e.id === this.selectedEvaluationId);
+        if (
+          this.selectedEvaluationId &&
+          evaluations &&
+          evaluations.length > 0
+        ) {
+          evaluation = evaluations.find(
+            (e) => e.id === this.selectedEvaluationId
+          );
           this.currentMoveNumber = evaluation.currentMoveNumber;
           this.evaluationDataService.setActive(evaluation.id);
-        // if there is only one evaluation, make it the active one, so that the user doesn't have to select it
+          // if there is only one evaluation, make it the active one, so that the user doesn't have to select it
         } else if (evaluations && evaluations.length === 1) {
           evaluation = evaluations[0];
           this.currentMoveNumber = evaluation.currentMoveNumber;
@@ -164,15 +194,23 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
         if (evaluation) {
           this.selectedEvaluationId = evaluation.id;
-          this.displayedMoveNumber = this.uiDataService.getMoveNumber(this.selectedEvaluationId);
+          this.displayedMoveNumber = this.uiDataService.getMoveNumber(
+            this.selectedEvaluationId
+          );
           this.displayedMoveNumber =
-            this.displayedMoveNumber >= 0 && this.displayedMoveNumber <= evaluation.currentMoveNumber ?
-              this.displayedMoveNumber :
-              evaluation.currentMoveNumber;
-          this.uiDataService.setMoveNumber(this.selectedEvaluationId, this.displayedMoveNumber);
+            this.displayedMoveNumber >= 0 &&
+            this.displayedMoveNumber <= evaluation.currentMoveNumber
+              ? this.displayedMoveNumber
+              : evaluation.currentMoveNumber;
+          this.uiDataService.setMoveNumber(
+            this.selectedEvaluationId,
+            this.displayedMoveNumber
+          );
           if (moves.length > 0 && !this.moveQuery.getActive()) {
             if (!this.moveQuery.getActive()) {
-              const move = this.moveQuery.getAll().find(m => m.moveNumber === this.displayedMoveNumber);
+              const move = this.moveQuery
+                .getAll()
+                .find((m) => m.moveNumber === this.displayedMoveNumber);
               if (move) {
                 this.moveDataService.setActive(move.id);
               }
@@ -185,7 +223,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
           // if we intiated advancing to next evaluation move, then display it
           if (this.waitingForCurrentMoveNumber > 0) {
-            const newMove = this.sortedMoveList.find(m => +m.moveNumber === +this.waitingForCurrentMoveNumber);
+            const newMove = this.sortedMoveList.find(
+              (m) => +m.moveNumber === +this.waitingForCurrentMoveNumber
+            );
             if (newMove) {
               this.waitingForCurrentMoveNumber = 0;
               this.nextDisplayedMove(newMove);
@@ -193,17 +233,21 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
         }
         if (user) {
-          this.canAccessAdminSection$.next(this.userDataService.canAccessAdminSection.getValue());
+          this.canAccessAdminSection$.next(
+            this.userDataService.canAccessAdminSection.getValue()
+          );
         }
       });
     // observe active evaluation
-    (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      if (active) {
-        this.selectedEvaluationId = active.id;
-        this.loadEvaluationData();
-        this.noChanges$.next(active.status === ItemStatus.Complete);
-      }
-    });
+    (this.evaluationQuery.selectActive() as Observable<Evaluation>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((active) => {
+        if (active) {
+          this.selectedEvaluationId = active.id;
+          this.loadEvaluationData();
+          this.noChanges$.next(active.status === ItemStatus.Complete);
+        }
+      });
     // observe authorizedUser
     this.userDataService.isAuthorizedUser
       .pipe(takeUntil(this.unsubscribe$))
@@ -211,56 +255,62 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.isAuthorizedUser = isAuthorized;
       });
     //get users
-    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
-      this.userList = users;
-    });
+    this.userDataService.userList
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((users) => {
+        this.userList = users;
+      });
     this.userDataService.getUsersFromApi();
     // observe route changes
-    activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
-      // get and set the evaluation
-      const evaluationId = params.get('evaluation');
-      if (evaluationId) {
-        this.evaluationDataService.setActive(evaluationId);
-        this.uiDataService.setEvaluation(evaluationId);
-      }
-      // get the requested section or set the saved section
-      const section = params.get('section');
-      switch (section) {
-        case 'scoresheet':
-          // set scoresheet
-          this.selectedSection = Section.scoresheet;
-          this.uiDataService.setSection(evaluationId, Section.scoresheet);
-          // now remove the section from the url, so that refreshes work properly
-          this.router.navigate([], {
-            queryParams: { evaluation: evaluationId },
-          });
-          break;
-        case 'dashboard':
-          // set dashboard
-          this.selectedSection = Section.dashboard;
-          this.uiDataService.setSection(evaluationId, Section.dashboard);
-          // now remove the section from the url, so that refreshes work properly
-          this.router.navigate([], {
-            queryParams: { evaluation: evaluationId },
-          });
-          break;
-        default:
-          // get the saved section
-          const savedSection = this.uiDataService.getSection(evaluationId);
-          if (savedSection === 'scoresheet') {
-            this.selectedSection =  Section.scoresheet;
-          } else if (savedSection === 'report') {
-            this.selectedSection =  Section.report;
-          } else {
+    activatedRoute.queryParamMap
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((params) => {
+        // get and set the evaluation
+        const evaluationId = params.get('evaluation');
+        if (evaluationId) {
+          this.evaluationDataService.setActive(evaluationId);
+          this.uiDataService.setEvaluation(evaluationId);
+        }
+        // get the requested section or set the saved section
+        const section = params.get('section');
+        switch (section) {
+          case 'scoresheet':
+            // set scoresheet
+            this.selectedSection = Section.scoresheet;
+            this.uiDataService.setSection(evaluationId, Section.scoresheet);
+            // now remove the section from the url, so that refreshes work properly
+            this.router.navigate([], {
+              queryParams: { evaluation: evaluationId },
+            });
+            break;
+          case 'dashboard':
+            // set dashboard
             this.selectedSection = Section.dashboard;
-          }
-          break;
-      }
-    });
+            this.uiDataService.setSection(evaluationId, Section.dashboard);
+            // now remove the section from the url, so that refreshes work properly
+            this.router.navigate([], {
+              queryParams: { evaluation: evaluationId },
+            });
+            break;
+          default:
+            // get the saved section
+            const savedSection = this.uiDataService.getSection(evaluationId);
+            if (savedSection === 'scoresheet') {
+              this.selectedSection = Section.scoresheet;
+            } else if (savedSection === 'report') {
+              this.selectedSection = Section.report;
+            } else {
+              this.selectedSection = Section.dashboard;
+            }
+            break;
+        }
+      });
     // observe the submissions
-    this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
-      this.processSubmissions(submissions);
-    });
+    this.submissionList$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((submissions) => {
+        this.processSubmissions(submissions);
+      });
     // load the user's evaluations
     this.evaluationDataService.loadMine();
     // Set the display settings from config file
@@ -271,9 +321,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       ? this.settingsService.settings.AppTopBarHexTextColor
       : this.topbarTextColor;
 
-    this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
-      this.evaluationList = evaluations
-        .sort((a, b) => {
+    this.evaluationQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((evaluations) => {
+        this.evaluationList = evaluations.sort((a, b) => {
           const aDescription = a.description.toLowerCase();
           const bDescription = b.description.toLowerCase();
 
@@ -285,9 +337,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             return 0;
           }
         });
-      this.setDataSources();
-    });
-
+        this.setDataSources();
+      });
   }
 
   ngOnInit() {
@@ -310,7 +361,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         });
     }
     const thisScope = this;
-    setTimeout(function() {
+    setTimeout(function () {
       thisScope.waitedLongEnough = true;
     }, 10000);
     this.filterString = '';
@@ -322,7 +373,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   loadEvaluationData() {
-    const evaluation = this.evaluationQuery.getAll().find(e => e.id === this.selectedEvaluationId);
+    const evaluation = this.evaluationQuery
+      .getAll()
+      .find((e) => e.id === this.selectedEvaluationId);
     if (evaluation) {
       this.evaluationDataService.setActive(this.selectedEvaluationId);
       this.scoringModelDataService.loadById(evaluation.scoringModelId);
@@ -345,16 +398,20 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   nextDisplayedMove(move: Move) {
     this.moveDataService.setActive(move.id);
-    this.uiDataService.setMoveNumber(this.selectedEvaluationId, move.moveNumber);
+    this.uiDataService.setMoveNumber(
+      this.selectedEvaluationId,
+      move.moveNumber
+    );
     this.displayedMoveNumber = move.moveNumber;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const submissions = this.submissionQuery.getAll();
-    let newSubmission = submissions.find(s =>
-      +s.moveNumber === +move.moveNumber  &&
-      s.userId === displayedSubmission.userId  &&
-      s.teamId === displayedSubmission.teamId  &&
-      s.groupId === displayedSubmission.groupId  &&
-      s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
+    let newSubmission = submissions.find(
+      (s) =>
+        +s.moveNumber === +move.moveNumber &&
+        s.userId === displayedSubmission.userId &&
+        s.teamId === displayedSubmission.teamId &&
+        s.groupId === displayedSubmission.groupId &&
+        s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
     );
     if (newSubmission) {
       this.setAndGetActiveSubmission(newSubmission);
@@ -362,21 +419,23 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       // the new submission would not be allowed, so select the default submission
       if (this.myTeamId === (this.teamQuery.getActive() as Team).id) {
         // select the user score
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +move.moveNumber  &&
-          s.userId  &&
-          s.teamId &&
-          !s.groupId  &&
-          !s.scoreIsAnAverage
+        newSubmission = submissions.find(
+          (s) =>
+            +s.moveNumber === +move.moveNumber &&
+            s.userId &&
+            s.teamId &&
+            !s.groupId &&
+            !s.scoreIsAnAverage
         );
       } else {
         // select the team score
-        newSubmission = submissions.find(s =>
-          +s.moveNumber === +move.moveNumber  &&
-          !s.userId  &&
-          s.teamId &&
-          !s.groupId  &&
-          !s.scoreIsAnAverage
+        newSubmission = submissions.find(
+          (s) =>
+            +s.moveNumber === +move.moveNumber &&
+            !s.userId &&
+            s.teamId &&
+            !s.groupId &&
+            !s.scoreIsAnAverage
         );
       }
       if (newSubmission) {
@@ -387,22 +446,31 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   previousDisplayedMove(move: Move) {
     this.moveDataService.setActive(move.id);
-    this.uiDataService.setMoveNumber(this.selectedEvaluationId, move.moveNumber);
+    this.uiDataService.setMoveNumber(
+      this.selectedEvaluationId,
+      move.moveNumber
+    );
     this.displayedMoveNumber = move.moveNumber;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
-    const newSubmission = this.submissionQuery.getAll()
-      .find(s => +s.moveNumber === +move.moveNumber
-        && s.userId === displayedSubmission.userId
-        && s.teamId === displayedSubmission.teamId
-        && s.groupId === displayedSubmission.groupId
-        && s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage);
+    const newSubmission = this.submissionQuery
+      .getAll()
+      .find(
+        (s) =>
+          +s.moveNumber === +move.moveNumber &&
+          s.userId === displayedSubmission.userId &&
+          s.teamId === displayedSubmission.teamId &&
+          s.groupId === displayedSubmission.groupId &&
+          s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
+      );
     if (newSubmission) {
       this.setAndGetActiveSubmission(newSubmission);
     }
   }
 
   nextEvaluationMove(moveNumber: number) {
-    const evaluation = this.evaluationList.find(e => e.id === this.selectedEvaluationId);
+    const evaluation = this.evaluationList.find(
+      (e) => e.id === this.selectedEvaluationId
+    );
     if (+moveNumber <= +this.getMaxMoveNumber()) {
       const updateEvaluation = { ...evaluation };
       updateEvaluation.currentMoveNumber = moveNumber;
@@ -412,16 +480,20 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   getMaxMoveNumber() {
-    return this.sortedMoveList.length > 0 ? this.sortedMoveList[this.sortedMoveList.length - 1].moveNumber : +this.currentMoveNumber;
+    return this.sortedMoveList.length > 0
+      ? this.sortedMoveList[this.sortedMoveList.length - 1].moveNumber
+      : +this.currentMoveNumber;
   }
 
   setTeams(teams: Team[]) {
     // check if saved teamId is in the list of teams
     const savedTeamId = this.uiDataService.getTeam(this.selectedEvaluationId);
-    let activeTeamId = teams.some(t => t.id === savedTeamId) ? savedTeamId : '';
+    let activeTeamId = teams.some((t) => t.id === savedTeamId)
+      ? savedTeamId
+      : '';
     // find the user's team
-    teams.forEach(t => {
-      if (t.users.some(u => u.id === this.loggedInUserId)) {
+    teams.forEach((t) => {
+      if (t.users.some((u) => u.id === this.loggedInUserId)) {
         this.myTeamId = t.id;
         this.myTeamId$.next(t.id);
         // if the saved team wasn't in the list, set the user's team to the active team
@@ -447,7 +519,12 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
     // when observing a team, you can't see the user or the team average
     if (teamId && this.myTeamId && teamId !== this.myTeamId) {
-      if (this.uiDataService.getSubmissionType(this.selectedEvaluationId) === 'user' || this.uiDataService.getSubmissionType(this.selectedEvaluationId) === 'team-avg') {
+      if (
+        this.uiDataService.getSubmissionType(this.selectedEvaluationId) ===
+          'user' ||
+        this.uiDataService.getSubmissionType(this.selectedEvaluationId) ===
+          'team-avg'
+      ) {
         this.uiDataService.setSubmissionType(this.selectedEvaluationId, 'team');
       }
     }
@@ -456,7 +533,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.submissionDataService.setActive('');
     this.moveDataService.setActive('');
     this.submissionDataService.unload();
-    this.submissionDataService.loadByEvaluationTeam(this.selectedEvaluationId, teamId);
+    this.submissionDataService.loadByEvaluationTeam(
+      this.selectedEvaluationId,
+      teamId
+    );
   }
 
   changeSection(section: string) {
@@ -473,12 +553,21 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
     if (submissions.length === 0) {
       this.makeNewSubmission();
-    // don't process the submissions if the selected team has changed, but the new submissions haven't been loaded yet
-    } else if (submissions.some(s => s.teamId && s.teamId === activeTeam.id)) {
+      // don't process the submissions if the selected team has changed, but the new submissions haven't been loaded yet
+    } else if (
+      submissions.some((s) => s.teamId && s.teamId === activeTeam.id)
+    ) {
       let activeSubmission = this.submissionQuery.getActive() as Submission;
-      activeSubmission = activeSubmission ? submissions.find(s => s.id === activeSubmission.id) : null;
-      if (!activeSubmission || activeSubmission.submissionCategories.length === 0) {
-        let submissionType = this.uiDataService.getSubmissionType(this.selectedEvaluationId);
+      activeSubmission = activeSubmission
+        ? submissions.find((s) => s.id === activeSubmission.id)
+        : null;
+      if (
+        !activeSubmission ||
+        activeSubmission.submissionCategories.length === 0
+      ) {
+        let submissionType = this.uiDataService.getSubmissionType(
+          this.selectedEvaluationId
+        );
         if (!submissionType) {
           submissionType = 'user';
         }
@@ -491,13 +580,18 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   makeNewSubmission() {
-    const evaluation = this.evaluationQuery.getAll().find(e => e.id === this.selectedEvaluationId);
+    const evaluation = this.evaluationQuery
+      .getAll()
+      .find((e) => e.id === this.selectedEvaluationId);
     const scoringModel = this.scoringModelQuery.getActive() as ScoringModel;
     const activeTeam = this.teamQuery.getActive() as Team;
-    if (!evaluation || ! scoringModel || !activeTeam) {
+    if (!evaluation || !scoringModel || !activeTeam) {
       return;
     }
-    const userId = !scoringModel.useUserScore || activeTeam.id !== this.myTeamId ? null : this.loggedInUserId;
+    const userId =
+      !scoringModel.useUserScore || activeTeam.id !== this.myTeamId
+        ? null
+        : this.loggedInUserId;
     const submission = {
       teamId: activeTeam ? activeTeam.id : this.myTeamId,
       evaluationId: evaluation.id,
@@ -521,55 +615,73 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       }
     }
     this.submissionDataService.setActive(submission.id);
-    const activeMove = this.sortedMoveList.find(m => +m.moveNumber === +submission.moveNumber);
+    const activeMove = this.sortedMoveList.find(
+      (m) => +m.moveNumber === +submission.moveNumber
+    );
     this.moveDataService.setActive(activeMove.id);
   }
 
   selectDisplayedSubmission(selection: string) {
     if (selection === 'report') {
-      this.selectedSection = this.selectedSection === this.section.report ? this.section.dashboard : this.section.report;
+      this.selectedSection =
+        this.selectedSection === this.section.report
+          ? this.section.dashboard
+          : this.section.report;
     } else {
       const submissions = this.submissionQuery.getAll();
       let newSubmission: Submission = null;
       switch (selection) {
         case 'user':
-          newSubmission = submissions.find(s =>
-            +s.moveNumber === +this.displayedMoveNumber &&
-            s.userId === this.loggedInUserId);
+          newSubmission = submissions.find(
+            (s) =>
+              +s.moveNumber === +this.displayedMoveNumber &&
+              s.userId === this.loggedInUserId
+          );
           break;
         case 'team':
-          newSubmission = submissions.find(s =>
-            +s.moveNumber === +this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId !== null &&
-            !s.scoreIsAnAverage);
+          newSubmission = submissions.find(
+            (s) =>
+              +s.moveNumber === +this.displayedMoveNumber &&
+              s.userId === null &&
+              s.teamId !== null &&
+              !s.scoreIsAnAverage
+          );
           break;
         case 'team-avg':
-          newSubmission = submissions.find(s =>
-            +s.moveNumber === +this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId !== null &&
-            s.scoreIsAnAverage);
+          newSubmission = submissions.find(
+            (s) =>
+              +s.moveNumber === +this.displayedMoveNumber &&
+              s.userId === null &&
+              s.teamId !== null &&
+              s.scoreIsAnAverage
+          );
           break;
         case 'group-avg':
-          newSubmission = submissions.find(s =>
-            +s.moveNumber === +this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId === null &&
-            s.scoreIsAnAverage);
+          newSubmission = submissions.find(
+            (s) =>
+              +s.moveNumber === +this.displayedMoveNumber &&
+              s.userId === null &&
+              s.teamId === null &&
+              s.scoreIsAnAverage
+          );
           break;
         case 'official':
-          newSubmission = submissions.find(s =>
-            +s.moveNumber === +this.displayedMoveNumber &&
-            s.userId === null &&
-            s.teamId === null &&
-            s.groupId === null);
+          newSubmission = submissions.find(
+            (s) =>
+              +s.moveNumber === +this.displayedMoveNumber &&
+              s.userId === null &&
+              s.teamId === null &&
+              s.groupId === null
+          );
           break;
         default:
           break;
       }
       if (newSubmission) {
-        this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
+        this.uiDataService.setSubmissionType(
+          this.selectedEvaluationId,
+          selection
+        );
         this.setAndGetActiveSubmission(newSubmission);
       } else {
         this.makeNewSubmission();
@@ -591,9 +703,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   getAppContentClass() {
     if (this.inIframe()) {
-      return 'app-model-container-no-topbar mat-elevation-z8 app-score-container-no-topbar ';
+      return 'app-model-container-no-topbar elevate app-score-container-no-topbar ';
     } else {
-      return 'app-model-container mat-elevation-z8 app-score-container';
+      return 'app-model-container elevate app-score-container';
     }
   }
 
@@ -603,11 +715,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       .pipe(take(1))
       .subscribe(
         (message) => {
-          this.apiIsSick = !message || !message.status || message.status !== 'Healthy';
+          this.apiIsSick =
+            !message || !message.status || message.status !== 'Healthy';
           if (!message || !message.status) {
             this.apiIsSick = true;
             if (message.status !== 'Healthy') {
-              this.apiMessage = 'The API web service is not healthy (' + message.status + ').';
+              this.apiMessage =
+                'The API web service is not healthy (' + message.status + ').';
             }
           }
           this.apiMessage = message;
@@ -620,52 +734,51 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   getUsername(userId: string): string {
-    const user = this.userList.find(u => u.id === userId);
+    const user = this.userList.find((u) => u.id === userId);
     return user ? user.name : ' ';
   }
 
- //Filter evaluation based on description value
- applyFilter(filterValue: string) {
-  this.filterString = filterValue;
-  filterValue = filterValue.trim();
-  filterValue = filterValue.toLowerCase();
-  this.evaluationDataSource.filter = filterValue;
-}
-
-//clear text on filter search bar
-clearFilter() {
-  this.applyFilter('');
-}
-
-//sort data based on evaluation's description
-sortData(sort: Sort) {
-  const data = this.evaluationList.slice();
-  this.evaluationDataSource.data = data.sort((a, b) => {
-    const isAsc = sort.direction === 'asc';
-    return this.compare(a.description, b.description, isAsc);
-  });
-}
-
-//compare function for evaluation's descriptions
-compare(a: string, b: string, isAsc: boolean) {
-  if (a === null || b === null) {
-    return 0;
-  } else {
-    return (a.toLowerCase() < b.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1);
+  //Filter evaluation based on description value
+  applyFilter(filterValue: string) {
+    this.filterString = filterValue;
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.evaluationDataSource.filter = filterValue;
   }
-}
 
-topBarNavigate(url): void {
-  this.router.navigate(['/']).then(() => {
-    window.location.reload();
-  });
-}
+  //clear text on filter search bar
+  clearFilter() {
+    this.applyFilter('');
+  }
 
-ngOnDestroy() {
-  this.unsubscribe$.next(null);
-  this.unsubscribe$.complete();
-  this.signalRService.leave();
-  this.gallerySignalRService.leave();
-}
+  //sort data based on evaluation's description
+  sortData(sort: Sort) {
+    const data = this.evaluationList.slice();
+    this.evaluationDataSource.data = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      return this.compare(a.description, b.description, isAsc);
+    });
+  }
 
+  //compare function for evaluation's descriptions
+  compare(a: string, b: string, isAsc: boolean) {
+    if (a === null || b === null) {
+      return 0;
+    } else {
+      return (a.toLowerCase() < b.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1);
+    }
+  }
+
+  topBarNavigate(url): void {
+    this.router.navigate(['/']).then(() => {
+      window.location.reload();
+    });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next(null);
+    this.unsubscribe$.complete();
+    this.signalRService.leave();
+    this.gallerySignalRService.leave();
+  }
 }

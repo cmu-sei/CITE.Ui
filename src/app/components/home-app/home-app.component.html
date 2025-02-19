@@ -38,7 +38,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         (changeSection)="changeSection($event)" (changeEvaluation)="changeEvaluation($event)"></app-evaluation-info>
     </div>
 
-    <div class="mat-elevation-z8 evaluation-list-container" *ngIf="!selectedEvaluationId">
+    <div class="elevate evaluation-list-container" *ngIf="!selectedEvaluationId">
       <div class="icon-text-container">
         <mat-icon class="crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
         <span class="evaluation-title text">My Evaluations</span>
@@ -113,7 +113,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div [ngClass]="getAppContentClass()"
         *ngIf="(activeScoringModel$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeScoringModel$ | async)?.rightSideDisplay !== 'None' && selectedSection !== section.report"
-        class="app-score-container flex-50 mat-elevation-z8" autosize>
+        class="app-score-container flex-50 elevate" autosize>
         <app-right-side-html *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'HtmlBlock'"
           [scoringModel$]="activeScoringModel$" [hideTopbar]="hideTopbar"></app-right-side-html>
         <app-right-side-iframe *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'EmbeddedUrl'"

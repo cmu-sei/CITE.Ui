@@ -29,6 +29,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   text-align: right;
+  min-width: 80px;
 }
 
 .mat-mdc-cell {
@@ -101,19 +102,21 @@
 .score-option {
   display: flex;
   flex-direction: row;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
   text-wrap: wrap;
   word-wrap: break-word;
 }
 
 .checkbox-div {
   display: flex;
-  width: 24px;
+  flex: 1;
+  width: 40px;
 }
 
 .description-div {
   display: flex;
-  width: calc(100% - 24px);
+  flex: 90;
 }
 
 .small-icon {
@@ -194,31 +197,6 @@
   height: 50px;
 }
 
-.black {
-  background-color: black;
-  color: white;
-}
-.red {
-  background-color: darkred;
-  color: white;
-}
-.orange {
-  background-color: darkorange;
-  color: black;
-}
-.yellow {
-  background-color: yellow;
-  color: black;
-}
-.green {
-  background-color: lightgreen;
-  color: black;
-}
-.white {
-  background-color: white;
-  color: black;
-}
-
 @media print {
   .no-print {
     display: none;
@@ -236,5 +214,11 @@
     padding: 15px;
     font-size: 14px;
     line-height: 18px;
-}
+  }
+
+  html,
+  body {
+    height: initial !important;
+    overflow: initial !important;
+  }
 }

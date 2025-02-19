@@ -6,54 +6,33 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div class="full-width">
 
-  <div *ngIf="isAddMode" class="user-list-container mat-elevation-z8">
+  <div *ngIf="isAddMode" class="user-list-container elevate">
 
     <div class="sp-icon">
-      <mat-icon
-        class="mdi-24px"
-        fontIcon="mdi-account"
-      ></mat-icon>
-    <span style="margin-left: 10px">
-      All Users
-    </span>
+      <mat-icon class="mdi-24px" fontIcon="mdi-account"></mat-icon>
+      <span style="margin-left: 10px">
+        All Users
+      </span>
     </div>
 
     <div>
       <mat-form-field class="search-box">
         <input matInput [formControl]="filterControl" placeholder="Search" />
       </mat-form-field>
-      <button
-        mat-icon-button
-        (click)="clearFilter()"
-        style="outline: none;"
-        title="Clear Search"
-      >
-        <mat-icon
-          class="mdi-18px" fontIcon="mdi-close-circle-outline"
-        ></mat-icon>
+      <button mat-icon-button (click)="clearFilter()" style="outline: none;" title="Clear Search">
+        <mat-icon class="mdi-18px" fontIcon="mdi-close-circle-outline"></mat-icon>
       </button>
     </div>
 
-    <mat-card
-      appearance="outlined"
-      *ngIf="false"
-      style="display: flex; justify-content: center; align-items: center;"
-    >
+    <mat-card appearance="outlined" *ngIf="false" style="display: flex; justify-content: center; align-items: center;">
       <mat-progress-spinner color="primary" mode="indeterminate">
       </mat-progress-spinner>
     </mat-card>
 
-    <mat-table
-      class="mat-table-all-users"
-      #table
-      [dataSource]="userDataSource"
-      matSort
-      (matSortChange)="onSortChange($event)"
-    >
+    <mat-table class="mat-table-all-users" #table [dataSource]="userDataSource" matSort
+      (matSortChange)="onSortChange($event)">
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >User</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div *ngIf="element.name !== null">{{ element.name }}</div>
           <div *ngIf="element.name === null">{{ element.id }}</div>
@@ -64,14 +43,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <button
-              mat-icon-button
-              (click)="addUserToTeam(element)"
-              style="outline: none;"
-              title="Add {{ element.name }} to Team"
-              [disabled]="noChanges"
-              *ngIf="!onAnotherTeam(element.id)"
-            >
+            <button mat-icon-button (click)="addUserToTeam(element)" style="outline: none;"
+              title="Add {{ element.name }} to Team" [disabled]="noChanges" *ngIf="!onAnotherTeam(element.id)">
               <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline"></mat-icon>
             </button>
             <label *ngIf="onAnotherTeam(element.id)">{{ getUserTeamName(element.id) }}</label>
@@ -86,124 +59,74 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div *ngIf="userDataSource.filteredData.length === 0">No results found</div>
   </div>
 
-  <div class="team-list-container mat-elevation-z8">
+  <div class="team-list-container elevate">
 
     <div class="sp-icon">
-      <mat-icon
-          class="mdi-24px"
-          fontIcon="mdi-account-group"
-      ></mat-icon>
+      <mat-icon class="mdi-24px" fontIcon="mdi-account-group"></mat-icon>
       <span style="margin-left: 10px">
         Team Users
       </span>
-      <button
-        *ngIf="!isAddMode"
-        mat-icon-button
-        (click)="toggleAddMode(true)"
-        style="outline: none;"
-        title="Add Users to Team"
-        [disabled]="noChanges"
-      >
+      <button *ngIf="!isAddMode" mat-icon-button (click)="toggleAddMode(true)" style="outline: none;"
+        title="Add Users to Team" [disabled]="noChanges">
         <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline"></mat-icon>
       </button>
-      <button
-        *ngIf="isAddMode"
-        mat-icon-button
-        (click)="toggleAddMode(false)"
-        style="outline: none;"
-        title="Show User Permissions"
-      >
+      <button *ngIf="isAddMode" mat-icon-button (click)="toggleAddMode(false)" style="outline: none;"
+        title="Show User Permissions">
         <mat-icon class="mdi-24px self-center" fontIcon="mdi-eye-outline"></mat-icon>
       </button>
     </div>
 
-    <mat-card
-      appearance="outlined"
-      *ngIf="false"
-      style="display: flex; justify-content: center; align-items: center;"
-    >
+    <mat-card appearance="outlined" *ngIf="false" style="display: flex; justify-content: center; align-items: center;">
       <mat-progress-spinner color="primary" mode="indeterminate">
       </mat-progress-spinner>
     </mat-card>
 
-    <mat-table
-      class="mat-table-all-users"
-      #table
-      [dataSource]="teamUserDataSource"
-      matSort
-      (matSortChange)="onSortTeamChange($event)"
-    >
+    <mat-table class="mat-table-all-users" #table [dataSource]="teamUserDataSource" matSort
+      (matSortChange)="onSortTeamChange($event)">
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >User</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>{{ getUserName(element.userId) }}</div>
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="isObserver">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Observer</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Observer</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-checkbox
-            [checked]="element.isObserver"
-            (change)="setObserverValue(element.id, $event.checked)"
-            [disabled]="noChanges"
-          ></mat-checkbox>
+          <mat-checkbox [checked]="element.isObserver" (change)="setObserverValue(element.id, $event.checked)"
+            [disabled]="noChanges"></mat-checkbox>
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="canManageTeam">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Manager</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Manager</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-checkbox
-            [checked]="element.canManageTeam"
-            (change)="setManagerValue(element.id, $event.checked)"
-            [disabled]="noChanges"
-          ></mat-checkbox>
+          <mat-checkbox [checked]="element.canManageTeam" (change)="setManagerValue(element.id, $event.checked)"
+            [disabled]="noChanges"></mat-checkbox>
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="canIncrementMove">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Incrementer</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Incrementer</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-checkbox
-            [checked]="element.canIncrementMove"
-            (change)="setIncrementerValue(element.id, $event.checked)"
-            [disabled]="noChanges"
-          ></mat-checkbox>
+          <mat-checkbox [checked]="element.canIncrementMove" (change)="setIncrementerValue(element.id, $event.checked)"
+            [disabled]="noChanges"></mat-checkbox>
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="canModify">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Modfier</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Modfier</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-checkbox
-            [checked]="element.canModify"
-            (change)="setModifierValue(element.id, $event.checked)"
-            [disabled]="noChanges"
-          ></mat-checkbox>
+          <mat-checkbox [checked]="element.canModify" (change)="setModifierValue(element.id, $event.checked)"
+            [disabled]="noChanges"></mat-checkbox>
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="canSubmit">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Submitter</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Submitter</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-checkbox
-            [checked]="element.canSubmit"
-            (change)="setSubmitterValue(element.id, $event.checked)"
-            [disabled]="noChanges"
-          ></mat-checkbox>
+          <mat-checkbox [checked]="element.canSubmit" (change)="setSubmitterValue(element.id, $event.checked)"
+            [disabled]="noChanges"></mat-checkbox>
         </mat-cell>
       </ng-container>
 
@@ -211,13 +134,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <button
-              mat-icon-button
-              (click)="removeUserFromTeam(element)"
-              style="outline: none;"
-              title="Remove {{ element.name }} from Team"
-              [disabled]="noChanges"
-            >
+            <button mat-icon-button (click)="removeUserFromTeam(element)" style="outline: none;"
+              title="Remove {{ element.name }} from Team" [disabled]="noChanges">
               <mat-icon class="mdi-24px self-center" fontIcon="mdi-minus-circle-outline"></mat-icon>
             </button>
           </div>

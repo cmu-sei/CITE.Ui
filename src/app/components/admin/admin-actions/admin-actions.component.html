@@ -7,24 +7,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <!-- Header -->
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon" style="margin-right: 10px;">
-    <mat-icon
-      class="mdi-24px"
-      fontIcon="mdi-clipboard-list-outline"
-      [ngStyle]="{'color': topbarColor}"
-    ></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-clipboard-list-outline" [ngStyle]="{'color': topbarColor}"></mat-icon>
   </div>
-  <button
-    mat-icon-button
-    (click)="addOrEditAction(null)"
-    style="outline: none; margin-left: 20px;"
-    title="Add Action"
-    [disabled]="!selectedEvaluationId || selectedMoveNumber < 0"
-  >
+  <button mat-icon-button (click)="addOrEditAction(null)" style="outline: none; margin-left: 20px;" title="Add Action"
+    [disabled]="!selectedEvaluationId || selectedMoveNumber < 0">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
   <mat-form-field class="button-margins" *ngIf="showSelectionControls">
     <mat-label>Evaluation</mat-label>
-    <mat-select placeholder="Evaluation" [value]="selectedEvaluationId" (selectionChange)="selectEvaluation($event.value)">
+    <mat-select placeholder="Evaluation" [value]="selectedEvaluationId"
+      (selectionChange)="selectEvaluation($event.value)">
       <mat-option *ngFor="let evaluation of evaluationList" [value]="evaluation.id">
         {{ evaluation.description }}
       </mat-option>
@@ -47,51 +39,27 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-option>
     </mat-select>
   </mat-form-field>
-    <div>
-    <mat-paginator
-      #paginator
-      [length]="filteredActionList.length"
-      [pageIndex]="pageIndex"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"
-      (page)="paginatorEvent($event)"
-    ></mat-paginator>
+  <div>
+    <mat-paginator #paginator [length]="filteredActionList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
   </div>
 </div>
 
 <!-- Table -->
-<div class="mat-elevation-z8">
-  <table
-    mat-table
-    [dataSource]="displayedActions"
-    matSort
-    (matSortChange)="sortChanged($event)"
-  >
+<div class="elevate">
+  <table mat-table [dataSource]="displayedActions" matSort (matSortChange)="sortChanged($event)">
     <!-- Description Column -->
     <ng-container matColumnDef="description">
       <th mat-header-cell *matHeaderCellDef mat-sort-header><span style="margin-left: 80px;">Description</span></th>
       <td mat-cell *matCellDef="let row">
-        <button
-          mat-icon-button
-          ngxClipboard
-          (click)="addOrEditAction(row); $event.stopPropagation()"
-          title="Edit Action"
-        >
-          <mat-icon
-            class="mdi-24px"
-            fontIcon="mdi-square-edit-outline">
+        <button mat-icon-button ngxClipboard (click)="addOrEditAction(row); $event.stopPropagation()"
+          title="Edit Action">
+          <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline">
           </mat-icon>
         </button>
-        <button
-          mat-icon-button
-          class="button-end"
-          (click)="deleteActionRequest(row); $event.stopPropagation()"
-          title="Delete Action"
-        >
-          <mat-icon
-            class="mdi-24px"
-            fontIcon="mdi-trash-can"
-          ></mat-icon>
+        <button mat-icon-button class="button-end" (click)="deleteActionRequest(row); $event.stopPropagation()"
+          title="Delete Action">
+          <mat-icon class="mdi-24px" fontIcon="mdi-trash-can"></mat-icon>
         </button>
         {{ row.description }}
       </td>
@@ -124,11 +92,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 </div>
 
 <!-- Loading Indicator -->
-<mat-card
-  appearance="outlined"
-  *ngIf="isLoading"
-  style="display: flex; justify-content: center; align-items: center"
->
+<mat-card appearance="outlined" *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
   <mat-progress-spinner color="primary" mode="indeterminate">
   </mat-progress-spinner>
 </mat-card>

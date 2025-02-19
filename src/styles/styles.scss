@@ -35,12 +35,6 @@ html {
   --official-text: #4d0a05;
 }
 
-html,
-body {
-  height: calc(100% - 5px);
-  overflow-y: auto;
-}
-
 // prevent table header rows from scrolling
 .mat-mdc-header-row {
   position: sticky;
