@@ -3,304 +3,121 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
-
-<div
-  class="app-admin-container background"
->
-  <app-topbar
-    *ngIf="!hideTopbar"
-    [title]="topbarText"
-    [topbarView]="TopbarView.CITE_ADMIN"
-    [topbarColor]="topbarColor"
-    [topbarTextColor]="topbarTextColor"
-    [imageFilePath]="topbarImage"
-  ></app-topbar>
-
-  <mat-sidenav-container class="tall">
-    <mat-sidenav
-      class="appbarmenu-container background"
-      #sidenav
-      mode="side"
-      [(opened)]="isSidebarOpen"
-    >
-      <mat-list>
-        <mat-list-item class="appslist" title="Exit Administration" (click)="exitAdminPages()">
-          <button
-            aria-label="Exit Administration"
-            mat-icon-button
-            (click)="exitAdminPages()"
-            style="outline: none"
-          >
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-close-circle-outline"
-            ></mat-icon>
-          </button>
-          <a class="nolink" (click)="exitAdminPages()">
-            <div>
-              <h2 class="icon-text">Administration</h2>
-            </div>
-          </a>
-          <mat-divider></mat-divider>
-        </mat-list-item>
-        <mat-list-item
-          *ngIf="isSuperUser"
-          class="showhand highlight"
-          [ngClass]="getSelectedClass(evaluationsText)"
-          id="wrapper"
-          (click)="gotoSection(evaluationsText)"
-        >
-          <div class="lefticon">
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-briefcase-outline"
-              [ngStyle]="{ color: topbarColor }"
-            ></mat-icon>
+@let showSection = showSection$ | async;
+<mat-sidenav-container class="appcontent-container" autosize>
+  <mat-sidenav class="appbarmenu-container" #sidenav mode="side" [(opened)]="isSidebarOpen">
+    <mat-list class="appitems-container">
+      <mat-list-item class="wrapper" title="Exit Administration" (click)="exitAdminPages()">
+        <a class="nolink" (click)="exitAdminPages()">
+          <div class="cssLayoutRowStartCenter">
+            <mat-icon class="icon-35px" svgIcon="crucible-icon-cite"></mat-icon>
+            <h2 class="icon-text">Administration</h2>
           </div>
-
-          <div id="evaluationsText" class="application-name">
-            {{ evaluationsText }}
-          </div>
-
-          <div>
-            <button aria-labelledby="evaluationsText" mat-icon-button>
-              <mat-icon
-                class="icon-color"
-                fontIcon="mdi-chevron-right"
-              ></mat-icon>
-            </button>
-          </div>
-        </mat-list-item>
-        <mat-list-item
-          *ngIf="isSuperUser"
-          class="showhand highlight"
-          [ngClass]="getSelectedClass(scoringModelsText)"
-          id="wrapper"
-          (click)="gotoSection(scoringModelsText)"
-        >
-          <div class="lefticon">
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-grid"
-              [ngStyle]="{ color: topbarColor }"
-            ></mat-icon>
-          </div>
-
-          <div id="scoringModelsText" class="application-name">
-            {{ scoringModelsText }}
-          </div>
-
-          <div>
-            <button aria-labelledby="scoringModelsText" mat-icon-button>
-              <mat-icon
-                class="icon-color"
-                fontIcon="mdi-chevron-right"
-              ></mat-icon>
-            </button>
-          </div>
-        </mat-list-item>
-        <mat-list-item
-          *ngIf="canAccessAdminSection"
-          class="showhand highlight"
-          [ngClass]="getSelectedClass(actionsText)"
-          id="wrapper"
-          (click)="gotoSection(actionsText)"
-        >
-          <div class="lefticon">
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-clipboard-list-outline"
-              [ngStyle]="{ color: topbarColor }"
-            ></mat-icon>
-          </div>
-
-          <div id="actionsText" class="application-name">
-            {{ actionsText }}
-          </div>
-
-          <div>
-            <button aria-labelledby="actionsText" mat-icon-button>
-              <mat-icon
-                class="icon-color"
-                fontIcon="mdi-chevron-right"
-              ></mat-icon>
-            </button>
-          </div>
-        </mat-list-item>
-        <mat-list-item
-          *ngIf="canAccessAdminSection"
-          class="showhand highlight"
-          [ngClass]="getSelectedClass(rolesText)"
-          id="wrapper"
-          (click)="gotoSection(rolesText)"
-        >
-          <div class="lefticon">
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-clipboard-account-outline"
-              [ngStyle]="{ color: topbarColor }"
-            ></mat-icon>
-          </div>
-
-          <div id="rolesText" class="application-name">
-            {{ rolesText }}
-          </div>
-
-          <div>
-            <button aria-labelledby="rolesText" mat-icon-button>
-              <mat-icon
-                class="icon-color"
-                fontIcon="mdi-chevron-right"
-              ></mat-icon>
-            </button>
-          </div>
-        </mat-list-item>
-        <mat-list-item
-          *ngIf="isSuperUser"
-          class="showhand highlight"
-          [ngClass]="getSelectedClass(submissionsText)"
-          id="wrapper"
-          (click)="gotoSection(submissionsText)"
-        >
-          <div class="lefticon">
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-playlist-play"
-              [ngStyle]="{ color: topbarColor }"
-            ></mat-icon>
-          </div>
-
-          <div id="submissionsText" class="application-name">
-            {{ submissionsText }}
-          </div>
-
-          <div>
-            <button aria-labelledby="submissionsText" mat-icon-button>
-              <mat-icon
-                class="icon-color"
-                fontIcon="mdi-chevron-right"
-              ></mat-icon>
-            </button>
-          </div>
-        </mat-list-item>
-        <mat-list-item
-          *ngIf="isSuperUser"
-          class="showhand highlight"
-          [ngClass]="getSelectedClass(teamTypesText)"
-          id="wrapper"
-          (click)="gotoSection(teamTypesText)"
-        >
-          <div class="lefticon">
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-playlist-play"
-              [ngStyle]="{ color: topbarColor }"
-            ></mat-icon>
-          </div>
-
-          <div id="teamTypesText" class="application-name">
-            {{ teamTypesText }}
-          </div>
-
-          <div>
-            <button aria-labelledby="teamTypesText" mat-icon-button>
-              <mat-icon
-                class="icon-color"
-                fontIcon="mdi-chevron-right"
-              ></mat-icon>
-            </button>
-          </div>
-        </mat-list-item>
-        <mat-list-item
-          *ngIf="isSuperUser"
-          class="showhand highlight"
-          [ngClass]="getSelectedClass(usersText)"
-          id="wrapper"
-          (click)="gotoSection(usersText)"
-        >
-          <div class="lefticon">
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-account"
-              [ngStyle]="{ color: topbarColor }"
-            ></mat-icon>
-          </div>
-
-          <div id="usersText" class="application-name">
-            {{ usersText }}
-          </div>
-
-          <div>
-            <button aria-labelledby="usersText" mat-icon-button>
-              <mat-icon
-                class="icon-color"
-                fontIcon="mdi-chevron-right"
-              ></mat-icon>
-            </button>
-          </div>
-        </mat-list-item>
-      </mat-list>
-      <div class="app-versions" style="margin-bottom: 58px;" *ngIf="!hideTopbar">
-        Versions: UI {{ uiVersion }},  API {{ apiVersion }}
-      </div>
-      <div class="app-versions" *ngIf="hideTopbar">
-        Versions: UI {{ uiVersion }},  API {{ apiVersion }}
-      </div>
-      <img
-        *ngIf="!hideTopbar"
-        class="cmu-logo"
-        [src]="
-          (theme$ | async) === 'light-theme'
-            ? 'assets/img/cmu-red-gray.png'
-            : 'assets/img/cmu-red-gray.png'
-        "
-      />
-    </mat-sidenav>
-    <mat-sidenav-content style="margin-left: 265px">
-      <span *ngIf="isSuperUser && ((showSection | async) === scoringModelsText)">
-        <app-admin-scoring-models
-        >
-        </app-admin-scoring-models>
-      </span>
-      <span *ngIf="isSuperUser && ((showSection | async) === evaluationsText)">
-        <app-admin-evaluations
-          [evaluationList]="evaluationList | async"
-        >
-        </app-admin-evaluations>
-      </span>
-      <span *ngIf="canAccessAdminSection && ((showSection | async) === actionsText)">
-        <app-admin-actions
-          [showSelectionControls]="canSwitchEvaluations | async"
-        >
-        </app-admin-actions>
-      </span>
-      <span *ngIf="canAccessAdminSection && ((showSection | async) === rolesText)">
-        <app-admin-roles
-          [showSelectionControls]="canSwitchEvaluations | async"
-        >
-        </app-admin-roles>
-      </span>
-      <span *ngIf="isSuperUser && ((showSection | async) === submissionsText)">
-        <app-admin-submissions
-        >
-        </app-admin-submissions>
-      </span>
-      <span *ngIf="isSuperUser && ((showSection | async) === teamTypesText)">
-        <app-admin-teamtypes
-        >
-        </app-admin-teamtypes>
-      </span>
-      <span *ngIf="isSuperUser && ((showSection | async) === usersText)">
-        <app-admin-users
-          [userList]="userList | async"
-          [permissionList]="permissionList | async"
-          (removeUserPermission)="removeUserPermissionHandler($event)"
-          (addUserPermission)="addUserPermissionHandler($event)"
-          (addUser)="addUserHandler($event)"
-          (deleteUser)="deleteUserHandler($event)"
-        >
-        </app-admin-users>
-      </span>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
-</div>
+        </a>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item *ngIf="isSuperUser" id="wrapper showhand" (click)="gotoSection(evaluationsText)"
+        [ngClass]="getSelectedClass(evaluationsText)">
+        <mat-icon matListItemIcon fontIcon="mdi-briefcase-outline"></mat-icon>
+        {{ evaluationsText }}
+        <button aria-labelledby="evaluationsText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item *ngIf="isSuperUser" [ngClass]="getSelectedClass(scoringModelsText)" id="wrapper showhand"
+        (click)="gotoSection(scoringModelsText)">
+        <mat-icon matListItemIcon fontIcon="mdi-grid"></mat-icon>
+        {{ scoringModelsText }}
+        <button aria-labelledby="scoringModelsText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item *ngIf="canAccessAdminSection" [ngClass]="getSelectedClass(actionsText)" id="wrapper showhand"
+        (click)="gotoSection(actionsText)">
+        <mat-icon matListItemIcon fontIcon="mdi-clipboard-list-outline"></mat-icon>
+        {{ actionsText }}
+        <button aria-labelledby="actionsText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item *ngIf="canAccessAdminSection" [ngClass]="getSelectedClass(rolesText)" id="wrapper showhand"
+        (click)="gotoSection(rolesText)">
+        <mat-icon matListItemIcon fontIcon="mdi-clipboard-account-outline"></mat-icon>
+        {{ rolesText }}
+        <button aria-labelledby="rolesText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item *ngIf="isSuperUser" [ngClass]="getSelectedClass(submissionsText)" id="wrapper showhand"
+        (click)="gotoSection(submissionsText)">
+        <mat-icon matListItemIcon fontIcon="mdi-playlist-play"></mat-icon>
+        {{ submissionsText }}
+        <button aria-labelledby="submissionsText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item *ngIf="isSuperUser" [ngClass]="getSelectedClass(teamTypesText)" id="wrapper showhand"
+        (click)="gotoSection(teamTypesText)">
+        <mat-icon matListItemIcon fontIcon="mdi-playlist-play"></mat-icon>
+        {{ teamTypesText }}
+        <button aria-labelledby="teamTypesText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item *ngIf="isSuperUser" [ngClass]="getSelectedClass(usersText)" id="wrapper showhand"
+        (click)="gotoSection(usersText)">
+        <mat-icon matListItemIcon fontIcon="mdi-account"></mat-icon>
+        {{ usersText }}
+        <button aria-labelledby="usersText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+    <div class="app-versions" style="margin-bottom: 58px;" *ngIf="!hideTopbar">
+      Versions: UI {{ uiVersion }}, API {{ apiVersion }}
+    </div>
+    <div class="app-versions" *ngIf="hideTopbar">
+      Versions: UI {{ uiVersion }}, API {{ apiVersion }}
+    </div>
+    <img *ngIf="!hideTopbar" class="crucible-logo" [src]="
+                    (theme$ | async) === 'light-theme'
+          ? 'assets/img/crucible-logo-light.png'
+          : 'assets/img/crucible-logo-dark.png'
+      " />
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <app-topbar *ngIf="!hideTopbar" [title]="showSection" [topbarView]="TopbarView.CITE_ADMIN"
+      [topbarColor]="topbarColor" [topbarTextColor]="topbarTextColor"></app-topbar>
+    <span *ngIf="isSuperUser && (showSection === scoringModelsText)">
+      <app-admin-scoring-models>
+      </app-admin-scoring-models>
+    </span>
+    <span *ngIf="isSuperUser && (showSection === evaluationsText)">
+      <app-admin-evaluations [evaluationList]="evaluationList | async">
+      </app-admin-evaluations>
+    </span>
+    <span *ngIf="canAccessAdminSection && (showSection === actionsText)">
+      <app-admin-actions [showSelectionControls]="canSwitchEvaluations | async">
+      </app-admin-actions>
+    </span>
+    <span *ngIf="canAccessAdminSection && (showSection === rolesText)">
+      <app-admin-roles [showSelectionControls]="canSwitchEvaluations | async">
+      </app-admin-roles>
+    </span>
+    <span *ngIf="isSuperUser && (showSection === submissionsText)">
+      <app-admin-submissions>
+      </app-admin-submissions>
+    </span>
+    <span *ngIf="isSuperUser && (showSection === teamTypesText)">
+      <app-admin-teamtypes>
+      </app-admin-teamtypes>
+    </span>
+    <span *ngIf="isSuperUser && (showSection === usersText)">
+      <app-admin-users [userList]="userList | async" [permissionList]="permissionList | async"
+        (removeUserPermission)="removeUserPermissionHandler($event)"
+        (addUserPermission)="addUserPermissionHandler($event)" (addUser)="addUserHandler($event)"
+        (deleteUser)="deleteUserHandler($event)">
+      </app-admin-users>
+    </span>
+  </mat-sidenav-content>
+</mat-sidenav-container>

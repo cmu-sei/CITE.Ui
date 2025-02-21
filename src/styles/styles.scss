@@ -10,14 +10,7 @@ html {
   @include mat.theme((color: theme.$primary-palette,
       typography: '"Open Sans", sans-serif',
     ),
-    $overrides: ((surface: var(--mat-sys-background), surface-variant: var(--mat-sys-background))));
-  --background-button: white;
-  --plain-button: black;
-  --user-text: #c2d5f8;
-  --team-text: #f7d5a6;
-  --team-avg-text: #e2d6f5;
-  --group-text: #dce8ee;
-  --official-text: #fcbbb5;
+    $overrides: ((background: #f1f1f2, surface: var(--mat-sys-background), surface-variant: var(--mat-sys-background))));
 }
 
 .darkMode {
@@ -25,14 +18,13 @@ html {
         theme-type: dark,
       ),
     ),
-    $overrides: ((background: #313131, surface: #393939, surface-variant: #292929)));
-  --background-button: white;
-  --plain-button: white;
-  --user-text: #052a61;
-  --team-text: #583605;
-  --team-avg-text: #270858;
-  --group-text: #073c57;
-  --official-text: #4d0a05;
+    $overrides: ((background: #313131, surface: var(--mat-sys-background), surface-variant: var(--mat-sys-background))));
+}
+
+// classes for icon sizing
+.icon-35px {
+  width: 35px !important;
+  height: 35px !important;
 }
 
 // prevent table header rows from scrolling
