@@ -52,7 +52,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   teamTypesText = 'Team Types';
   topbarText = 'Set AppTopBarText in Settings';
   showSection$: Observable<string>;
-  displayedSection = '';
+  displayedSection = this.evaluationsText;
   exitSection = '';
   originalEvaluationId: string;
   isSidebarOpen = true;
@@ -126,13 +126,16 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
       map((params) => parseInt(params.get('pageindex') || '0', 10))
     );
     this.showSection$ = activatedRoute.queryParamMap.pipe(
-      tap((params) => (this.displayedSection = params.get('section'))),
+      tap(
+        (params) =>
+          (this.displayedSection =
+            params.get('section') || this.evaluationsText)
+      ),
       map((params) => params.get('section') || this.evaluationsText)
     );
     this.showSection$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((section) => {
-        console.log('section changed to ' + section);
         this.displayedSection = section;
       });
     this.originalEvaluationId = this.evaluationQuery.getActiveId();

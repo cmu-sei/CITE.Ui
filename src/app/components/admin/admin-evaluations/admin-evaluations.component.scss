@@ -8,6 +8,11 @@
   min-width: 700px;
 }
 
+.search-field {
+  min-width: 100px;
+  margin-left: 10px;
+}
+
 .mat-mdc-header-row {
   min-height: 56px;
   font-family: "open_sansregular";
@@ -17,7 +22,8 @@
   min-height: 48px;
 }
 
-.mat-mdc-row, .mat-mdc-header-row {
+.mat-mdc-row,
+.mat-mdc-header-row {
   display: flex;
   border-bottom-width: 1px;
   border-bottom-style: solid;
@@ -26,7 +32,8 @@
   box-sizing: border-box;
 }
 
-.mat-mdc-cell, .mat-mdc-header-cell {
+.mat-mdc-cell,
+.mat-mdc-header-cell {
   flex: 1;
   overflow: hidden;
   word-wrap: break-word;
@@ -68,13 +75,13 @@
 }
 
 .nator-div {
-  min-width: 375px;
+  min-width: 220px;
 }
 
 .status-ff {
   margin-left: 20px;
   margin-right: 20px;
-  min-width: 250px;
+  min-width: 200px;
 }
 
 .status-dd {
@@ -115,4 +122,3 @@
 .center-self {
   align-self: center;
 }
-

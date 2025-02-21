@@ -35,6 +35,14 @@ html {
   z-index: 9 !important;
 }
 
+// remove the border around paginator items per page selection
+mat-paginator {
+  --mdc-outlined-text-field-outline-color: transparent;
+  --mdc-outlined-text-field-hover-outline-color: transparent;
+  --mdc-outlined-text-field-focus-outline-color: transparent;
+  min-width: 200px !important;
+}
+
 /* The following acts as drop in replacement for the deprecation of Angular FlexLayout */
 .cssLayoutColumnCenterCenter {
   display: flex;
