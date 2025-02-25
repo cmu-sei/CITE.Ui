@@ -6,153 +6,90 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon">
-    <mat-icon
-      class="mdi-24px"
-      fontIcon="mdi-grid"
-      [ngStyle]="{'color': topbarColor}"
-    ></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-grid" [ngStyle]="{'color': topbarColor}"></mat-icon>
   </div>
   <mat-form-field style="width: 300px; margin-left: 20px;">
     <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()" />
   </mat-form-field>
   <div style="width: 30px;">
-    <button
-      mat-icon-button
-      style="outline: none;"
-      title="Clear Search"
-      (click)="clearFilter()"
-    >
+    <button mat-icon-button style="outline: none;" title="Clear Search" (click)="clearFilter()">
       <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
     </button>
   </div>
   <div *ngIf="!addingNewScoringModel">
-    <mat-paginator
-      #paginator
-      [length]="filteredScoringModelList.length"
-      [pageIndex]="pageIndex"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"
-      (page)="paginatorEvent($event)"
-    ></mat-paginator>
+    <mat-paginator #paginator [length]="filteredScoringModelList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
   </div>
 </div>
 
 <mat-accordion displayMode="flat">
-  <section
-    matSort
-    (matSortChange)="sortChanged($event)"
-    class="mat-elevation-z2 mat-header-row"
-  >
-  <span class="mat-header-cell first-cell">
-    <button
-      mat-icon-button
-      (click)="addOrEditScoringModel(null)"
-      style="outline: none; margin-left: 20px;"
-      title="Add Scoring Model"
-      [disabled]="isBusy"
-    >
-      <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
-      title="Upload Scoring Model"
-      [disabled]="isBusy"
-    >
-      <mat-icon class="mdi-18px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
-    </button>
-  </span>
-  <span class="mat-header-cell description-cell" mat-sort-header="description">Scoring Model Description</span>
-  <span class="mat-header-cell one-cell" mat-sort-header="createdBy">Created By</span>
-    <span class="mat-header-cell date-cell" mat-sort-header="dateCreated">Date</span>
-    <span class="mat-header-cell one-cell" mat-sort-header="status">Status</span>
+  <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
+    <span class="header-cell first-cell">
+      <button mat-icon-button (click)="addOrEditScoringModel(null)" style="outline: none; margin-left: 20px;"
+        title="Add Scoring Model" [disabled]="isBusy">
+        <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+      </button>
+      <button mat-icon-button (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
+        title="Upload Scoring Model" [disabled]="isBusy">
+        <mat-icon class="mdi-18px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
+      </button>
+    </span>
+    <span class="header-cell description-cell" mat-sort-header="description">Scoring Model Description</span>
+    <span class="header-cell one-cell" mat-sort-header="createdBy">Created By</span>
+    <span class="header-cell date-cell" mat-sort-header="dateCreated">Date</span>
+    <span class="header-cell one-cell" mat-sort-header="status">Status</span>
   </section>
 
-  <mat-expansion-panel
-    *ngFor="let scoringModel of displayedScoringModels"
-    [expanded]="editScoringModel.id === scoringModel.id"
-  >
-    <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading" (click)="togglePanel(scoringModel); $event.stopPropagation()">
-      <span class="mat-cell first-cell">
-        <button
-          mat-icon-button
-          (click)="addOrEditScoringModel(scoringModel); $event.stopPropagation()"
-          class="first-cell-button"
-          title="Edit {{ scoringModel.description }}"
-          [disabled]="isBusy"
-        >
+  <mat-expansion-panel *ngFor="let scoringModel of displayedScoringModels"
+    [expanded]="editScoringModel.id === scoringModel.id">
+    <mat-expansion-panel-header class="row" *ngIf="!isLoading"
+      (click)="togglePanel(scoringModel); $event.stopPropagation()">
+      <span class="cell first-cell">
+        <button mat-icon-button (click)="addOrEditScoringModel(scoringModel); $event.stopPropagation()"
+          class="first-cell-button" title="Edit {{ scoringModel.description }}" [disabled]="isBusy">
           <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline" alt="Edit"></mat-icon>
         </button>
-        <button
-          mat-icon-button
-          (click)="copyScoringModel(scoringModel.id); $event.stopPropagation();"
-          class="first-cell-button"
-          title="Copy {{ scoringModel.description }}"
-          [disabled]="isBusy"
-        >
+        <button mat-icon-button (click)="copyScoringModel(scoringModel.id); $event.stopPropagation();"
+          class="first-cell-button" title="Copy {{ scoringModel.description }}" [disabled]="isBusy">
           <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
         </button>
-        <button
-          mat-icon-button
-          (click)="downloadScoringModel(scoringModel); $event.stopPropagation();"
-          class="first-cell-button"
-          title="Download {{ scoringModel.description }}"
-          [disabled]="isBusy"
-        >
+        <button mat-icon-button (click)="downloadScoringModel(scoringModel); $event.stopPropagation();"
+          class="first-cell-button" title="Download {{ scoringModel.description }}" [disabled]="isBusy">
           <mat-icon class="mdi-18px" fontIcon="mdi-download" alt="Download"></mat-icon>
         </button>
-        <button
-          mat-icon-button
-          (click)="deleteScoringModelRequest(scoringModel); $event.stopPropagation()"
-          class="first-cell-button"
-          title="Delete {{ scoringModel.description }}"
-          [disabled]="isBusy"
-        >
+        <button mat-icon-button (click)="deleteScoringModelRequest(scoringModel); $event.stopPropagation()"
+          class="first-cell-button" title="Delete {{ scoringModel.description }}" [disabled]="isBusy">
           <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can" alt="Delete"></mat-icon>
         </button>
       </span>
-      <span class="mat-cell description-cell">
+      <span class="cell description-cell">
         <span>
           {{ scoringModel.description }}
         </span>
       </span>
-      <span class="mat-cell one-cell">
+      <span class="cell one-cell">
         {{ getUserName(scoringModel.createdBy) }}
       </span>
-      <span class="mat-cell date-cell">
+      <span class="cell date-cell">
         {{ scoringModel.dateCreated | date:"MM/dd/yyyy HH:mm" }}
       </span>
-      <span class="mat-cell one-cell">
+      <span class="cell one-cell">
         {{ scoringModel.status }}
       </span>
     </mat-expansion-panel-header>
     <div class="sub-container" *ngIf="editScoringModel.id === scoringModel.id">
-      <app-admin-scoring-categories
-        [scoringModelId]="scoringModel.id"
-        [editScoringCategoryId]="scoringCategoryId"
+      <app-admin-scoring-categories [scoringModelId]="scoringModel.id" [editScoringCategoryId]="scoringCategoryId"
         [displayScoringModelbyMoveNumber]="scoringModel.displayScoringModelByMoveNumber"
-        (scoringCategoryClick)="scoringCategoryId = $event.toString()"
-    ></app-admin-scoring-categories>
+        (scoringCategoryClick)="scoringCategoryId = $event.toString()"></app-admin-scoring-categories>
     </div>
   </mat-expansion-panel>
 </mat-accordion>
 
-<mat-card
-  appearance="outlined"
-  *ngIf="isLoading"
-  style="display: flex; justify-content: center; align-items: center;"
->
+<mat-card appearance="outlined" *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center;">
   <mat-progress-spinner color="primary" mode="indeterminate">
   </mat-progress-spinner>
 </mat-card>
 
 
 
-<input
-  hidden
-  (change)="selectFile($event)"
-  (cancel)="isBusy = false"
-  #jsonInput
-  type="file"
-  accept=".json"
-/>
+<input hidden (change)="selectFile($event)" (cancel)="isBusy = false" #jsonInput type="file" accept=".json" />

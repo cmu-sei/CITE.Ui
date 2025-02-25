@@ -13,27 +13,26 @@
   margin-left: 10px;
 }
 
-.mat-mdc-header-row {
+.header-row {
   min-height: 56px;
-  font-family: "open_sansregular";
 }
 
-.mat-mdc-row {
+.row {
   min-height: 48px;
 }
 
-.mat-mdc-row,
-.mat-mdc-header-row {
+.row,
+.header-row {
   display: flex;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
   align-items: center;
+  justify-content: center;
   padding: 0 24px;
-  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
 }
 
-.mat-mdc-cell,
-.mat-mdc-header-cell {
+.cell,
+.header-cell {
   flex: 1;
   overflow: hidden;
   word-wrap: break-word;
@@ -48,13 +47,9 @@
   margin-left: 10px;
 }
 
-.mat-accordion .mat-mdc-header-row {
+.mat-accordion .header-row {
   padding-left: 1.5rem;
   padding-right: 2rem;
-  border-bottom: none;
-}
-
-.mat-expansion-panel-header.mat-mdc-row {
   border-bottom: none;
 }
 
@@ -91,7 +86,7 @@
 
 .first-cell {
   flex: 1;
-  min-width: 100px;
+  min-width: 120px;
 }
 
 .first-cell-button {
@@ -102,6 +97,7 @@
 
 .description-cell {
   flex: 5;
+  min-width: 150px;
 }
 
 .date-cell {
@@ -110,8 +106,12 @@
 }
 
 .move-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex: 1;
-  min-width: 100px;
+  min-width: 120px;
+  text-align: center;
 }
 
 .one-cell {

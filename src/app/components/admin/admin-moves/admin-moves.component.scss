@@ -35,25 +35,29 @@
   width: 150px;
 }
 
-.mat-mdc-header-row {
+.header-row {
   min-height: 56px;
   font-family: "open_sansregular";
 }
 
-.mat-mdc-row {
+.row {
   min-height: 48px;
 }
 
-.mat-mdc-row, .mat-mdc-header-row {
+.row,
+.header-row {
   display: flex;
   border-bottom-width: 1px;
   border-bottom-style: solid;
   align-items: center;
   padding: 0 24px;
-  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  color: var(--mat-sys-on-background);
 }
 
-.mat-mdc-cell, .mat-mdc-header-cell {
+.cell,
+.header-cell {
   flex: 1;
   overflow: hidden;
   word-wrap: break-word;
@@ -68,13 +72,13 @@
   margin-left: 10px;
 }
 
-.mat-accordion .mat-mdc-header-row {
+.mat-accordion .header-row {
   padding-left: 1.5rem;
   padding-right: 2rem;
   border-bottom: none;
 }
 
-.mat-expansion-panel-header.mat-mdc-row {
+.mat-expansion-panel-header.row {
   border-bottom: none;
 }
 
@@ -117,4 +121,3 @@
 .center-self {
   align-self: center;
 }
-

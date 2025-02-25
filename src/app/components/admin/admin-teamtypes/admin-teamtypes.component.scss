@@ -2,30 +2,34 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-.mat-mdc-table {
+.table {
   display: block;
 }
 
-.mat-mdc-header-row {
+.header-row {
   min-height: 56px;
   font-family: "open_sansregular";
 }
 
-.mat-mdc-row {
+.row {
   min-height: 48px;
 }
 
-.mat-mdc-row, .mat-mdc-header-row {
+.row,
+.header-row {
   display: flex;
   flex-direction: row;
   border-bottom-width: 1px;
   border-bottom-style: solid;
   align-items: center;
   padding: 0 24px;
-  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  color: var(--mat-sys-on-background);
 }
 
-.mat-mdc-cell, .mat-mdc-header-cell {
+.cell,
+.header-cell {
   overflow: hidden;
   word-wrap: break-word;
   text-align: left;
@@ -77,13 +81,13 @@
   margin-left: 10px;
 }
 
-.mat-accordion .mat-mdc-header-row {
+.mat-accordion .header-row {
   padding-left: 1.5rem;
   padding-right: 2rem;
   border-bottom: none;
 }
 
-.mat-expansion-panel-header.mat-mdc-row {
+.mat-expansion-panel-header.row {
   border-bottom: none;
 }
 
