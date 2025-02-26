@@ -1,15 +1,9 @@
-FROM node:20-alpine as builder
-
-COPY package.json package-lock.json ./
-
-# Storing node modules on a separate layer will prevent unnecessary npm install at each build
-RUN npm i && mkdir -p /ng-app/dist && cp -R ./node_modules ./ng-app
-
-WORKDIR /ng-app
-
+FROM node:20-alpine AS build-stage
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
 COPY . .
-
-RUN $(npm bin)/ng build --resources-output-path=assets/fonts --aot --verbose --configuration production
+RUN npm run build --configuration production
 
 ### Stage 2: Setup ###
 
