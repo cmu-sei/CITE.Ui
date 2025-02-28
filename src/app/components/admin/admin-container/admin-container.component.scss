@@ -28,8 +28,7 @@
 }
 
 .appbarmenu-container {
-  min-width: 250px;
-  max-width: 280px;
+  width: 250px;
   border-right: solid var(--mat-sys-surface-container);
 }
 
@@ -40,7 +39,7 @@
 
 .pull-right {
   position: absolute;
-  right: 35px;
+  right: 0px;
   margin-top: -8px;
 }
 
@@ -104,7 +103,6 @@
 
 .icon-text {
   margin-left: 10px;
-  font-family: open_sansbold;
 }
 
 .selected-item {

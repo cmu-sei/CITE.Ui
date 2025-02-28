@@ -36,14 +36,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <mat-expansion-panel *ngFor="let team of sortedTeams" [expanded]="editTeam.id === team.id">
     <mat-expansion-panel-header class="row" *ngIf="!isLoading" (click)="togglePanel(team); $event.stopPropagation()">
       <div class="cell one-cell">
-        <div class="panel-div">
-          <button mat-icon-button (click)="addOrEditTeam(team); $event.stopPropagation()" style="outline: none;"
-            title="Edit {{ team.name }}" [disabled]="noChanges">
-            <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+        <div class="button-div">
+          <button mat-icon-button (click)="addOrEditTeam(team); $event.stopPropagation()" title="Edit {{ team.name }}"
+            [disabled]="noChanges" class="team-button">
+            <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
           </button>
-          <button mat-icon-button (click)="deleteTeam(team); $event.stopPropagation()" style="outline: none;"
-            title="Delete {{ team.name }}" [disabled]="noChanges">
-            <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can"></mat-icon>
+          <button mat-icon-button (click)="deleteTeam(team); $event.stopPropagation()" title="Delete {{ team.name }}"
+            [disabled]="noChanges" class="team-button">
+            <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can"></mat-icon>
           </button>
         </div>
       </div>

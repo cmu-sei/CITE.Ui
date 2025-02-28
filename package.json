@@ -36,6 +36,7 @@
     "@kolkov/angular-editor": "^3.0.0-beta.0",
     "@mdi/font": "^5.9.55",
     "@microsoft/signalr": "^8.0.7",
+    "@ngxmc/datetime-picker": "^19.1.0",
     "@types/luxon": "^3.2.0",
     "ajv": "^8.6.0",
     "core-js": "^3.14.0",

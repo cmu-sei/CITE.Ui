@@ -22,6 +22,7 @@ table {
 .button-margins {
   margin-left: 20px;
   margin-right: 20px;
+  min-width: 180px;
 }
 
 .team-selector {
@@ -30,4 +31,8 @@ table {
 
 .mat-mdc-header-row {
   min-height: 56px;
+}
+
+.mat-mdc-cell {
+  align-self: center;
 }

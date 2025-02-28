@@ -2,12 +2,15 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
 import {
-  UntypedFormControl,
-  FormGroupDirective,
-  NgForm,
-} from '@angular/forms';
+  Component,
+  EventEmitter,
+  Inject,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { UntypedFormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import {
   MatDialogRef,
@@ -28,12 +31,11 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-    selector: 'app-admin-evaluation-edit-dialog',
-    templateUrl: './admin-evaluation-edit-dialog.component.html',
-    styleUrls: ['./admin-evaluation-edit-dialog.component.scss'],
-    standalone: false
+  selector: 'app-admin-evaluation-edit-dialog',
+  templateUrl: './admin-evaluation-edit-dialog.component.html',
+  styleUrls: ['./admin-evaluation-edit-dialog.component.scss'],
+  standalone: false,
 })
-
 export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
   @Output() editComplete = new EventEmitter<any>();
 
@@ -53,21 +55,21 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
     defaultFontName: '',
     defaultFontSize: '',
     fonts: [
-      {class: 'arial', name: 'Arial'},
-      {class: 'times-new-roman', name: 'Times New Roman'},
-      {class: 'calibri', name: 'Calibri'},
-      {class: 'comic-sans-ms', name: 'Comic Sans MS'}
+      { class: 'arial', name: 'Arial' },
+      { class: 'times-new-roman', name: 'Times New Roman' },
+      { class: 'calibri', name: 'Calibri' },
+      { class: 'comic-sans-ms', name: 'Comic Sans MS' },
     ],
     uploadUrl: '',
     uploadWithCredentials: false,
     sanitize: true,
     toolbarPosition: 'top',
-    toolbarHiddenButtons: [
-      ['backgroundColor']
-    ]
+    toolbarHiddenButtons: [['backgroundColor']],
   };
   public situationDateFormControl = new UntypedFormControl(
-    this.data.evaluation.situationTime ? this.data.evaluation.situationTime : '',
+    this.data.evaluation.situationTime
+      ? this.data.evaluation.situationTime
+      : '',
     []
   );
 
@@ -79,8 +81,7 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
     dialogRef.disableClose = true;
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   errorFree() {
     return this.data.evaluation.description.length > 0;
@@ -120,18 +121,16 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
   }
 
   getUserName(userId: string) {
-    return this.data.userList.find(u => u.id === userId).name;
+    return this.data.userList.find((u) => u.id === userId).name;
   }
 
   incrementCurrentMoveNumber() {
-    this.data.evaluation.currentMoveNumber ++;
+    this.data.evaluation.currentMoveNumber++;
   }
 
   decrementCurrentMoveNumber() {
-    this.data.evaluation.currentMoveNumber --;
+    this.data.evaluation.currentMoveNumber--;
   }
 
-  ngOnDestroy() {
-  }
-
+  ngOnDestroy() {}
 }

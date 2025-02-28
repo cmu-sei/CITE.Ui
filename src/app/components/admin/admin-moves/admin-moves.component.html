@@ -6,7 +6,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <mat-accordion displayMode="flat">
   <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
-    <div class="header-cell cell-one">
+    <div class="header-cell cell-two">
       <button mat-icon-button (click)="addOrEditMove(null)" style="outline: none;" title="Add Move"
         [disabled]="noChanges">
         <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
@@ -30,14 +30,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
   <mat-expansion-panel *ngFor="let move of sortedMoves" [disabled]="true">
     <mat-expansion-panel-header class="row" *ngIf="!isLoading">
-      <div class="cell cell-one">
+      <div class="cell cell-two">
         <button mat-icon-button (click)="addOrEditMove(move); $event.stopPropagation()" style="outline: none;"
           title="Edit Move">
-          <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+          <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
         </button>
         <button mat-icon-button (click)="deleteMoveRequest(move); $event.stopPropagation()" title="Delete Move"
           [disabled]="noChanges">
-          <mat-icon class="mdi-24px" fontIcon="mdi-trash-can"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
         </button>
       </div>
       <div class="cell cell-one center-self">

@@ -10,6 +10,15 @@
   text-align: left;
 }
 
+.button-div {
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  min-width: 100px;
+  margin-left: -10px;
+}
+
 .panel-div {
   display: flex;
   flex-flow: row;
@@ -37,11 +46,10 @@
 
 .header-row {
   min-height: 56px;
-  font-family: "open_sansregular";
 }
 
 .row {
-  min-height: 48px;
+  min-height: 36px;
 }
 
 .row,
@@ -79,6 +87,10 @@
 
 .mat-expansion-panel {
   text-align: left;
+}
+
+.team-button {
+  width: 36px !important;
 }
 
 .pad-top {

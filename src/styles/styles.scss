@@ -11,6 +11,9 @@ html {
       typography: '"Open Sans", sans-serif',
     ),
     $overrides: ((background: #f1f1f2, surface: var(--mat-sys-background), surface-variant: var(--mat-sys-background))));
+  @include mat.datepicker-overrides((calendar-container-background-color: var(--mat-sys-outline-variant),
+      calendar-date-selected-state-text-color: var(--mat-sys-primary), calendar-container-text-color: var(--mat-sys-on-background),
+    ));
 }
 
 .darkMode {
@@ -19,6 +22,9 @@ html {
       ),
     ),
     $overrides: ((background: #313131, surface: var(--mat-sys-background), surface-variant: var(--mat-sys-background))));
+  @include mat.datepicker-overrides((calendar-container-background-color: var(--mat-sys-outline-variant),
+      calendar-date-selected-state-text-color: var(--mat-sys-primary), calendar-container-text-color: var(--mat-sys-on-background),
+    ));
 }
 
 // classes for icon sizing

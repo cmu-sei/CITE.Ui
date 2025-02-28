@@ -3,46 +3,6 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 @use "@angular/material" as mat;
 
-@font-face {
-    font-family: 'open_sansregular';
-    src: format('woff2'),
-         format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'open_sansbold';
-    src: format('woff2'),
-         format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'open_sansitalic';
-    src: format('woff2'),
-         format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-* {
-    font-family: 'open_sansregular';
-}
-
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'open_sansbold';
-}
-
-b {
-    font-family: 'open_sansbold';
-}
-
-i {
-    font-family: 'open_sansitalic';
-}
-
 mat-toolbar {
   @include mat.toolbar-overrides((container-background-color: var(--mat-sys-primary),
       container-text-color: var(--mat-sys-on-primary),
