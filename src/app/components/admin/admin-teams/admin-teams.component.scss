@@ -10,6 +10,15 @@
   text-align: left;
 }
 
+.button-div {
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  min-width: 100px;
+  margin-left: -10px;
+}
+
 .panel-div {
   display: flex;
   flex-flow: row;
@@ -35,25 +44,27 @@
   width: 150px;
 }
 
-.mat-header-row {
+.header-row {
   min-height: 56px;
-  font-family: "open_sansregular";
 }
 
-.mat-row {
-  min-height: 48px;
+.row {
+  min-height: 36px;
 }
 
-.mat-row, .mat-header-row {
+.row,
+.header-row {
   display: flex;
   border-bottom-width: 1px;
   border-bottom-style: solid;
   align-items: center;
   padding: 0 24px;
-  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
 }
 
-.mat-cell, .mat-header-cell {
+.cell,
+.header-cell {
   flex: 1;
   overflow: hidden;
   word-wrap: break-word;
@@ -68,18 +79,18 @@
   margin-left: 10px;
 }
 
-.mat-accordion .mat-header-row {
+.mat-accordion .header-row {
   padding-left: 1.5rem;
   padding-right: 2rem;
   border-bottom: none;
 }
 
-.mat-expansion-panel-header.mat-row {
-  border-bottom: none;
-}
-
 .mat-expansion-panel {
   text-align: left;
+}
+
+.team-button {
+  width: 36px !important;
 }
 
 .pad-top {

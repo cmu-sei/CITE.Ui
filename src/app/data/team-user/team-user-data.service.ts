@@ -5,7 +5,7 @@
 import { TeamUserStore } from './team-user.store';
 import { TeamUserQuery } from './team-user.query';
 import { Injectable } from '@angular/core';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import {
   TeamUser,
   TeamUserService,

@@ -4,9 +4,14 @@
 
 import { Component, ElementRef, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import { Evaluation, ItemStatus, Move, User } from 'src/app/generated/cite.api/model/models';
+import {
+  Evaluation,
+  ItemStatus,
+  Move,
+  User,
+} from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
@@ -15,15 +20,16 @@ import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.servi
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dialog/admin-evaluation-edit-dialog.component';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 
 @Component({
-  selector: 'app-admin-evaluations',
-  templateUrl: './admin-evaluations.component.html',
-  styleUrls: ['./admin-evaluations.component.scss'],
+    selector: 'app-admin-evaluations',
+    templateUrl: './admin-evaluations.component.html',
+    styleUrls: ['./admin-evaluations.component.scss'],
+    standalone: false
 })
 
 export class AdminEvaluationsComponent implements OnInit, OnDestroy {

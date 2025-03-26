@@ -7,15 +7,16 @@
   margin-left: 5%;
 }
 
-.mat-header-row {
+.header-row {
   min-height: 36px;
 }
 
-.mat-row {
+.row {
   min-height: 24px;
 }
 
-.mat-row, .mat-header-row {
+.row,
+.header-row {
   display: flex;
   flex-direction: row;
   border-bottom-width: 1px;
@@ -23,10 +24,11 @@
   border-bottom-color: darkgray;
   align-items: center;
   padding: 0 24px;
-  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
 }
 
-.mat-cell {
+.cell {
   display: flex;
   flex-direction: row;
 }
@@ -40,13 +42,13 @@
   margin-left: 10px;
 }
 
-.mat-accordion .mat-header-row {
+.mat-accordion .header-row {
   padding-left: 1.5rem;
   padding-right: 2rem;
   border-bottom: none;
 }
 
-.mat-expansion-panel-header.mat-row {
+.mat-expansion-panel-header.row {
   border-bottom: none;
 }
 
@@ -54,7 +56,7 @@
   text-align: left;
 }
 
-.mat-select {
+.mat-mdc-select {
   width: 100px;
 }
 

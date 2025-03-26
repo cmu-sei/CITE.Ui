@@ -11,7 +11,10 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 import { Pipe, PipeTransform } from '@angular/core';
 import { orderBy } from 'lodash';
 
-@Pipe({ name: 'sortBy' })
+@Pipe({
+    name: 'sortBy',
+    standalone: false
+})
 export class SortByPipe implements PipeTransform {
 
   transform(value: any[], order = '', column: string = ''): any[] {
@@ -36,7 +39,10 @@ export class SortByPipe implements PipeTransform {
   }
 }
 
-@Pipe({ name: 'displayOrder' })
+@Pipe({
+    name: 'displayOrder',
+    standalone: false
+})
 export class DisplayOrderPipe implements PipeTransform {
 
   transform(value: any[]): any[] {

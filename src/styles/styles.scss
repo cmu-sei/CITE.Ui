@@ -1,54 +1,52 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
-/* VENDER IMPORTS */
-@use '@angular/material' as mat;
-@import '@angular/material/theming';
-// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
-//  The following line adds:
-//    1. Default typography styles for all components
-//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
-//  If you specify typography styles for the components you use elsewhere, you should delete this line.
-//  If you don't need the default component typographies but still want the hierarchy styles,
-//  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
-@include mat.all-legacy-component-typographies();
-@include mat.legacy-core();
-$mdi-font-path: '~@mdi/font/fonts';
-@import '@mdi/font/scss/materialdesignicons';
-@import '~material-design-icons/iconfont/material-icons.css';    // added for ngx-mat-datetimepicker
+@use "@angular/material" as mat;
+@use "./theme-colors" as theme;
+@include mat.core();
+@import '@mdi/font';
 
-/* END VENDER IMPORTS */
-
-/* LOCAL IMPORTS */
-@import 'theme';
-/* END LOCAL IMPORTS */
-
-.light-theme {
-  @include mat.all-legacy-component-themes($light-theme);
-  @include globals($light-theme);
+html {
+  @include mat.theme((color: theme.$primary-palette,
+      typography: '"Open Sans", sans-serif',
+    ),
+    $overrides: ((background: #f1f1f2, surface: var(--mat-sys-background), surface-variant: var(--mat-sys-background))));
+  @include mat.datepicker-overrides((calendar-container-background-color: var(--mat-sys-outline-variant),
+      calendar-date-selected-state-text-color: var(--mat-sys-primary), calendar-container-text-color: var(--mat-sys-on-background),
+    ));
 }
 
-.dark-theme {
-  @include mat.all-legacy-component-themes($dark-theme);
-  @include globals($dark-theme);
+.darkMode {
+  @include mat.theme((color: (primary: theme.$primary-palette,
+        theme-type: dark,
+      ),
+    ),
+    $overrides: ((background: #313131, surface: var(--mat-sys-background), surface-variant: var(--mat-sys-background))));
+  @include mat.datepicker-overrides((calendar-container-background-color: var(--mat-sys-outline-variant),
+      calendar-date-selected-state-text-color: var(--mat-sys-primary), calendar-container-text-color: var(--mat-sys-on-background),
+    ));
 }
 
-/* The following overrides transparent select options after upgrading to Angular 7 */
-.mat-select-panel {
-  background: #fff;
-}
-.mat-select-panel:not([class*='mat-elevation-z']) {
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
-    0 1px 10px 0 rgba(0, 0, 0, 0.12);
+// classes for icon sizing
+.icon-35px {
+  width: 35px !important;
+  height: 35px !important;
 }
 
-.ngx-mat-timepicker form .ngx-mat-timepicker-table .ngx-mat-timepicker-tbody tr td .mat-icon-button .mat-icon {
-  font-family: 'Material Icons';
+// prevent table header rows from scrolling
+.mat-mdc-header-row {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  z-index: 9 !important;
 }
 
-.mat-datepicker-content .mat-stroked-button {
-  font-family: 'Material Icons';
+// remove the border around paginator items per page selection
+mat-paginator {
+  --mdc-outlined-text-field-outline-color: transparent;
+  --mdc-outlined-text-field-hover-outline-color: transparent;
+  --mdc-outlined-text-field-focus-outline-color: transparent;
+  min-width: 200px !important;
 }
 
 /* The following acts as drop in replacement for the deprecation of Angular FlexLayout */
@@ -123,3 +121,5 @@ $mdi-font-path: '~@mdi/font/fonts';
   align-items: center;
   align-content: center;
 }
+
+/* end of FlexLayout replacements */

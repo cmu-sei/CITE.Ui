@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import {
   Permission,
@@ -18,16 +18,17 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-admin-users',
-  templateUrl: './admin-users.component.html',
-  styleUrls: ['./admin-users.component.scss'],
+    selector: 'app-admin-users',
+    templateUrl: './admin-users.component.html',
+    styleUrls: ['./admin-users.component.scss'],
+    standalone: false
 })
-export class AdminUsersComponent implements OnInit, OnDestroy{
+export class AdminUsersComponent implements OnInit, OnDestroy {
   @Input() userList: User[];
   @Input() permissionList: Permission[];
   pageSize: number = 10;
   pageIndex: number = 0;
-  filteredUserList: User [] = [];
+  filteredUserList: User[] = [];
   @Output() removeUserPermission = new EventEmitter<UserPermission>();
   @Output() addUserPermission = new EventEmitter<UserPermission>();
   @Output() addUser = new EventEmitter<User>();
@@ -36,10 +37,10 @@ export class AdminUsersComponent implements OnInit, OnDestroy{
   filterString = '';
   addingNewUser = false;
   newUser: User = { id: '', name: '' };
-  displayedUsers: User [] = [];
+  displayedUsers: User[] = [];
   isLoading = false;
   topbarColor = '#ef3a47';
-  sort: Sort = { active: 'name', direction: 'asc'};
+  sort: Sort = { active: 'name', direction: 'asc' };
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -53,16 +54,18 @@ export class AdminUsersComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit() {
-    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
-      this.userList = users;
-      this.applyFilter(this.filterString);
-    });
+    this.userDataService.userList
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((users) => {
+        this.userList = users;
+        this.applyFilter(this.filterString);
+      });
 
-    this.filterControl.valueChanges.pipe(
-      takeUntil(this.unsubscribe$)
-    ).subscribe(value => {
-      this.applyFilter(value);
-    });
+    this.filterControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((value) => {
+        this.applyFilter(value);
+      });
   }
 
   hasPermission(permissionId: string, user: User) {
@@ -105,7 +108,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy{
 
   applyFilter(filterValue: string) {
     this.filterString = filterValue.trim().toLowerCase();
-    this.filteredUserList = this.userList.filter(user =>
+    this.filteredUserList = this.userList.filter((user) =>
       user.name.toLowerCase().includes(this.filterString)
     );
     this.pageIndex = 0;
@@ -136,9 +139,9 @@ export class AdminUsersComponent implements OnInit, OnDestroy{
     }
   }
 
-  handleInput(event: KeyboardEvent): void{
+  handleInput(event: KeyboardEvent): void {
     event.stopPropagation();
-  } 
+  }
 
   paginatorEvent(page: PageEvent) {
     this.pageIndex = page.pageIndex;
@@ -154,5 +157,4 @@ export class AdminUsersComponent implements OnInit, OnDestroy{
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

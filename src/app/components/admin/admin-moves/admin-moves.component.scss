@@ -35,25 +35,28 @@
   width: 150px;
 }
 
-.mat-header-row {
+.header-row {
   min-height: 56px;
-  font-family: "open_sansregular";
 }
 
-.mat-row {
+.row {
   min-height: 48px;
 }
 
-.mat-row, .mat-header-row {
+.row,
+.header-row {
   display: flex;
   border-bottom-width: 1px;
   border-bottom-style: solid;
   align-items: center;
   padding: 0 24px;
-  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  color: var(--mat-sys-on-background);
 }
 
-.mat-cell, .mat-header-cell {
+.cell,
+.header-cell {
   flex: 1;
   overflow: hidden;
   word-wrap: break-word;
@@ -68,13 +71,13 @@
   margin-left: 10px;
 }
 
-.mat-accordion .mat-header-row {
+.mat-accordion .header-row {
   padding-left: 1.5rem;
   padding-right: 2rem;
   border-bottom: none;
 }
 
-.mat-expansion-panel-header.mat-row {
+.mat-expansion-panel-header.row {
   border-bottom: none;
 }
 
@@ -117,4 +120,3 @@
 .center-self {
   align-self: center;
 }
-

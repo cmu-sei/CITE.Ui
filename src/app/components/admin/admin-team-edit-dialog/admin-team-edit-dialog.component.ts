@@ -10,7 +10,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 
 /** Error when invalid control is dirty, touched, or submitted. */
@@ -27,9 +27,10 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 const MIN_NAME_LENGTH = 3;
 
 @Component({
-  selector: 'app-admin-team-edit-dialog',
-  templateUrl: './admin-team-edit-dialog.component.html',
-  styleUrls: ['./admin-team-edit-dialog.component.scss'],
+    selector: 'app-admin-team-edit-dialog',
+    templateUrl: './admin-team-edit-dialog.component.html',
+    styleUrls: ['./admin-team-edit-dialog.component.scss'],
+    standalone: false
 })
 
 export class AdminTeamEditDialogComponent {

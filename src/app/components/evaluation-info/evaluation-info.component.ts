@@ -17,9 +17,10 @@ import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 
 @Component({
-  selector: 'app-evaluation-info',
-  templateUrl: './evaluation-info.component.html',
-  styleUrls: ['./evaluation-info.component.scss'],
+    selector: 'app-evaluation-info',
+    templateUrl: './evaluation-info.component.html',
+    styleUrls: ['./evaluation-info.component.scss'],
+    standalone: false
 })
 export class EvaluationInfoComponent implements OnDestroy {
   @Input() showAdminButton: boolean;

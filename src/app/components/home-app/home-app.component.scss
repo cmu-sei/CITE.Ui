@@ -1,18 +1,16 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
+@use "@angular/material" as mat;
+@include mat.core();
 
-.nolink {
-  text-decoration: none;
-}
-
-.icon-text {
-  margin-left: 10px;
-  font-family: open_sansbold;
+.elevate {
+  @include mat.elevation(2);
 }
 
 .evaluation-list-container {
   overflow-y: auto;
+  box-shadow: 0 5px 5px -3px #0003, 0 8px 10px 1px #00000024, 0 3px 14px 2px #0000001f;
 }
 
 .app-events-container {
@@ -24,6 +22,9 @@
   height: 100%;
   text-align: center;
   overflow: hidden;
+  height: 100%;
+  background-color: var(--mat-sys-background);
+  color: var(--mat-sys-on-background);
 }
 
 .content-under-topbar {
@@ -136,9 +137,15 @@
 
 .icon-text-container {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  padding-top: 20px;
+  justify-content: center;
   margin-left: 20px;
+  height: 90px;
+}
+
+.mat-mdc-text-field-wrapper {
+  height: 38px !important;
 }
 
 .evaluation-title {
@@ -148,13 +155,42 @@
 }
 
 .searchBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   margin-right: 10px;
   margin-left: auto !important;
+  height: 60px !important;
 }
 
-.mat-table {
+.mat-mdc-table {
   overflow-y: auto;
   max-height: calc(100vh - 300px);
+}
+
+.mat-mdc-cell {
+  border-color: var(--mat-sys-outline-variant);
+}
+
+/* unvisited link */
+a:link {
+  color: var(--mat-sys-on-background);
+}
+
+/* visited link */
+a:visited {
+  color: var(--mat-sys-on-background);
+}
+
+/* mouse over link */
+a:hover {
+  color: var(--mat-sys-outline);
+}
+
+/* selected link */
+a:active {
+  color: var(--mat-sys-on-background);
 }
 
 @media print {
