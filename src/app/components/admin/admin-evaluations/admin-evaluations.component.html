@@ -53,20 +53,20 @@ project root for license information or contact permission@sei.cmu.edu for full 
       (click)="togglePanel(evaluation); $event.stopPropagation()">
       <span class="cell first-cell center-self">
         <button mat-icon-button (click)="addOrEditEvaluation(evaluation); $event.stopPropagation()"
-          class="first-cell-button" title="Edit Evaluation" [disabled]="isBusy">
-          <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+          title="Edit Evaluation" [disabled]="isBusy">
+          <mat-icon fontIcon="mdi-square-edit-outline"></mat-icon>
         </button>
         <button mat-icon-button (click)="copyEvaluation(evaluation.id); $event.stopPropagation();"
-          class="first-cell-button" title="Copy {{ evaluation.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
+          title="Copy {{ evaluation.description }}" [disabled]="isBusy">
+          <mat-icon fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
         </button>
         <button mat-icon-button (click)="downloadEvaluation(evaluation); $event.stopPropagation();"
-          class="first-cell-button" title="Download {{ evaluation.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-download" alt="Download"></mat-icon>
+          title="Download {{ evaluation.description }}" [disabled]="isBusy">
+          <mat-icon fontIcon="mdi-download" alt="Download"></mat-icon>
         </button>
         <button mat-icon-button (click)="deleteEvaluationRequest(evaluation); $event.stopPropagation()"
-          class="first-cell-button" title="Delete Evaluation" [disabled]="isBusy">
-          <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can"></mat-icon>
+          title="Delete Evaluation" [disabled]="isBusy">
+          <mat-icon fontIcon="mdi-trash-can"></mat-icon>
         </button>
       </span>
       <span class="cell description-cell center-self">{{ evaluation.description }}</span>
