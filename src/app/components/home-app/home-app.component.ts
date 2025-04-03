@@ -83,7 +83,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   evaluationList$ = this.evaluationQuery.selectAll();
   submissionList$ = this.submissionQuery.selectAll();
   displayedSubmission: Submission;
-  waitedLongEnough = false;
+  evaluationsAreLoading$ = this.evaluationQuery.selectLoading();
   isReady = false;
   currentMoveNumber = -1;
   displayedMoveNumber = -1;
@@ -309,9 +309,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         });
     }
     const thisScope = this;
-    setTimeout(function() {
-      thisScope.waitedLongEnough = true;
-    }, 10000);
     this.filterString = '';
     this.evaluationDataSource.sort = this.sort;
   }

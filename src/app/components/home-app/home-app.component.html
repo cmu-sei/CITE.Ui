@@ -18,16 +18,18 @@ project root for license information or contact permission@sei.cmu.edu for full 
   ></app-topbar>
 
   <div
-    *ngIf="apiIsSick && waitedLongEnough"
+    *ngIf="apiIsSick"
     class="app-header-container background text"
     autosize
   >
-    <h1>{{ apiMessage }}</h1>
-    <h2>Please refresh this page.</h2>
-    <h2>If the problem persists, please contact the site administrator.</h2>
+    <span style="margin-top: 200px;">
+      <h1>{{ apiMessage }}</h1>
+      <h2>Please refresh this page.</h2>
+      <h2>If the problem persists, please contact the site administrator.</h2>
+    </span>
   </div>
   <div
-    *ngIf="!apiIsSick && waitedLongEnough && evaluationList.length === 0"
+    *ngIf="!apiIsSick && !(evaluationsAreLoading$ | async) && evaluationList.length === 0"
     class="app-header-container"
   >
     <span style="margin-top: 200px;">
@@ -193,4 +195,3 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
 </div>
-
