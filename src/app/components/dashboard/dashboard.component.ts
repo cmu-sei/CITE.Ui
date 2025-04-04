@@ -44,9 +44,12 @@ import { UserDataService } from 'src/app/data/user/user-data.service';
   styleUrls: ['./dashboard.component.scss'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition(
+        'expanded <=> collapsed',
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
+      ),
     ]),
   ],
 })
@@ -90,6 +93,8 @@ export class DashboardComponent implements OnDestroy {
   modifiedRole: Role = {};
   completeSituationDescription = '';
   loggedInUserId = '';
+  showPermissions = false;
+  showRoles = false;
 
   constructor(
     private actionDataService: ActionDataService,
@@ -111,74 +116,100 @@ export class DashboardComponent implements OnDestroy {
   ) {
     this.titleService.setTitle('CITE Dashboard');
     // observe the selected evaluation
-    (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      const activeId = this.evaluationQuery.getActiveId();
-      active = active ? active : { id: ''} as Evaluation;
-      if (active.id === activeId) {
-        this.selectedEvaluation = active;
-        this.currentMoveNumber = active.currentMoveNumber;
-        this.unreadArticlesDataService.loadById(activeId);
-        this.galleryUrl = this.settingsService.settings.GalleryUiUrl + '?exhibit=' + active.galleryExhibitId + '&section=archive';
+    (this.evaluationQuery.selectActive() as Observable<Evaluation>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((active) => {
+        const activeId = this.evaluationQuery.getActiveId();
+        active = active ? active : ({ id: '' } as Evaluation);
+        if (active.id === activeId) {
+          this.selectedEvaluation = active;
+          this.currentMoveNumber = active.currentMoveNumber;
+          this.unreadArticlesDataService.loadById(activeId);
+          this.galleryUrl =
+            this.settingsService.settings.GalleryUiUrl +
+            '?exhibit=' +
+            active.galleryExhibitId +
+            '&section=archive';
+          this.setCompleteSituationDescription();
+          // load the team data
+          this.loadTeamData();
+        }
+      });
+    // observe the move list
+    this.moveQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((moves) => {
+        this.moveList = moves;
+      });
+    // observe the active move
+    (this.moveQuery.selectActive() as Observable<Move>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((active) => {
+        if (active) {
+          this.displayedMoveNumber = active.moveNumber;
+          this.actionList = this.allActions
+            .filter((a) => +a.moveNumber === +active.moveNumber)
+            .sort((a, b) => (a.description < b.description ? -1 : 1));
+        }
         this.setCompleteSituationDescription();
         // load the team data
         this.loadTeamData();
-      }
-    });
-    // observe the move list
-    this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
-      this.moveList = moves;
-    });
-    // observe the active move
-    (this.moveQuery.selectActive() as Observable<Move>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      if (active) {
-        this.displayedMoveNumber = active.moveNumber;
-        this.actionList = this.allActions
-          .filter(a => +a.moveNumber === +active.moveNumber)
-          .sort((a, b) => a.description < b.description ? -1 : 1);
-      }
-      this.setCompleteSituationDescription();
-      // load the team data
-      this.loadTeamData();
-    });
-    // observe the active team
-    (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      if (active) {
-        this.usersOnTheTeam = active.users;
-        this.activeTeamId = active.id;
-        // load the team data for this team
-        this.loadTeamData();
-      }
-    });
-    // observe the Action list
-    this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(actions => {
-      this.allActions = actions;
-      this.actionList = actions
-        .filter(a => +a.moveNumber === +this.displayedMoveNumber)
-        .sort((a, b) => a.description < b.description ? -1 : 1);
-    });
-    // observe the Role list
-    this.roleQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(roles => {
-      this.roleList = [];
-      roles.forEach(role => {
-        const newRole = {... role};
-        const newUsers: User[] = [];
-        newRole.users.forEach(user => {
-          const addUser = this.usersOnTheTeam?.find(tu => tu.id === user.id);
-          newUsers.push(addUser);
-        });
-        newRole.users = newUsers;
-        this.roleList.push(newRole);
       });
-    });
+    // observe the active team
+    (this.teamQuery.selectActive() as Observable<Team>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((active) => {
+        if (active) {
+          this.usersOnTheTeam = active.users;
+          this.activeTeamId = active.id;
+          // load the team data for this team
+          this.loadTeamData();
+        }
+      });
+    // observe the Action list
+    this.actionQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((actions) => {
+        this.allActions = actions;
+        this.actionList = actions
+          .filter((a) => +a.moveNumber === +this.displayedMoveNumber)
+          .sort((a, b) => (a.description < b.description ? -1 : 1));
+      });
+    // observe the Role list
+    this.roleQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((roles) => {
+        this.roleList = [];
+        roles.forEach((role) => {
+          const newRole = { ...role };
+          const newUsers: User[] = [];
+          newRole.users.forEach((user) => {
+            const addUser = this.usersOnTheTeam?.find(
+              (tu) => tu.id === user.id
+            );
+            newUsers.push(addUser);
+          });
+          newRole.users = newUsers;
+          this.roleList.push(newRole);
+        });
+      });
     // observe the scoring model
-    (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModel => {
-      this.scoringModel = scoringModel;
-      this.setCompleteSituationDescription();
-    });
+    (this.scoringModelQuery.selectActive() as Observable<ScoringModel>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((scoringModel) => {
+        this.scoringModel = scoringModel;
+        this.setCompleteSituationDescription();
+      });
     // observe the TeamUsers
-    this.teamUserQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(tUsers => {
-      this.teamUsers = tUsers;
-    });
+    this.teamUserQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((tUsers) => {
+        this.teamUsers = tUsers;
+      });
     // observe the logged in user ID
     this.userDataService.loggedInUser
       .pipe(takeUntil(this.unsubscribe$))
@@ -194,67 +225,101 @@ export class DashboardComponent implements OnDestroy {
       return;
     }
     const dateTimeFormatOptions = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        timeZoneName: 'short',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZoneName: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
     } as DateTimeFormatOptions;
     let description = '';
     let pastMovesBannerAdded = false;
     let lastDisplayedMoveNumber = 0;
 
     if (+this.displayedMoveNumber === +this.currentMoveNumber) {
-      const displayedMove = this.moveList.find(m => +m.moveNumber === +this.displayedMoveNumber);
-        description = '<div style="display: flex; align-items: center; font-size: 25px;">' +
-            '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
-            'Current Move: ' + displayedMove.description +
-            '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
-            '</div>' +
-            '<h4>' +
-            this.selectedEvaluation.situationTime?.toLocaleString('en-US', dateTimeFormatOptions) +
-            '<br /></h4>' +
-            this.selectedEvaluation.situationDescription;
-    } else if (this.moveList && this.moveList.length > 0 && this.displayedMoveNumber) {
-        const displayedMove = this.moveList.find(m => +m.moveNumber === +this.displayedMoveNumber);
-        description = '<h2>' + displayedMove.situationTime?.toLocaleString('en-US', dateTimeFormatOptions)
-            + '<br /></h2>' + displayedMove.situationDescription;
-        lastDisplayedMoveNumber = +this.displayedMoveNumber;
+      const displayedMove = this.moveList.find(
+        (m) => +m.moveNumber === +this.displayedMoveNumber
+      );
+      description =
+        '<div style="display: flex; align-items: center; font-size: 25px;">' +
+        '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+        'Current Move: ' +
+        displayedMove.description +
+        '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+        '</div>' +
+        '<h4>' +
+        this.selectedEvaluation.situationTime?.toLocaleString(
+          'en-US',
+          dateTimeFormatOptions
+        ) +
+        '<br /></h4>' +
+        this.selectedEvaluation.situationDescription;
+    } else if (
+      this.moveList &&
+      this.moveList.length > 0 &&
+      this.displayedMoveNumber
+    ) {
+      const displayedMove = this.moveList.find(
+        (m) => +m.moveNumber === +this.displayedMoveNumber
+      );
+      description =
+        '<h2>' +
+        displayedMove.situationTime?.toLocaleString(
+          'en-US',
+          dateTimeFormatOptions
+        ) +
+        '<br /></h2>' +
+        displayedMove.situationDescription;
+      lastDisplayedMoveNumber = +this.displayedMoveNumber;
     }
 
     if (this.scoringModel && this.scoringModel.showPastSituationDescriptions) {
-        this.moveList?.forEach(m => {
-            if (+m.moveNumber < +this.displayedMoveNumber) {
-                // Add the "Previous Moves" banner only for the first past move number
-                if (!pastMovesBannerAdded) {
-                    description = description + '<br /><div style="display: flex; align-items: center; font-size: 25px;">' +
-                        '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
-                        'Previous Moves' +
-                        '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
-                        '</div>';
-                    pastMovesBannerAdded = true;
-                } else {
-                    // Add a line separator for past moves without the banner
-                    description = description + '<br><div style="border-bottom: 3px solid grey; margin: 5px;"></div>';
-                }
+      this.moveList?.forEach((m) => {
+        if (+m.moveNumber < +this.displayedMoveNumber) {
+          // Add the "Previous Moves" banner only for the first past move number
+          if (!pastMovesBannerAdded) {
+            description =
+              description +
+              '<br /><div style="display: flex; align-items: center; font-size: 25px;">' +
+              '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+              'Previous Moves' +
+              '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+              '</div>';
+            pastMovesBannerAdded = true;
+          } else {
+            // Add a line separator for past moves without the banner
+            description =
+              description +
+              '<br><div style="border-bottom: 3px solid grey; margin: 5px;"></div>';
+          }
 
-                // Add the past move details
-                description = description + '<h4>' + m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) + '</h4>'
-                    + m.situationDescription + '</div>';
-            }
-        });
+          // Add the past move details
+          description =
+            description +
+            '<h4>' +
+            m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) +
+            '</h4>' +
+            m.situationDescription +
+            '</div>';
+        }
+      });
     }
     this.completeSituationDescription = description;
   }
-  
+
   loadTeamData() {
     // load the team data for this team
     if (this.activeTeamId && this.selectedEvaluation.id) {
-      this.actionDataService.loadByEvaluationTeam(this.selectedEvaluation.id, this.activeTeamId);
-      this.roleDataService.loadByEvaluationTeam(this.selectedEvaluation.id, this.activeTeamId);
+      this.actionDataService.loadByEvaluationTeam(
+        this.selectedEvaluation.id,
+        this.activeTeamId
+      );
+      this.roleDataService.loadByEvaluationTeam(
+        this.selectedEvaluation.id,
+        this.activeTeamId
+      );
       this.teamUserDataService.loadByTeam(this.activeTeamId);
     }
   }
@@ -277,15 +342,15 @@ export class DashboardComponent implements OnDestroy {
         description: '',
         evaluationId: this.selectedEvaluation.id,
         moveNumber: this.displayedMoveNumber,
-        teamId: this.activeTeamId
+        teamId: this.activeTeamId,
       };
     } else {
-      action = {... action};
+      action = { ...action };
     }
     const dialogRef = this.matDialog.open(AdminActionEditDialogComponent, {
       width: '800px',
       data: {
-        action: action
+        action: action,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -305,20 +370,22 @@ export class DashboardComponent implements OnDestroy {
   }
 
   deleteActionRequest(action: Action) {
-    this.dialogService.confirm(
-      'Delete this action?',
-      'Are you sure that you want to delete this action?'
-    ).subscribe((result) => {
-      if (result['confirm']) {
-        this.actionDataService.delete(action.id);
-      }
-    });
+    this.dialogService
+      .confirm(
+        'Delete this action?',
+        'Are you sure that you want to delete this action?'
+      )
+      .subscribe((result) => {
+        if (result['confirm']) {
+          this.actionDataService.delete(action.id);
+        }
+      });
   }
 
   changedBy(actionId: string) {
     let changedBy = null;
     let isChecked = null;
-    const action = this.actionList.find(a => a.id === actionId);
+    const action = this.actionList.find((a) => a.id === actionId);
 
     if (action) {
       isChecked = action && action.isChecked;
@@ -334,17 +401,19 @@ export class DashboardComponent implements OnDestroy {
   }
 
   getUserName(id) {
-    const theUser = this.usersOnTheTeam?.find(u => u.id === id);
+    const theUser = this.usersOnTheTeam?.find((u) => u.id === id);
     return theUser ? theUser.name : '';
   }
 
   getUserNames(userList: User[]) {
     let nameList = '';
-    userList.forEach(u => {
+    userList.forEach((u) => {
       nameList = u.name ? nameList + u.name + ', ' : nameList;
     });
 
-    return nameList.length > 2 ? nameList.substring(0, nameList.length - 2) : nameList;
+    return nameList.length > 2
+      ? nameList.substring(0, nameList.length - 2)
+      : nameList;
   }
 
   addOrEditRole(role: Role) {
@@ -352,15 +421,15 @@ export class DashboardComponent implements OnDestroy {
       role = {
         name: '',
         evaluationId: this.selectedEvaluation.id,
-        teamId: this.activeTeamId
+        teamId: this.activeTeamId,
       };
     } else {
-      role = {... role};
+      role = { ...role };
     }
     const dialogRef = this.matDialog.open(AdminRoleEditDialogComponent, {
       width: '800px',
       data: {
-        role: role
+        role: role,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -380,14 +449,16 @@ export class DashboardComponent implements OnDestroy {
   }
 
   deleteRoleRequest(role: Role) {
-    this.dialogService.confirm(
-      'Delete this role?',
-      'Are you sure that you want to delete this role?'
-    ).subscribe((result) => {
-      if (result['confirm']) {
-        this.roleDataService.delete(role.id);
-      }
-    });
+    this.dialogService
+      .confirm(
+        'Delete this role?',
+        'Are you sure that you want to delete this role?'
+      )
+      .subscribe((result) => {
+        if (result['confirm']) {
+          this.roleDataService.delete(role.id);
+        }
+      });
   }
 
   openRoleUsers(role: Role) {
@@ -397,24 +468,28 @@ export class DashboardComponent implements OnDestroy {
 
   updateRoleUsers(roleId: string, event: any) {
     if (roleId !== this.originalRole.id || roleId !== this.modifiedRole.id) {
-      alert('There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.');
+      alert(
+        'There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.'
+      );
     }
     this.modifiedRole.users = event.value;
   }
 
   closeRoleUsers(roleId: string) {
     if (roleId !== this.originalRole.id || roleId !== this.modifiedRole.id) {
-      alert('There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.');
+      alert(
+        'There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.'
+      );
     }
     const newUserIds = this.modifiedRole.users.map(({ id }) => id);
     const oldUserIds = this.originalRole.users.map(({ id }) => id);
-    newUserIds.forEach(nru => {
-      if (!oldUserIds.some(ru => ru === nru)) {
+    newUserIds.forEach((nru) => {
+      if (!oldUserIds.some((ru) => ru === nru)) {
         this.roleDataService.addRoleUser(roleId, nru);
       }
     });
-    oldUserIds.forEach(ru => {
-      if (!newUserIds.some(nru => ru === nru)) {
+    oldUserIds.forEach((ru) => {
+      if (!newUserIds.some((nru) => ru === nru)) {
         this.roleDataService.removeRoleUser(roleId, ru);
       }
     });
@@ -437,12 +512,13 @@ export class DashboardComponent implements OnDestroy {
   }
 
   loggedInUserCanManageTeam(): boolean {
-    return this.teamUsers.some(tu => tu.userId === this.loggedInUserId && tu.canManageTeam)
+    return this.teamUsers.some(
+      (tu) => tu.userId === this.loggedInUserId && tu.canManageTeam
+    );
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

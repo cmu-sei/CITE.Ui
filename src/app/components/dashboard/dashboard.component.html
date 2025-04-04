@@ -94,10 +94,26 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
   <!-- Roles Section -->
-  <div class="row-container">
+  <div class="row-container" *ngIf="!showRoles">
+    <div class="section-container mat-elevation-z8 four-cell">
+      <div class="row-container">
+        <div class="two-cell center-self">
+          <button mat-icon-button (click)="showRoles = true" title="Expand the roles">
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-menu-down"></mat-icon>
+          </button>
+          <b title="Participant Responsibilities during an Exercise">Roles:</b>
+        </div>
+        <div class="checkboxes-cell">&nbsp;</div>
+      </div>
+    </div>
+  </div>
+  <div class="row-container" *ngIf="showRoles">
     <div class="section-container mat-elevation-z8 four-cell">
       <div class="row-container">
         <div class="five-cell center-self">
+          <button mat-icon-button (click)="showRoles = false" title="Collapse the roles">
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-menu-up"></mat-icon>
+          </button>
           <b title="Participant Responsibilities during an Exercise">Roles:</b>
         </div>
         <div class="right-cell" *ngIf="myTeamId === activeTeamId">
@@ -185,10 +201,26 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
   <!-- Permissions Section -->
-  <div class="row-container">
+  <div class="row-container" *ngIf="!showPermissions">
     <div class="section-container mat-elevation-z8 four-cell">
       <div class="row-container">
         <div class="two-cell center-self">
+          <button mat-icon-button (click)="showPermissions = true" title="Expand the permissions">
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-menu-down"></mat-icon>
+          </button>
+          <b title="Participant permissions for this Exercise">Permissions:</b>
+        </div>
+        <div class="checkboxes-cell">&nbsp;</div>
+      </div>
+    </div>
+  </div>
+  <div class="row-container" *ngIf="showPermissions">
+    <div class="section-container mat-elevation-z8 four-cell">
+      <div class="row-container">
+        <div class="two-cell center-self">
+          <button mat-icon-button (click)="showPermissions = false" title="Collapse the permissions">
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-menu-up"></mat-icon>
+          </button>
           <b title="Participant permissions for this Exercise">Permissions:</b>
         </div>
         <div class="checkboxes-cell">
