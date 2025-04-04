@@ -60,6 +60,11 @@
   z-index: 100;
 }
 
+textarea.mat-input-element {
+  border: revert;
+  background: transparent;
+}
+
 .comment-list {
   margin-left: 25px;
   margin-bottom: 10px;
