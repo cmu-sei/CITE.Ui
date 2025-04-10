@@ -21,7 +21,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-header-cell *matHeaderCellDef [ngClass]="matHeaderClass()">
         <div
           class="navigation-font"
-          *ngIf="!userOnly && haveSomeScoringCategories"
+          *ngIf="haveSomeScoringCategories"
         >
           <span style="transform: scale(0.8)">
             <!-- User -->
@@ -61,73 +61,75 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-stroked-button
               class="plain-button move-button"
               (click)="selectDisplayedSubmission.emit('team')"
-              *ngIf="displaying !== 'team' && !userOnly"
+              *ngIf="displaying !== 'team'"
               title="The team's score"
             >
               Team
             </button>
-            <!-- Team Avg -->
-            <button
-              mat-flat-button
-              color="team-avg"
-              class="background-button move-button"
-              (click)="selectDisplayedSubmission.emit('team-avg')"
-              *ngIf="displaying === 'team-avg'"
-              [disabled]="myTeamId !== activeTeamId"
-              title="The average of all user scores for your team"
-            >
-              Team Avg
-            </button>
-            <button
-              mat-stroked-button
-              class="plain-button move-button"
-              (click)="selectDisplayedSubmission.emit('team-avg')"
-              *ngIf="displaying !== 'team-avg' && !userOnly"
-              [disabled]="myTeamId !== activeTeamId && !userOnly"
-              title="The average of all user scores for your team"
-            >
-              Team Avg
-            </button>
-            <!-- Group Avg -->
-            <button
-              mat-flat-button
-              color="group-avg"
-              class="background-button move-button"
-              (click)="selectDisplayedSubmission.emit('group-avg')"
-              *ngIf="displaying === 'group-avg'"
-              title="The average of all team scores for your group"
-            >
-              Group Avg
-            </button>
-            <button
-              mat-stroked-button
-              class="plain-button move-button"
-              (click)="selectDisplayedSubmission.emit('group-avg')"
-              *ngIf="displaying !== 'group-avg' && showGroupAvgScore && !userOnly"
-              title="The average of all team scores for your group"
-            >
-              Group Avg
-            </button>
-            <!-- Official -->
-            <button
-              mat-flat-button
-              color="official"
-              class="background-button move-button"
-              (click)="selectDisplayedSubmission.emit('official')"
-              *ngIf="displaying === 'official'"
-              title="The official score for this move"
-            >
-              Official
-            </button>
-            <button
-              mat-stroked-button
-              class="plain-button move-button"
-              (click)="selectDisplayedSubmission.emit('official')"
-              *ngIf="displaying !== 'official' && showOfficialScore && !userOnly"
-              title="The official score for this move"
-            >
-              Official
-            </button>
+            <span *ngIf="!rightSideDisplay">
+              <!-- Team Avg -->
+              <button
+                mat-flat-button
+                color="team-avg"
+                class="background-button move-button"
+                (click)="selectDisplayedSubmission.emit('team-avg')"
+                *ngIf="displaying === 'team-avg'"
+                [disabled]="myTeamId !== activeTeamId"
+                title="The average of all user scores for your team"
+              >
+                Team Avg
+              </button>
+              <button
+                mat-stroked-button
+                class="plain-button move-button"
+                (click)="selectDisplayedSubmission.emit('team-avg')"
+                *ngIf="displaying !== 'team-avg'"
+                [disabled]="myTeamId !== activeTeamId"
+                title="The average of all user scores for your team"
+              >
+                Team Avg
+              </button>
+              <!-- Group Avg -->
+              <button
+                mat-flat-button
+                color="group-avg"
+                class="background-button move-button"
+                (click)="selectDisplayedSubmission.emit('group-avg')"
+                *ngIf="displaying === 'group-avg'"
+                title="The average of all team scores for your group"
+              >
+                Group Avg
+              </button>
+              <button
+                mat-stroked-button
+                class="plain-button move-button"
+                (click)="selectDisplayedSubmission.emit('group-avg')"
+                *ngIf="displaying !== 'group-avg' && showGroupAvgScore"
+                title="The average of all team scores for your group"
+              >
+                Group Avg
+              </button>
+              <!-- Official -->
+              <button
+                mat-flat-button
+                color="official"
+                class="background-button move-button"
+                (click)="selectDisplayedSubmission.emit('official')"
+                *ngIf="displaying === 'official'"
+                title="The official score for this move"
+              >
+                Official
+              </button>
+              <button
+                mat-stroked-button
+                class="plain-button move-button"
+                (click)="selectDisplayedSubmission.emit('official')"
+                *ngIf="displaying !== 'official' && showOfficialScore"
+                title="The official score for this move"
+              >
+                Official
+              </button>
+            </span>
           </span>
         </div>
         <div *ngIf="!selectedScoringModel.hideScoresOnScoreSheet && haveSomeScoringCategories">
@@ -176,7 +178,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               mat-raised-button
               [ngClass]="buttonClass"
               class="move-button background-button"
-              *ngIf="showModifyControls && !userOnly"
+              *ngIf="showModifyControls"
               (click)="presetSelections()"
               title="Preset selections to the previous move"
               [disabled]="noChanges"

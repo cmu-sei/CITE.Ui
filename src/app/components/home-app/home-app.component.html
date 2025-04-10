@@ -145,7 +145,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="app-content-container"
       *ngIf="isReady"
     >
-      <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection !== section.scoresheet && selectedSection !== section.report">
+      <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection !== section.scoresheet && !(selectedSection === section.report || selectedSection === section.aggregate)">
         <app-dashboard
           *ngIf="unreadArticles$ && moveList$"
           [unreadArticles]="unreadArticles$ | async"
@@ -161,12 +161,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
         ></app-scoresheet>
       </div>
       <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.report">
-        <app-report
-          [userOnly]="true"
-          [myTeamId]="myTeamId$ | async"
-        ></app-report>
+        <app-report></app-report>
       </div>
-      <div *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'ScoreSummary' && selectedSection !== section.report" class="flex-35" autosize>
+      <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.aggregate">
+        <app-aggregate
+          [selectedEvaluation]="activeEvaluation$ | async"
+          [selectedScoringModel]="activeScoringModel$ | async"
+          [moveList]="moveList$ | async"
+        ></app-aggregate>
+      </div>
+      <div *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'ScoreSummary' && !(selectedSection === section.report || selectedSection === section.aggregate)" class="flex-35" autosize>
         <app-score-summary
           *ngIf="unreadArticles$ && moveList$"
           [selectedScoringModel]="activeScoringModel$ | async"
@@ -174,7 +178,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           [activeSubmission]="activeSubmission$ | async"
         ></app-score-summary>
       </div>
-      <div [ngClass]="getAppContentClass()" *ngIf="(activeScoringModel$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeScoringModel$ | async)?.rightSideDisplay !== 'None' && selectedSection !== section.report" class="app-score-container flex-50 mat-elevation-z8" autosize>
+      <div [ngClass]="getAppContentClass()" *ngIf="(activeScoringModel$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeScoringModel$ | async)?.rightSideDisplay !== 'None' && !(selectedSection === section.report || selectedSection === section.aggregate)" class="app-score-container flex-50 mat-elevation-z8" autosize>
         <app-right-side-html
           *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'HtmlBlock'"
           [scoringModel$]="activeScoringModel$"
@@ -186,7 +190,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         ></app-right-side-iframe>
         <app-scoresheet
           *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
-          [userOnly]="true"
+          [rightSideDisplay]="true"
           [myTeamId]="myTeamId$ | async"
           [noChanges]="noChanges$ | async"
           (selectDisplayedSubmission)="selectDisplayedSubmission($event)"

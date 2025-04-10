@@ -251,15 +251,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </div>
           <div class="one-cell center-self">
             <mat-checkbox
-              [checked]="teamUser.canModify"
-              (change)="setModifierValue(teamUser.id, $event.checked)"
+              [checked]="teamUser.canSubmit"
+              (change)="setSubmitterValue(teamUser.id, $event.checked)"
               [disabled]="noChanges || !loggedInUserCanManageTeam()"
             ></mat-checkbox>
           </div>
           <div class="one-cell center-self">
             <mat-checkbox
-              [checked]="teamUser.canSubmit"
-              (change)="setSubmitterValue(teamUser.id, $event.checked)"
+              [checked]="teamUser.canModify"
+              (change)="setModifierValue(teamUser.id, $event.checked)"
               [disabled]="noChanges || !loggedInUserCanManageTeam()"
             ></mat-checkbox>
           </div>
