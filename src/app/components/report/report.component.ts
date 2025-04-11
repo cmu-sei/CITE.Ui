@@ -101,7 +101,6 @@ export class ReportComponent implements OnDestroy {
         if (user && user.profile && user.profile.sub !== this.loggedInUserId) {
           this.loggedInUserId = user.profile.sub;
           this.loggedInUserName = user.profile.name;
-          console.log(this.loggedInUserName);
         }
       });
     // observe the submission list
