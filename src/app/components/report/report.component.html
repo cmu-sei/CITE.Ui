@@ -7,9 +7,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <div class="header-div">
     <div class="header-text">
       <h2>
-        <span *ngIf="displaying === 'team'">{{ getUserName(loggedInUserId) }}</span>
-        <span *ngIf="displaying !== 'team'">{{ getUserName(loggedInUserId) }}</span>
-        Submissions Responses for {{ selectedEvaluation.description }}
+        <span *ngIf="displaying === 'team'">{{ selectedTeam.shortName }}'s</span>
+        <span *ngIf="displaying !== 'team'">{{ loggedInUserName }}'s</span>
+        Responses for {{ selectedEvaluation.description }}
       </h2>
     </div>
     <div class="right-buttons no-print">
