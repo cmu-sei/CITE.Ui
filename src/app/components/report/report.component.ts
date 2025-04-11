@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -14,12 +14,13 @@ import { TeamQuery } from 'src/app/data/team/team.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { ItemStatus,
   Evaluation,
+  Move,
   ScoringModel,
   Team,
   User,
   ScoringCategory
 } from 'src/app/generated/cite.api/model/models';
-import { PopulatedSubmission } from 'src/app/data/submission/submission.models';
+import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { Title} from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
@@ -30,16 +31,19 @@ import { UIDataService } from 'src/app/data/ui/ui-data.service';
   styleUrls: ['./report.component.scss'],
 })
 export class ReportComponent implements OnDestroy {
+  @Input() selectedEvaluation: Evaluation;
+  @Input() selectedScoringModel: ScoringModel;
+  @Input() moveList: Move[];
   loggedInUserId = '';
-  userId = '';
-  activeTeamId = '';
+  loggedInUserName = '';
+  selectedTeam: Team = {};
   teamUsers: User[];
   currentMoveNumber = -1;
   displayedMoveNumber = -1;
-  selectedEvaluation: Evaluation = {};
-  selectedScoringModel: ScoringModel = {};
   displayedSubmissionList: PopulatedSubmission[] = [];
   submissionList: PopulatedSubmission[] = [];
+  teamSubmissionList: PopulatedSubmission[] = [];
+  userSubmissionList: PopulatedSubmission[] = [];
   displayedScoreClass = 'white';
   displayedScoreHover = 'Level 0 - Baseline';
   displaying = '';
@@ -76,7 +80,6 @@ export class ReportComponent implements OnDestroy {
         this.selectedEvaluation = active;
         this.currentMoveNumber = active.currentMoveNumber;
         this.displaying = this.displaying && this.displaying === 'team' ? 'team' : 'user';
-        console.log(this.displaying);
       }
     });
     // observe the selected scoring model
@@ -88,8 +91,7 @@ export class ReportComponent implements OnDestroy {
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
-        this.activeTeamId = active.id;
-        this.teamUsers = active.users;
+        this.selectedTeam = active;
       }
     });
     // observe the logged in user ID
@@ -98,7 +100,7 @@ export class ReportComponent implements OnDestroy {
       .subscribe((user) => {
         if (user && user.profile && user.profile.sub !== this.loggedInUserId) {
           this.loggedInUserId = user.profile.sub;
-          this.userId = this.loggedInUserId;
+          this.loggedInUserName = user.profile.name;
         }
       });
     // observe the submission list
@@ -219,19 +221,67 @@ export class ReportComponent implements OnDestroy {
   }
 
   selectDisplayedSubmissions() {
-    let validSubmissions = Object.assign([], this.submissionList) as PopulatedSubmission[];
-    validSubmissions = validSubmissions.filter(vs => vs.submissionType.toLowerCase() === this.displaying);
-    let displayedSubmissions: PopulatedSubmission[] = [];
-    validSubmissions.forEach(vs => {
-      const hasScores = !this.selectedScoringModel.displayScoringModelByMoveNumber ||
-        this.selectedScoringModel.scoringCategories.some(
-          sc => +vs.moveNumber >= +sc.moveNumberFirstDisplay && +vs.moveNumber <= +sc.moveNumberLastDisplay);
-        if (hasScores && +vs.moveNumber <= +this.selectedEvaluation.currentMoveNumber) {
-          displayedSubmissions.push(vs);
+    const allSubmissions: PopulatedSubmission[] = [];
+    const userSubmissions: PopulatedSubmission[] = [];
+    const teamSubmissions: PopulatedSubmission[] = [];
+    this.submissionList.forEach((submission) => {
+      if (this.hasScoresAndValidMove(submission)) {
+        if (submission.userId) {
+          // user submission
+          const populatedSubmission = {
+            ...submission,
+          } as PopulatedSubmission;
+          populatedSubmission.name = this.loggedInUserName;
+          populatedSubmission.submissionType = SubmissionType.user;
+          allSubmissions.push(submission);
+          userSubmissions.push(populatedSubmission);
+        } else if (submission.teamId) {
+          if (!submission.scoreIsAnAverage) {
+            // team submission
+            const populatedSubmission = {
+              ...submission,
+            } as PopulatedSubmission;
+            populatedSubmission.name = this.selectedTeam.name;
+            populatedSubmission.submissionType = SubmissionType.team;
+            allSubmissions.push(submission);
+            teamSubmissions.push(populatedSubmission);
+            }
         }
+      }
     });
-    displayedSubmissions = displayedSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
-    this.displayedSubmissionList = displayedSubmissions;
+    this.submissionList = allSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
+    this.teamSubmissionList = teamSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
+    this.userSubmissionList = userSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
+    this.displayedSubmissionList = this.displaying === 'team' ? this.teamSubmissionList : this.userSubmissionList;
+  }
+
+  getSortedMoveList(): Move[] {
+    const moveList = [];
+    this.moveList.forEach(move => {
+      const addIt = (+move.moveNumber <= +this.selectedEvaluation.currentMoveNumber) && this.getDisplayedScoringCategories(move.moveNumber).length > 0;
+      if (addIt) {
+        moveList.push(move);
+      }
+    });
+    return moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
+  }
+
+  hasScoresAndValidMove(vs: PopulatedSubmission): boolean {
+    const hasScores = !this.selectedScoringModel.displayScoringModelByMoveNumber ||
+      this.selectedScoringModel?.scoringCategories.some(
+        sc => +vs.moveNumber >= +sc.moveNumberFirstDisplay && +vs.moveNumber <= +sc.moveNumberLastDisplay);
+    const hasValidMove = +vs.moveNumber <= +this.selectedEvaluation.currentMoveNumber;
+    return hasScores && hasValidMove;
+  }
+
+  toggleDisplaying() {
+    if (this.displaying === 'team') {
+      this.displaying = 'user';
+      this.displayedSubmissionList = this.userSubmissionList;
+    } else {
+      this.displaying = 'team';
+      this.displayedSubmissionList = this.teamSubmissionList;
+    }
   }
 
   printpage()

@@ -91,7 +91,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     </div>
                   </div>
                   <div class="comment-box" *ngIf="selectedScoringModel.displayCommentTextBoxes">
-                    <span class="comment">{{ optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment }}</span>
+                    <span class="comment">
+                      <span *ngIf="displaying === 'team'"><b>{{ getTeamShortName(submission.teamId) }}:</b></span>
+                      <span *ngIf="displaying !== 'team'"><b>{{ getUserName(submission.userId) }}:</b></span>
+                      {{ optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment }}
+                    </span>
                   </div>
                 </div>
               </div>

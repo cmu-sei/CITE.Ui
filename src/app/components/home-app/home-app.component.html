@@ -161,13 +161,18 @@ project root for license information or contact permission@sei.cmu.edu for full 
         ></app-scoresheet>
       </div>
       <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.report">
-        <app-report></app-report>
+        <app-report
+        [selectedEvaluation]="activeEvaluation$ | async"
+        [selectedScoringModel]="activeScoringModel$ | async"
+        [moveList]="moveList$ | async"
+      ></app-report>
       </div>
       <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.aggregate">
         <app-aggregate
           [selectedEvaluation]="activeEvaluation$ | async"
           [selectedScoringModel]="activeScoringModel$ | async"
           [moveList]="moveList$ | async"
+          [activeTeam]="activeTeam$ | async"
         ></app-aggregate>
       </div>
       <div *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'ScoreSummary' && !(selectedSection === section.report || selectedSection === section.aggregate)" class="flex-35" autosize>

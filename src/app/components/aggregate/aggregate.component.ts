@@ -36,7 +36,6 @@ export class AggregateComponent implements OnInit, OnDestroy {
   @Input() moveList: Move[];
   loggedInUserId = '';
   userId = '';
-  activeTeamId = '';
   teamList$: Observable<Team[]>;
   teamList: Team[] = [];
   userList: User[];
@@ -174,6 +173,11 @@ export class AggregateComponent implements OnInit, OnDestroy {
       }
     }
     return;
+  }
+
+  getTeamShortName(id: string) {
+    const theTeam = this.teamList?.find(tu => tu.id === id);
+    return theTeam ? theTeam.shortName : '';
   }
 
   getUserName(id: string) {

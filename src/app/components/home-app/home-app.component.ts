@@ -83,6 +83,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   evaluationList: Evaluation[] = [];
   evaluationList$ = this.evaluationQuery.selectAll();
   submissionList$ = this.submissionQuery.selectAll();
+  activeTeam$ = this.teamQuery.selectActive() as Team;
   displayedSubmission: Submission;
   addingSubmission = false;
   evaluationsAreLoading$ = this.evaluationQuery.selectLoading();
@@ -372,6 +373,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           !s.groupId  &&
           !s.scoreIsAnAverage
         );
+        if (!newSubmission) {
+          this.makeNewSubmission();
+        }
       } else {
         // select the team score
         newSubmission = submissions.find(s =>
