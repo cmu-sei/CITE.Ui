@@ -63,8 +63,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <button
           mat-icon-button
           ngxClipboard
+          [cbContent]="row.id"
           (click)="$event.stopPropagation()"
-          title="Copy Submission ID:  {{ row.id }}"
+          title="Copy Submission ID to clipboard:  {{ row.id }}"
         >
           <mat-icon
             class="mdi-24px"

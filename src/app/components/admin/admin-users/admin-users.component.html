@@ -108,8 +108,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <button
           mat-icon-button
           ngxClipboard
+          [cbContent]="user.id"
           (click)="$event.stopPropagation()"
-          title="Copy User ID:  {{ user.id }}"
+          title="Copy User ID to clipboard:  {{ user.id }}"
         >
           <mat-icon class="mdi-24px" fontIcon="mdi-content-copy"></mat-icon>
         </button>
