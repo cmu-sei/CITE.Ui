@@ -74,8 +74,6 @@
 .comment {
   width: calc(100% - 32px);
   resize: vertical;
-  text-decoration: underline;
-  font-style: italic;
 
 }
 
@@ -114,6 +112,9 @@
 .description-div {
   display: flex;
   width: calc(100% - 24px);
+  font-weight: bold;
+  text-decoration: underline;
+  font-style: italic;
 }
 
 .small-icon {

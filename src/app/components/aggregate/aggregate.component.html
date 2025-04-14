@@ -7,9 +7,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <div class="header-div">
     <div class="header-text">
       <h2>
-        <span *ngIf="displaying === 'team'">{{ selectedTeam.shortName }}'s</span>
-        <span *ngIf="displaying !== 'team'">{{ loggedInUserName }}'s</span>
-        Responses for {{ selectedEvaluation.description }}
+        <span *ngIf="displaying === 'team'">Team </span>
+        <span *ngIf="displaying !== 'team'">User </span>
+        Submissions Report for {{ selectedEvaluation.description }}
       </h2>
     </div>
     <div class="right-buttons no-print">
@@ -34,18 +34,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </div>
   <mat-table
-    [dataSource]="getDisplayedScoringCategories(submission.moveNumber) | displayOrder"
+    [dataSource]="getDisplayedScoringCategories(move.moveNumber) | displayOrder"
     class="full-width"
-    *ngFor="let submission of displayedSubmissionList"
+    *ngFor="let move of getSortedMoveList()"
   >
     <!-- Description Definition -->
-    <ng-container matColumnDef="scoringCategoryDescription">
+    <ng-container matColumnDef="scoringCategoryDescription" *ngIf="getMoveSubmissions(move) as moveSubmissions">
       <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
         <div class="title-font">
-          Move {{ submission.moveNumber }}
-          <span *ngIf="!selectedScoringModel?.hideScoresOnScoreSheet" title="{{ displayedScoreHover }}"
-            > - {{ submission.score | number: '1.2-2' }}
-          </span>
+          Move {{ move.moveNumber }}
         </div>
       </mat-header-cell>
 
@@ -57,11 +54,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
       >
         <div class="scoring-category-description" [ngClass]="tableClass">
           {{ scoringCategory.displayOrder }}. {{ scoringCategory.description }}
-          <span *ngIf="scoringCategory.calculationMethodId > 0">
-            &nbsp;&nbsp;-&nbsp;&nbsp;[{{
-              categoryScore(submission, scoringCategory.id) | number: '1.0-0'
-            }}]
-          </span>
         </div>
         <mat-table
           [dataSource]="scoringCategory.scoringOptions | displayOrder"
@@ -79,35 +71,32 @@ project root for license information or contact permission@sei.cmu.edu for full 
             >
               <div [ngClass]="scoringOption.isModifier ? 'indent-div' : 'no-indent-div'">
                 <div class="score-option">
-                  <div class="checkbox-div" *ngIf="scoringCategory.scoringOptionSelection !== 'None'">
-                    <mat-checkbox
-                      [aria-label]="scoringOption.description"
-                      [checked]="isSelected(submission, scoringCategory.id, scoringOption.id)"
-                      [disabled]="true"
-                      [matTooltip]="selectedBy(submission, scoringCategory.id, scoringOption.id)"
-                    >
-                    </mat-checkbox>
-                  </div>
                   <div class="description-div">
                     {{ scoringOption.description }} &nbsp;
                   </div>
                 </div>
-                <div class="comment-list" *ngIf="!selectedScoringModel.displayCommentTextBoxes">
-                  <div
-                    *ngFor="
-                      let comment of optionComments(
-                        submission,
-                        scoringCategory.id,
-                        scoringOption.id
-                      )
-                    "
-                  >
-                    {{ comment.comment }}
-                    <span *ngIf="displaying === 'Team'"> - {{ getUserName(comment.createdBy) }}</span>
+                <div *ngFor="let submission of moveSubmissions">
+                  <div class="comment-list" *ngIf="!selectedScoringModel.displayCommentTextBoxes">
+                    <div
+                      *ngFor="
+                        let comment of optionComments(
+                          submission,
+                          scoringCategory.id,
+                          scoringOption.id
+                        )
+                      "
+                    >
+                      {{ comment.comment }}
+                      <span *ngIf="displaying === 'Team'"> - {{ getUserName(comment.createdBy) }}</span>
+                    </div>
                   </div>
-                </div>
-                <div class="comment-box" *ngIf="selectedScoringModel.displayCommentTextBoxes">
-                  <span class="comment">{{ optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment }}</span>
+                  <div class="comment-box" *ngIf="selectedScoringModel.displayCommentTextBoxes">
+                    <span class="comment">
+                      <span *ngIf="displaying === 'team'"><b>{{ getTeamShortName(submission.teamId) }}:</b></span>
+                      <span *ngIf="displaying !== 'team'"><b>{{ getUserName(submission.userId) }}:</b></span>
+                      {{ optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </mat-cell>

@@ -1,4 +1,4 @@
-// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+// Copyright 2025 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
@@ -13,7 +13,6 @@
   text-align: left;
   height: 100%;
   width: 100%;
-  font-size: 18px;
 }
 
 .description-container {
@@ -22,7 +21,6 @@
   justify-content: flex-start;
   align-items: flex-start;
   text-align: left;
-  font-size: 16px;
 }
 
 .value-container {
@@ -54,16 +52,10 @@
   justify-content: center;
 }
 
-.mat-header-row {
+.title-row {
   position: sticky;
   top: -.5px;
   z-index: 100;
-}
-
-textarea.mat-input-element {
-  color: revert;
-  border: revert;
-  background: revert;
 }
 
 .comment-list {
@@ -74,6 +66,7 @@ textarea.mat-input-element {
 }
 
 .comment-box {
+  margin-left: 25px;
   margin-bottom: 10px;
   width: 100%;
 }
@@ -81,10 +74,16 @@ textarea.mat-input-element {
 .comment {
   width: calc(100% - 32px);
   resize: vertical;
+
 }
 
 .indent-div {
   margin-left: 25px;
+  width: 100%;
+}
+
+.no-indent-div {
+  width: 100%;
 }
 
 .value-div {
@@ -97,6 +96,27 @@ textarea.mat-input-element {
   margin-top: 20px;
 }
 
+.score-option {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  text-wrap: wrap;
+  word-wrap: break-word;
+}
+
+.checkbox-div {
+  display: flex;
+  width: 24px;
+}
+
+.description-div {
+  display: flex;
+  width: calc(100% - 24px);
+  font-weight: bold;
+  text-decoration: underline;
+  font-style: italic;
+}
+
 .small-icon {
   width: 22px !important;
   height: 22px !important;
@@ -107,6 +127,28 @@ textarea.mat-input-element {
   width: 22px !important;
   height: 22px !important;
   line-height: unset;
+}
+
+.header-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.header-text {
+  display: flex;
+  flex: 15;
+  width: 100%;
+  justify-content: center;
+  align-self: center;
+}
+
+.right-buttons {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+  white-space: nowrap;
 }
 
 .title-font {
@@ -147,6 +189,12 @@ textarea.mat-input-element {
   height: 100%;
 }
 
+.header-div {
+  width: 100%;
+  text-align: center;
+  height: 50px;
+}
+
 .black {
   background-color: black;
   color: white;
@@ -171,10 +219,23 @@ textarea.mat-input-element {
   background-color: white;
   color: black;
 }
-.mat-column-description{
-  font-size: 100px;
-}
 
-.no-display {
-  display:none;
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  #printable-area {
+    overflow: visible !important;
+    background-color: white !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    padding: 15px;
+    font-size: 14px;
+    line-height: 18px;
+}
 }

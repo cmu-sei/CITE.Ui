@@ -237,17 +237,18 @@ export class DashboardComponent implements OnDestroy {
     let description = '';
     let pastMovesBannerAdded = false;
     let lastDisplayedMoveNumber = 0;
+    const isDisplayedMoveCurrent = +this.displayedMoveNumber === +this.currentMoveNumber;
 
-    if (+this.displayedMoveNumber === +this.currentMoveNumber) {
+    if (isDisplayedMoveCurrent) {
       const displayedMove = this.moveList.find(
         (m) => +m.moveNumber === +this.displayedMoveNumber
       );
       description =
         '<div style="display: flex; align-items: center; font-size: 25px;">' +
-        '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+        '<b>' +
         'Current Move: ' +
         displayedMove.description +
-        '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
+        '</b></div>' +
         '</div>' +
         '<h4>' +
         this.selectedEvaluation.situationTime?.toLocaleString(
@@ -265,13 +266,18 @@ export class DashboardComponent implements OnDestroy {
         (m) => +m.moveNumber === +this.displayedMoveNumber
       );
       description =
-        '<h2>' +
+        '<div style="display: flex; align-items: center; font-size: 25px;">' +
+        'Previous Move: ' +
+        displayedMove.description +
+        '</div>' +
+        '<h4>' +
         displayedMove.situationTime?.toLocaleString(
           'en-US',
           dateTimeFormatOptions
         ) +
-        '<br /></h2>' +
+        '<br /></h4>' +
         displayedMove.situationDescription;
+      pastMovesBannerAdded = true;
       lastDisplayedMoveNumber = +this.displayedMoveNumber;
     }
 

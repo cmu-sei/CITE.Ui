@@ -34,7 +34,7 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   otherTeamUsers: TeamUser[] = [];
   teamList: Team[] = [];
   displayedUserColumns: string[] = ['name', 'id'];
-  displayedTeamUserColumns: string[] = ['name', 'isObserver', 'canManageTeam', 'canIncrementMove', 'canModify', 'canSubmit', 'id'];
+  displayedTeamUserColumns: string[] = ['name', 'isObserver', 'canManageTeam', 'canIncrementMove', 'canSubmit', 'canModify', 'id'];
   displayedTeamColumns: string[] = ['name', 'user'];
   userDataSource = new MatTableDataSource<User>(new Array<User>());
   teamUserDataSource = new MatTableDataSource<TeamUser>(new Array<TeamUser>());

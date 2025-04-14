@@ -35,7 +35,7 @@ import { UIDataService } from 'src/app/data/ui/ui-data.service';
 })
 export class ScoresheetComponent implements OnDestroy {
   @Input() myTeamId: string;
-  @Input() userOnly: boolean;
+  @Input() rightSideDisplay: boolean;
   @Input() noChanges: boolean;
   @Output() selectDisplayedSubmission = new EventEmitter<string>();
   loggedInUserId = '';
@@ -364,7 +364,6 @@ export class ScoresheetComponent implements OnDestroy {
     const errorMessage = this.verifySubmission();
     if (errorMessage === '') {
       // all is well, so submit the score
-      console.log('submitting score for move #' + this.displayedSubmission.moveNumber + ' and current move is #' + this.currentMoveNumber);
       this.submit();
     } else {
       // there were missing values, so confirm submission

@@ -44,18 +44,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <button
       mat-icon-button
       style="outline: none;"
-      title="SubmissionReview"
-      (click)="setSection(reportSection)"
-      *ngIf="selectedSection !== reportSection && selectedEvaluationId"
-    >
-      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      style="outline: none;"
       title="Dashboard"
       (click)="setSection(dashboardSection)"
-      *ngIf="selectedTeamId && selectedSection === scoresheetSection || selectedSection === reportSection && selectedEvaluationId"
+      *ngIf="selectedTeamId && selectedEvaluationId && selectedSection !== dashboardSection"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard"></mat-icon>
     </button>
@@ -67,6 +58,24 @@ project root for license information or contact permission@sei.cmu.edu for full 
       *ngIf="selectedTeamId && selectedSection !== scoresheetSection && !hideScoresheet() && selectedEvaluationId"
     >
       <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      style="outline: none;"
+      title="SubmissionReview"
+      (click)="setSection(reportSection)"
+      *ngIf="selectedSection !== reportSection && selectedEvaluationId"
+    >
+      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      style="outline: none;"
+      title="Aggregate Report"
+      (click)="setSection(aggregateSection)"
+      *ngIf="showAdminButton && selectedSection !== aggregateSection && selectedEvaluationId"
+    >
+      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-multiple-outline"></mat-icon>
     </button>
     <button
       aria-label="Show Administration Page"
