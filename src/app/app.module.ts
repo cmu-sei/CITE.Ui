@@ -82,6 +82,7 @@ import { AdminTeamTypesComponent } from './components/admin/admin-teamtypes/admi
 import { AdminTeamUsersComponent } from './components/admin/admin-team-users/admin-team-users.component';
 import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
 import { AggregateComponent } from './components/aggregate/aggregate.component';
+import { ClipboardModule } from 'ngx-clipboard';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HomeAppComponent } from './components/home-app/home-app.component';
 import { EvaluationInfoComponent } from './components/evaluation-info/evaluation-info.component';
@@ -159,6 +160,7 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    ClipboardModule,
     SwaggerCodegenApiModule,
     HttpClientModule,
     FormsModule,

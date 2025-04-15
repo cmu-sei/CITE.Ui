@@ -25,7 +25,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="right-cell" *ngIf="myTeamId === activeTeamId">
           <button
             mat-icon-button
-            ngxClipboard
             (click)="isActionEditMode = true"
             title="Edit Actions"
             [disabled]="noChanges"
@@ -60,7 +59,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div *ngIf="isActionEditMode">
           <button
             mat-icon-button
-            ngxClipboard
             (click)="addOrEditAction(action); $event.stopPropagation()"
             title="Edit Action"
           >
@@ -119,7 +117,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="right-cell" *ngIf="myTeamId === activeTeamId">
           <button
             mat-icon-button
-            ngxClipboard
             (click)="isRoleEditMode = true"
             title="Edit Roles"
             *ngIf="!isRoleEditMode"
@@ -154,7 +151,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="role-cell" *ngIf="isRoleEditMode">
           <button
             mat-icon-button
-            ngxClipboard
             (click)="addOrEditRole(role); $event.stopPropagation()"
             title="Edit Role"
           >
