@@ -6,7 +6,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Subject, Observable, combineLatest } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import {
   ComnSettingsService,
   Theme,
@@ -18,7 +18,6 @@ import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.s
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import {
   Evaluation,
-  HealthCheckService,
   ItemStatus,
   Move,
   ScoringModel,
@@ -40,9 +39,8 @@ import { ApplicationArea, SignalRService } from 'src/app/services/signalr.servic
 import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
-import { RightSideDisplay } from 'src/app/generated/cite.api/model/rightSideDisplay';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
 
 export enum Section {
@@ -60,7 +58,6 @@ export enum Section {
 export class HomeAppComponent implements OnDestroy {
   @ViewChild('sidenav') sidenav: MatSidenav;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  apiIsSick = false;
   apiMessage = 'The API web service is not responding.';
   topbarTextBase = 'Set AppTopBarText in Settings';
   topbarText = 'blank';
@@ -128,7 +125,6 @@ export class HomeAppComponent implements OnDestroy {
     private teamUserDataService: TeamUserDataService,
     private signalRService: SignalRService,
     private gallerySignalRService: GallerySignalRService,
-    private healthCheckService: HealthCheckService,
     private moveQuery: MoveQuery,
     private unreadArticlesQuery: UnreadArticlesQuery,
     private uiDataService: UIDataService,

@@ -17,199 +17,186 @@ project root for license information or contact permission@sei.cmu.edu for full 
     (urlNavigate)="topBarNavigate($event)"
   ></app-topbar>
 
-  <div
-    *ngIf="apiIsSick"
-    class="app-header-container background text"
-    autosize
-  >
-    <span style="margin-top: 200px;">
-      <h1>{{ apiMessage }}</h1>
-      <h2>Please refresh this page.</h2>
-      <h2>If the problem persists, please contact the site administrator.</h2>
-    </span>
-  </div>
-  <span *ngIf="!apiIsSick">
-    <span *ngIf="!isStarted">
-      <mat-card>
-      <mat-card-header>
-        <mat-card-title>Initializing Data</mat-card-title>
-        <mat-card-subtitle>Please wait ...</mat-card-subtitle>
-      </mat-card-header>
-        <mat-progress-spinner color="primary" mode="indeterminate">
-        </mat-progress-spinner>
-      </mat-card>
-    </span>
-    <span *ngIf="isStarted">
-      <div
-        *ngIf="!(evaluationsAreLoading$ | async) && evaluationList.length === 0"
-        class="app-header-container"
+  <span *ngIf="!isStarted">
+    <mat-card>
+    <mat-card-header>
+      <mat-card-title>Initializing Data</mat-card-title>
+      <mat-card-subtitle>Please wait ...</mat-card-subtitle>
+    </mat-card-header>
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </mat-card>
+  </span>
+  <span *ngIf="isStarted">
+    <div
+      *ngIf="!(evaluationsAreLoading$ | async) && evaluationList.length === 0"
+      class="app-header-container"
+    >
+      <span style="margin-top: 200px;">
+        <h1>You are not a team member for an active evaluation.</h1>
+        <h2>Please contact the site administrator or your event facilator.</h2>
+      </span>
+      <button
+        aria-label="Show Administration Page"
+        mat-icon-button
+        *ngIf="canAccessAdminSection$ | async"
+        [routerLink]="['/admin']"
+        [queryParams]="{section: 'Evaluations'}"
+        style="outline: none; align-self: center;"
+        title="Administration"
       >
-        <span style="margin-top: 200px;">
-          <h1>You are not a team member for an active evaluation.</h1>
-          <h2>Please contact the site administrator or your event facilator.</h2>
-        </span>
-        <button
-          aria-label="Show Administration Page"
-          mat-icon-button
-          *ngIf="canAccessAdminSection$ | async"
-          [routerLink]="['/admin']"
-          [queryParams]="{section: 'Evaluations'}"
-          style="outline: none; align-self: center;"
-          title="Administration"
-        >
-          <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
-          Goto Administration Pages
-        </button>
+        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
+        Goto Administration Pages
+      </button>
+    </div>
+    <div
+      class="content-under-topbar"
+      *ngIf="isAuthorizedUser && evaluationList.length > 0"
+    >
+      <div class="app-header-container">
+        <app-evaluation-info
+          [showAdminButton]="canAccessAdminSection$ | async"
+          [showMoveArrows]="selectedSection === section.scoresheet"
+          [teamList]="teamList$ | async"
+          [myTeamId]="myTeamId$ | async"
+          [evaluationList]="evaluationList$ | async"
+          [moveList]="moveList$ | async"
+          [scoresheetOnRight]="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
+          [noChanges]="noChanges$ | async"
+          [selectedSection]="selectedSection"
+          (nextDisplayedMove)="nextDisplayedMove($event)"
+          (previousDisplayedMove)="previousDisplayedMove($event)"
+          (nextEvaluationMove)="nextEvaluationMove($event)"
+          (changeTeam)="changeTeam($event)"
+          (changeSection)="changeSection($event)"
+          (changeEvaluation)="changeEvaluation($event)"
+          ></app-evaluation-info>
       </div>
-      <div
-        class="content-under-topbar"
-        *ngIf="isAuthorizedUser && evaluationList.length > 0"
-      >
-        <div class="app-header-container">
-          <app-evaluation-info
-            [showAdminButton]="canAccessAdminSection$ | async"
-            [showMoveArrows]="selectedSection === section.scoresheet"
-            [teamList]="teamList$ | async"
+
+      <div class="mat-elevation-z8 evaluation-list-container" *ngIf="!selectedEvaluationId">
+        <div class="icon-text-container">
+          <mat-icon class="crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
+          <span class="evaluation-title text">My Evaluations</span>
+          <div class="searchBox d-flex align-items-center">
+            <!-- Search Bar -->
+            <mat-icon
+              class="text"
+              style="transform: scale(0.85); margin-right: 5px"
+              svgIcon="ic_magnify_search"
+            ></mat-icon>
+            <mat-form-field style="width: 320px">
+              <input
+                matInput
+                [(ngModel)]="filterString"
+                (keyup)="applyFilter($event.target.value)"
+                placeholder="Search"
+              />
+              <button
+                *ngIf="filterString !== ''"
+                mat-icon-button
+                matSuffix
+                (click)="clearFilter()"
+                title="Clear Search"
+              >
+                <mat-icon
+                  style="transform: scale(0.85)"
+                  svgIcon="ic_clear"
+                ></mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+        </div>
+        <mat-table #table class="width-100 mat-table" [dataSource]="evaluationDataSource" matSort  (matSortChange)="sortData($event)">
+          <!-- Name Column -->
+          <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="description">Name</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">
+              <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }">
+                {{ evaluation.description }}
+              </a>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ evaluation.status }}</mat-cell>
+          </ng-container>
+
+          <!-- Created By Column -->
+          <ng-container matColumnDef="createdBy">
+            <mat-header-cell *matHeaderCellDef>Created By</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ getUsername(evaluation.createdBy)}}</mat-cell>
+          </ng-container>
+
+            <!-- Date Created Column -->
+            <ng-container matColumnDef="dateCreated">
+            <mat-header-cell *matHeaderCellDef>Date Created</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"MM/dd/yyyy HH:mm" }}</mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+        </mat-table>
+        <div class="text no-results" *ngIf="evaluationDataSource.filteredData.length === 0">
+          No results found
+        </div>
+      </div>
+      <div class="app-content-container" *ngIf="selectedEvaluationId">
+        <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection !== section.scoresheet && !(selectedSection === section.report || selectedSection === section.aggregate)">
+          <app-dashboard
+            *ngIf="unreadArticles$ && moveList$"
+            [unreadArticles]="unreadArticles$ | async"
             [myTeamId]="myTeamId$ | async"
-            [evaluationList]="evaluationList$ | async"
-            [moveList]="moveList$ | async"
-            [scoresheetOnRight]="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
             [noChanges]="noChanges$ | async"
-            [selectedSection]="selectedSection"
-            (nextDisplayedMove)="nextDisplayedMove($event)"
-            (previousDisplayedMove)="previousDisplayedMove($event)"
-            (nextEvaluationMove)="nextEvaluationMove($event)"
-            (changeTeam)="changeTeam($event)"
-            (changeSection)="changeSection($event)"
-            (changeEvaluation)="changeEvaluation($event)"
-            ></app-evaluation-info>
+          ></app-dashboard>
         </div>
-
-        <div class="mat-elevation-z8 evaluation-list-container" *ngIf="!selectedEvaluationId">
-          <div class="icon-text-container">
-            <mat-icon class="crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
-            <span class="evaluation-title text">My Evaluations</span>
-            <div class="searchBox d-flex align-items-center">
-              <!-- Search Bar -->
-              <mat-icon
-                class="text"
-                style="transform: scale(0.85); margin-right: 5px"
-                svgIcon="ic_magnify_search"
-              ></mat-icon>
-              <mat-form-field style="width: 320px">
-                <input
-                  matInput
-                  [(ngModel)]="filterString"
-                  (keyup)="applyFilter($event.target.value)"
-                  placeholder="Search"
-                />
-                <button
-                  *ngIf="filterString !== ''"
-                  mat-icon-button
-                  matSuffix
-                  (click)="clearFilter()"
-                  title="Clear Search"
-                >
-                  <mat-icon
-                    style="transform: scale(0.85)"
-                    svgIcon="ic_clear"
-                  ></mat-icon>
-                </button>
-              </mat-form-field>
-            </div>
-          </div>
-          <mat-table #table class="width-100 mat-table" [dataSource]="evaluationDataSource" matSort  (matSortChange)="sortData($event)">
-            <!-- Name Column -->
-            <ng-container matColumnDef="description">
-              <mat-header-cell *matHeaderCellDef mat-sort-header="description">Name</mat-header-cell>
-              <mat-cell *matCellDef="let evaluation">
-                <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }">
-                  {{ evaluation.description }}
-                </a>
-              </mat-cell>
-            </ng-container>
-
-            <!-- Status Column -->
-            <ng-container matColumnDef="status">
-              <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
-              <mat-cell *matCellDef="let evaluation">{{ evaluation.status }}</mat-cell>
-            </ng-container>
-
-            <!-- Created By Column -->
-            <ng-container matColumnDef="createdBy">
-              <mat-header-cell *matHeaderCellDef>Created By</mat-header-cell>
-              <mat-cell *matCellDef="let evaluation">{{ getUsername(evaluation.createdBy)}}</mat-cell>
-            </ng-container>
-
-              <!-- Date Created Column -->
-              <ng-container matColumnDef="dateCreated">
-              <mat-header-cell *matHeaderCellDef>Date Created</mat-header-cell>
-              <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"MM/dd/yyyy HH:mm" }}</mat-cell>
-            </ng-container>
-
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-          </mat-table>
-          <div class="text no-results" *ngIf="evaluationDataSource.filteredData.length === 0">
-            No results found
-          </div>
+        <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.scoresheet">
+          <app-scoresheet
+            [myTeamId]="myTeamId$ | async"
+            (selectDisplayedSubmission)="selectDisplayedSubmission($event)"
+            [noChanges]="noChanges$ | async"
+          ></app-scoresheet>
         </div>
-        <div class="app-content-container">
-          <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection !== section.scoresheet && !(selectedSection === section.report || selectedSection === section.aggregate)">
-            <app-dashboard
-              *ngIf="unreadArticles$ && moveList$"
-              [unreadArticles]="unreadArticles$ | async"
-              [myTeamId]="myTeamId$ | async"
-              [noChanges]="noChanges$ | async"
-            ></app-dashboard>
-          </div>
-          <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.scoresheet">
-            <app-scoresheet
-              [myTeamId]="myTeamId$ | async"
-              (selectDisplayedSubmission)="selectDisplayedSubmission($event)"
-              [noChanges]="noChanges$ | async"
-            ></app-scoresheet>
-          </div>
-          <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.report">
-            <app-report
+        <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.report">
+          <app-report
+          [selectedEvaluation]="activeEvaluation$ | async"
+          [selectedScoringModel]="activeScoringModel$ | async"
+          [moveList]="moveList$ | async"
+        ></app-report>
+        </div>
+        <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.aggregate">
+          <app-aggregate
             [selectedEvaluation]="activeEvaluation$ | async"
             [selectedScoringModel]="activeScoringModel$ | async"
             [moveList]="moveList$ | async"
-          ></app-report>
-          </div>
-          <div [ngClass]="getAppContentClass()" autosize *ngIf="selectedSection === section.aggregate">
-            <app-aggregate
-              [selectedEvaluation]="activeEvaluation$ | async"
-              [selectedScoringModel]="activeScoringModel$ | async"
-              [moveList]="moveList$ | async"
-            ></app-aggregate>
-          </div>
-          <div *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'ScoreSummary' && !(selectedSection === section.report || selectedSection === section.aggregate)" class="flex-35" autosize>
-            <app-score-summary
-              *ngIf="unreadArticles$ && moveList$"
-              [selectedScoringModel]="activeScoringModel$ | async"
-            ></app-score-summary>
-          </div>
-          <div [ngClass]="getAppContentClass()" *ngIf="(activeScoringModel$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeScoringModel$ | async)?.rightSideDisplay !== 'None' && !(selectedSection === section.report || selectedSection === section.aggregate)" class="app-score-container flex-50 mat-elevation-z8" autosize>
-            <app-right-side-html
-              *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'HtmlBlock'"
-              [scoringModel$]="activeScoringModel$"
-              [hideTopbar]="hideTopbar"
-            ></app-right-side-html>
-            <app-right-side-iframe
-              *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'EmbeddedUrl'"
-              [hideTopbar]="hideTopbar"
-            ></app-right-side-iframe>
-            <app-scoresheet
-              *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
-              [rightSideDisplay]="true"
-              [myTeamId]="myTeamId$ | async"
-              [noChanges]="noChanges$ | async"
-              (selectDisplayedSubmission)="selectDisplayedSubmission($event)"
-            ></app-scoresheet>
-          </div>
+          ></app-aggregate>
+        </div>
+        <div *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'ScoreSummary' && !(selectedSection === section.report || selectedSection === section.aggregate)" class="flex-35" autosize>
+          <app-score-summary
+            *ngIf="unreadArticles$ && moveList$"
+            [selectedScoringModel]="activeScoringModel$ | async"
+          ></app-score-summary>
+        </div>
+        <div [ngClass]="getAppContentClass()" *ngIf="(activeScoringModel$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeScoringModel$ | async)?.rightSideDisplay !== 'None' && !(selectedSection === section.report || selectedSection === section.aggregate)" class="app-score-container flex-50 mat-elevation-z8" autosize>
+          <app-right-side-html
+            *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'HtmlBlock'"
+            [scoringModel$]="activeScoringModel$"
+            [hideTopbar]="hideTopbar"
+          ></app-right-side-html>
+          <app-right-side-iframe
+            *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'EmbeddedUrl'"
+            [hideTopbar]="hideTopbar"
+          ></app-right-side-iframe>
+          <app-scoresheet
+            *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
+            [rightSideDisplay]="true"
+            [myTeamId]="myTeamId$ | async"
+            [noChanges]="noChanges$ | async"
+            (selectDisplayedSubmission)="selectDisplayedSubmission($event)"
+          ></app-scoresheet>
         </div>
       </div>
-    </span>
+    </div>
   </span>
 </div>
