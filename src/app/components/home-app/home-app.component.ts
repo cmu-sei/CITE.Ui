@@ -1,7 +1,7 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
-import { Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, OnDestroy, ViewChild} from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -57,7 +57,7 @@ export enum Section {
   templateUrl: './home-app.component.html',
   styleUrls: ['./home-app.component.scss'],
 })
-export class HomeAppComponent implements OnDestroy, OnInit {
+export class HomeAppComponent implements OnDestroy {
   @ViewChild('sidenav') sidenav: MatSidenav;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   apiIsSick = false;
@@ -87,7 +87,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   displayedSubmission: Submission;
   addingSubmission = false;
   evaluationsAreLoading$ = this.evaluationQuery.selectLoading();
-  isReady = false;
   currentMoveNumber = -1;
   displayedMoveNumber = -1;
   requestedMoveNumber = -1;
@@ -109,9 +108,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   private isSubmissionDataServiceLoading: boolean;
   waitingForCurrentMoveNumber = 0;
   noChanges$ = new BehaviorSubject<boolean>(false);
+  isStarted = false;
 
   constructor(
-    activatedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private router: Router,
     private userDataService: UserDataService,
     private settingsService: ComnSettingsService,
@@ -134,7 +134,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private uiDataService: UIDataService,
     titleService: Title
   ) {
-    this.healthCheck();
     const appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
     titleService.setTitle(appTitle);
     this.topbarTextBase = this.settingsService.settings.AppTopBarText || this.topbarTextBase;
@@ -147,6 +146,26 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.submissionQuery.selectLoading().pipe(takeUntil(this.unsubscribe$)).subscribe(isLoading => {
       this.isSubmissionDataServiceLoading = isLoading;
     });
+    // Set the display settings from config file
+    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
+      ? this.settingsService.settings.AppTopBarHexColor
+      : this.topbarColor;
+    this.topbarTextColor = this.settingsService.settings.AppTopBarHexTextColor
+      ? this.settingsService.settings.AppTopBarHexTextColor
+      : this.topbarTextColor;
+      this.userDataService.loggedInUser.pipe(takeUntil(this.unsubscribe$)).subscribe((user) => {
+        if (user && user.profile && user.profile.sub) {
+          this.startup();
+        }
+      });
+      setTimeout(() => {
+        if (!this.isStarted) {
+          window.location.reload();
+        }
+      }, 10000);
+    }
+
+  startup() {
     // observe the vital information and process it when it is all present
     combineLatest([this.evaluationList$, this.moveList$, this.loggedInUser$, this.teamList$])
       .pipe(takeUntil(this.unsubscribe$)).subscribe(([evaluations, moves, user, teams]) => {
@@ -221,7 +240,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     });
     this.userDataService.getUsersFromApi();
     // observe route changes
-    activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
+    this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       // get and set the evaluation
       const evaluationId = params.get('evaluation');
       if (evaluationId) {
@@ -268,16 +287,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
       this.processSubmissions(submissions);
     });
-    // load the user's evaluations
-    this.evaluationDataService.loadMine();
-    // Set the display settings from config file
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
-    this.topbarTextColor = this.settingsService.settings.AppTopBarHexTextColor
-      ? this.settingsService.settings.AppTopBarHexTextColor
-      : this.topbarTextColor;
-
+    // observe the evaluations
     this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
       this.evaluationList = evaluations
         .sort((a, b) => {
@@ -294,10 +304,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         });
       this.setDataSources();
     });
-
-  }
-
-  ngOnInit() {
+    // load the user's evaluations
+    this.evaluationDataService.loadMine();
+    // join signalR
     this.signalRService
       .startConnection(ApplicationArea.home)
       .then(() => {
@@ -319,6 +328,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     const thisScope = this;
     this.filterString = '';
     this.evaluationDataSource.sort = this.sort;
+
+    this.isStarted = true;
   }
 
   setDataSources() {
@@ -334,7 +345,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.teamDataService.loadMine(this.selectedEvaluationId);
       this.currentMoveNumber = evaluation.currentMoveNumber;
     }
-    this.isReady = true;
   }
 
   changeEvaluation(evaluationId: string) {
@@ -595,28 +605,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     } else {
       return 'app-model-container mat-elevation-z8 app-score-container';
     }
-  }
-
-  healthCheck() {
-    this.healthCheckService
-      .healthGetReadiness()
-      .pipe(take(1))
-      .subscribe(
-        (message) => {
-          this.apiIsSick = !message || !message.status || message.status !== 'Healthy';
-          if (!message || !message.status) {
-            this.apiIsSick = true;
-            if (message.status !== 'Healthy') {
-              this.apiMessage = 'The API web service is not healthy (' + message.status + ').';
-            }
-          }
-          this.apiMessage = message;
-        },
-        (error) => {
-          this.apiIsSick = true;
-          this.apiMessage = 'The API web service is not responding.';
-        }
-      );
   }
 
   getUsername(userId: string): string {
