@@ -5,7 +5,8 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { ScoringModel, Submission } from 'src/app/generated/cite.api/model/models';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-score-summary',
@@ -16,8 +17,8 @@ import { Subject } from 'rxjs';
 export class ScoreSummaryComponent implements OnDestroy {
   isLoading = false;
   @Input() selectedScoringModel: ScoringModel;
-  @Input() submissionList: Submission[];
-  @Input() activeSubmission: Submission;
+  submissionList: Submission[];
+  activeSubmission: Submission = {};
   levels = [
     {
       scoremin: '90', scoremax: '100', level: 5, name: 'Emergency', color: 'black',
@@ -43,7 +44,16 @@ export class ScoreSummaryComponent implements OnDestroy {
 
   constructor(
     private submissionQuery: SubmissionQuery
-  ) {}
+  ) {
+    this.submissionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
+      this.submissionList = submissions;
+    });
+    (this.submissionQuery.selectActive() as Observable<Submission>).pipe(takeUntil(this.unsubscribe$)).subscribe(submission => {
+      if (submission) {
+        this.activeSubmission = submission;
+      }
+    });
+  }
 
   currentSubmissions() {
     if (this.activeSubmission && this.submissionList) {

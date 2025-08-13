@@ -48,9 +48,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header><span style="margin-left: 80px;">Name</span></th>
       <td mat-cell *matCellDef="let row">
-        <button mat-icon-button ngxClipboard (click)="$event.stopPropagation()"
-          title="Copy Submission ID:  {{ row.id }}">
-          <mat-icon class="mdi-24px" fontIcon="mdi-content-copy">
+        <button
+          mat-icon-button
+          ngxClipboard
+          [cbContent]="row.id"
+          (click)="$event.stopPropagation()"
+          title="Copy Submission ID to clipboard:  {{ row.id }}"
+        >
+          <mat-icon
+            class="mdi-24px"
+            fontIcon="mdi-content-copy">
           </mat-icon>
         </button>
         <button mat-icon-button class="button-end" (click)="deleteSubmissionRequest(row); $event.stopPropagation()"

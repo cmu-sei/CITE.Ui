@@ -1,0 +1,135 @@
+<!--
+Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license, please see LICENSE.md in the
+project root for license information or contact permission@sei.cmu.edu for full terms.
+-->
+<div id="printable-area">
+  <div class="header-div">
+    <div class="header-text">
+      <h2>
+        <span *ngIf="displaying === 'team'">Team </span>
+        <span *ngIf="displaying !== 'team'">User </span>
+        Submissions Report for {{ selectedEvaluation.description }}
+      </h2>
+    </div>
+    <div class="right-buttons no-print">
+      <button
+        aria-label="Toggle between user and team scores"
+        mat-icon-button
+        style="outline: none;"
+        title="Toggle between user and team scores"
+        (click)="toggleDisplaying()"
+      >
+        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-swap-horizontal"></mat-icon>
+      </button>
+      <button
+        aria-label="Print Submission Review"
+        mat-icon-button
+        style="outline: none;"
+        title="Print Submission Review"
+        (click)="printpage()"
+      >
+        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-printer"></mat-icon>
+      </button>
+    </div>
+  </div>
+  <mat-table
+    [dataSource]="getDisplayedScoringCategories(move.moveNumber) | displayOrder"
+    class="full-width"
+    *ngFor="let move of getSortedMoveList()"
+  >
+    <!-- Description Definition -->
+    <ng-container matColumnDef="scoringCategoryDescription" *ngIf="getMoveSubmissions(move) as moveSubmissions">
+      <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
+        <div class="title-font">
+          Move {{ move.moveNumber }}
+        </div>
+      </mat-header-cell>
+
+      <!-- Report display -->
+      <mat-cell
+        *matCellDef="let scoringCategory"
+        class="description-container"
+        [ngClass]="tableClass"
+      >
+        <div class="scoring-category-description" [ngClass]="tableClass">
+          {{ scoringCategory.displayOrder }}. {{ scoringCategory.description }}
+        </div>
+        <mat-table
+          [dataSource]="scoringCategory.scoringOptions | displayOrder"
+          class="full-width"
+          [ngClass]="tableClass"
+        >
+          <ng-container
+            matColumnDef="scoringOptionDescription"
+            class="description-cell"
+          >
+            <mat-cell
+              *matCellDef="let scoringOption"
+              class="description-container"
+              [ngClass]="tableClass"
+            >
+              <div [ngClass]="scoringOption.isModifier ? 'indent-div' : 'no-indent-div'">
+                <div class="score-option">
+                  <div class="description-div">
+                    {{ scoringOption.description }} &nbsp;
+                  </div>
+                </div>
+                <div *ngFor="let submission of moveSubmissions">
+                  <div class="comment-list" *ngIf="!selectedScoringModel.displayCommentTextBoxes">
+                    <div
+                      *ngFor="
+                        let comment of optionComments(
+                          submission,
+                          scoringCategory.id,
+                          scoringOption.id
+                        )
+                      "
+                    >
+                      {{ comment.comment }}
+                      <span *ngIf="displaying === 'Team'"> - {{ getUserName(comment.createdBy) }}</span>
+                    </div>
+                  </div>
+                  <div class="comment-box" *ngIf="selectedScoringModel.displayCommentTextBoxes">
+                    <span class="comment">
+                      <span *ngIf="displaying === 'team'"><b>{{ getTeamShortName(submission.teamId) }}:</b></span>
+                      <span *ngIf="displaying !== 'team'"><b>{{ getUserName(submission.userId) }}:</b></span>
+                      {{ optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="value">
+            <mat-cell
+              *matCellDef="let scoringOption"
+              class="value-container"
+              [ngClass]="tableClass"
+            >
+              <div class="value-div" *ngIf="!selectedScoringModel?.hideScoresOnScoreSheet">
+                {{
+                  scoringCategory.calculationMethodId == 0 ||
+                  scoringOption.isModifier
+                    ? ' '
+                    : scoringOption.value
+                }}
+              </div>
+            </mat-cell>
+          </ng-container>
+          <mat-row
+            *matRowDef="let row; columns: ['scoringOptionDescription', 'value']"
+          ></mat-row>
+        </mat-table>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Header and Row Declarations -->
+    <mat-header-row
+      *matHeaderRowDef="['scoringCategoryDescription']"
+    ></mat-header-row>
+    <mat-row
+      *matRowDef="let row; columns: ['scoringCategoryDescription']"
+    ></mat-row>
+  </mat-table>
+</div>

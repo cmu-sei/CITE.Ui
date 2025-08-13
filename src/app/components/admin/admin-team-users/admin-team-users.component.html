@@ -91,7 +91,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </ng-container>
 
       <ng-container matColumnDef="isObserver">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Observer</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Observe</mat-header-cell
+        >
         <mat-cell *matCellDef="let element">
           <mat-checkbox [checked]="element.isObserver" (change)="setObserverValue(element.id, $event.checked)"
             [disabled]="noChanges"></mat-checkbox>
@@ -99,7 +101,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </ng-container>
 
       <ng-container matColumnDef="canManageTeam">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Manager</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Manage</mat-header-cell
+        >
         <mat-cell *matCellDef="let element">
           <mat-checkbox [checked]="element.canManageTeam" (change)="setManagerValue(element.id, $event.checked)"
             [disabled]="noChanges"></mat-checkbox>
@@ -107,26 +111,38 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </ng-container>
 
       <ng-container matColumnDef="canIncrementMove">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Incrementer</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Advance</mat-header-cell
+        >
         <mat-cell *matCellDef="let element">
           <mat-checkbox [checked]="element.canIncrementMove" (change)="setIncrementerValue(element.id, $event.checked)"
             [disabled]="noChanges"></mat-checkbox>
         </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="canModify">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Modfier</mat-header-cell>
+      <ng-container matColumnDef="canSubmit">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Submit</mat-header-cell
+        >
         <mat-cell *matCellDef="let element">
-          <mat-checkbox [checked]="element.canModify" (change)="setModifierValue(element.id, $event.checked)"
-            [disabled]="noChanges"></mat-checkbox>
+          <mat-checkbox
+            [checked]="element.canSubmit"
+            (change)="setSubmitterValue(element.id, $event.checked)"
+            [disabled]="noChanges"
+          ></mat-checkbox>
         </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="canSubmit">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Submitter</mat-header-cell>
+      <ng-container matColumnDef="canModify">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Modify</mat-header-cell
+        >
         <mat-cell *matCellDef="let element">
-          <mat-checkbox [checked]="element.canSubmit" (change)="setSubmitterValue(element.id, $event.checked)"
-            [disabled]="noChanges"></mat-checkbox>
+          <mat-checkbox
+            [checked]="element.canModify"
+            (change)="setModifierValue(element.id, $event.checked)"
+            [disabled]="noChanges"
+          ></mat-checkbox>
         </mat-cell>
       </ng-container>
 

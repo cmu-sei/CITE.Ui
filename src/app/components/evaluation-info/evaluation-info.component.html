@@ -44,21 +44,46 @@ project root for license information or contact permission@sei.cmu.edu for full 
         {{ team.shortName }}
       </mat-option>
     </mat-select>
-    <button mat-icon-button style="outline: none;" title="SubmissionReview" (click)="setSection(reportSection)"
-      *ngIf="selectedSection !== reportSection && selectedEvaluationId">
-      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
-    </button>
-    <button mat-icon-button style="outline: none;" title="Dashboard" (click)="setSection(dashboardSection)"
-      *ngIf="selectedTeamId && selectedSection === scoresheetSection || selectedSection === reportSection && selectedEvaluationId">
+    <button
+      mat-icon-button
+      style="outline: none;"
+      title="Dashboard"
+      (click)="setSection(dashboardSection)"
+      *ngIf="selectedTeamId && selectedEvaluationId && selectedSection !== dashboardSection"
+    >
       <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard"></mat-icon>
     </button>
     <button mat-icon-button style="outline: none;" title="Scoresheet" (click)="setSection(scoresheetSection)"
       *ngIf="selectedTeamId && selectedSection !== scoresheetSection && !hideScoresheet() && selectedEvaluationId">
       <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>
     </button>
-    <button aria-label="Show Administration Page" mat-icon-button *ngIf="showAdminButton" [routerLink]="['/admin']"
-      [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}" style="outline: none;"
-      title="Administration">
+    <button
+      mat-icon-button
+      style="outline: none;"
+      title="SubmissionReview"
+      (click)="setSection(reportSection)"
+      *ngIf="selectedSection !== reportSection && selectedEvaluationId"
+    >
+      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      style="outline: none;"
+      title="Aggregate Report"
+      (click)="setSection(aggregateSection)"
+      *ngIf="showAdminButton && selectedSection !== aggregateSection && selectedEvaluationId"
+    >
+      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-multiple-outline"></mat-icon>
+    </button>
+    <button
+      aria-label="Show Administration Page"
+      mat-icon-button
+      *ngIf="showAdminButton"
+      [routerLink]="['/admin']"
+      [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}"
+      style="outline: none;"
+      title="Administration"
+    >
       <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
     </button>
   </div>

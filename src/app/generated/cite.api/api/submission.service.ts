@@ -447,6 +447,56 @@ export class SubmissionService {
     }
 
     /**
+     * Gets Submissions by evaluation
+     * Returns a list of Submissions for the evaluation.
+     * @param evaluationId
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getByEvaluation(evaluationId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<Submission>>;
+    public getByEvaluation(evaluationId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Submission>>>;
+    public getByEvaluation(evaluationId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Submission>>>;
+    public getByEvaluation(evaluationId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (evaluationId === null || evaluationId === undefined) {
+            throw new Error('Required parameter evaluationId was null or undefined when calling getByEvaluation.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.get<Array<Submission>>(`${this.configuration.basePath}/api/evaluations/${encodeURIComponent(String(evaluationId))}/submissions`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Gets Submissions by evaluation team
      * Returns a list of Submissions for the evaluation team specified.
      * @param evaluationId
@@ -459,7 +509,7 @@ export class SubmissionService {
     public getByEvaluationTeam(evaluationId: string, teamId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Submission>>>;
     public getByEvaluationTeam(evaluationId: string, teamId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (evaluationId === null || evaluationId === undefined) {
-            throw new Error('Required parameter evaluationId was null or undefined when calling getMineByEvaluation.');
+            throw new Error('Required parameter evaluationId was null or undefined when calling getByEvaluationTeam.');
         }
 
         let headers = this.defaultHeaders;

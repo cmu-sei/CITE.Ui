@@ -3,21 +3,21 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { ReportComponent } from './report.component';
+import { AggregateComponent } from './aggregate.component';
 
-describe('ScoresheetComponent', () => {
-  let component: ReportComponent;
-  let fixture: ComponentFixture<ReportComponent>;
+describe('AggregateComponent', () => {
+  let component: AggregateComponent;
+  let fixture: ComponentFixture<AggregateComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ReportComponent ]
+      declarations: [ AggregateComponent ]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ReportComponent);
+    fixture = TestBed.createComponent(AggregateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

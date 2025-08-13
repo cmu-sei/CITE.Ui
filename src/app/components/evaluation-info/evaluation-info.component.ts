@@ -42,6 +42,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   dashboardSection = Section.dashboard;
   scoresheetSection = Section.scoresheet;
   reportSection = Section.report;
+  aggregateSection = Section.aggregate;
   displayedMoveNumber = -1;
   currentMoveNumber = -1;
   selectedTeamId = '';
@@ -121,7 +122,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   getEvaluationDescriptionById(evaluationId: string): string {
     const evaluation = this.evaluationList.find(e => e.id === evaluationId);
     return evaluation ? evaluation.description : 'Evaluation not found';
-  }  
+  }
 
   incrementDisplayedMove() {
     const nextMoveIndex = this.sortedMoveList().findIndex(m => +m.moveNumber === +this.displayedMoveNumber) + 1;
@@ -158,7 +159,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   setSection(section: Section) {
-    if (this.hideScoresheet() && section !== Section.report) {
+    if (this.hideScoresheet() && !(section === Section.report || section === Section.aggregate)) {
       section = Section.dashboard;
     }
     this.selectedSection = section;

@@ -6,11 +6,29 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <div id="printable-area">
   <div class="header-div">
     <div class="header-text">
-      <h2>{{ selectedEvaluation.description }} Responses</h2>
+      <h2>
+        <span *ngIf="displaying === 'team'">{{ selectedTeam.shortName }}'s</span>
+        <span *ngIf="displaying !== 'team'">{{ loggedInUserName }}'s</span>
+        Responses for {{ selectedEvaluation.description }}
+      </h2>
     </div>
     <div class="right-buttons no-print">
-      <button aria-label="Print Submission Review" mat-icon-button style="outline: none;"
-        title="Print Submission Review" (click)="printpage()">
+      <button
+        aria-label="Toggle between user and team scores"
+        mat-icon-button
+        style="outline: none;"
+        title="Toggle between user and team scores"
+        (click)="toggleDisplaying()"
+      >
+        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-swap-horizontal"></mat-icon>
+      </button>
+      <button
+        aria-label="Print Submission Review"
+        mat-icon-button
+        style="outline: none;"
+        title="Print Submission Review"
+        (click)="printpage()"
+      >
         <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-printer"></mat-icon>
       </button>
     </div>

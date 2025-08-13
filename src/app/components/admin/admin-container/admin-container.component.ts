@@ -226,7 +226,8 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
       .pipe(take(1))
       .subscribe(
         (message) => {
-          this.apiVersion = message.substring(0, 5);
+          const messageParts = message.split('+');
+          this.apiVersion = messageParts[0];
         },
         (error) => {
           this.apiVersion = 'API ERROR!';
