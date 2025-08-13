@@ -108,8 +108,8 @@ import {
   NgxMatDatepickerInput,
   NgxMatDatepickerToggle,
   NgxMatDatetimepicker,
-  NgxMatNativeDateModule,
 } from '@ngxmc/datetime-picker';
+
 
 const settings: ComnSettingsConfig = {
   url: 'assets/config/settings.json',
@@ -213,7 +213,6 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     NgxMatDatepickerInput,
     NgxMatDatepickerToggle,
     NgxMatDatetimepicker,
-    NgxMatNativeDateModule,
     CdkTableModule,
     MatTreeModule,
     CdkTreeModule,
