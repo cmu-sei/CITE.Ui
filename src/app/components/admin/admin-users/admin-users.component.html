@@ -57,7 +57,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-expansion-panel-header class="row" *ngIf="!isLoading">
       <span class="cell user-cell">
         <button mat-icon-button ngxClipboard (click)="$event.stopPropagation()" title="Copy User ID:  {{ user.id }}">
-          <mat-icon class="mdi-24px" fontIcon="mdi-content-copy"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy"></mat-icon>
         </button>
         {{ user.name }}
       </span>
@@ -70,7 +70,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </div>
           <button mat-icon-button class="button-end" (click)="deleteUserRequest(user); $event.stopPropagation()"
             title="Delete User">
-            <mat-icon class="mdi-24px" fontIcon="mdi-trash-can"></mat-icon>
+            <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
           </button>
         </div>
       </span>

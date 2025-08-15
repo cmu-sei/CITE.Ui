@@ -2,6 +2,8 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
+@use '@angular/material' as mat;
+
 .move-container {
   width: 90%;
   margin-left: 5%;
@@ -80,20 +82,10 @@
 }
 
 .first-cell {
-  flex: 1;
-  min-width: 120px;
-}
-
-.mat-mdc-button-touch-target {
-  width: 24px !important;
-  height: 24px !important;
-}
-
-.first-cell-button {
-  font-size: 24px;
-  width: 24px !important;
-  height: 24px !important;
-  outline: none;
+  flex: 2;
+  align-self: center;
+  min-width: 160px;
+  max-width: 180px;
 }
 
 .description-cell {

@@ -51,22 +51,22 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <mat-expansion-panel *ngFor="let evaluation of displayedEvaluations" [expanded]="editEvaluation.id === evaluation.id">
     <mat-expansion-panel-header class="row" *ngIf="!isLoading"
       (click)="togglePanel(evaluation); $event.stopPropagation()">
-      <span class="cell first-cell center-self">
+      <span class="cell first-cell">
         <button mat-icon-button (click)="addOrEditEvaluation(evaluation); $event.stopPropagation()"
           title="Edit Evaluation" [disabled]="isBusy">
-          <mat-icon fontIcon="mdi-square-edit-outline"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline"></mat-icon>
         </button>
         <button mat-icon-button (click)="copyEvaluation(evaluation.id); $event.stopPropagation();"
           title="Copy {{ evaluation.description }}" [disabled]="isBusy">
-          <mat-icon fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
         </button>
         <button mat-icon-button (click)="downloadEvaluation(evaluation); $event.stopPropagation();"
           title="Download {{ evaluation.description }}" [disabled]="isBusy">
-          <mat-icon fontIcon="mdi-download" alt="Download"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-download" alt="Download"></mat-icon>
         </button>
         <button mat-icon-button (click)="deleteEvaluationRequest(evaluation); $event.stopPropagation()"
           title="Delete Evaluation" [disabled]="isBusy">
-          <mat-icon fontIcon="mdi-trash-can"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
         </button>
       </span>
       <span class="cell description-cell center-self">{{ evaluation.description }}</span>
