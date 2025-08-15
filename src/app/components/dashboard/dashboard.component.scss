@@ -26,6 +26,10 @@
   min-height: 40px;
 }
 
+.first-row {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
 .section-container {
   display: flex;
   flex-flow: column;
@@ -41,6 +45,7 @@
   padding-right: 20px;
   font-family: "Open Sans", sans-serif;
   width: 100%;
+  @include mat.elevation(2);
 }
 
 .angular-editor {
@@ -63,7 +68,7 @@
   justify-content: flex-end;
 }
 
-.mat-checkbox {
+.mat-mdc-checkbox {
   padding: 10px;
 }
 

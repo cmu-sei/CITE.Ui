@@ -8,9 +8,15 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import { Evaluation, Action, Move, Team, User } from 'src/app/generated/cite.api/model/models';
+import {
+  Evaluation,
+  Action,
+  Move,
+  Team,
+  User,
+} from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { ActionQuery } from 'src/app/data/action/action.query';
@@ -21,15 +27,16 @@ import { TeamQuery } from 'src/app/data/team/team.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admin-action-edit-dialog.component';
 
 @Component({
-  selector: 'app-admin-actions',
-  templateUrl: './admin-actions.component.html',
-  styleUrls: ['./admin-actions.component.scss'],
+    selector: 'app-admin-actions',
+    templateUrl: './admin-actions.component.html',
+    styleUrls: ['./admin-actions.component.scss'],
+    standalone: false
 })
 export class AdminActionsComponent implements OnDestroy, OnInit {
   @Input() showSelectionControls: boolean;
@@ -41,7 +48,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   dataSource = new MatTableDataSource<Action>();
   selectedEvaluationId = '';
   evaluationList: Evaluation[] = [];
-  filteredActionList: Action [] = [];
+  filteredActionList: Action[] = [];
   filterString = '';
   selectedTeamId = '';
   teamList: Team[] = [];
@@ -51,13 +58,9 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   userList$: User[] = [];
   sort: Sort = {
     active: 'description',
-    direction: 'asc'
+    direction: 'asc',
   };
-  displayedColumns: string[] = [
-    'description',
-    'teamId',
-    'isChecked'
-  ];
+  displayedColumns: string[] = ['description', 'teamId', 'isChecked'];
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -76,32 +79,47 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
-    this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
-      this.evaluationList = evaluations;
-      if (!evaluations.some(e => e.id === this.selectedEvaluationId)) {
-        this.selectedEvaluationId = '';
-        this.selectedTeamId = '';
-        this.teamList = [];
-        this.actionList = [];
-        this.criteriaChanged();
-      }
-    });
+    this.evaluationQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((evaluations) => {
+        this.evaluationList = evaluations;
+        if (!evaluations.some((e) => e.id === this.selectedEvaluationId)) {
+          this.selectedEvaluationId = '';
+          this.selectedTeamId = '';
+          this.teamList = [];
+          this.actionList = [];
+          this.criteriaChanged();
+        }
+      });
     this.moveDataService.unload();
-    this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
-      this.moveList = moves;
-      if (this.selectedMoveNumber === -1) {
-        this.selectedMoveNumber = moves[0] ? +moves[0].moveNumber : -1;
-        this.actionDataService.loadByEvaluationMove(this.selectedEvaluationId, this.selectedMoveNumber);
-      }
-    });
-    this.teamQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teams => {
-      this.teamList = teams;
-    });
+    this.moveQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((moves) => {
+        this.moveList = moves;
+        if (this.selectedMoveNumber === -1) {
+          this.selectedMoveNumber = moves[0] ? +moves[0].moveNumber : -1;
+          this.actionDataService.loadByEvaluationMove(
+            this.selectedEvaluationId,
+            this.selectedMoveNumber
+          );
+        }
+      });
+    this.teamQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((teams) => {
+        this.teamList = teams;
+      });
     this.actionDataService.unload();
-    this.actionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe((actions) => {
-      this.actionList = actions;
-      this.criteriaChanged();
-    });
+    this.actionQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((actions) => {
+        this.actionList = actions;
+        this.criteriaChanged();
+      });
   }
 
   ngOnInit() {
@@ -113,12 +131,19 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
         }
       }
     } else {
-      if (this.selectedEvaluationId && (this.selectedMoveNumber >= 0) && this.selectedTeamId) {
-        this.actionDataService.loadByEvaluationMoveTeam(this.selectedEvaluationId, +this.selectedMoveNumber, this.selectedTeamId);
+      if (
+        this.selectedEvaluationId &&
+        this.selectedMoveNumber >= 0 &&
+        this.selectedTeamId
+      ) {
+        this.actionDataService.loadByEvaluationMoveTeam(
+          this.selectedEvaluationId,
+          +this.selectedMoveNumber,
+          this.selectedTeamId
+        );
         this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
       }
     }
-    
   }
 
   selectEvaluation(evaluationId: string) {
@@ -133,7 +158,10 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
 
   selectMove(moveNumber: number) {
     this.selectedMoveNumber = moveNumber;
-    this.actionDataService.loadByEvaluationMove(this.selectedEvaluationId, this.selectedMoveNumber);
+    this.actionDataService.loadByEvaluationMove(
+      this.selectedEvaluationId,
+      this.selectedMoveNumber
+    );
     this.criteriaChanged();
   }
 
@@ -148,16 +176,16 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
         description: '',
         evaluationId: this.selectedEvaluationId,
         moveNumber: this.selectedMoveNumber,
-        teamId: this.selectedTeamId
+        teamId: this.selectedTeamId,
       };
     } else {
-      action = {... action};
+      action = { ...action };
     }
     const dialogRef = this.dialog.open(AdminActionEditDialogComponent, {
       width: '800px',
       data: {
         action: action,
-        teamList: this.teamList
+        teamList: this.teamList,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -175,7 +203,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
       if (action.teamId) {
         this.actionDataService.add(action);
       } else {
-        this.teamList.forEach(team => {
+        this.teamList.forEach((team) => {
           action.teamId = team.id;
           this.actionDataService.add(action);
         });
@@ -184,33 +212,38 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   }
 
   deleteActionRequest(action: Action) {
-    this.dialogService.confirm(
-      'Delete this action?',
-      'Are you sure that you want to delete this action?'
-    ).subscribe((result) => {
-      if (result['confirm']) {
-        this.actionDataService.delete(action.id);
-      }
-    });
+    this.dialogService
+      .confirm(
+        'Delete this action?',
+        'Are you sure that you want to delete this action?'
+      )
+      .subscribe((result) => {
+        if (result['confirm']) {
+          this.actionDataService.delete(action.id);
+        }
+      });
   }
 
   criteriaChanged() {
     if (this.selectedTeamId) {
-      this.filteredActionList= this.actionList.filter(r => r.teamId === this.selectedTeamId);
+      this.filteredActionList = this.actionList.filter(
+        (r) => r.teamId === this.selectedTeamId
+      );
     } else {
-      this.filteredActionList= this.actionList;
+      this.filteredActionList = this.actionList;
     }
     this.applyPagination();
   }
 
   sortChanged(sort: Sort) {
     this.sort = sort;
-    this.filteredActionList.sort((a, b) => this.sortActions(a, b, sort.active, sort.direction));
+    this.filteredActionList.sort((a, b) =>
+      this.sortActions(a, b, sort.active, sort.direction)
+    );
     this.applyPagination();
   }
 
-  private sortActions(a: Action, b: Action, column: string, direction: string)
-  {
+  private sortActions(a: Action, b: Action, column: string, direction: string) {
     const isAsc = direction !== 'desc';
     switch (column) {
       case 'description':
@@ -223,15 +256,15 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
           (this.getTeamName(a.teamId) < this.getTeamName(b.teamId) ? -1 : 1) *
           (isAsc ? 1 : -1)
         );
-      default: 
-        return 0; 
+      default:
+        return 0;
     }
   }
 
   getTeamName(teamId: string) {
     let teamName = '';
     if (teamId) {
-      const team = this.teamList.find(t => t.id === teamId);
+      const team = this.teamList.find((t) => t.id === teamId);
       if (team) {
         teamName = team.name;
       }
@@ -247,7 +280,10 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
 
   applyPagination() {
     const startIndex = this.pageIndex * this.pageSize;
-    this.displayedActions = this.filteredActionList.slice(startIndex, startIndex + this.pageSize);
+    this.displayedActions = this.filteredActionList.slice(
+      startIndex,
+      startIndex + this.pageSize
+    );
   }
 
   ngOnDestroy() {

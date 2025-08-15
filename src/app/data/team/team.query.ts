@@ -9,7 +9,7 @@ import {
 } from './team.store';
 import { Team } from 'src/app/generated/cite.api';
 import { Injectable } from '@angular/core';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
 
 @QueryConfig({

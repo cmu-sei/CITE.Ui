@@ -8,45 +8,30 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
   <div class="spacer">&nbsp;</div>
 
-  <div class="user-list-container mat-elevation-z8">
+  <div class="user-list-container elevate">
 
     <div class="sp-icon">
-      <mat-icon
-        class="mdi-24px"
-        fontIcon="mdi-account-group"
-      ></mat-icon>
-    <span style="margin-left: 10px">
-      Evaluation Users
-    </span>
+      <mat-icon class="mdi-24px" fontIcon="mdi-account-group"></mat-icon>
+      <span style="margin-left: 10px">
+        Evaluation Users
+      </span>
     </div>
 
-    <mat-card
-      *ngIf="false"
-      style="display: flex; justify-content: center; align-items: center;"
-    >
+    <mat-card appearance="outlined" *ngIf="false" style="display: flex; justify-content: center; align-items: center;">
       <mat-progress-spinner color="primary" mode="indeterminate">
       </mat-progress-spinner>
     </mat-card>
 
-    <mat-table
-      class="mat-table-all-users"
-      #table
-      [dataSource]="teamUserDataSource"
-      matSort
-    >
+    <mat-table class="mat-table-all-users" #table [dataSource]="teamUserDataSource" matSort>
       <ng-container matColumnDef="team">
-        <mat-header-cell *matHeaderCellDef
-          >Team</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
         <mat-cell *matCellDef="let element">
           {{ getTeamName(element.teamId) }}
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef
-          >User</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef>User</mat-header-cell>
         <mat-cell *matCellDef="let element">
           {{ getUserName(element.userId) }}
         </mat-cell>
@@ -72,45 +57,30 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
   <div class="spacer">&nbsp;</div>
 
-  <div class="observer-list-container mat-elevation-z8">
+  <div class="observer-list-container elevate">
 
     <div class="sp-icon">
-      <mat-icon
-          class="mdi-24px"
-          fontIcon="mdi-account-multiple"
-      ></mat-icon>
+      <mat-icon class="mdi-24px" fontIcon="mdi-account-multiple"></mat-icon>
       <span style="margin-left: 10px">
         Observers
       </span>
     </div>
 
-    <mat-card
-      *ngIf="false"
-      style="display: flex; justify-content: center; align-items: center;"
-    >
+    <mat-card appearance="outlined" *ngIf="false" style="display: flex; justify-content: center; align-items: center;">
       <mat-progress-spinner color="primary" mode="indeterminate">
       </mat-progress-spinner>
     </mat-card>
 
-    <mat-table
-      class="mat-table-all-users"
-      #table
-      [dataSource]="observerDataSource"
-      matSort
-    >
+    <mat-table class="mat-table-all-users" #table [dataSource]="observerDataSource" matSort>
       <ng-container matColumnDef="team">
-        <mat-header-cell *matHeaderCellDef
-          >Team</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
         <mat-cell *matCellDef="let element">
           {{ getTeamName(element.teamId) }}
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef
-          >User</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef>User</mat-header-cell>
         <mat-cell *matCellDef="let element">
           {{ getUserName(element.userId) }}
         </mat-cell>

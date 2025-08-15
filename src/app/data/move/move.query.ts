@@ -9,7 +9,7 @@ import {
 } from './move.store';
 import { Move } from 'src/app/generated/cite.api';
 import { Injectable } from '@angular/core';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
 
 @QueryConfig({

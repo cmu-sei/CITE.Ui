@@ -3,13 +3,11 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import {
-  TeamType,
-} from 'src/app/generated/cite.api/model/models';
+import { TeamType } from 'src/app/generated/cite.api/model/models';
 import { ComnSettingsService } from '@cmusei/crucible-common';
-import { MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
@@ -18,9 +16,10 @@ import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-admin-teamtypes',
-  templateUrl: './admin-teamtypes.component.html',
-  styleUrls: ['./admin-teamtypes.component.scss'],
+    selector: 'app-admin-teamtypes',
+    templateUrl: './admin-teamtypes.component.html',
+    styleUrls: ['./admin-teamtypes.component.scss'],
+    standalone: false
 })
 export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   pageIndex: number = 0;
@@ -30,7 +29,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   sortedTeamTypeList: TeamType[] = [];
   filterControl = new UntypedFormControl();
   filterString = '';
-  sort: Sort = {active: 'name', direction: 'asc'};
+  sort: Sort = { active: 'name', direction: 'asc' };
   addingNewTeamType = false;
   newTeamType: TeamType = {};
   isLoading = false;
@@ -48,22 +47,25 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
     // subscribe to TeamTypes
-    this.teamTypeQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamTypes => {
-      const newTeamTypes = new Array<TeamType>();
-      teamTypes.forEach(tt => {
-        newTeamTypes.push(Object.assign(tt));
+    this.teamTypeQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((teamTypes) => {
+        const newTeamTypes = new Array<TeamType>();
+        teamTypes.forEach((tt) => {
+          newTeamTypes.push(Object.assign(tt));
+        });
+        this.teamTypeList = newTeamTypes;
+        this.sortChanged(this.sort);
       });
-      this.teamTypeList = newTeamTypes;
-      this.sortChanged(this.sort);
-    });
   }
 
   ngOnInit() {
-    this.filterControl.valueChanges.pipe(
-      takeUntil(this.unsubscribe$)
-    ).subscribe(newValue => {
-      this.applyFilter(newValue);
-  });
+    this.filterControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((newValue) => {
+        this.applyFilter(newValue);
+      });
   }
 
   addTeamTypeRequest(isAdd: boolean) {
@@ -97,8 +99,8 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
-    this.filterString = filterValue.toLowerCase(); 
-    this.updateFilteredData(); 
+    this.filterString = filterValue.toLowerCase();
+    this.updateFilteredData();
   }
 
   clearFilter() {
@@ -107,29 +109,36 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
 
   updateFilteredData() {
     this.filteredTeamTypeList = this.getFilteredTeamTypes(this.teamTypeList);
-    this.sortedTeamTypeList = this.getSortedTeamTypes(this.filteredTeamTypeList);
-    this.paginator.length = this.sortedTeamTypeList.length; 
-    this.pageIndex = 0; 
-    this.paginator.pageIndex = 0; 
+    this.sortedTeamTypeList = this.getSortedTeamTypes(
+      this.filteredTeamTypeList
+    );
+    this.paginator.length = this.sortedTeamTypeList.length;
+    this.pageIndex = 0;
+    this.paginator.pageIndex = 0;
     this.paginateTeamtypes();
   }
 
-
   sortChanged(sort: Sort) {
-    this.sort = sort && sort.direction ? sort : {active: 'name', direction: 'asc'};
-    this.sortedTeamTypeList = this.getSortedTeamTypes(this.getFilteredTeamTypes(this.teamTypeList));
+    this.sort =
+      sort && sort.direction ? sort : { active: 'name', direction: 'asc' };
+    this.sortedTeamTypeList = this.getSortedTeamTypes(
+      this.getFilteredTeamTypes(this.teamTypeList)
+    );
   }
 
   getFilteredTeamTypes(teamTypes: TeamType[]): TeamType[] {
     if (!teamTypes) return [];
 
-    return teamTypes.filter(t => t.name.toLowerCase().includes(this.filterString));
+    return teamTypes.filter((t) =>
+      t.name.toLowerCase().includes(this.filterString)
+    );
   }
-
 
   getSortedTeamTypes(teamTypes: TeamType[]) {
     if (teamTypes) {
-      teamTypes.sort((a, b) => this.sortTeamTypes(a, b, this.sort.active, this.sort.direction));
+      teamTypes.sort((a, b) =>
+        this.sortTeamTypes(a, b, this.sort.active, this.sort.direction)
+      );
     }
     return teamTypes;
   }
@@ -143,17 +152,26 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     const isAsc = direction !== 'desc';
     switch (column) {
       case 'showTeamTypeAverage':
-        return ( (a.showTeamTypeAverage < b.showTeamTypeAverage ? -1 : 1) * (isAsc ? 1 : -1) );
+        return (
+          (a.showTeamTypeAverage < b.showTeamTypeAverage ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
         break;
       case 'isOfficialScoreContributor':
-        return ( (a.isOfficialScoreContributor < b.isOfficialScoreContributor ? -1 : 1) * (isAsc ? 1 : -1) );
+        return (
+          (a.isOfficialScoreContributor < b.isOfficialScoreContributor
+            ? -1
+            : 1) * (isAsc ? 1 : -1)
+        );
         break;
       default:
-        return ( (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        return (
+          (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
         break;
     }
   }
-
 
   paginatorEvent(event: PageEvent) {
     this.pageIndex = event.pageIndex;
@@ -168,12 +186,12 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   }
 
   toggleIsOfficialScoreContributor(teamType: TeamType) {
-    teamType.isOfficialScoreContributor = ! teamType.isOfficialScoreContributor;
+    teamType.isOfficialScoreContributor = !teamType.isOfficialScoreContributor;
     this.teamTypeDataService.updateTeamType(teamType);
   }
 
   toggleShowTeamTypeAverage(teamType: TeamType) {
-    teamType.showTeamTypeAverage = ! teamType.showTeamTypeAverage;
+    teamType.showTeamTypeAverage = !teamType.showTeamTypeAverage;
     this.teamTypeDataService.updateTeamType(teamType);
   }
 
@@ -185,5 +203,4 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { OverlayContainer } from '@angular/cdk/overlay';
-import { Component, HostBinding, HostListener, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnDestroy } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,9 +15,9 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  standalone: false,
 })
 export class AppComponent implements OnDestroy {
-  @HostBinding('class') componentCssClass: string;
   @HostListener('document:keydown.backspace', ['$event'])
   onKeyDown(evt: KeyboardEvent) {
     let doPrevent = true;
@@ -367,14 +367,16 @@ export class AppComponent implements OnDestroy {
     const classList = this.overlayContainer.getContainerElement().classList;
     switch (theme) {
       case Theme.LIGHT:
-        this.componentCssClass = theme;
-        classList.add(theme);
-        classList.remove(Theme.DARK);
+        // this.componentCssClass = theme;
+        // classList.add(theme);
+        // classList.remove(Theme.DARK);
+        document.body.classList.toggle('darkMode', false);
         break;
       case Theme.DARK:
-        this.componentCssClass = theme;
-        classList.add(theme);
-        classList.remove(Theme.LIGHT);
+        // this.componentCssClass = theme;
+        // classList.add(theme);
+        // classList.remove(Theme.LIGHT);
+        document.body.classList.toggle('darkMode', true);
     }
   }
   ngOnDestroy(): void {

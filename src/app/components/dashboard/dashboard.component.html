@@ -6,18 +6,19 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <div class="top-level-container">
   <div class="row-container">
     <div class="section-container">
-      <angular-editor class="angular-editor" [ngModel]="completeSituationDescription" [config]="editorConfig"></angular-editor>
+      <angular-editor class="angular-editor" [ngModel]="completeSituationDescription"
+        [config]="editorConfig"></angular-editor>
     </div>
   </div>
   <div class="row-container" *ngIf="unreadArticles && +unreadArticles.count > 0">
-    <div class="section-container mat-elevation-z8 one-cell">
+    <div class="section-container one-cell">
       <b>You have {{ unreadArticles.count }} unread Gallery item<span *ngIf="+unreadArticles.count > 1">s</span>,
-      <a mat-stroked-button href="{{ galleryUrl }}" target="_blank">click here to view them in Gallery</a></b>
+        <a mat-stroked-button href="{{ galleryUrl }}" target="_blank">click here to view them in Gallery</a></b>
     </div>
   </div>
   <!-- Actions section -->
   <div class="row-container">
-    <div class="section-container mat-elevation-z8 four-cell">
+    <div class="section-container four-cell">
       <div class="row-container">
         <div class="five-cell center-self">
           <b title="Participant Actions during an Exercise">Actions:</b>
@@ -35,22 +36,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
               fontIcon="mdi-square-edit-outline">
             </mat-icon>
           </button>
-          <button
-            mat-icon-button
-            (click)="addOrEditAction(null)"
-            style="outline: none; margin-left: 20px;"
-            title="Add Action"
-            *ngIf="isActionEditMode"
-          >
+          <button mat-icon-button (click)="addOrEditAction(null)" style="outline: none; margin-left: 20px;"
+            title="Add Action" *ngIf="isActionEditMode">
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
           </button>
-          <button
-            mat-icon-button
-            (click)="isActionEditMode = false"
-            style="outline: none; margin-left: 20px;"
-            title="Close Action Editing"
-            *ngIf="isActionEditMode"
-          >
+          <button mat-icon-button (click)="isActionEditMode = false" style="outline: none; margin-left: 20px;"
+            title="Close Action Editing" *ngIf="isActionEditMode">
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
           </button>
         </div>
@@ -67,33 +58,22 @@ project root for license information or contact permission@sei.cmu.edu for full 
               fontIcon="mdi-square-edit-outline">
             </mat-icon>
           </button>
-          <button
-            mat-icon-button
-            class="button-end"
-            (click)="deleteActionRequest(action); $event.stopPropagation()"
-            title="Delete Action"
-          >
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-trash-can"
-            ></mat-icon>
+          <button mat-icon-button class="button-end" (click)="deleteActionRequest(action); $event.stopPropagation()"
+            title="Delete Action">
+            <mat-icon class="mdi-24px" fontIcon="mdi-trash-can"></mat-icon>
           </button>
         </div>
         <div class="center-self">
-          <mat-checkbox
-            [checked]="action.isChecked"
-            (change)="checkAction(action.id, $event.checked)"
-            [matTooltip]="changedBy(action.id)"
-            *ngIf="!isActionEditMode"
-            [disabled]="noChanges || myTeamId !== activeTeamId"
-          ></mat-checkbox>{{ action.description }}
+          <mat-checkbox [checked]="action.isChecked" (change)="checkAction(action.id, $event.checked)"
+            [matTooltip]="changedBy(action.id)" *ngIf="!isActionEditMode"
+            [disabled]="noChanges || myTeamId !== activeTeamId"></mat-checkbox>{{ action.description }}
         </div>
       </div>
     </div>
   </div>
   <!-- Roles Section -->
   <div class="row-container" *ngIf="!showRoles">
-    <div class="section-container mat-elevation-z8 four-cell">
+    <div class="section-container four-cell">
       <div class="row-container">
         <div class="two-cell center-self">
           <button mat-icon-button (click)="showRoles = true" title="Expand the roles">
@@ -127,22 +107,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
               fontIcon="mdi-square-edit-outline">
             </mat-icon>
           </button>
-          <button
-            mat-icon-button
-            (click)="addOrEditRole(null)"
-            style="outline: none; margin-left: 20px;"
-            title="Add Role"
-            *ngIf="isRoleEditMode"
-          >
+          <button mat-icon-button (click)="addOrEditRole(null)" style="outline: none; margin-left: 20px;"
+            title="Add Role" *ngIf="isRoleEditMode">
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
           </button>
-          <button
-            mat-icon-button
-            (click)="isRoleEditMode = false"
-            style="outline: none; margin-left: 20px;"
-            title="Close Role Editing"
-            *ngIf="isRoleEditMode"
-          >
+          <button mat-icon-button (click)="isRoleEditMode = false" style="outline: none; margin-left: 20px;"
+            title="Close Role Editing" *ngIf="isRoleEditMode">
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
           </button>
         </div>
@@ -159,36 +129,20 @@ project root for license information or contact permission@sei.cmu.edu for full 
               fontIcon="mdi-square-edit-outline">
             </mat-icon>
           </button>
-          <button
-            mat-icon-button
-            class="button-end"
-            (click)="deleteRoleRequest(role); $event.stopPropagation()"
-            title="Delete Role"
-          >
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-trash-can"
-            ></mat-icon>
+          <button mat-icon-button class="button-end" (click)="deleteRoleRequest(role); $event.stopPropagation()"
+            title="Delete Role">
+            <mat-icon class="mdi-24px" fontIcon="mdi-trash-can"></mat-icon>
           </button>
         </div>
         <div class="five-cell center-self">
           <label>{{ role.name }}</label>
         </div>
         <div class="five-cell center-self">
-          <mat-select
-            *ngIf="!isRoleEditMode"
-            placeholder="Assign Users"
-            [value]="role.users"
-            multiple
-            (opened)="openRoleUsers(role)"
-            (selectionChange)="updateRoleUsers(role.id, $event)"
-            (closed)="closeRoleUsers(role.id)"
-            [disabled]="noChanges || myTeamId !== activeTeamId"
-            title="Select a Team Member"
-          >
-            <mat-option
-              *ngFor="let user of usersOnTheTeam" [value]="user"
-            >{{ user.name }}
+          <mat-select *ngIf="!isRoleEditMode" placeholder="Assign Users" [value]="role.users" multiple
+            (opened)="openRoleUsers(role)" (selectionChange)="updateRoleUsers(role.id, $event)"
+            (closed)="closeRoleUsers(role.id)" [disabled]="noChanges || myTeamId !== activeTeamId"
+            title="Select a Team Member">
+            <mat-option *ngFor="let user of usersOnTheTeam" [value]="user">{{ user.name }}
             </mat-option>
           </mat-select>
           <span *ngIf="isRoleEditMode">{{ getUserNames(role.users) }}</span>
@@ -198,7 +152,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   <!-- Permissions Section -->
   <div class="row-container" *ngIf="!showPermissions">
-    <div class="section-container mat-elevation-z8 four-cell">
+    <div class="section-container four-cell">
       <div class="row-container">
         <div class="two-cell center-self">
           <button mat-icon-button (click)="showPermissions = true" title="Expand the permissions">
@@ -232,18 +186,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
         <div class="checkboxes-cell">
           <div class="one-cell center-self">
-            <mat-checkbox
-              [checked]="teamUser.canManageTeam"
-              (change)="setManagerValue(teamUser.id, $event.checked)"
-              [disabled]="noChanges || teamUser.userId === loggedInUserId || !loggedInUserCanManageTeam()"
-            ></mat-checkbox>
+            <mat-checkbox [checked]="teamUser.canManageTeam" (change)="setManagerValue(teamUser.id, $event.checked)"
+              [disabled]="noChanges || teamUser.userId === loggedInUserId || !loggedInUserCanManageTeam()"></mat-checkbox>
           </div>
           <div class="one-cell center-self">
-            <mat-checkbox
-              [checked]="teamUser.canIncrementMove"
+            <mat-checkbox [checked]="teamUser.canIncrementMove"
               (change)="setIncrementerValue(teamUser.id, $event.checked)"
-              [disabled]="noChanges || !loggedInUserCanManageTeam()"
-            ></mat-checkbox>
+              [disabled]="noChanges || !loggedInUserCanManageTeam()"></mat-checkbox>
           </div>
           <div class="one-cell center-self">
             <mat-checkbox

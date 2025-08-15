@@ -4,18 +4,10 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div
-  class="app-events-container background text"
->
-  <app-topbar
-    *ngIf="!hideTopbar"
-    [title]="topbarText"
-    [topbarView]="TopbarView.CITE_HOME"
-    [topbarColor]="topbarColor"
-    [topbarTextColor]="topbarTextColor"
-    [imageFilePath]="topbarImage"
-    (urlNavigate)="topBarNavigate($event)"
-  ></app-topbar>
+<div class="app-events-container">
+  <app-topbar *ngIf="!hideTopbar" [title]="topbarText" [topbarView]="TopbarView.CITE_HOME" [topbarColor]="topbarColor"
+    [topbarTextColor]="topbarTextColor" [imageFilePath]="topbarImage"
+    (urlNavigate)="topBarNavigate($event)"></app-topbar>
 
   <span *ngIf="!isStarted">
     <mat-card>
@@ -44,6 +36,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         [queryParams]="{section: 'Evaluations'}"
         style="outline: none; align-self: center;"
         title="Administration"
+        color="primary"
       >
         <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
         Goto Administration Pages
@@ -73,11 +66,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
           ></app-evaluation-info>
       </div>
 
-      <div class="mat-elevation-z8 evaluation-list-container" *ngIf="!selectedEvaluationId">
+      <div class="elevate evaluation-list-container" *ngIf="!selectedEvaluationId">
         <div class="icon-text-container">
           <mat-icon class="crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
           <span class="evaluation-title text">My Evaluations</span>
-          <div class="searchBox d-flex align-items-center">
+          <div class="searchBox">
             <!-- Search Bar -->
             <mat-icon
               class="text"
@@ -106,7 +99,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             </mat-form-field>
           </div>
         </div>
-        <mat-table #table class="width-100 mat-table" [dataSource]="evaluationDataSource" matSort  (matSortChange)="sortData($event)">
+        <mat-table #table class="width-100 mat-table evaluation-table" [dataSource]="evaluationDataSource" matSort  (matSortChange)="sortData($event)">
           <!-- Name Column -->
           <ng-container matColumnDef="description">
             <mat-header-cell *matHeaderCellDef mat-sort-header="description">Name</mat-header-cell>
@@ -178,7 +171,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             [selectedScoringModel]="activeScoringModel$ | async"
           ></app-score-summary>
         </div>
-        <div [ngClass]="getAppContentClass()" *ngIf="(activeScoringModel$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeScoringModel$ | async)?.rightSideDisplay !== 'None' && !(selectedSection === section.report || selectedSection === section.aggregate)" class="app-score-container flex-50 mat-elevation-z8" autosize>
+        <div [ngClass]="getAppContentClass()" *ngIf="(activeScoringModel$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeScoringModel$ | async)?.rightSideDisplay !== 'None' && !(selectedSection === section.report || selectedSection === section.aggregate)" class="app-score-container flex-50 elevate" autosize>
           <app-right-side-html
             *ngIf="(activeScoringModel$ | async)?.rightSideDisplay === 'HtmlBlock'"
             [scoringModel$]="activeScoringModel$"

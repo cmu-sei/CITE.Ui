@@ -6,136 +6,71 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon">
-    <mat-icon
-      class="mdi-24px"
-      fontIcon="mdi-account"
-      [ngStyle]="{'color': topbarColor}"
-    ></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-account" [ngStyle]="{'color': topbarColor}"></mat-icon>
   </div>
-  <button
-    mat-icon-button
-    (click)="addingNewUser = true"
-    style="outline: none; margin-left: 20px;"
-    title="Add User"
-  >
+  <button mat-icon-button (click)="addingNewUser = true" style="outline: none; margin-left: 20px;" title="Add User">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
   <mat-form-field style="width: 300px; margin-left: 10px;">
-    <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter($event.target.value)"/>
+    <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter($event.target.value)" />
   </mat-form-field>
   <div style="width: 30px;">
-    <button
-      mat-icon-button
-      (click)="clearFilter()"
-      style="outline: none;"
-      title="Clear Search"
-    >
+    <button mat-icon-button (click)="clearFilter()" style="outline: none;" title="Clear Search">
       <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
     </button>
   </div>
   <div class="button-end">
-    <mat-paginator
-      #paginator
-      [length]="filteredUserList?.length"
-      [pageIndex]="pageIndex"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"
-      (page)="paginatorEvent($event)"
-    ></mat-paginator>
+    <mat-paginator #paginator [length]="filteredUserList?.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
   </div>
 </div>
 
-<mat-accordion displayMode="flat" class="mat-table">
+<mat-accordion displayMode="flat" class="table">
   <mat-expansion-panel *ngIf="addingNewUser" [disabled]="true">
-    <mat-expansion-panel-header class="mat-row">
-      <span class="mat-cell new-user-cell">
+    <mat-expansion-panel-header class="row">
+      <span class="cell new-user-cell">
         <label>Add New User:</label>
         <mat-form-field class="new-user-spacing">
-          <input
-            matInput
-            placeholder="User ID"
-            [(ngModel)]="newUser.id"
-            matTooltip="Must be a valid Guid"
-          />
+          <input matInput placeholder="User ID" [(ngModel)]="newUser.id" matTooltip="Must be a valid Guid" />
         </mat-form-field>
         <mat-form-field class="new-user-spacing">
-          <input
-            matInput
-            placeholder="User Name"
-            [(ngModel)]="newUser.name"
-            matTooltip="Must have a minimum of 4 characters"
-            (keydown)="handleInput($event)"
-          />
+          <input matInput placeholder="User Name" [(ngModel)]="newUser.name"
+            matTooltip="Must have a minimum of 4 characters" (keydown)="handleInput($event)" />
         </mat-form-field>
-        <button
-          mat-icon-button
-          class="new-user-spacing"
-          (click)="addUserRequest(true)"
-          [disabled]="!newUser.id || !newUser.name || newUser.name.length < 4"
-        >
-          <mat-icon
-            class="mdi-24px"
-            fontIcon="mdi-account-plus"
-            matTooltip="Add this user"
-          ></mat-icon>
+        <button mat-icon-button class="new-user-spacing" (click)="addUserRequest(true)"
+          [disabled]="!newUser.id || !newUser.name || newUser.name.length < 4">
+          <mat-icon class="mdi-24px" fontIcon="mdi-account-plus" matTooltip="Add this user"></mat-icon>
         </button>
-        <button
-          mat-icon-button
-          (click)="addUserRequest(false)"
-          matTooltip="Cancel"
-        >
+        <button mat-icon-button (click)="addUserRequest(false)" matTooltip="Cancel">
           <mat-icon class="mdi-24px" fontIcon="mdi-account-remove"></mat-icon>
         </button>
       </span>
     </mat-expansion-panel-header>
   </mat-expansion-panel>
 
-  <section
-    matSort
-    (matSortChange)="sortChanged($event)"
-    class="mat-elevation-z2 mat-header-row"
-  >
-    <div class="mat-header-cell user-cell" mat-sort-header="name"><span style="margin-left: 40px;">User</span></div>
-    <div class="mat-header-cell permission-cell">Permissions</div>
+  <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
+    <div class="header-cell user-cell" mat-sort-header="name"><span style="margin-left: 40px;">User</span></div>
+    <div class="header-cell permission-cell">Permissions</div>
   </section>
 
-  <mat-expansion-panel
-    *ngFor="let user of paginateUsers(pageIndex, pageSize)"
-    [disabled]="true"
-  >
-    <mat-expansion-panel-header class="mat-row" *ngIf="!isLoading">
-      <span class="mat-cell user-cell">
-        <button
-          mat-icon-button
-          ngxClipboard
-          [cbContent]="user.id"
-          (click)="$event.stopPropagation()"
-          title="Copy User ID to clipboard:  {{ user.id }}"
-        >
-          <mat-icon class="mdi-24px" fontIcon="mdi-content-copy"></mat-icon>
+  <mat-expansion-panel *ngFor="let user of paginateUsers(pageIndex, pageSize)" [disabled]="true">
+    <mat-expansion-panel-header class="row" *ngIf="!isLoading">
+      <span class="cell user-cell">
+        <button mat-icon-button ngxClipboard (click)="$event.stopPropagation()" title="Copy User ID:  {{ user.id }}">
+          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy"></mat-icon>
         </button>
         {{ user.name }}
       </span>
-      <span class="mat-cell permission-cell">
+      <span class="cell permission-cell">
         <div class="cssLayoutRowStartCenter">
           <div class="permission-item" *ngFor="let permission of permissionList">
-            <mat-checkbox
-              [checked]="hasPermission(permission.id, user)"
-              (change)="toggleUserPermission(user, permission.id)"
-              style="margin-right: 20px;"
-              >{{ permission.key }}</mat-checkbox
-            >
+            <mat-checkbox [checked]="hasPermission(permission.id, user)"
+              (change)="toggleUserPermission(user, permission.id)" style="margin-right: 20px;">{{ permission.key
+              }}</mat-checkbox>
           </div>
-          <button
-            mat-icon-button
-            class="button-end"
-            (click)="deleteUserRequest(user); $event.stopPropagation()"
-            title="Delete User"
-          >
-            <mat-icon
-              class="mdi-24px"
-              fontIcon="mdi-delete-forever-outline"
-            ></mat-icon>
+          <button mat-icon-button class="button-end" (click)="deleteUserRequest(user); $event.stopPropagation()"
+            title="Delete User">
+            <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
           </button>
         </div>
       </span>
@@ -143,10 +78,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </mat-expansion-panel>
 </mat-accordion>
 
-<mat-card
-  *ngIf="isLoading"
-  style="display: flex; justify-content: center; align-items: center;"
->
+<mat-card appearance="outlined" *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center;">
   <mat-progress-spinner color="primary" mode="indeterminate">
   </mat-progress-spinner>
 </mat-card>

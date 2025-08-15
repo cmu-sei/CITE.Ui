@@ -10,9 +10,10 @@ import { Subject, Observable, combineLatest } from 'rxjs';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 
 @Component({
-  selector: 'app-right-side-iframe',
-  templateUrl: './right-side-iframe.component.html',
-  styleUrls: ['./right-side-iframe.component.scss'],
+    selector: 'app-right-side-iframe',
+    templateUrl: './right-side-iframe.component.html',
+    styleUrls: ['./right-side-iframe.component.scss'],
+    standalone: false
 })
 export class RightSideIframeComponent implements OnDestroy {
   @Input() hideTopbar: boolean;

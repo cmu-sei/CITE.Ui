@@ -6,46 +6,30 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div class="cssLayoutRowStartCenter">
   <h2>Scoring Categories</h2>
-  <button
-    mat-icon-button
-    (click)="addOrEditScoringCategory(null)"
-    style="outline: none; margin-left: 20px;"
-    title="Add Scoring Category"
-  >
+  <button mat-icon-button (click)="addOrEditScoringCategory(null)" style="outline: none; margin-left: 20px;"
+    title="Add Scoring Category">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
 </div>
 <div class="mat-elevation-z2" *ngIf="!isLoading">
   <mat-accordion displayMode="flat">
-    <section
-      class="mat-header-row"
-    >
-      <div class="mat-header-cell nine-cell center-self"><span style="margin-left: 80px;">Description</span></div>
-      <div class="mat-header-cell one-cell center-text center-self">Order</div>
-      <div class="mat-header-cell one-cell center-text center-self">First Move</div>
-      <div class="mat-header-cell one-cell center-text center-self">Last Move</div>
+    <section class="header-row">
+      <div class="header-cell nine-cell center-self"><span style="margin-left: 80px;">Description</span></div>
+      <div class="header-cell one-cell center-text center-self">Order</div>
+      <div class="header-cell one-cell center-text center-self">First Move</div>
+      <div class="header-cell one-cell center-text center-self">Last Move</div>
     </section>
 
-    <mat-expansion-panel
-      *ngFor="let scoringCategory of scoringCategoryList"
-      [expanded]="editScoringCategoryId === scoringCategory.id"
-    >
-      <mat-expansion-panel-header class="mat-row" (click)="togglePanel(scoringCategory.id); $event.stopPropagation()">
-        <div class="mat-cell nine-cell">
-          <button
-            mat-icon-button
-            (click)="addOrEditScoringCategory(scoringCategory); $event.stopPropagation()"
-            style="outline: none;"
-            title="Edit Scoring Category"
-          >
+    <mat-expansion-panel *ngFor="let scoringCategory of scoringCategoryList"
+      [expanded]="editScoringCategoryId === scoringCategory.id">
+      <mat-expansion-panel-header class="row" (click)="togglePanel(scoringCategory.id); $event.stopPropagation()">
+        <div class="cell nine-cell">
+          <button mat-icon-button (click)="addOrEditScoringCategory(scoringCategory); $event.stopPropagation()"
+            style="outline: none;" title="Edit Scoring Category">
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
           </button>
-          <button
-            mat-icon-button
-            (click)="deleteScoringCategoryRequest(scoringCategory); $event.stopPropagation()"
-            style="outline: none;"
-            title="Delete Scoring Category"
-          >
+          <button mat-icon-button (click)="deleteScoringCategoryRequest(scoringCategory); $event.stopPropagation()"
+            style="outline: none;" title="Delete Scoring Category">
             <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can"></mat-icon>
           </button>
           <span class="center-self">
@@ -63,18 +47,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
       </mat-expansion-panel-header>
       <div class="sub-container" *ngIf="editScoringCategoryId === scoringCategory.id">
-        <app-admin-scoring-options
-          [scoringCategoryId]="scoringCategory.id"
-        ></app-admin-scoring-options>
+        <app-admin-scoring-options [scoringCategoryId]="scoringCategory.id"></app-admin-scoring-options>
       </div>
     </mat-expansion-panel>
   </mat-accordion>
 </div>
 
-<mat-card
-  *ngIf="isLoading"
-  style="display: flex; justify-content: center; align-items: center;"
->
+<mat-card appearance="outlined" *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center;">
   <mat-progress-spinner color="primary" mode="indeterminate">
   </mat-progress-spinner>
 </mat-card>

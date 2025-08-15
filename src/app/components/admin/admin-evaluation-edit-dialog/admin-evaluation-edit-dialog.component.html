@@ -6,13 +6,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div mat-dialog-title>
   &nbsp;
-  <button
-    mat-icon-button
-    (click)="handleEditComplete(false)"
-    title="Cancel"
-    class="close-button"
-    tabindex="-1"
-  >
+  <button mat-icon-button (click)="handleEditComplete(false)" title="Cancel" class="close-button" tabindex="-1">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
   </button>
 </div>
@@ -29,7 +23,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div>
       <mat-form-field class="description-field full-width">
         <mat-label>Scoring Model</mat-label>
-        <mat-select placeholder="Select a Scoring Model" [(value)]="data.evaluation.scoringModelId" (click)="$event.stopPropagation()">
+        <mat-select placeholder="Select a Scoring Model" [(value)]="data.evaluation.scoringModelId"
+          (click)="$event.stopPropagation()">
           <mat-option *ngFor="let scoringModel of data.scoringModels" [value]="scoringModel.id">
             {{ scoringModel.description }}
           </mat-option>
@@ -68,40 +63,26 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <div class="add-margin">
     <div>
       <mat-form-field>
-        <input
-          matInput
-          [ngxMatDatetimePicker]="picker"
-          placeholder="Situation Date / Time"
-          [formControl]="situationDateFormControl"
-          (inputChange)="saveEvaluation('situationDate')"
-          (dateChange)="saveEvaluation('situationDate')"
-        >
-        <mat-datepicker-toggle
-          matSuffix
-          title="Choose Date/Time"
-          [for]="$any(picker)">
+        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Situation Date / Time"
+          [formControl]="situationDateFormControl" (inputChange)="saveEvaluation('situationDate')"
+          (dateChange)="saveEvaluation('situationDate')">
+        <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)">
         </mat-datepicker-toggle>
-        <ngx-mat-datetime-picker #picker
-           [showSpinners]=true
-           [showSeconds]=true
-           [stepHour]=1
-           [stepMinute]=1
-           [stepSecond]=1
-           [touchUi]=false
-           [enableMeridian]=true
-           [disableMinute]=false
-           [hideTime]=false>
+        <ngx-mat-datetime-picker #picker [showSpinners]=true [showSeconds]=false [stepHour]=1 [stepMinute]=5
+          [stepSecond]=1 [touchUi]=false [enableMeridian]=true [disableMinute]=false [hideTime]=false [color]="'warn'">
         </ngx-mat-datetime-picker>
-     </mat-form-field>
+      </mat-form-field>
     </div>
   </div>
   <div class="add-margin">
     <mat-label class="gray">Situation Description</mat-label>
-    <angular-editor [placeholder]="'Enter situation description here...'" [(ngModel)]="data.evaluation.situationDescription" [config]="editorConfig"></angular-editor>
+    <angular-editor [placeholder]="'Enter situation description here...'"
+      [(ngModel)]="data.evaluation.situationDescription" [config]="editorConfig"></angular-editor>
   </div>
   <div class="cssLayoutRowStartCenter bottom-button">
     <div class="delete-button">
-      <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>
+      <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()"
+        style="margin-left: 40px;">Save</button>
     </div>
     <div class="delete-button">
       <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>

@@ -33,59 +33,38 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </button>
     </div>
   </div>
-  <mat-table
-    [dataSource]="getDisplayedScoringCategories(submission.moveNumber) | displayOrder"
-    class="full-width"
-    *ngFor="let submission of displayedSubmissionList"
-  >
+  <mat-table [dataSource]="getDisplayedScoringCategories(submission.moveNumber) | displayOrder" class="full-width"
+    *ngFor="let submission of displayedSubmissionList">
     <!-- Description Definition -->
     <ng-container matColumnDef="scoringCategoryDescription">
       <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
         <div class="title-font">
           Move {{ submission.moveNumber }}
-          <span *ngIf="!selectedScoringModel?.hideScoresOnScoreSheet" title="{{ displayedScoreHover }}"
-            > - {{ submission.score | number: '1.2-2' }}
+          <span *ngIf="!selectedScoringModel?.hideScoresOnScoreSheet" title="{{ displayedScoreHover }}"> - {{
+            submission.score | number: '1.2-2' }}
           </span>
         </div>
       </mat-header-cell>
 
       <!-- Report display -->
-      <mat-cell
-        *matCellDef="let scoringCategory"
-        class="description-container"
-        [ngClass]="tableClass"
-      >
-        <div class="scoring-category-description" [ngClass]="tableClass">
+      <mat-cell *matCellDef="let scoringCategory" class="description-container">
+        <div class="scoring-category-description">
           {{ scoringCategory.displayOrder }}. {{ scoringCategory.description }}
           <span *ngIf="scoringCategory.calculationMethodId > 0">
             &nbsp;&nbsp;-&nbsp;&nbsp;[{{
-              categoryScore(submission, scoringCategory.id) | number: '1.0-0'
+            categoryScore(submission, scoringCategory.id) | number: '1.0-0'
             }}]
           </span>
         </div>
-        <mat-table
-          [dataSource]="scoringCategory.scoringOptions | displayOrder"
-          class="full-width"
-          [ngClass]="tableClass"
-        >
-          <ng-container
-            matColumnDef="scoringOptionDescription"
-            class="description-cell"
-          >
-            <mat-cell
-              *matCellDef="let scoringOption"
-              class="description-container"
-              [ngClass]="tableClass"
-            >
+        <mat-table [dataSource]="scoringCategory.scoringOptions | displayOrder" class="full-width">
+          <ng-container matColumnDef="scoringOptionDescription" class="description-cell">
+            <mat-cell *matCellDef="let scoringOption" class="description-container">
               <div [ngClass]="scoringOption.isModifier ? 'indent-div' : 'no-indent-div'">
                 <div class="score-option">
                   <div class="checkbox-div" *ngIf="scoringCategory.scoringOptionSelection !== 'None'">
-                    <mat-checkbox
-                      [aria-label]="scoringOption.description"
-                      [checked]="isSelected(submission, scoringCategory.id, scoringOption.id)"
-                      [disabled]="true"
-                      [matTooltip]="selectedBy(submission, scoringCategory.id, scoringOption.id)"
-                    >
+                    <mat-checkbox [aria-label]="scoringOption.description"
+                      [checked]="isSelected(submission, scoringCategory.id, scoringOption.id)" [disabled]="true"
+                      [matTooltip]="selectedBy(submission, scoringCategory.id, scoringOption.id)">
                     </mat-checkbox>
                   </div>
                   <div class="description-div">
@@ -93,54 +72,43 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   </div>
                 </div>
                 <div class="comment-list" *ngIf="!selectedScoringModel.displayCommentTextBoxes">
-                  <div
-                    *ngFor="
+                  <div *ngFor="
                       let comment of optionComments(
                         submission,
                         scoringCategory.id,
                         scoringOption.id
                       )
-                    "
-                  >
+                    ">
                     {{ comment.comment }}
                     <span *ngIf="displaying === 'Team'"> - {{ getUserName(comment.createdBy) }}</span>
                   </div>
                 </div>
                 <div class="comment-box" *ngIf="selectedScoringModel.displayCommentTextBoxes">
-                  <span class="comment">{{ optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment }}</span>
+                  <span class="comment">{{ optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment
+                    }}</span>
                 </div>
               </div>
             </mat-cell>
           </ng-container>
           <ng-container matColumnDef="value">
-            <mat-cell
-              *matCellDef="let scoringOption"
-              class="value-container"
-              [ngClass]="tableClass"
-            >
+            <mat-cell *matCellDef="let scoringOption" class="value-container">
               <div class="value-div" *ngIf="!selectedScoringModel?.hideScoresOnScoreSheet">
                 {{
-                  scoringCategory.calculationMethodId == 0 ||
-                  scoringOption.isModifier
-                    ? ' '
-                    : scoringOption.value
+                scoringCategory.calculationMethodId == 0 ||
+                scoringOption.isModifier
+                ? ' '
+                : scoringOption.value
                 }}
               </div>
             </mat-cell>
           </ng-container>
-          <mat-row
-            *matRowDef="let row; columns: ['scoringOptionDescription', 'value']"
-          ></mat-row>
+          <mat-row *matRowDef="let row; columns: ['scoringOptionDescription', 'value']"></mat-row>
         </mat-table>
       </mat-cell>
     </ng-container>
 
     <!-- Header and Row Declarations -->
-    <mat-header-row
-      *matHeaderRowDef="['scoringCategoryDescription']"
-    ></mat-header-row>
-    <mat-row
-      *matRowDef="let row; columns: ['scoringCategoryDescription']"
-    ></mat-row>
+    <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']"></mat-row>
   </mat-table>
 </div>

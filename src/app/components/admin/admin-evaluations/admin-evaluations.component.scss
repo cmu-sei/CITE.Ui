@@ -2,52 +2,51 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
+@use '@angular/material' as mat;
+
 .move-container {
   width: 90%;
   margin-left: 5%;
   min-width: 700px;
 }
 
-.mat-header-row {
-  min-height: 56px;
-  font-family: "open_sansregular";
+.search-field {
+  min-width: 100px;
+  margin-left: 10px;
 }
 
-.mat-row {
+.header-row {
+  min-height: 56px;
+}
+
+.row {
   min-height: 48px;
 }
 
-.mat-row, .mat-header-row {
+.row,
+.header-row {
   display: flex;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
   align-items: center;
+  justify-content: center;
   padding: 0 24px;
-  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
 }
 
-.mat-cell, .mat-header-cell {
+.cell,
+.header-cell {
   flex: 1;
   overflow: hidden;
   word-wrap: break-word;
-}
-
-.button-margins {
-  margin-left: 20px;
-  margin-right: 20px;
 }
 
 .sp-icon {
   margin-left: 10px;
 }
 
-.mat-accordion .mat-header-row {
+.mat-accordion .header-row {
   padding-left: 1.5rem;
   padding-right: 2rem;
-  border-bottom: none;
-}
-
-.mat-expansion-panel-header.mat-row {
   border-bottom: none;
 }
 
@@ -55,7 +54,7 @@
   text-align: left;
 }
 
-.mat-select {
+.mat-mdc-select {
   width: 100px;
 }
 
@@ -68,13 +67,13 @@
 }
 
 .nator-div {
-  min-width: 375px;
+  min-width: 220px;
 }
 
 .status-ff {
   margin-left: 20px;
   margin-right: 20px;
-  min-width: 250px;
+  min-width: 200px;
 }
 
 .status-dd {
@@ -83,18 +82,15 @@
 }
 
 .first-cell {
-  flex: 1;
-  min-width: 100px;
-}
-
-.first-cell-button {
-  width: 24px;
-  height: 24px;
-  outline: none;
+  flex: 2;
+  align-self: center;
+  min-width: 160px;
+  max-width: 180px;
 }
 
 .description-cell {
   flex: 5;
+  min-width: 150px;
 }
 
 .date-cell {
@@ -103,8 +99,12 @@
 }
 
 .move-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex: 1;
-  min-width: 100px;
+  min-width: 120px;
+  text-align: center;
 }
 
 .one-cell {
@@ -115,4 +115,3 @@
 .center-self {
   align-self: center;
 }
-

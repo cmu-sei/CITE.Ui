@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,7 +26,10 @@ import {
   ComnAuthQuery,
   Theme,
 } from '@cmusei/crucible-common';
-import { ApplicationArea, SignalRService } from 'src/app/services/signalr.service';
+import {
+  ApplicationArea,
+  SignalRService,
+} from 'src/app/services/signalr.service';
 import { environment } from 'src/environments/environment';
 import { HealthCheckService } from 'src/app/generated/cite.api/api/api';
 
@@ -34,6 +37,7 @@ import { HealthCheckService } from 'src/app/generated/cite.api/api/api';
   selector: 'app-admin-container',
   templateUrl: './admin-container.component.html',
   styleUrls: ['./admin-container.component.scss'],
+  standalone: false,
 })
 export class AdminContainerComponent implements OnDestroy, OnInit {
   loggedInUser = this.userDataService.loggedInUser;
@@ -45,10 +49,10 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   submissionsText = 'Submissions';
   groupsText = 'Groups';
   teamsText = 'Teams';
-  teamTypesText = 'Team Types'
+  teamTypesText = 'Team Types';
   topbarText = 'Set AppTopBarText in Settings';
-  showSection: Observable<string>;
-  displayedSection = '';
+  showSection$: Observable<string>;
+  displayedSection = this.evaluationsText;
   exitSection = '';
   originalEvaluationId: string;
   isSidebarOpen = true;
@@ -91,8 +95,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.userDataService.isSuperUser
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((result) => {
-        if (result !== this.isSuperUser)
-        {
+        if (result !== this.isSuperUser) {
           this.isSuperUser = result;
           this.canSwitchEvaluations.next(result);
           if (this.isSuperUser) {
@@ -109,8 +112,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.userDataService.canAccessAdminSection
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((result) => {
-        if (result !== this.canAccessAdminSection)
-        {
+        if (result !== this.canAccessAdminSection) {
           this.canAccessAdminSection = result;
           if (this.canAccessAdminSection && !this.isSuperUser) {
             this.evaluationDataService.loadMine();
@@ -123,10 +125,19 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.pageIndex = activatedRoute.queryParamMap.pipe(
       map((params) => parseInt(params.get('pageindex') || '0', 10))
     );
-    this.showSection = activatedRoute.queryParamMap.pipe(
-      tap((params) => this.displayedSection = params.get('section')),
+    this.showSection$ = activatedRoute.queryParamMap.pipe(
+      tap(
+        (params) =>
+          (this.displayedSection =
+            params.get('section') || this.evaluationsText)
+      ),
       map((params) => params.get('section') || this.evaluationsText)
     );
+    this.showSection$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((section) => {
+        this.displayedSection = section;
+      });
     this.originalEvaluationId = this.evaluationQuery.getActiveId();
     // load and subscribe to TeamTypes
     this.teamTypeDataService.load();
@@ -137,9 +148,11 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.topbarTextColor = this.settingsService.settings.AppTopBarHexTextColor
       ? this.settingsService.settings.AppTopBarHexTextColor
       : this.topbarTextColor;
-    const appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
+    const appTitle =
+      this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
     titleService.setTitle(appTitle);
-    this.topbarText = this.settingsService.settings.AppTopBarText || this.topbarText;
+    this.topbarText =
+      this.settingsService.settings.AppTopBarText || this.topbarText;
     this.getApiVersion();
   }
 
@@ -158,8 +171,8 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.router.navigate([], {
       queryParams: {
         evaluation: this.originalEvaluationId,
-        section: section
-      }
+        section: section,
+      },
     });
   }
 
@@ -167,7 +180,15 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     if (section === this.displayedSection) {
       return 'selected-item';
     } else {
-      return null;
+      return 'non-selected-item';
+    }
+  }
+
+  isSelectedClass(section: string): boolean {
+    if (section === this.displayedSection) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -217,7 +238,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   exitAdminPages() {
     this.evaluationDataService.setActive(this.originalEvaluationId);
     this.router.navigate(['/'], {
-      queryParams: { evaluation: this.originalEvaluationId }
+      queryParams: { evaluation: this.originalEvaluationId },
     });
   }
 

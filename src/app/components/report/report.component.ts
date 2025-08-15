@@ -2,8 +2,8 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnInit, Input, OnDestroy, Output } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { Component, Input, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -12,23 +12,25 @@ import { SubmissionDataService } from 'src/app/data/submission/submission-data.s
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
-import { ItemStatus,
+import {
+  ItemStatus,
   Evaluation,
   Move,
   ScoringModel,
   Team,
   User,
-  ScoringCategory
+  ScoringCategory,
 } from 'src/app/generated/cite.api/model/models';
 import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
-import { Title} from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
+  standalone: false,
 })
 export class ReportComponent implements OnDestroy {
   @Input() selectedEvaluation: Evaluation;
@@ -56,7 +58,6 @@ export class ReportComponent implements OnDestroy {
   showModifyControls = false;
   commentOptionDescription = 'this is the description';
   currentComment = 'current comment';
-  tableClass = 'user-text';
   buttonClass = 'mat-user';
   private unsubscribe$ = new Subject();
 
@@ -71,7 +72,6 @@ export class ReportComponent implements OnDestroy {
     public matDialog: MatDialog,
     private titleService: Title,
     private uiDataService: UIDataService
-
   ) {
     this.titleService.setTitle('CITE Report');
     // observe the selected evaluation
@@ -83,11 +83,13 @@ export class ReportComponent implements OnDestroy {
       }
     });
     // observe the selected scoring model
-    (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      if (active) {
-        this.selectedScoringModel = active;
-      }
-    });
+    (this.scoringModelQuery.selectActive() as Observable<ScoringModel>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((active) => {
+        if (active) {
+          this.selectedScoringModel = active;
+        }
+      });
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
@@ -104,14 +106,28 @@ export class ReportComponent implements OnDestroy {
         }
       });
     // observe the submission list
-    this.submissionQuery.selectAllPopulated().pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
-      this.submissionList = submissions;
-      this.showGroupAvgScore = this.submissionList.some(
-        s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && s.groupId && s.scoreIsAnAverage);
-      this.showOfficialScore = this.submissionList.some(
-        s => +s.moveNumber === +this.displayedMoveNumber && !s.userId && !s.teamId && !s.groupId);
-      this.selectDisplayedSubmissions();
-    });
+    this.submissionQuery
+      .selectAllPopulated()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((submissions) => {
+        this.submissionList = submissions;
+        this.showGroupAvgScore = this.submissionList.some(
+          (s) =>
+            +s.moveNumber === +this.displayedMoveNumber &&
+            !s.userId &&
+            !s.teamId &&
+            s.groupId &&
+            s.scoreIsAnAverage
+        );
+        this.showOfficialScore = this.submissionList.some(
+          (s) =>
+            +s.moveNumber === +this.displayedMoveNumber &&
+            !s.userId &&
+            !s.teamId &&
+            !s.groupId
+        );
+        this.selectDisplayedSubmissions();
+      });
   }
 
   categoryScore(submission: PopulatedSubmission, scoringCategoryId: string) {
@@ -119,52 +135,84 @@ export class ReportComponent implements OnDestroy {
     if (!submissionCategories || submissionCategories.length === 0) {
       return 0;
     } else {
-      const submissionCategory = submissionCategories.find(sc => sc.scoringCategoryId === scoringCategoryId);
+      const submissionCategory = submissionCategories.find(
+        (sc) => sc.scoringCategoryId === scoringCategoryId
+      );
       return submissionCategory ? submissionCategory.score : 0;
     }
   }
 
-  isSelected(submission: PopulatedSubmission, scoringCategoryId: string, scoringOptionId: string) {
+  isSelected(
+    submission: PopulatedSubmission,
+    scoringCategoryId: string,
+    scoringOptionId: string
+  ) {
     let isSelected = false;
     const submissionCategories = submission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
-      const sc = submissionCategories.find(subCat => subCat.scoringCategoryId === scoringCategoryId);
+      const sc = submissionCategories.find(
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId
+      );
       if (sc) {
-        const so = sc.submissionOptions.find(subOpt => subOpt.scoringOptionId === scoringOptionId);
+        const so = sc.submissionOptions.find(
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId
+        );
         isSelected = so && so.isSelected;
       }
       if (isSelected) {
-        const scoringCategory = this.selectedScoringModel.scoringCategories.find(subCat => subCat.id === scoringCategoryId);
-        const scoringOption = scoringCategory.scoringOptions.find(so => so.id === scoringOptionId);
+        const scoringCategory =
+          this.selectedScoringModel.scoringCategories.find(
+            (subCat) => subCat.id === scoringCategoryId
+          );
+        const scoringOption = scoringCategory.scoringOptions.find(
+          (so) => so.id === scoringOptionId
+        );
       }
     }
     return isSelected;
   }
 
-  selectedCount(submission: PopulatedSubmission, scoringCategoryId: string, scoringOptionId: string) {
+  selectedCount(
+    submission: PopulatedSubmission,
+    scoringCategoryId: string,
+    scoringOptionId: string
+  ) {
     let selectedCount = 0;
     const submissionCategories = submission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
-      const sc = submissionCategories.find(subCat => subCat.scoringCategoryId === scoringCategoryId);
+      const sc = submissionCategories.find(
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId
+      );
       if (sc) {
-        const so = sc.submissionOptions.find(subOpt => subOpt.scoringOptionId === scoringOptionId);
+        const so = sc.submissionOptions.find(
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId
+        );
         selectedCount = so ? so.selectedCount : 0;
       }
     }
     return selectedCount > 0 ? selectedCount.toString() : '   ';
   }
 
-  optionComments(submission: PopulatedSubmission, scoringCategoryId: string, scoringOptionId: string) {
-    if (!submission ||
-        !submission.submissionCategories ||
-        !scoringCategoryId ||
-        !scoringOptionId) {
+  optionComments(
+    submission: PopulatedSubmission,
+    scoringCategoryId: string,
+    scoringOptionId: string
+  ) {
+    if (
+      !submission ||
+      !submission.submissionCategories ||
+      !scoringCategoryId ||
+      !scoringOptionId
+    ) {
       return [];
     }
-    const submissionCategory = submission.submissionCategories
-      .find(sc => sc.scoringCategoryId === scoringCategoryId);
+    const submissionCategory = submission.submissionCategories.find(
+      (sc) => sc.scoringCategoryId === scoringCategoryId
+    );
     if (submissionCategory) {
-      const submissionOption = submissionCategory.submissionOptions.find(so => so.scoringOptionId === scoringOptionId);
+      const submissionOption = submissionCategory.submissionOptions.find(
+        (so) => so.scoringOptionId === scoringOptionId
+      );
       if (submissionOption) {
         return submissionOption.submissionComments;
       }
@@ -172,7 +220,11 @@ export class ReportComponent implements OnDestroy {
     return [];
   }
 
-  selectedBy(submission: PopulatedSubmission, scoringCategoryId: string, scoringOptionId: string) {
+  selectedBy(
+    submission: PopulatedSubmission,
+    scoringCategoryId: string,
+    scoringOptionId: string
+  ) {
     if (this.displaying !== 'team') {
       return;
     }
@@ -180,9 +232,13 @@ export class ReportComponent implements OnDestroy {
     let isSelected = null;
     const submissionCategories = submission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
-      const sc = submissionCategories.find(subCat => subCat.scoringCategoryId === scoringCategoryId);
+      const sc = submissionCategories.find(
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId
+      );
       if (sc) {
-        const so = sc.submissionOptions.find(subOpt => subOpt.scoringOptionId === scoringOptionId);
+        const so = sc.submissionOptions.find(
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId
+        );
         isSelected = so && so.isSelected;
         selectedBy = so && so.modifiedBy;
       }
@@ -196,24 +252,28 @@ export class ReportComponent implements OnDestroy {
   }
 
   getUserName(id) {
-    const theUser = this.teamUsers?.find(tu => tu.id === id);
+    const theUser = this.teamUsers?.find((tu) => tu.id === id);
     return theUser ? theUser.name : '';
   }
 
   getSubmissionStatusText(submission: PopulatedSubmission) {
-    return submission.status === ItemStatus.Complete ? 'Submitted' : 'Unsubmitted';
+    return submission.status === ItemStatus.Complete
+      ? 'Submitted'
+      : 'Unsubmitted';
   }
 
   getDisplayedScoringCategories(moveNumber: number): ScoringCategory[] {
     const displayedScoringCategories: ScoringCategory[] = [];
-    this.selectedScoringModel.scoringCategories.forEach(scoringCategory => {
+    this.selectedScoringModel.scoringCategories.forEach((scoringCategory) => {
       let hideIt = false;
-      if (this.selectedScoringModel.displayScoringModelByMoveNumber &&
-          (+moveNumber < +scoringCategory.moveNumberFirstDisplay ||
-          +moveNumber > +scoringCategory.moveNumberLastDisplay)) {
-        hideIt = true
+      if (
+        this.selectedScoringModel.displayScoringModelByMoveNumber &&
+        (+moveNumber < +scoringCategory.moveNumberFirstDisplay ||
+          +moveNumber > +scoringCategory.moveNumberLastDisplay)
+      ) {
+        hideIt = true;
       }
-    if (!hideIt) {
+      if (!hideIt) {
         displayedScoringCategories.push(scoringCategory);
       }
     });
@@ -284,17 +344,15 @@ export class ReportComponent implements OnDestroy {
     }
   }
 
-  printpage()
-  {
-     var printContents= document.getElementById('printable-area').innerHTML;
-     document.body.innerHTML = printContents;
-     window.print();
-     location.reload();
+  printpage() {
+    var printContents = document.getElementById('printable-area').innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    location.reload();
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

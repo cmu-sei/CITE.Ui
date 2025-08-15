@@ -2,20 +2,14 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-.score-card-container {
-  display: flex;
-  flex-flow: column;
-  justify-content: flex-start;
-  align-self: flex-start;
-  text-align: center;
-  padding: 10px;
-  height: 100%;
+.big-container {
+  height: calc(100% - 100px);
 }
 
-.sticky-card {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
+.mat-mdc-table {
+  width: 100%;
+  height: calc(100% - 40px);
+  overflow-y: auto;
 }
 
 .title-font {
@@ -29,45 +23,46 @@
   width: 60px;
   margin-bottom: 10px;
 }
-/*
-.mat-table {
-  border: 1px double black;
-}
-*/
+
 .black {
   background-color: black;
   color: white;
   height: 80px;
   text-align: left;
 }
+
 .red {
   background-color: darkred;
   color: white;
   height: 80px;
   text-align: left;
 }
+
 .orange {
   background-color: darkorange;
   color: black;
   height: 80px;
   text-align: left;
 }
+
 .yellow {
   background-color: yellow;
   color: black;
   height: 80px;
   text-align: left;
 }
+
 .green {
   background-color: lightgreen;
   color: black;
   height: 80px;
   text-align: left;
 }
+
 .white {
   background-color: white;
   color: black;
-  min-height:80px;
+  min-height: 80px;
   text-align: left;
 }
 
@@ -75,7 +70,6 @@
   background-color: dimgrey;
 }
 
-.mat-row {
-  height: 100% !important;
+.mat-mdc-row {
   align-items: stretch;
 }

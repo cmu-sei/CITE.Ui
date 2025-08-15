@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -22,13 +22,14 @@ import { ItemStatus,
 import { SubmissionService } from 'src/app/generated/cite.api';
 import { TeamService } from 'src/app/generated/cite.api';
 import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
-import { Title} from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 
 @Component({
   selector: 'app-aggregate',
   templateUrl: './aggregate.component.html',
   styleUrls: ['./aggregate.component.scss'],
+  standalone: false
 })
 export class AggregateComponent implements OnInit, OnDestroy {
   @Input() selectedEvaluation: Evaluation;

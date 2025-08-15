@@ -7,15 +7,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <!-- Header -->
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon" style="margin-right: 10px;">
-    <mat-icon
-      class="mdi-24px"
-      fontIcon="mdi-playlist-play"
-      [ngStyle]="{'color': topbarColor}"
-    ></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-playlist-play" [ngStyle]="{'color': topbarColor}"></mat-icon>
   </div>
   <mat-form-field class="button-margins">
     <mat-label>Evaluation</mat-label>
-    <mat-select placeholder="Evaluation" [value]="selectedEvaluation.id" (selectionChange)="selectEvaluation($event.value)">
+    <mat-select placeholder="Evaluation" [value]="selectedEvaluation.id"
+      (selectionChange)="selectEvaluation($event.value)">
       <mat-option *ngFor="let evaluation of evaluationList" [value]="evaluation.id">
         {{ evaluation.description }}
       </mat-option>
@@ -23,8 +20,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </mat-form-field>
   <mat-form-field class="button-margins">
     <mat-label>Types</mat-label>
-    <mat-select placeholder="Types" [(ngModel)]="selectedSubmissionTypes" multiple (selectionChange)="criteriaChanged()">
-      <mat-option *ngFor="let submissionType of submissionTypes" [value]="submissionType">{{ submissionType }}</mat-option>
+    <mat-select placeholder="Types" [(ngModel)]="selectedSubmissionTypes" multiple
+      (selectionChange)="criteriaChanged()">
+      <mat-option *ngFor="let submissionType of submissionTypes" [value]="submissionType">{{ submissionType
+        }}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="button-margins">
@@ -37,25 +36,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </mat-select>
   </mat-form-field>
   <div>
-    <mat-paginator
-      #paginator
-      [length]="filteredSubmission.length"
-      [pageIndex]="pageIndex"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"
-      (page)="paginatorEvent($event)"
-    ></mat-paginator>
+    <mat-paginator #paginator [length]="filteredSubmission.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
   </div>
 </div>
 
 <!-- Table -->
-<div class="mat-elevation-z8">
-  <table
-    mat-table
-    [dataSource]="displayedSubmissions"
-    matSort
-    (matSortChange)="sortChanged($event)"
-  >
+<div class="elevate">
+  <table mat-table [dataSource]="displayedSubmissions" matSort (matSortChange)="sortChanged($event)">
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header><span style="margin-left: 80px;">Name</span></th>
@@ -68,20 +56,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
           title="Copy Submission ID to clipboard:  {{ row.id }}"
         >
           <mat-icon
-            class="mdi-24px"
+            class="mdi-18px"
             fontIcon="mdi-content-copy">
           </mat-icon>
         </button>
-        <button
-          mat-icon-button
-          class="button-end"
-          (click)="deleteSubmissionRequest(row); $event.stopPropagation()"
-          title="Delete Submission"
-        >
-          <mat-icon
-            class="mdi-24px"
-            fontIcon="mdi-trash-can"
-          ></mat-icon>
+        <button mat-icon-button class="button-end" (click)="deleteSubmissionRequest(row); $event.stopPropagation()"
+          title="Delete Submission">
+          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
         </button>
         {{ row.name }}
       </td>
@@ -122,10 +103,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 </div>
 
 <!-- Loading Indicator -->
-<mat-card
-  *ngIf="isLoading"
-  style="display: flex; justify-content: center; align-items: center"
->
+<mat-card appearance="outlined" *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
   <mat-progress-spinner color="primary" mode="indeterminate">
   </mat-progress-spinner>
 </mat-card>

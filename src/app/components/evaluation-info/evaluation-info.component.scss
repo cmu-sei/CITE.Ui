@@ -8,7 +8,7 @@
   margin-bottom: 10px;
 }
 
-.evaluation-info {
+.evaluation-info-container {
   padding-left: 24px;
   padding-right: 24px;
   font-size: 12px;
@@ -17,6 +17,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1%;
+  min-height: 60px;
 }
 
 .evaluation-selector-div {
@@ -32,7 +33,7 @@
   text-align: center;
 }
 
-.mat-select {
+.mat-mdc-select {
   font-size: 18px !important;
 }
 
@@ -66,13 +67,11 @@
   font-weight: bold;
 }
 
-.blue-button {
-  color: white;
+.advance-button {
   transform: scale(0.8);
   min-width: 50px;
   margin-left: 10px;
   margin-right: 10px;
-  font-size: 15px;
 }
 
 

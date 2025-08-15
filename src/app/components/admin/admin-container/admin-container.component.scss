@@ -1,6 +1,12 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
+@use "@angular/material" as mat;
+@include mat.core();
+
+.appitems-container .mat-list-item {
+  height: auto;
+}
 
 .appslist {
   margin-top: 10px;
@@ -9,27 +15,71 @@
 
 .nolink {
   text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
-.app-admin-container {
+.appcontent-container {
+  position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  position: fixed;
-  height: 100%;
 }
 
 .appbarmenu-container {
-  min-width: 50px;
+  width: 250px;
+  border-right: solid var(--mat-sys-surface-container);
 }
 
-.tall {
-  height: calc(100% - 44px);
+.sidenav-header {
+  height: 40px;
+  border-bottom: 2px solid var(--mat-sys-surface-container);
 }
 
-.cmu-logo {
+.pull-right {
+  position: absolute;
+  right: 0px;
+  margin-top: -8px;
+}
+
+.showhand {
+  cursor: pointer;
+}
+
+#wrapper {
+  display: flex;
+  flex-direction: row;
   width: 100%;
+}
+
+#lefticon {
+  width: 30px;
+  font-size: 75%;
+  padding: 0.5em;
+}
+
+#lefticon>img {
+  height: 35px;
+  width: 35px;
+  text-align: center;
+  cursor: pointer;
+}
+
+#rightcontext {
+  width: 30px;
+  font-size: 75%;
+}
+
+#content {
+  text-align: left;
+  vertical-align: middle;
+  width: 160px;
+  font-size: 90%;
+  padding: 0.5em;
+}
+
+.crucible-logo {
   position: absolute;
   bottom: 0;
 }
@@ -42,43 +92,25 @@
   padding-top: 5px;
   text-align: center;
   font-size: x-small;
-  border-bottom: 1px;
+  border-bottom: 2px;
   border-bottom-style: solid;
-  border-top: 1px;
+  border-top: 2px;
   border-top-style: solid;
-  border-color: lightgray;
-}
-
-.showhand {
-  cursor: pointer;
-}
-
-.lefticon {
-  padding: 0.5em;
-}
-
-.righticon {
-  align-self: flex-end;
-}
-
-.application-name {
-  width: 120px;
-  margin-left: 20px;
-}
-
-.cmu-logo {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
+  border-color: var(--mat-sys-surface-container);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
 }
 
 .icon-text {
   margin-left: 10px;
-  font-family: open_sansbold;
 }
 
-.cite-icon {
-  transform: scale(0.8);
-  width: 60px;
+.selected-item {
+  background-color: var(--mat-sys-surface-container);
+  cursor: pointer;
+}
+
+.non-selected-item {
+  background-color: var(--mat-sys-background);
+  cursor: pointer;
 }

@@ -2,9 +2,9 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
-    "downlevelIteration": true,
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
+    "esModuleInterop": true,
     "declaration": false,
     "module": "es2020",
     "moduleResolution": "node",
@@ -20,7 +20,6 @@
     ],
     "useDefineForClassFields": false,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
   },
   "angularCompilerOptions": {
     "strictTemplates": true,

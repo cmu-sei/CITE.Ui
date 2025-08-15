@@ -3,90 +3,49 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
-<mat-toolbar
-  class="toolbar"
-  [style.backgroundColor]="topbarColor ? topbarColor : null"
-  [style.color]="topbarTextColor ? topbarTextColor : null"
->
+<mat-toolbar class="toolbar" [style.backgroundColor]="topbarColor ? topbarColor : null"
+  [style.color]="topbarTextColor ? topbarTextColor : null">
   <mat-toolbar-row>
     <span class="margin-auto">
-      <button
-        *ngIf="sidenav && sidenav?.opened"
-        (click)="sidenavToggleFn()"
-        mat-icon-button
-        matTooltip="Close Sidebar"
-      >
+      <button *ngIf="sidenav && sidenav?.opened" class="menu-trigger" (click)="sidenavToggleFn()" mat-icon-button
+        matTooltip="Close Sidebar">
         <mat-icon svgIcon="ic_chevron_left"></mat-icon>
       </button>
-      <button
-        *ngIf="sidenav && !sidenav?.opened"
-        (click)="sidenavToggleFn()"
-        mat-icon-button
-        matTooltip="Open Sidebar"
-      >
-        <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
+      <button *ngIf="sidenav && !sidenav?.opened" class="menu-trigger" (click)="sidenavToggleFn()" mat-icon-button
+        matTooltip="Open Sidebar">
+        <mat-icon svgIcon="ic_chevron_right"></mat-icon>
       </button>
-      <img
-        *ngIf="!!imageFilePath"
-        class="no-sidenav"
-        [src]="imageFilePath"
-        title="Home"
-        (click)="goToUrl('/')"
-      />
+      <img *ngIf="!!imageFilePath" class="no-sidenav" [src]="imageFilePath" title="Home" (click)="goToUrl('/')" />
     </span>
     <span class="view-text">{{ title }}</span>
     <ng-container *ngIf="teams && team && teams.length > 0">
       <div class="team-text">Team:</div>
       <b class="team-text">{{ team.name }}</b>
       <div *ngIf="teams.length > 1">
-        <button
-          mat-button
-          [matMenuTriggerFor]="teamMenu"
-          style="outline: none;"
-        >
+        <button mat-button [matMenuTriggerFor]="teamMenu" style="outline: none;">
           <mat-icon class="icon-color" svgIcon="ic_expand_more"></mat-icon>
         </button>
         <mat-menu #teamMenu="matMenu" [overlapTrigger]="false">
-          <button
-            *ngFor="let val of teams"
-            mat-menu-item
-            (click)="setTeamFn(val.id)"
-          >
+          <button *ngFor="let val of teams" mat-menu-item (click)="setTeamFn(val.id)">
             {{ val.name }}
           </button>
         </mat-menu>
       </div>
     </ng-container>
     <span class="spacer"></span>
-    <div
-      class="options-text"
-      *ngIf="currentUser$ | async as currentUser"
-    >
-      <button
-        mat-button
-        class="icon-color"
-        [matMenuTriggerFor]="menu"
-        style="outline: none;"
-      >
+    <div class="options-text" *ngIf="currentUser$ | async as currentUser">
+      <button mat-button class="menu-trigger" [matMenuTriggerFor]="menu" style="outline: none;">
         <strong *ngIf="currentUser && currentUser.profile">{{ currentUser.profile.name }}</strong>
         <mat-icon aria-hidden="false" class="icon-color" svgIcon="ic_expand_more"></mat-icon>
       </button>
       <mat-menu #menu="matMenu" [overlapTrigger]="false">
-        <button
-          *ngIf="team && team.canManage"
-          (click)="editFn($event)"
-          mat-menu-item
-        >
+        <button *ngIf="team && team.canManage" (click)="editFn($event)" mat-menu-item>
           Edit View
         </button>
         <button mat-menu-item (click)="logout()">Logout</button>
-        <mat-slide-toggle
-          class="mat-menu-item"
-          color="primary"
-          [checked]="(theme$ | async) === 'dark-theme' ? true : false"
-          (click)="$event.stopPropagation()"
-          (change)="themeFn($event)"
-        >
+        <mat-slide-toggle class="mat-menu-item" color="primary"
+          [checked]="(theme$ | async) === 'dark-theme' ? true : false" (click)="$event.stopPropagation()"
+          (change)="themeFn($event)">
           Dark Theme
         </mat-slide-toggle>
       </mat-menu>

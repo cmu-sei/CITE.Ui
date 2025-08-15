@@ -9,9 +9,10 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-score-summary',
-  templateUrl: './score-summary.component.html',
-  styleUrls: ['./score-summary.component.scss'],
+    selector: 'app-score-summary',
+    templateUrl: './score-summary.component.html',
+    styleUrls: ['./score-summary.component.scss'],
+    standalone: false
 })
 export class ScoreSummaryComponent implements OnDestroy {
   isLoading = false;
