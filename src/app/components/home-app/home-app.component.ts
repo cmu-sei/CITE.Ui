@@ -198,12 +198,6 @@ export class HomeAppComponent implements OnDestroy {
           );
           this.currentMoveNumber = evaluation.currentMoveNumber;
           this.evaluationDataService.setActive(evaluation.id);
-          // if there is only one evaluation, make it the active one, so that the user doesn't have to select it
-        } else if (evaluations && evaluations.length === 1) {
-          evaluation = evaluations[0];
-          this.currentMoveNumber = evaluation.currentMoveNumber;
-          this.selectedEvaluationId = evaluation.id;
-          this.evaluationDataService.setActive(evaluation.id);
         }
         if (evaluation) {
           this.selectedEvaluationId = evaluation.id;

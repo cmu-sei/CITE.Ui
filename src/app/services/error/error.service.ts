@@ -44,15 +44,12 @@ export class ErrorService implements ErrorHandler {
           'Identity Server Error',
           'The Identity Server could not be reached for user authentication.'
         );
-      } else if (err.rejection.message === 'Failed to fetch') {
+      } else if (err.rejection.message.endsWith('Failed to fetch')) {
         console.log('SignalR error reaching the Gallery API:  ' + err.rejection.message);
       } else {
         messageService.displayMessage('Error', err.rejection.message);
         console.log(err.rejection.message);
       }
-    } else {
-      messageService.displayMessage(err.name, err.message);
-      console.log(err.name + ' ==> ' + err.message);
     }
   }
 }
