@@ -9,7 +9,7 @@
     "lint": "eslint -c .eslintrc.js --ext .ts src/",
     "e2e": "ng e2e",
     "swagger:gen": "curl --insecure http://localhost:4720/swagger/v1/swagger.json --output swagger.json && node_modules/@openapitools/openapi-generator-cli/bin/openapi-generator generate -i ./swagger.json -g typescript-angular -o src/app/generated/cite.api --additional-properties ngVersion=14 --additional-properties useRxJS6=true --additional-properties modelPropertyNaming=original --type-mappings=DateTime=Date --skip-validate-spec",
-    "swagger:gen-win": "docker run --rm -v %CD%:/local openapitools/openapi-generator-cli:v4.1.2 generate -i http://localhost:4720/swagger/v1/swagger.json -g typescript-angular -o /local/src/app/generated/cite.api --additional-properties ngVersion=15 --additional-properties useRxJS6=true --additional-properties modelPropertyNaming=original --type-mappings=DateTime=Date --skip-validate-spec",
+    "swagger:gen-docker": "docker run --rm -v %CD%:/local openapitools/openapi-generator-cli:v4.1.2 generate -i http://host.docker.internal:4720/swagger/v1/swagger.json -g typescript-angular -o /local/src/app/generated/cite.api --additional-properties ngVersion=19 --additional-properties useRxJS6=true --additional-properties modelPropertyNaming=original --type-mappings=DateTime=Date --skip-validate-spec",
     "docker:init": "docker network create identity --driver=overlay",
     "docker:stack": "npm run docker:stack:identity && npm run docker:stack:api",
     "docker:stack:api": "docker stack deploy -c docker-compose.yml -c docker/compose/api.yml cite_stack",
