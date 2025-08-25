@@ -33,7 +33,7 @@
     "@datorama/akita": "^8.0.0",
     "@datorama/akita-ng-router-store": "^7.0.0",
     "@datorama/akita-ngdevtools": "^7.0.0",
-    "@kolkov/angular-editor": "^3.0.0-beta.0",
+    "@kolkov/angular-editor": "^3.0.0-beta.2",
     "@mdi/font": "^5.9.55",
     "@microsoft/signalr": "^8.0.7",
     "@ngxmc/datetime-picker": "^19.1.0",
