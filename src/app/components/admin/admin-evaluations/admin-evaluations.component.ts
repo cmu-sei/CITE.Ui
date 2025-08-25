@@ -135,7 +135,8 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       data: {
         evaluation: evaluation,
         scoringModels: this.scoringModels,
-        itemStatuses: this.itemStatuses
+        itemStatuses: this.itemStatuses,
+        isExisting: !!evaluation.scoringModelId
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

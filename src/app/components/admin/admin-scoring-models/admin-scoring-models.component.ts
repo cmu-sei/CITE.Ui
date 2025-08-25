@@ -2,11 +2,12 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import {
+  Evaluation,
   ScoringModel,
   ItemStatus,
   RightSideDisplay,
@@ -29,6 +30,7 @@ import { UserDataService } from 'src/app/data/user/user-data.service';
     standalone: false
 })
 export class AdminScoringModelsComponent implements OnInit, OnDestroy {
+  @Input() evaluationList: Evaluation[];
   scoringModelList: ScoringModel[] = [];
   sortedScoringModelList: ScoringModel[] = [];
   userList: User[] = [];
@@ -65,6 +67,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   isBusy = false;
   uploadProgress = 0;
   @ViewChild('jsonInput') jsonInput: ElementRef<HTMLInputElement>;
+  showAll = false;
 
   constructor(
     private settingsService: ComnSettingsService,
@@ -127,7 +130,8 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
       data: {
         scoringModel: scoringModel,
         itemStatuses: this.itemStatuses,
-        rightSideDisplays: this.rightSideDisplays
+        rightSideDisplays: this.rightSideDisplays,
+        canEdit: scoringModel?.id && !scoringModel.evaluationId
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -164,8 +168,9 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
 
   applyFilter() {
     this.filteredScoringModelList = this.scoringModelList.filter(model =>
-        !this.filterString ||
-        model.description.toLowerCase().includes(this.filterString)
+        (!this.filterString ||
+        model.description.toLowerCase().includes(this.filterString)) &&
+        ((this.showAll) || (!model.evaluationId && !this.showAll))
     );
     this.sortChanged(this.sort);
   }
@@ -209,6 +214,13 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   getUserName(id: string) {
     const user = this.userList.find(u => u.id === id);
     return user ? user.name : '?';
+  }
+
+  scoringModelEvaluation(evaluationId: string): string {
+    const evaluation = this.evaluationList?.find(m => m.id === evaluationId);
+    const name = evaluation ? " - on " + evaluation.description : '';
+
+    return name;
   }
 
   copyScoringModel(id: string): void {
