@@ -24,11 +24,14 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "./node_modules/@kolkov/angular-editor/assets/",
-                "output": "./assets/fonts/"
+                "input": "./node_modules/@kolkov/angular-editor/assets/icons",
+                "output": "./assets/ae-icons/"
               }
             ],
-            "styles": ["src/styles/styles.scss"],
+            "styles": [
+              "src/styles/styles.scss",
+              "node_modules/@kolkov/angular-editor/themes/default.scss"
+            ],
             "scripts": [],
             "extractLicenses": false,
             "sourceMap": true,
@@ -93,14 +96,17 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss",
+              "node_modules/@kolkov/angular-editor/themes/default.scss"
+            ],
             "scripts": [],
             "assets": [
               "src/favicon.ico",
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "./node_modules/@kolkov/angular-editor/assets/",
+                "input": "./node_modules/@kolkov/angular-editor/assets/icons/",
                 "output": "./assets/fonts/"
               }
             ]

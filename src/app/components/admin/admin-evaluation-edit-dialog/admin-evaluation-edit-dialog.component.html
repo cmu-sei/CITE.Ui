@@ -24,7 +24,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-form-field class="description-field full-width">
         <mat-label>Scoring Model</mat-label>
         <mat-select placeholder="Select a Scoring Model" [(value)]="data.evaluation.scoringModelId"
-          (click)="$event.stopPropagation()">
+          (click)="$event.stopPropagation()" [disabled]="data.isExisting">
           <mat-option *ngFor="let scoringModel of data.scoringModels" [value]="scoringModel.id">
             {{ scoringModel.description }}
           </mat-option>

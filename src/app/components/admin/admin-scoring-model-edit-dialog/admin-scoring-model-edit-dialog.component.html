@@ -21,7 +21,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div>
       <mat-form-field class="description-field full-width">
         <mat-label>Scoring Model Description</mat-label>
-        <input matInput [(ngModel)]="data.scoringModel.description" />
+        <input matInput [(ngModel)]="data.scoringModel.description" [disabled]="!data.canEdit" />
       </mat-form-field>
     </div>
   </div>
@@ -29,7 +29,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div>
       <mat-form-field class="description-field full-width">
         <mat-label>Scoring Model Status</mat-label>
-        <mat-select placeholder="Select a Status" [(ngModel)]="data.scoringModel.status">
+        <mat-select placeholder="Select a Status" [(ngModel)]="data.scoringModel.status" [disabled]="!data.canEdit">
           <mat-option *ngFor="let status of data.itemStatuses" [value]="status">
             {{ status }}
           </mat-option>
@@ -41,7 +41,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div>
       <mat-form-field class="description-field full-width">
         <mat-label>Calculation Equation</mat-label>
-        <input matInput [(ngModel)]="data.scoringModel.calculationEquation" />
+        <input matInput [(ngModel)]="data.scoringModel.calculationEquation" [disabled]="!data.canEdit" />
       </mat-form-field>
     </div>
   </div>
@@ -49,27 +49,27 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <b>Scoring Options</b>
     <div class="scoring-option">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringModel.useUserScore">Use Individual User Scoring</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringModel.useUserScore" [disabled]="!data.canEdit">Use Individual User Scoring</mat-checkbox>
       </div>
     </div>
     <div class="scoring-option">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringModel.useTeamScore">Use Team Scoring</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringModel.useTeamScore" [disabled]="!data.canEdit">Use Team Scoring</mat-checkbox>
       </div>
     </div>
     <div class="scoring-option">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringModel.useOfficialScore">Use Official Scoring</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringModel.useOfficialScore" [disabled]="!data.canEdit">Use Official Scoring</mat-checkbox>
       </div>
     </div>
     <div class="scoring-option">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringModel.useTeamAverageScore" [disabled]="!data.scoringModel.useUserScore">Use Team Average Scoring</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringModel.useTeamAverageScore" [disabled]="!data.scoringModel.useUserScore || !data.canEdit">Use Team Average Scoring</mat-checkbox>
       </div>
     </div>
     <div class="scoring-option">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringModel.useTypeAverageScore" [disabled]="!data.scoringModel.useTeamScore">Use Type Average Scoring</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringModel.useTypeAverageScore" [disabled]="!data.scoringModel.useTeamScore || !data.canEdit">Use Type Average Scoring</mat-checkbox>
       </div>
     </div>
   </div>
@@ -77,27 +77,27 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <b>Display Options</b>
     <div class="scoring-option">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringModel.useSubmit">Use Submit Button for Submissions</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringModel.useSubmit" [disabled]="!data.canEdit">Use Submit Button for Submissions</mat-checkbox>
       </div>
     </div>
     <div class="scoring-option">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringModel.hideScoresOnScoreSheet">Hide Option Values On Scoresheet</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringModel.hideScoresOnScoreSheet" [disabled]="!data.canEdit">Hide Option Values On Scoresheet</mat-checkbox>
       </div>
     </div>
     <div class="scoring-option">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringModel.displayCommentTextBoxes">Display Comments as Textboxes</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringModel.displayCommentTextBoxes" [disabled]="!data.canEdit">Display Comments as Textboxes</mat-checkbox>
       </div>
     </div>
     <div class="scoring-option">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringModel.displayScoringModelByMoveNumber">Use Different Scoring Categories by Move Number</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringModel.displayScoringModelByMoveNumber" [disabled]="!data.canEdit">Use Different Scoring Categories by Move Number</mat-checkbox>
       </div>
     </div>
     <div class="scoring-option">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringModel.showPastSituationDescriptions">Show Past Situation Descriptions on Dashboard</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringModel.showPastSituationDescriptions" [disabled]="!data.canEdit">Show Past Situation Descriptions on Dashboard</mat-checkbox>
       </div>
     </div>
     <div class="add-margin"> &nbsp;</div>
@@ -105,7 +105,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Right Side Display</mat-label>
-          <mat-select placeholder="Select a Right Side Display Option" [(ngModel)]="data.scoringModel.rightSideDisplay">
+          <mat-select placeholder="Select a Right Side Display Option" [(ngModel)]="data.scoringModel.rightSideDisplay" [disabled]="!data.canEdit">
             <mat-option *ngFor="let item of data.rightSideDisplays" [value]="item">
               {{ item }}
             </mat-option>
@@ -115,20 +115,20 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
     <div class="scoring-option" *ngIf="data.scoringModel.rightSideDisplay === 'HtmlBlock'">
       <mat-label class="gray">Right Side HTML Block</mat-label>
-      <angular-editor [placeholder]="'Enter content here...'" [(ngModel)]="data.scoringModel.rightSideHtmlBlock" [config]="editorConfig"></angular-editor>
+      <angular-editor [placeholder]="'Enter content here...'" [(ngModel)]="data.scoringModel.rightSideHtmlBlock" [config]="editorConfig" [disabled]="!data.canEdit"></angular-editor>
     </div>
     <div class="scoring-option" *ngIf="data.scoringModel.rightSideDisplay === 'EmbeddedUrl'">
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Right Side URL</mat-label>
-          <input matInput [(ngModel)]="data.scoringModel.rightSideEmbeddedUrl" />
+          <input matInput [(ngModel)]="data.scoringModel.rightSideEmbeddedUrl" [disabled]="!data.canEdit" />
         </mat-form-field>
       </div>
     </div>
   </div>
   <div class="cssLayoutRowStartCenter bottom-button">
     <div class="delete-button">
-      <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>
+      <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!data.canEdit || !errorFree()" style="margin-left: 40px;">Save</button>
     </div>
     <div class="delete-button">
       <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>

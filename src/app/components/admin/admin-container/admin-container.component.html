@@ -89,7 +89,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       [topbarColor]="topbarColor" [topbarTextColor]="topbarTextColor" [sidenav]="sidenav"
       (sidenavToggle)="sidenav.toggle()"></app-topbar>
     <span *ngIf="isSuperUser && (showSection === scoringModelsText)">
-      <app-admin-scoring-models>
+      <app-admin-scoring-models [evaluationList]="evaluationList | async">
       </app-admin-scoring-models>
     </span>
     <span *ngIf="isSuperUser && (showSection === evaluationsText)">

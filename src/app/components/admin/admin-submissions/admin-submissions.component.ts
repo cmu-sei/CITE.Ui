@@ -17,6 +17,7 @@ import {
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
+import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -73,6 +74,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
     private evaluationQuery: EvaluationQuery,
     private submissionDataService: SubmissionDataService,
     private submissionQuery: SubmissionQuery,
+    private teamDataService: TeamDataService,
     private dialogService: DialogService,
     public matDialog: MatDialog
   ) {
@@ -111,6 +113,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
 
   selectEvaluation(evaluationId: string) {
     this.submissionDataService.load(evaluationId, '', '', '');
+    this.teamDataService.loadByEvaluationId(evaluationId);
   }
 
   selectMove(move: number) {
