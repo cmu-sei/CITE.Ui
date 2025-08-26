@@ -1,6 +1,6 @@
 <!--
 Copyright 2022 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license, please see LICENSE.md in the
+Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
@@ -21,64 +21,74 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   <div class="button-end">
     <mat-paginator #paginator [length]="filteredUserList?.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
+    [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
   </div>
 </div>
 
 <mat-accordion displayMode="flat" class="table">
-  <mat-expansion-panel *ngIf="addingNewUser" [disabled]="true">
-    <mat-expansion-panel-header class="row">
-      <span class="cell new-user-cell">
-        <label>Add New User:</label>
-        <mat-form-field class="new-user-spacing">
-          <input matInput placeholder="User ID" [(ngModel)]="newUser.id" matTooltip="Must be a valid Guid" />
-        </mat-form-field>
-        <mat-form-field class="new-user-spacing">
-          <input matInput placeholder="User Name" [(ngModel)]="newUser.name"
-            matTooltip="Must have a minimum of 4 characters" (keydown)="handleInput($event)" />
-        </mat-form-field>
-        <button mat-icon-button class="new-user-spacing" (click)="addUserRequest(true)"
-          [disabled]="!newUser.id || !newUser.name || newUser.name.length < 4">
-          <mat-icon class="mdi-24px" fontIcon="mdi-account-plus" matTooltip="Add this user"></mat-icon>
-        </button>
-        <button mat-icon-button (click)="addUserRequest(false)" matTooltip="Cancel">
-          <mat-icon class="mdi-24px" fontIcon="mdi-account-remove"></mat-icon>
-        </button>
-      </span>
-    </mat-expansion-panel-header>
-  </mat-expansion-panel>
+  @if (addingNewUser) {
+    <mat-expansion-panel [disabled]="true">
+      <mat-expansion-panel-header class="row">
+        <span class="cell new-user-cell">
+          <label>Add New User:</label>
+          <mat-form-field class="new-user-spacing">
+            <input matInput placeholder="User ID" [(ngModel)]="newUser.id" matTooltip="Must be a valid Guid" />
+          </mat-form-field>
+          <mat-form-field class="new-user-spacing">
+            <input matInput placeholder="User Name" [(ngModel)]="newUser.name"
+              matTooltip="Must have a minimum of 4 characters" (keydown)="handleInput($event)" />
+            </mat-form-field>
+            <button mat-icon-button class="new-user-spacing" (click)="addUserRequest(true)"
+              [disabled]="!newUser.id || !newUser.name || newUser.name.length < 4">
+              <mat-icon class="mdi-24px" fontIcon="mdi-account-plus" matTooltip="Add this user"></mat-icon>
+            </button>
+            <button mat-icon-button (click)="addUserRequest(false)" matTooltip="Cancel">
+              <mat-icon class="mdi-24px" fontIcon="mdi-account-remove"></mat-icon>
+            </button>
+          </span>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+    }
 
-  <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
-    <div class="header-cell user-cell" mat-sort-header="name"><span style="margin-left: 40px;">User</span></div>
-    <div class="header-cell permission-cell">Permissions</div>
-  </section>
+    <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
+      <div class="header-cell user-cell" mat-sort-header="name"><span style="margin-left: 40px;">User</span></div>
+      <div class="header-cell permission-cell">Permissions</div>
+    </section>
 
-  <mat-expansion-panel *ngFor="let user of paginateUsers(pageIndex, pageSize)" [disabled]="true">
-    <mat-expansion-panel-header class="row" *ngIf="!isLoading">
-      <span class="cell user-cell">
-        <button mat-icon-button ngxClipboard (click)="$event.stopPropagation()" title="Copy User ID:  {{ user.id }}">
-          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy"></mat-icon>
-        </button>
-        {{ user.name }}
-      </span>
-      <span class="cell permission-cell">
-        <div class="cssLayoutRowStartCenter">
-          <div class="permission-item" *ngFor="let permission of permissionList">
-            <mat-checkbox [checked]="hasPermission(permission.id, user)"
-              (change)="toggleUserPermission(user, permission.id)" style="margin-right: 20px;">{{ permission.key
-              }}</mat-checkbox>
-          </div>
-          <button mat-icon-button class="button-end" (click)="deleteUserRequest(user); $event.stopPropagation()"
-            title="Delete User">
-            <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
-          </button>
-        </div>
-      </span>
-    </mat-expansion-panel-header>
-  </mat-expansion-panel>
-</mat-accordion>
+    @for (user of paginateUsers(pageIndex, pageSize); track user) {
+      <mat-expansion-panel [disabled]="true">
+        @if (!isLoading) {
+          <mat-expansion-panel-header class="row">
+            <span class="cell user-cell">
+              <button mat-icon-button ngxClipboard (click)="$event.stopPropagation()" title="Copy User ID:  {{ user.id }}">
+                <mat-icon class="mdi-18px" fontIcon="mdi-content-copy"></mat-icon>
+              </button>
+              {{ user.name }}
+            </span>
+            <span class="cell permission-cell">
+              <div class="cssLayoutRowStartCenter">
+                @for (permission of permissionList; track permission) {
+                  <div class="permission-item">
+                    <mat-checkbox [checked]="hasPermission(permission.id, user)"
+                      (change)="toggleUserPermission(user, permission.id)" style="margin-right: 20px;">{{ permission.key
+                    }}</mat-checkbox>
+                  </div>
+                }
+                <button mat-icon-button class="button-end" (click)="deleteUserRequest(user); $event.stopPropagation()"
+                  title="Delete User">
+                  <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
+                </button>
+              </div>
+            </span>
+          </mat-expansion-panel-header>
+        }
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
 
-<mat-card appearance="outlined" *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center;">
-  <mat-progress-spinner color="primary" mode="indeterminate">
-  </mat-progress-spinner>
-</mat-card>
+  @if (isLoading) {
+    <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </mat-card>
+  }

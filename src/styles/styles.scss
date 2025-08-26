@@ -3,8 +3,9 @@
 
 @use "@angular/material" as mat;
 @use "./theme-colors" as theme;
-@include mat.core();
-@import '@mdi/font';
+@use '@mdi/font/scss/materialdesignicons.scss';
+@include mat.elevation-classes();
+@include mat.app-background();
 
 html {
   @include mat.theme((color: theme.$primary-palette,
@@ -43,9 +44,9 @@ html {
 
 // remove the border around paginator items per page selection
 mat-paginator {
-  --mdc-outlined-text-field-outline-color: transparent;
-  --mdc-outlined-text-field-hover-outline-color: transparent;
-  --mdc-outlined-text-field-focus-outline-color: transparent;
+  --mat-form-field-outlined-outline-color: transparent;
+  --mat-form-field-outlined-hover-outline-color: transparent;
+  --mat-form-field-outlined-focus-outline-color: transparent;
   min-width: 200px !important;
 }
 

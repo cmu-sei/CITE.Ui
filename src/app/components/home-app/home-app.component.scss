@@ -2,7 +2,8 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 @use "@angular/material" as mat;
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 .elevate {
   @include mat.elevation(2);

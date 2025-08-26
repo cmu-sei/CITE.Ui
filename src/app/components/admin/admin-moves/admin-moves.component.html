@@ -1,6 +1,6 @@
 <!--
 Copyright 2022 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license, please see LICENSE.md in the
+Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
@@ -28,29 +28,35 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </section>
 
-  <mat-expansion-panel *ngFor="let move of sortedMoves" [disabled]="true">
-    <mat-expansion-panel-header class="row" *ngIf="!isLoading">
-      <div class="cell cell-two">
-        <button mat-icon-button (click)="addOrEditMove(move); $event.stopPropagation()" style="outline: none;"
-          title="Edit Move">
-          <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
-        </button>
-        <button mat-icon-button (click)="deleteMoveRequest(move); $event.stopPropagation()" title="Delete Move"
-          [disabled]="noChanges">
-          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
-        </button>
-      </div>
-      <div class="cell cell-one center-self">
-        {{ move.moveNumber }}
-      </div>
-      <div class="cell cell-eight center-self">
-        {{ move.description }}
-      </div>
-    </mat-expansion-panel-header>
-  </mat-expansion-panel>
+  @for (move of sortedMoves; track move) {
+    <mat-expansion-panel [disabled]="true">
+      @if (!isLoading) {
+        <mat-expansion-panel-header class="row">
+          <div class="cell cell-two">
+            <button mat-icon-button (click)="addOrEditMove(move); $event.stopPropagation()" style="outline: none;"
+              title="Edit Move">
+              <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+            </button>
+            <button mat-icon-button (click)="deleteMoveRequest(move); $event.stopPropagation()" title="Delete Move"
+              [disabled]="noChanges">
+              <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
+            </button>
+          </div>
+          <div class="cell cell-one center-self">
+            {{ move.moveNumber }}
+          </div>
+          <div class="cell cell-eight center-self">
+            {{ move.description }}
+          </div>
+        </mat-expansion-panel-header>
+      }
+    </mat-expansion-panel>
+  }
 </mat-accordion>
 
-<mat-card appearance="outlined" *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center;">
-  <mat-progress-spinner color="primary" mode="indeterminate">
-  </mat-progress-spinner>
-</mat-card>
+@if (isLoading) {
+  <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
+    <mat-progress-spinner color="primary" mode="indeterminate">
+    </mat-progress-spinner>
+  </mat-card>
+}
