@@ -1,0 +1,212 @@
+// Copyright 2025 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license, please see LICENSE.md in the
+// project root for license information or contact permission@sei.cmu.edu for full terms.
+
+@use '@angular/material' as mat;
+@use '../../../../styles/styles.scss';
+
+.description-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.value-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: right;
+  min-width: 80px;
+}
+
+.mat-mdc-cell {
+  border: none !important;
+}
+
+.mat-mdc-row {
+  border: none !important;
+}
+
+.mat-column-value {
+  flex: 0 0 5% !important;
+  width: 5% !important;
+  justify-content: center;
+}
+
+.mat-column-description {
+  flex: 0 0 95% !important;
+  width: 95% !important;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title-row {
+  position: sticky;
+  top: -.5px;
+  z-index: 100;
+}
+
+.comment-list {
+  margin-left: 25px;
+  margin-bottom: 10px;
+  font-style: italic;
+  font-size: smaller;
+}
+
+.comment-box {
+  margin-left: 25px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.comment {
+  width: calc(100% - 32px);
+  resize: vertical;
+
+}
+
+.indent-div {
+  margin-left: 25px;
+  width: 100%;
+}
+
+.no-indent-div {
+  width: 100%;
+}
+
+.value-div {
+  width: 100%;
+  text-align: right;
+}
+
+.scoring-category-description {
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.score-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-wrap: wrap;
+  word-wrap: break-word;
+}
+
+.checkbox-div {
+  display: flex;
+  flex: 1;
+  width: 40px;
+}
+
+.description-div {
+  display: flex;
+  flex: 90;
+}
+
+.small-icon {
+  width: 22px !important;
+  height: 22px !important;
+  display: inline;
+}
+
+.small-button {
+  width: 22px !important;
+  height: 22px !important;
+  line-height: unset;
+}
+
+.header-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.header-text {
+  display: flex;
+  flex: 15;
+  width: 100%;
+  justify-content: center;
+  align-self: center;
+}
+
+.right-buttons {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+
+.title-font {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.navigation-font {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.status-font {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.move-button {
+  transform: scale(0.8);
+  min-width: 50px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.header-div {
+  width: 100%;
+  text-align: center;
+  height: 50px;
+}
+
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  #printable-area {
+    overflow: visible !important;
+    background-color: white !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    padding: 15px;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  html,
+  body {
+    height: initial !important;
+    overflow: initial !important;
+  }
+}

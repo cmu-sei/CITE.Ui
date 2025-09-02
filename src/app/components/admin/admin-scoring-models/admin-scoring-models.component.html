@@ -4,105 +4,117 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="cssLayoutRowStartCenter">
-  <div class="sp-icon">
-    <mat-icon class="mdi-24px" fontIcon="mdi-grid" [ngStyle]="{'color': topbarColor}"></mat-icon>
-  </div>
-  <mat-form-field style="width: 300px; margin-left: 20px;">
-    <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()" />
-  </mat-form-field>
-  <div style="width: 30px;">
-    <button mat-icon-button style="outline: none;" title="Clear Search" (click)="clearFilter()">
-      <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
-    </button>
-  </div>
-  <div style="width: 150px; margin-left: 20px;">
-    <mat-checkbox [(ngModel)]="showAll" (change)="applyFilter()">Show All</mat-checkbox>
-  </div>
-  @if (!addingNewScoringModel) {
-    <div>
-      <mat-paginator #paginator [length]="filteredScoringModelList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
+@if (!previewScoringModelId) {
+  <div class="cssLayoutRowStartCenter">
+    <div class="sp-icon">
+      <mat-icon class="mdi-24px" fontIcon="mdi-grid" [ngStyle]="{'color': topbarColor}"></mat-icon>
     </div>
-  }
-</div>
-
-<mat-accordion displayMode="flat">
-  <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
-    <span class="header-cell first-cell">
-      <button mat-icon-button (click)="addOrEditScoringModel(null)" style="outline: none; margin-left: 20px;"
-        title="Add Scoring Model" [disabled]="isBusy">
-        <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+    <mat-form-field style="width: 300px; margin-left: 20px;">
+      <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()" />
+    </mat-form-field>
+    <div style="width: 30px;">
+      <button mat-icon-button style="outline: none;" title="Clear Search" (click)="clearFilter()">
+        <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
       </button>
-      <button mat-icon-button (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
-        title="Upload Scoring Model" [disabled]="isBusy">
-        <mat-icon class="mdi-18px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
-      </button>
-    </span>
-    <span class="header-cell description-cell" mat-sort-header="description">Scoring Model Description</span>
-    <span class="header-cell one-cell" mat-sort-header="createdBy">Created By</span>
-    <span class="header-cell date-cell" mat-sort-header="dateCreated">Date</span>
-    <span class="header-cell one-cell" mat-sort-header="status">Status</span>
-  </section>
+    </div>
+    <div style="width: 150px; margin-left: 20px;">
+      <mat-checkbox [(ngModel)]="showAll" (change)="applyFilter()">Show All</mat-checkbox>
+    </div>
+    @if (!addingNewScoringModel) {
+      <div>
+        <mat-paginator #paginator [length]="filteredScoringModelList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
+      </div>
+    }
+  </div>
 
-  @for (scoringModel of displayedScoringModels; track scoringModel) {
-    <mat-expansion-panel
-      [expanded]="editScoringModel.id === scoringModel.id">
-      @if (!isLoading) {
-        <mat-expansion-panel-header class="row"
-          (click)="togglePanel(scoringModel); $event.stopPropagation()">
-          <span class="cell first-cell">
-            <button mat-icon-button (click)="addOrEditScoringModel(scoringModel); $event.stopPropagation()"
-              title="Edit {{ scoringModel.description }}" [disabled]="isBusy">
-              <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline" alt="Edit"></mat-icon>
-            </button>
-            <button mat-icon-button (click)="copyScoringModel(scoringModel.id); $event.stopPropagation();"
-              title="Copy {{ scoringModel.description }}" [disabled]="isBusy">
-              <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
-            </button>
-            <button mat-icon-button (click)="downloadScoringModel(scoringModel); $event.stopPropagation();"
-              title="Download {{ scoringModel.description }}" [disabled]="isBusy">
-              <mat-icon class="mdi-18px" fontIcon="mdi-download" alt="Download"></mat-icon>
-            </button>
-            <button mat-icon-button (click)="deleteScoringModelRequest(scoringModel); $event.stopPropagation()"
-              title="Delete {{ scoringModel.description }}" [disabled]="isBusy || scoringModel.evaluationId">
-              <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can" alt="Delete"></mat-icon>
-            </button>
-          </span>
-          <span class="cell description-cell">
-            <span>
-              {{ scoringModel.description }} <b>{{ scoringModelEvaluation(scoringModel.evaluationId) }}</b>
+  <mat-accordion displayMode="flat">
+    <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
+      <span class="header-cell first-cell">
+        <button mat-icon-button (click)="addOrEditScoringModel(null)" style="outline: none; margin-left: 20px;"
+          title="Add Scoring Model" [disabled]="isBusy">
+          <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+        </button>
+        <button mat-icon-button (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
+          title="Upload Scoring Model" [disabled]="isBusy">
+          <mat-icon class="mdi-18px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
+        </button>
+      </span>
+      <span class="header-cell description-cell" mat-sort-header="description">Scoring Model Description</span>
+      <span class="header-cell one-cell" mat-sort-header="createdBy">Created By</span>
+      <span class="header-cell date-cell" mat-sort-header="dateCreated">Date</span>
+      <span class="header-cell one-cell" mat-sort-header="status">Status</span>
+    </section>
+
+    @for (scoringModel of displayedScoringModels; track scoringModel) {
+      <mat-expansion-panel
+        [expanded]="editScoringModel.id === scoringModel.id">
+        @if (!isLoading) {
+          <mat-expansion-panel-header class="row"
+            (click)="togglePanel(scoringModel); $event.stopPropagation()">
+            <span class="cell first-cell">
+              <button mat-icon-button (click)="previewScoringModel(scoringModel.id); $event.stopPropagation()"
+                title="Preview {{ scoringModel.description }}" [disabled]="isBusy">
+                <mat-icon class="mdi-18px" fontIcon="mdi-eye-outline" alt="Preview"></mat-icon>
+              </button>
+              <button mat-icon-button (click)="addOrEditScoringModel(scoringModel); $event.stopPropagation()"
+                title="Edit {{ scoringModel.description }}" [disabled]="isBusy">
+                <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline" alt="Edit"></mat-icon>
+              </button>
+              <button mat-icon-button (click)="copyScoringModel(scoringModel.id); $event.stopPropagation();"
+                title="Copy {{ scoringModel.description }}" [disabled]="isBusy">
+                <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
+              </button>
+              <button mat-icon-button (click)="downloadScoringModel(scoringModel); $event.stopPropagation();"
+                title="Download {{ scoringModel.description }}" [disabled]="isBusy">
+                <mat-icon class="mdi-18px" fontIcon="mdi-download" alt="Download"></mat-icon>
+              </button>
+              <button mat-icon-button (click)="deleteScoringModelRequest(scoringModel); $event.stopPropagation()"
+                title="Delete {{ scoringModel.description }}" [disabled]="isBusy || scoringModel.evaluationId">
+                <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can" alt="Delete"></mat-icon>
+              </button>
             </span>
-          </span>
-          <span class="cell one-cell">
-            {{ getUserName(scoringModel.createdBy) }}
-          </span>
-          <span class="cell date-cell">
-            {{ scoringModel.dateCreated | date:"MM/dd/yyyy HH:mm" }}
-          </span>
-          <span class="cell one-cell">
-            {{ scoringModel.status }}
-          </span>
-        </mat-expansion-panel-header>
-      }
-      @if (editScoringModel.id === scoringModel.id) {
-        <div class="sub-container">
-          <app-admin-scoring-categories [scoringModelId]="scoringModel.id" [editScoringCategoryId]="scoringCategoryId"
-            [displayScoringModelbyMoveNumber]="scoringModel.displayScoringModelByMoveNumber"
-          (scoringCategoryClick)="scoringCategoryId = $event.toString()"></app-admin-scoring-categories>
-        </div>
-      }
-    </mat-expansion-panel>
+            <span class="cell description-cell">
+              <span>
+                {{ scoringModel.description }} <b>{{ scoringModelEvaluation(scoringModel.evaluationId) }}</b>
+              </span>
+            </span>
+            <span class="cell one-cell">
+              {{ getUserName(scoringModel.createdBy) }}
+            </span>
+            <span class="cell date-cell">
+              {{ scoringModel.dateCreated | date:"MM/dd/yyyy HH:mm" }}
+            </span>
+            <span class="cell one-cell">
+              {{ scoringModel.status }}
+            </span>
+          </mat-expansion-panel-header>
+        }
+        @if (editScoringModel.id === scoringModel.id) {
+          <div class="sub-container">
+            <app-admin-scoring-categories [scoringModelId]="scoringModel.id" [editScoringCategoryId]="scoringCategoryId"
+              [displayScoringModelbyMoveNumber]="scoringModel.displayScoringModelByMoveNumber"
+            (scoringCategoryClick)="scoringCategoryId = $event.toString()"></app-admin-scoring-categories>
+          </div>
+        }
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+
+  @if (isLoading) {
+    <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </mat-card>
   }
-</mat-accordion>
 
-@if (isLoading) {
-  <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
-    <mat-progress-spinner color="primary" mode="indeterminate">
-    </mat-progress-spinner>
-  </mat-card>
+
+
+  <input hidden (change)="selectFile($event)" (cancel)="isBusy = false" #jsonInput type="file" accept=".json" />
 }
-
-
-
-<input hidden (change)="selectFile($event)" (cancel)="isBusy = false" #jsonInput type="file" accept=".json" />
+@else {
+  <app-admin-preview
+    [scoringModelId]="previewScoringModelId"
+    (closeMe)="previewScoringModel('')"
+  ></app-admin-preview>
+}
