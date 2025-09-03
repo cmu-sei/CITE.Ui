@@ -1,6 +1,6 @@
 <!--
 Copyright 2022 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license, please see LICENSE.md in the
+Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 @let showSection = showSection$ | async;
@@ -15,109 +15,145 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </a>
     </mat-toolbar>
     <mat-list class="appitems-container">
-      <mat-list-item *ngIf="isSuperUser" id="wrapper showhand" (click)="gotoSection(evaluationsText)"
-        [ngClass]="getSelectedClass(evaluationsText)">
-        <mat-icon matListItemIcon fontIcon="mdi-briefcase-outline"></mat-icon>
-        {{ evaluationsText }}
-        <button aria-labelledby="evaluationsText" mat-icon-button class="pull-right">
-          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-        </button>
-      </mat-list-item>
-      <mat-list-item *ngIf="isSuperUser" [ngClass]="getSelectedClass(scoringModelsText)" id="wrapper showhand"
-        (click)="gotoSection(scoringModelsText)">
-        <mat-icon matListItemIcon fontIcon="mdi-grid"></mat-icon>
-        {{ scoringModelsText }}
-        <button aria-labelledby="scoringModelsText" mat-icon-button class="pull-right">
-          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-        </button>
-      </mat-list-item>
-      <mat-list-item *ngIf="canAccessAdminSection" [ngClass]="getSelectedClass(actionsText)" id="wrapper showhand"
-        (click)="gotoSection(actionsText)">
-        <mat-icon matListItemIcon fontIcon="mdi-clipboard-list-outline"></mat-icon>
-        {{ actionsText }}
-        <button aria-labelledby="actionsText" mat-icon-button class="pull-right">
-          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-        </button>
-      </mat-list-item>
-      <mat-list-item *ngIf="canAccessAdminSection" [ngClass]="getSelectedClass(rolesText)" id="wrapper showhand"
-        (click)="gotoSection(rolesText)">
-        <mat-icon matListItemIcon fontIcon="mdi-clipboard-account-outline"></mat-icon>
-        {{ rolesText }}
-        <button aria-labelledby="rolesText" mat-icon-button class="pull-right">
-          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-        </button>
-      </mat-list-item>
-      <mat-list-item *ngIf="isSuperUser" [ngClass]="getSelectedClass(submissionsText)" id="wrapper showhand"
-        (click)="gotoSection(submissionsText)">
-        <mat-icon matListItemIcon fontIcon="mdi-playlist-play"></mat-icon>
-        {{ submissionsText }}
-        <button aria-labelledby="submissionsText" mat-icon-button class="pull-right">
-          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-        </button>
-      </mat-list-item>
-      <mat-list-item *ngIf="isSuperUser" [ngClass]="getSelectedClass(teamTypesText)" id="wrapper showhand"
-        (click)="gotoSection(teamTypesText)">
-        <mat-icon matListItemIcon fontIcon="mdi-playlist-play"></mat-icon>
-        {{ teamTypesText }}
-        <button aria-labelledby="teamTypesText" mat-icon-button class="pull-right">
-          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-        </button>
-      </mat-list-item>
-      <mat-list-item *ngIf="isSuperUser" [ngClass]="getSelectedClass(usersText)" id="wrapper showhand"
-        (click)="gotoSection(usersText)">
-        <mat-icon matListItemIcon fontIcon="mdi-account"></mat-icon>
-        {{ usersText }}
-        <button aria-labelledby="usersText" mat-icon-button class="pull-right">
-          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-        </button>
-      </mat-list-item>
+      @if (isSuperUser) {
+        <mat-list-item id="wrapper showhand" (click)="gotoSection(evaluationsText)"
+          [ngClass]="getSelectedClass(evaluationsText)">
+          <mat-icon matListItemIcon fontIcon="mdi-briefcase-outline"></mat-icon>
+          {{ evaluationsText }}
+          <button aria-labelledby="evaluationsText" mat-icon-button class="pull-right">
+            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+          </button>
+        </mat-list-item>
+      }
+      @if (isSuperUser) {
+        <mat-list-item [ngClass]="getSelectedClass(scoringModelsText)" id="wrapper showhand"
+          (click)="gotoSection(scoringModelsText)">
+          <mat-icon matListItemIcon fontIcon="mdi-grid"></mat-icon>
+          {{ scoringModelsText }}
+          <button aria-labelledby="scoringModelsText" mat-icon-button class="pull-right">
+            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+          </button>
+        </mat-list-item>
+      }
+      @if (canAccessAdminSection) {
+        <mat-list-item [ngClass]="getSelectedClass(actionsText)" id="wrapper showhand"
+          (click)="gotoSection(actionsText)">
+          <mat-icon matListItemIcon fontIcon="mdi-clipboard-list-outline"></mat-icon>
+          {{ actionsText }}
+          <button aria-labelledby="actionsText" mat-icon-button class="pull-right">
+            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+          </button>
+        </mat-list-item>
+      }
+      @if (canAccessAdminSection) {
+        <mat-list-item [ngClass]="getSelectedClass(rolesText)" id="wrapper showhand"
+          (click)="gotoSection(rolesText)">
+          <mat-icon matListItemIcon fontIcon="mdi-clipboard-account-outline"></mat-icon>
+          {{ rolesText }}
+          <button aria-labelledby="rolesText" mat-icon-button class="pull-right">
+            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+          </button>
+        </mat-list-item>
+      }
+      @if (isSuperUser) {
+        <mat-list-item [ngClass]="getSelectedClass(submissionsText)" id="wrapper showhand"
+          (click)="gotoSection(submissionsText)">
+          <mat-icon matListItemIcon fontIcon="mdi-playlist-play"></mat-icon>
+          {{ submissionsText }}
+          <button aria-labelledby="submissionsText" mat-icon-button class="pull-right">
+            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+          </button>
+        </mat-list-item>
+      }
+      @if (isSuperUser) {
+        <mat-list-item [ngClass]="getSelectedClass(teamTypesText)" id="wrapper showhand"
+          (click)="gotoSection(teamTypesText)">
+          <mat-icon matListItemIcon fontIcon="mdi-playlist-play"></mat-icon>
+          {{ teamTypesText }}
+          <button aria-labelledby="teamTypesText" mat-icon-button class="pull-right">
+            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+          </button>
+        </mat-list-item>
+      }
+      @if (isSuperUser) {
+        <mat-list-item [ngClass]="getSelectedClass(usersText)" id="wrapper showhand"
+          (click)="gotoSection(usersText)">
+          <mat-icon matListItemIcon fontIcon="mdi-account"></mat-icon>
+          {{ usersText }}
+          <button aria-labelledby="usersText" mat-icon-button class="pull-right">
+            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+          </button>
+        </mat-list-item>
+      }
     </mat-list>
-    <div class="app-versions" style="margin-bottom: 58px;" *ngIf="!hideTopbar">
-      Versions: UI {{ uiVersion }}, API {{ apiVersion }}
-    </div>
-    <div class="app-versions" *ngIf="hideTopbar">
-      Versions: UI {{ uiVersion }}, API {{ apiVersion }}
-    </div>
-    <img *ngIf="!hideTopbar" class="crucible-logo" [src]="
+    @if (!hideTopbar) {
+      <div class="app-versions" style="margin-bottom: 58px;">
+        Versions: UI {{ uiVersion }}, API {{ apiVersion }}
+      </div>
+    }
+    @if (hideTopbar) {
+      <div class="app-versions">
+        Versions: UI {{ uiVersion }}, API {{ apiVersion }}
+      </div>
+    }
+    @if (!hideTopbar) {
+<img class="crucible-logo" [src]="
                     (theme$ | async) === 'light-theme'
           ? 'assets/img/crucible-logo-light.png'
           : 'assets/img/crucible-logo-dark.png'
       " />
+    }
   </mat-sidenav>
   <mat-sidenav-content>
-    <app-topbar *ngIf="!hideTopbar" [title]="showSection" [topbarView]="TopbarView.CITE_ADMIN"
-      [topbarColor]="topbarColor" [topbarTextColor]="topbarTextColor" [sidenav]="sidenav"
+    @if (!hideTopbar) {
+      <app-topbar [title]="showSection" [topbarView]="TopbarView.CITE_ADMIN"
+        [topbarColor]="topbarColor" [topbarTextColor]="topbarTextColor" [sidenav]="sidenav"
       (sidenavToggle)="sidenav.toggle()"></app-topbar>
-    <span *ngIf="isSuperUser && (showSection === scoringModelsText)">
-      <app-admin-scoring-models [evaluationList]="evaluationList | async">
-      </app-admin-scoring-models>
-    </span>
-    <span *ngIf="isSuperUser && (showSection === evaluationsText)">
-      <app-admin-evaluations [evaluationList]="evaluationList | async">
-      </app-admin-evaluations>
-    </span>
-    <span *ngIf="canAccessAdminSection && (showSection === actionsText)">
-      <app-admin-actions [showSelectionControls]="canSwitchEvaluations | async">
-      </app-admin-actions>
-    </span>
-    <span *ngIf="canAccessAdminSection && (showSection === rolesText)">
-      <app-admin-roles [showSelectionControls]="canSwitchEvaluations | async">
-      </app-admin-roles>
-    </span>
-    <span *ngIf="isSuperUser && (showSection === submissionsText)">
-      <app-admin-submissions>
-      </app-admin-submissions>
-    </span>
-    <span *ngIf="isSuperUser && (showSection === teamTypesText)">
-      <app-admin-teamtypes>
-      </app-admin-teamtypes>
-    </span>
-    <span *ngIf="isSuperUser && (showSection === usersText)">
-      <app-admin-users [userList]="userList | async" [permissionList]="permissionList | async"
-        (removeUserPermission)="removeUserPermissionHandler($event)"
-        (addUserPermission)="addUserPermissionHandler($event)" (addUser)="addUserHandler($event)"
-        (deleteUser)="deleteUserHandler($event)">
-      </app-admin-users>
-    </span>
+    }
+    @if (isSuperUser && (showSection === scoringModelsText)) {
+      <span>
+        <app-admin-scoring-models [evaluationList]="evaluationList | async">
+        </app-admin-scoring-models>
+      </span>
+    }
+    @if (isSuperUser && (showSection === evaluationsText)) {
+      <span>
+        <app-admin-evaluations [evaluationList]="evaluationList | async">
+        </app-admin-evaluations>
+      </span>
+    }
+    @if (canAccessAdminSection && (showSection === actionsText)) {
+      <span>
+        <app-admin-actions [showSelectionControls]="canSwitchEvaluations | async">
+        </app-admin-actions>
+      </span>
+    }
+    @if (canAccessAdminSection && (showSection === rolesText)) {
+      <span>
+        <app-admin-roles [showSelectionControls]="canSwitchEvaluations | async">
+        </app-admin-roles>
+      </span>
+    }
+    @if (isSuperUser && (showSection === submissionsText)) {
+      <span>
+        <app-admin-submissions>
+        </app-admin-submissions>
+      </span>
+    }
+    @if (isSuperUser && (showSection === teamTypesText)) {
+      <span>
+        <app-admin-teamtypes>
+        </app-admin-teamtypes>
+      </span>
+    }
+    @if (isSuperUser && (showSection === usersText)) {
+      <span>
+        <app-admin-users [userList]="userList | async" [permissionList]="permissionList | async"
+          (removeUserPermission)="removeUserPermissionHandler($event)"
+          (addUserPermission)="addUserPermissionHandler($event)" (addUser)="addUserHandler($event)"
+          (deleteUser)="deleteUserHandler($event)">
+        </app-admin-users>
+      </span>
+    }
   </mat-sidenav-content>
 </mat-sidenav-container>

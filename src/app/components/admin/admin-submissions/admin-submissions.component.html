@@ -1,6 +1,6 @@
 <!--
 Copyright 2022 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license, please see LICENSE.md in the
+Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
@@ -13,31 +13,37 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-label>Evaluation</mat-label>
     <mat-select placeholder="Evaluation" [value]="selectedEvaluation.id"
       (selectionChange)="selectEvaluation($event.value)">
-      <mat-option *ngFor="let evaluation of evaluationList" [value]="evaluation.id">
-        {{ evaluation.description }}
-      </mat-option>
+      @for (evaluation of evaluationList; track evaluation) {
+        <mat-option [value]="evaluation.id">
+          {{ evaluation.description }}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <mat-form-field class="button-margins">
     <mat-label>Types</mat-label>
     <mat-select placeholder="Types" [(ngModel)]="selectedSubmissionTypes" multiple
       (selectionChange)="criteriaChanged()">
-      <mat-option *ngFor="let submissionType of submissionTypes" [value]="submissionType">{{ submissionType
+      @for (submissionType of submissionTypes; track submissionType) {
+        <mat-option [value]="submissionType">{{ submissionType
         }}</mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <mat-form-field class="button-margins">
     <mat-label>Move</mat-label>
     <mat-select placeholder="Move" [value]="selectedMove" (selectionChange)="selectMove($event.value)">
       <mat-option [value]="-1">All Moves</mat-option>
-      <mat-option *ngFor="let move of moveList" [value]="move">
-        {{ move }}
-      </mat-option>
+      @for (move of moveList; track move) {
+        <mat-option [value]="move">
+          {{ move }}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <div>
     <mat-paginator #paginator [length]="filteredSubmission.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
+    [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
   </div>
 </div>
 
@@ -54,7 +60,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           [cbContent]="row.id"
           (click)="$event.stopPropagation()"
           title="Copy Submission ID to clipboard:  {{ row.id }}"
-        >
+          >
           <mat-icon
             class="mdi-18px"
             fontIcon="mdi-content-copy">
@@ -103,7 +109,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
 </div>
 
 <!-- Loading Indicator -->
-<mat-card appearance="outlined" *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
-  <mat-progress-spinner color="primary" mode="indeterminate">
-  </mat-progress-spinner>
-</mat-card>
+@if (isLoading) {
+  <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center">
+    <mat-progress-spinner color="primary" mode="indeterminate">
+    </mat-progress-spinner>
+  </mat-card>
+}

@@ -12,47 +12,48 @@ project root for license information or contact permission@sei.cmu.edu for full 
     title="Cancel"
     class="close-button"
     tabindex="-1"
-  >
+    >
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
   </button>
 </div>
-<div mat-dialog-content *ngIf="data && data.scoringOption">
-  <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field full-width">
-        <mat-label>Scoring Option Description</mat-label>
-        <textarea matInput [(ngModel)]="data.scoringOption.description"></textarea>
-      </mat-form-field>
+@if (data && data.scoringOption) {
+  <div mat-dialog-content>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="description-field full-width">
+          <mat-label>Scoring Option Description</mat-label>
+          <textarea matInput [(ngModel)]="data.scoringOption.description"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="description-field">
+          <mat-label>Display Order</mat-label>
+          <input matInput [(ngModel)]="data.scoringOption.displayOrder" />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="description-field">
+          <mat-label>Value</mat-label>
+          <input matInput [(ngModel)]="data.scoringOption.value" />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="add-margin">
+      <div>
+        <mat-checkbox [(ngModel)]="data.scoringOption.isModifier">Is a Modifier</mat-checkbox>
+      </div>
+    </div>
+    <div class="cssLayoutRowStartCenter bottom-button">
+      <div class="delete-button">
+        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>
+      </div>
+      <div class="delete-button">
+        <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
+      </div>
     </div>
   </div>
-  <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field">
-        <mat-label>Display Order</mat-label>
-        <input matInput [(ngModel)]="data.scoringOption.displayOrder" />
-      </mat-form-field>
-    </div>
-  </div>
-  <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field">
-        <mat-label>Value</mat-label>
-        <input matInput [(ngModel)]="data.scoringOption.value" />
-      </mat-form-field>
-    </div>
-  </div>
-  <div class="add-margin">
-    <div>
-      <mat-checkbox [(ngModel)]="data.scoringOption.isModifier">Is a Modifier</mat-checkbox>
-    </div>
-  </div>
-  <div class="cssLayoutRowStartCenter bottom-button">
-    <div class="delete-button">
-      <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>
-    </div>
-    <div class="delete-button">
-      <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
-    </div>
-  </div>
-
-</div>
+}

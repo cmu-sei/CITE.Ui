@@ -12,52 +12,53 @@ project root for license information or contact permission@sei.cmu.edu for full 
     title="Cancel"
     class="close-button"
     tabindex="-1"
-  >
+    >
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
   </button>
 </div>
-<div mat-dialog-content *ngIf="data && data.move">
-  <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field">
-        <mat-label>Move Number</mat-label>
-        <input matInput [(ngModel)]="data.move.moveNumber" />
-      </mat-form-field>
+@if (data && data.move) {
+  <div mat-dialog-content>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="description-field">
+          <mat-label>Move Number</mat-label>
+          <input matInput [(ngModel)]="data.move.moveNumber" />
+        </mat-form-field>
+      </div>
     </div>
-  </div>
-  <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field full-width">
-        <mat-label>Move Description</mat-label>
-        <input matInput [(ngModel)]="data.move.description" />
-      </mat-form-field>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="description-field full-width">
+          <mat-label>Move Description</mat-label>
+          <input matInput [(ngModel)]="data.move.description" />
+        </mat-form-field>
+      </div>
     </div>
-  </div>
-  <div class="add-margin">
-    <div>
-      <mat-form-field>
-        <input
-          matInput
-          id = "[ngxMatDatetimePicker]='picker'"
-          placeholder="Situation Date / Time"
-          [formControl]="situationDateFormControl"
-          (inputChange)="saveMove('situationDate')"
-          (dateChange)="saveMove('situationDate')"
-        >
-     </mat-form-field>
+    <div class="add-margin">
+      <div>
+        <mat-form-field>
+          <input
+            matInput
+            id = "[ngxMatDatetimePicker]='picker'"
+            placeholder="Situation Date / Time"
+            [formControl]="situationDateFormControl"
+            (inputChange)="saveMove('situationDate')"
+            (dateChange)="saveMove('situationDate')"
+            >
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="add-margin">
+        <mat-label class="gray">Situation Description</mat-label>
+        <angular-editor [placeholder]="'Enter situation description here...'" [(ngModel)]="data.move.situationDescription" [config]="editorConfig"></angular-editor>
+      </div>
+      <div class="cssLayoutRowStartCenter bottom-button">
+        <div class="delete-button">
+          <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="data.noChanges || !errorFree()" style="margin-left: 40px;">Save</button>
+        </div>
+        <div class="delete-button">
+          <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="add-margin">
-    <mat-label class="gray">Situation Description</mat-label>
-    <angular-editor [placeholder]="'Enter situation description here...'" [(ngModel)]="data.move.situationDescription" [config]="editorConfig"></angular-editor>
-  </div>
-  <div class="cssLayoutRowStartCenter bottom-button">
-    <div class="delete-button">
-      <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="data.noChanges || !errorFree()" style="margin-left: 40px;">Save</button>
-    </div>
-    <div class="delete-button">
-      <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
-    </div>
-  </div>
-
-</div>
+  }

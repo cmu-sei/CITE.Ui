@@ -1,6 +1,6 @@
 <!--
 Copyright 2022 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license, please see LICENSE.md in the
+Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
@@ -33,46 +33,56 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </section>
 
-  <mat-expansion-panel *ngFor="let team of sortedTeams" [expanded]="editTeam.id === team.id">
-    <mat-expansion-panel-header class="row" *ngIf="!isLoading" (click)="togglePanel(team); $event.stopPropagation()">
-      <div class="cell one-cell">
-        <div class="button-div">
-          <button mat-icon-button (click)="addOrEditTeam(team); $event.stopPropagation()" title="Edit {{ team.name }}"
-            [disabled]="noChanges" class="team-button">
-            <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
-          </button>
-          <button mat-icon-button (click)="deleteTeam(team); $event.stopPropagation()" title="Delete {{ team.name }}"
-            [disabled]="noChanges" class="team-button">
-            <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can"></mat-icon>
-          </button>
+  @for (team of sortedTeams; track team) {
+    <mat-expansion-panel [expanded]="editTeam.id === team.id">
+      @if (!isLoading) {
+        <mat-expansion-panel-header class="row" (click)="togglePanel(team); $event.stopPropagation()">
+          <div class="cell one-cell">
+            <div class="button-div">
+              <button mat-icon-button (click)="addOrEditTeam(team); $event.stopPropagation()" title="Edit {{ team.name }}"
+                [disabled]="noChanges" class="team-button">
+                <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+              </button>
+              <button mat-icon-button (click)="deleteTeam(team); $event.stopPropagation()" title="Delete {{ team.name }}"
+                [disabled]="noChanges" class="team-button">
+                <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can"></mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="cell one-cell center-self">
+            <div class="panel-div">
+              {{ team.shortName }}
+            </div>
+          </div>
+          <div class="cell three-cell center-self">
+            <div class="panel-div">
+              {{ getTeamTypeName(team.teamTypeId) }}
+            </div>
+          </div>
+          <div class="cell five-cell center-self">
+            <div class="panel-div">
+              {{ team.name }}
+            </div>
+          </div>
+        </mat-expansion-panel-header>
+      }
+      @if (editTeam.id === team.id) {
+        <div class="panel-container">
+          <div class="user-div">
+            @if (team.id === editTeam.id) {
+              <app-admin-team-users [teamId]="team.id"
+              [noChanges]="noChanges"></app-admin-team-users>
+            }
+          </div>
         </div>
-      </div>
-      <div class="cell one-cell center-self">
-        <div class="panel-div">
-          {{ team.shortName }}
-        </div>
-      </div>
-      <div class="cell three-cell center-self">
-        <div class="panel-div">
-          {{ getTeamTypeName(team.teamTypeId) }}
-        </div>
-      </div>
-      <div class="cell five-cell center-self">
-        <div class="panel-div">
-          {{ team.name }}
-        </div>
-      </div>
-    </mat-expansion-panel-header>
-    <div class="panel-container" *ngIf="editTeam.id === team.id">
-      <div class="user-div">
-        <app-admin-team-users *ngIf="team.id === editTeam.id" [teamId]="team.id"
-          [noChanges]="noChanges"></app-admin-team-users>
-      </div>
-    </div>
-  </mat-expansion-panel>
+      }
+    </mat-expansion-panel>
+  }
 </mat-accordion>
 
-<mat-card appearance="outlined" *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center;">
-  <mat-progress-spinner color="primary" mode="indeterminate">
-  </mat-progress-spinner>
-</mat-card>
+@if (isLoading) {
+  <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
+    <mat-progress-spinner color="primary" mode="indeterminate">
+    </mat-progress-spinner>
+  </mat-card>
+}

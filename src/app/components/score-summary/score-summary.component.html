@@ -1,6 +1,6 @@
 <!--
 Copyright 2022 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license, please see LICENSE.md in the
+Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 <div class="big-container">
@@ -12,7 +12,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-header-cell *matHeaderCellDef class="title-font"> Scores </mat-header-cell>
       <mat-cell *matCellDef="let row" [ngClass]="row.color">
         <div>
-          <div *ngFor="let submission of currentSubmissions()">{{ showScore(row, submission) }}</div>
+          @for (submission of currentSubmissions(); track submission) {
+            <div>{{ showScore(row, submission) }}</div>
+          }
         </div>
       </mat-cell>
     </ng-container>
@@ -42,4 +44,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-row *matRowDef="let row; columns: columnsToDisplay" title="{{ row.definition }}"></mat-row>
   </mat-table>
 </div>
-<div *ngIf="!activeSubmission">No Active Submission</div>
+@if (!activeSubmission) {
+  <div>No Active Submission</div>
+}

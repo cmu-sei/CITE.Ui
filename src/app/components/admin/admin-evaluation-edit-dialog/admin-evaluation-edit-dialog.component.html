@@ -10,83 +10,88 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
   </button>
 </div>
-<div mat-dialog-content *ngIf="data && data.evaluation">
-  <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field full-width">
-        <mat-label>Evaluation Description</mat-label>
-        <input matInput [(ngModel)]="data.evaluation.description" />
-      </mat-form-field>
+@if (data && data.evaluation) {
+  <div mat-dialog-content>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="description-field full-width">
+          <mat-label>Evaluation Description</mat-label>
+          <input matInput [(ngModel)]="data.evaluation.description" />
+        </mat-form-field>
+      </div>
     </div>
-  </div>
-  <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field full-width">
-        <mat-label>Scoring Model</mat-label>
-        <mat-select placeholder="Select a Scoring Model" [(value)]="data.evaluation.scoringModelId"
-          (click)="$event.stopPropagation()" [disabled]="data.isExisting">
-          <mat-option *ngFor="let scoringModel of data.scoringModels" [value]="scoringModel.id">
-            {{ scoringModel.description }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="description-field full-width">
+          <mat-label>Scoring Model</mat-label>
+          <mat-select placeholder="Select a Scoring Model" [(value)]="data.evaluation.scoringModelId"
+            (click)="$event.stopPropagation()" [disabled]="data.isExisting">
+            @for (scoringModel of data.scoringModels; track scoringModel) {
+              <mat-option [value]="scoringModel.id">
+                {{ scoringModel.description }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
-  </div>
-  <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field full-width">
-        <mat-label>Evaluation Status</mat-label>
-        <mat-select placeholder="Select a Status" [(value)]="data.evaluation.status" (click)="$event.stopPropagation()">
-          <mat-option *ngFor="let status of data.itemStatuses" [value]="status">
-            {{ status }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="description-field full-width">
+          <mat-label>Evaluation Status</mat-label>
+          <mat-select placeholder="Select a Status" [(value)]="data.evaluation.status" (click)="$event.stopPropagation()">
+            @for (status of data.itemStatuses; track status) {
+              <mat-option [value]="status">
+                {{ status }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
-  </div>
-  <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field full-width">
-        <mat-label>Gallery Exhibit ID</mat-label>
-        <input matInput [(ngModel)]="data.evaluation.galleryExhibitId" />
-      </mat-form-field>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="description-field full-width">
+          <mat-label>Gallery Exhibit ID</mat-label>
+          <input matInput [(ngModel)]="data.evaluation.galleryExhibitId" />
+        </mat-form-field>
+      </div>
     </div>
-  </div>
-  <div class="add-margin">
-    <div>
-      <mat-form-field class="description-field">
-        <mat-label>Current Move</mat-label>
-        <input matInput [(ngModel)]="data.evaluation.currentMoveNumber" />
-      </mat-form-field>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="description-field">
+          <mat-label>Current Move</mat-label>
+          <input matInput [(ngModel)]="data.evaluation.currentMoveNumber" />
+        </mat-form-field>
+      </div>
     </div>
-  </div>
-  <div class="add-margin">
-    <div>
-      <mat-form-field>
-        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Situation Date / Time"
-          [formControl]="situationDateFormControl" (inputChange)="saveEvaluation('situationDate')"
-          (dateChange)="saveEvaluation('situationDate')">
-        <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)">
-        </mat-datepicker-toggle>
-        <ngx-mat-datetime-picker #picker [showSpinners]=true [showSeconds]=false [stepHour]=1 [stepMinute]=5
-          [stepSecond]=1 [touchUi]=false [enableMeridian]=true [disableMinute]=false [hideTime]=false [color]="'warn'">
-        </ngx-mat-datetime-picker>
-      </mat-form-field>
+    <div class="add-margin">
+      <div>
+        <mat-form-field>
+          <input matInput [ngxMatDatetimePicker]="picker" placeholder="Situation Date / Time"
+            [formControl]="situationDateFormControl" (inputChange)="saveEvaluation('situationDate')"
+            (dateChange)="saveEvaluation('situationDate')">
+            <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)">
+            </mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #picker [showSpinners]=true [showSeconds]=false [stepHour]=1 [stepMinute]=5
+              [stepSecond]=1 [touchUi]=false [enableMeridian]=true [disableMinute]=false [hideTime]=false [color]="'warn'">
+            </ngx-mat-datetime-picker>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="add-margin">
+        <mat-label class="gray">Situation Description</mat-label>
+        <angular-editor [placeholder]="'Enter situation description here...'"
+        [(ngModel)]="data.evaluation.situationDescription" [config]="editorConfig"></angular-editor>
+      </div>
+      <div class="cssLayoutRowStartCenter bottom-button">
+        <div class="delete-button">
+          <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()"
+          style="margin-left: 40px;">Save</button>
+        </div>
+        <div class="delete-button">
+          <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="add-margin">
-    <mat-label class="gray">Situation Description</mat-label>
-    <angular-editor [placeholder]="'Enter situation description here...'"
-      [(ngModel)]="data.evaluation.situationDescription" [config]="editorConfig"></angular-editor>
-  </div>
-  <div class="cssLayoutRowStartCenter bottom-button">
-    <div class="delete-button">
-      <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()"
-        style="margin-left: 40px;">Save</button>
-    </div>
-    <div class="delete-button">
-      <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
-    </div>
-  </div>
-
-</div>
+  }

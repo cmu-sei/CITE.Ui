@@ -22,6 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminScoringModelEditDialogComponent } from '../admin-scoring-model-edit-dialog/admin-scoring-model-edit-dialog.component';
 import { UserDataService } from 'src/app/data/user/user-data.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-admin-scoring-models',
@@ -46,7 +47,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   addingNewScoringModel = false;
   newScoringModelDescription = '';
   editScoringModel: ScoringModel = {};
-  selectedScoringModelId = '';
+  previewScoringModelId = '';
   scoringCategoryId = '';
   itemStatuses = [
     ItemStatus.Pending,
@@ -75,7 +76,9 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     private scoringModelQuery: ScoringModelQuery,
     private userDataService: UserDataService,
     private dialog: MatDialog,
-    public dialogService: DialogService
+    public dialogService: DialogService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
@@ -101,6 +104,11 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
       .subscribe((term) => {
         this.filterString = term.trim().toLowerCase();
         this.applyFilter();
+      });
+    this.activatedRoute.queryParamMap
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((params) => {
+        this.previewScoringModelId = params.get('scoringModelId');
       });
   }
 
@@ -225,6 +233,15 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
 
   copyScoringModel(id: string): void {
     this.scoringModelDataService.copy(id);
+  }
+
+  previewScoringModel(scoringModelId: string) {
+    this.router.navigate([], {
+      queryParams: {
+        section: 'Scoring Models',
+        scoringModelId: scoringModelId,
+      },
+    });
   }
 
   downloadScoringModel(scoringModel: ScoringModel) {

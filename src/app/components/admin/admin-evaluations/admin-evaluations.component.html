@@ -1,6 +1,6 @@
 <!--
 Copyright 2022 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license, please see LICENSE.md in the
+Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
@@ -16,17 +16,23 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-icon class="mdi-18px" fontIcon="mdi-close-circle-outline"></mat-icon>
     </button>
   </div>
-  <mat-form-field class="status-ff" *ngIf="!addingNewEvaluation">
-    <mat-label>Statuses</mat-label>
-    <mat-select class="status-dd" placeholder="Statuses" [(ngModel)]="selectedStatuses" multiple
-      (selectionChange)="applyFilter()">
-      <mat-option *ngFor="let status of itemStatuses" [value]="status">{{ status }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <div class="nator-div" *ngIf="!addingNewEvaluation">
-    <mat-paginator #paginator [length]="filteredEvaluationList?.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+  @if (!addingNewEvaluation) {
+    <mat-form-field class="status-ff">
+      <mat-label>Statuses</mat-label>
+      <mat-select class="status-dd" placeholder="Statuses" [(ngModel)]="selectedStatuses" multiple
+        (selectionChange)="applyFilter()">
+        @for (status of itemStatuses; track status) {
+          <mat-option [value]="status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+  @if (!addingNewEvaluation) {
+    <div class="nator-div">
+      <mat-paginator #paginator [length]="filteredEvaluationList?.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
       [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
-  </div>
+    </div>
+  }
 </div>
 
 <mat-accordion displayMode="flat">
@@ -48,80 +54,86 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="header-cell date-cell" mat-sort-header="dateCreated">Date</div>
   </section>
 
-  <mat-expansion-panel *ngFor="let evaluation of displayedEvaluations" [expanded]="editEvaluation.id === evaluation.id">
-    <mat-expansion-panel-header class="row" *ngIf="!isLoading"
-      (click)="togglePanel(evaluation); $event.stopPropagation()">
-      <span class="cell first-cell">
-        <button mat-icon-button (click)="addOrEditEvaluation(evaluation); $event.stopPropagation()"
-          title="Edit Evaluation" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline"></mat-icon>
-        </button>
-        <button mat-icon-button (click)="copyEvaluation(evaluation.id); $event.stopPropagation();"
-          title="Copy {{ evaluation.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
-        </button>
-        <button mat-icon-button (click)="downloadEvaluation(evaluation); $event.stopPropagation();"
-          title="Download {{ evaluation.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-download" alt="Download"></mat-icon>
-        </button>
-        <button mat-icon-button (click)="deleteEvaluationRequest(evaluation); $event.stopPropagation()"
-          title="Delete Evaluation" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
-        </button>
-      </span>
-      <span class="cell description-cell center-self">{{ evaluation.description }}</span>
-      <span class="cell move-cell center-self">
-        <button aria-label="Decrement Current Move" mat-icon-button
-          [disabled]="evaluationFrozen(evaluation) || evaluation.currentMoveNumber <= getLowestMoveNumber(evaluation)"
-          (click)="decrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Decrement Move">
-          <mat-icon svgIcon="ic_chevron_left"></mat-icon>
-        </button>
-        {{ evaluation.currentMoveNumber }}
-        <button aria-label="Increment Current Move" mat-icon-button
-          [disabled]="evaluationFrozen(evaluation) || evaluation.currentMoveNumber >= getHighestMoveNumber(evaluation)"
-          (click)="incrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Increment Move">
-          <mat-icon svgIcon="ic_chevron_right"></mat-icon>
-        </button>
-      </span>
-      <span class="cell one-cell center-self">
-        {{ evaluation.status }}
-      </span>
-      <span class="cell one-cell center-self">
-        {{ getUserName(evaluation.createdBy) }}
-      </span>
-      <span class="cell date-cell center-self">
-        {{ evaluation.dateCreated | date:"MM/dd/yyyy HH:mm" }}
-      </span>
-    </mat-expansion-panel-header>
-    <div class="move-container">
-      <mat-expansion-panel class="bottom-space">
-        <mat-expansion-panel-header>
-          <h4>Moves</h4>
+  @for (evaluation of displayedEvaluations; track evaluation) {
+    <mat-expansion-panel [expanded]="editEvaluation.id === evaluation.id">
+      @if (!isLoading) {
+        <mat-expansion-panel-header class="row"
+          (click)="togglePanel(evaluation); $event.stopPropagation()">
+          <span class="cell first-cell">
+            <button mat-icon-button (click)="addOrEditEvaluation(evaluation); $event.stopPropagation()"
+              title="Edit Evaluation" [disabled]="isBusy">
+              <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline"></mat-icon>
+            </button>
+            <button mat-icon-button (click)="copyEvaluation(evaluation.id); $event.stopPropagation();"
+              title="Copy {{ evaluation.description }}" [disabled]="isBusy">
+              <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
+            </button>
+            <button mat-icon-button (click)="downloadEvaluation(evaluation); $event.stopPropagation();"
+              title="Download {{ evaluation.description }}" [disabled]="isBusy">
+              <mat-icon class="mdi-18px" fontIcon="mdi-download" alt="Download"></mat-icon>
+            </button>
+            <button mat-icon-button (click)="deleteEvaluationRequest(evaluation); $event.stopPropagation()"
+              title="Delete Evaluation" [disabled]="isBusy">
+              <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
+            </button>
+          </span>
+          <span class="cell description-cell center-self">{{ evaluation.description }}</span>
+          <span class="cell move-cell center-self">
+            <button aria-label="Decrement Current Move" mat-icon-button
+              [disabled]="evaluationFrozen(evaluation) || evaluation.currentMoveNumber <= getLowestMoveNumber(evaluation)"
+              (click)="decrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Decrement Move">
+              <mat-icon svgIcon="ic_chevron_left"></mat-icon>
+            </button>
+            {{ evaluation.currentMoveNumber }}
+            <button aria-label="Increment Current Move" mat-icon-button
+              [disabled]="evaluationFrozen(evaluation) || evaluation.currentMoveNumber >= getHighestMoveNumber(evaluation)"
+              (click)="incrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Increment Move">
+              <mat-icon svgIcon="ic_chevron_right"></mat-icon>
+            </button>
+          </span>
+          <span class="cell one-cell center-self">
+            {{ evaluation.status }}
+          </span>
+          <span class="cell one-cell center-self">
+            {{ getUserName(evaluation.createdBy) }}
+          </span>
+          <span class="cell date-cell center-self">
+            {{ evaluation.dateCreated | date:"MM/dd/yyyy HH:mm" }}
+          </span>
         </mat-expansion-panel-header>
-        <app-admin-moves [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)"></app-admin-moves>
-      </mat-expansion-panel>
-      <mat-expansion-panel class="bottom-space">
-        <mat-expansion-panel-header>
-          <h4>Teams</h4>
-        </mat-expansion-panel-header>
-        <app-admin-teams [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)">
-        </app-admin-teams>
-      </mat-expansion-panel>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <h4>Observers</h4>
-        </mat-expansion-panel-header>
-        <app-admin-observers [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)">
-        </app-admin-observers>
-      </mat-expansion-panel>
-    </div>
-  </mat-expansion-panel>
+      }
+      <div class="move-container">
+        <mat-expansion-panel class="bottom-space">
+          <mat-expansion-panel-header>
+            <h4>Moves</h4>
+          </mat-expansion-panel-header>
+          <app-admin-moves [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)"></app-admin-moves>
+        </mat-expansion-panel>
+        <mat-expansion-panel class="bottom-space">
+          <mat-expansion-panel-header>
+            <h4>Teams</h4>
+          </mat-expansion-panel-header>
+          <app-admin-teams [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)">
+          </app-admin-teams>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <h4>Observers</h4>
+          </mat-expansion-panel-header>
+          <app-admin-observers [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)">
+          </app-admin-observers>
+        </mat-expansion-panel>
+      </div>
+    </mat-expansion-panel>
+  }
 </mat-accordion>
 
-<mat-card appearance="outlined" *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center;">
-  <mat-progress-spinner color="primary" mode="indeterminate">
-  </mat-progress-spinner>
-</mat-card>
+@if (isLoading) {
+  <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
+    <mat-progress-spinner color="primary" mode="indeterminate">
+    </mat-progress-spinner>
+  </mat-card>
+}
 
 
 <input hidden (change)="selectFile($event)" (cancel)="isBusy = false" #jsonInput type="file" accept=".json" />

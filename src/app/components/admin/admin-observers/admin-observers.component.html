@@ -1,6 +1,6 @@
 <!--
 Copyright 2023 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license, please see LICENSE.md in the
+Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
@@ -16,11 +16,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         Evaluation Users
       </span>
     </div>
-
-    <mat-card appearance="outlined" *ngIf="false" style="display: flex; justify-content: center; align-items: center;">
-      <mat-progress-spinner color="primary" mode="indeterminate">
-      </mat-progress-spinner>
-    </mat-card>
 
     <mat-table class="mat-table-all-users" #table [dataSource]="teamUserDataSource" matSort>
       <ng-container matColumnDef="team">
@@ -52,7 +47,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-row *matRowDef="let row; columns: displayedTeamUserColumns"></mat-row>
     </mat-table>
 
-    <div *ngIf="teamUserDataSource.filteredData.length === 0">No results found</div>
+    @if (teamUserDataSource.filteredData.length === 0) {
+      <div>No results found</div>
+    }
   </div>
 
   <div class="spacer">&nbsp;</div>
@@ -66,10 +63,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </span>
     </div>
 
-    <mat-card appearance="outlined" *ngIf="false" style="display: flex; justify-content: center; align-items: center;">
-      <mat-progress-spinner color="primary" mode="indeterminate">
-      </mat-progress-spinner>
-    </mat-card>
+    @if (false) {
+      <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
+        <mat-progress-spinner color="primary" mode="indeterminate">
+        </mat-progress-spinner>
+      </mat-card>
+    }
 
     <mat-table class="mat-table-all-users" #table [dataSource]="observerDataSource" matSort>
       <ng-container matColumnDef="team">

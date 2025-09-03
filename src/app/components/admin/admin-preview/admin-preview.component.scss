@@ -1,19 +1,9 @@
-// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+// Copyright 2025 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 @use '@angular/material' as mat;
-@use '../../../styles/styles.scss';
-
-.form-container {
-  display: flex;
-  flex-flow: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  height: 100%;
-  width: 100%;
-}
+@use '../../../../styles/styles.scss';
 
 .description-container {
   display: flex;
@@ -115,9 +105,6 @@
 .description-div {
   display: flex;
   flex: 90;
-  font-weight: bold;
-  text-decoration: underline;
-  font-style: italic;
 }
 
 .small-icon {
