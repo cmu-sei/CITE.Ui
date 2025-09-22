@@ -171,26 +171,6 @@ export class TeamDataService {
       });
   }
 
-  loadByUserId(userId: string) {
-    this.teamStore.setLoading(true);
-    this.teamService
-      .getTeamsByUser(userId)
-      .pipe(
-        tap(() => {
-          this.teamStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe(
-        (teams) => {
-          this.teamStore.set(teams);
-        },
-        (error) => {
-          this.teamStore.set([]);
-        }
-      );
-  }
-
   loadMine(evaluationId: string) {
     this.teamStore.setLoading(true);
     this.teamService

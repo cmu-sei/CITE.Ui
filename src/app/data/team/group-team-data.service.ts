@@ -4,19 +4,13 @@
 
 import { Injectable, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ComnAuthQuery, ComnAuthService } from '@cmusei/crucible-common';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { GroupTeamService, TeamService } from 'src/app/generated/cite.api/api/api';
-import { Team } from 'src/app/generated/cite.api/model/models';
+import { Observable, Subject } from 'rxjs';
+import { TeamService } from 'src/app/generated/cite.api/api/api';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GroupTeamDataService implements OnDestroy {
-  private _groupTeams: Team[] = [];
-  readonly groupTeams = new BehaviorSubject<Team[]>(this._groupTeams);
   readonly filterControl = new UntypedFormControl();
   private filterTerm: Observable<string>;
   private sortColumn: Observable<string>;
@@ -27,49 +21,7 @@ export class GroupTeamDataService implements OnDestroy {
 
   constructor(
     private teamService: TeamService,
-    private groupTeamService: GroupTeamService,
-    private authQuery: ComnAuthQuery,
-    private authService: ComnAuthService,
-    private router: Router,
-    activatedRoute: ActivatedRoute
   ) {}
-
-  private updateGroupTeams(teams: Team[]) {
-    this._groupTeams = Object.assign([], teams);
-    this.groupTeams.next(this._groupTeams);
-  }
-
-  getGroupTeamsFromApi(groupId: string) {
-    return this.teamService
-      .getGroupTeams(groupId)
-      .pipe(take(1))
-      .subscribe(
-        (teams) => {
-          this.updateGroupTeams(teams);
-        },
-        (error) => {
-          this.updateGroupTeams([]);
-        }
-      );
-  }
-
-  addTeamToGroup(groupId: string, team: Team) {
-    this.groupTeamService.createGroupTeam({groupId: groupId, teamId: team.id}).subscribe(
-      (tu) => {
-        this._groupTeams.unshift(team);
-        this.updateGroupTeams(this._groupTeams);
-      }
-    );
-  }
-
-  removeGroupTeam(groupId: string, teamId: string) {
-    this.groupTeamService.deleteGroupTeamByIds(teamId, groupId).subscribe(
-      (response) => {
-        this._groupTeams = this._groupTeams.filter((u) => u.id !== teamId);
-        this.updateGroupTeams(this._groupTeams);
-      }
-    );
-  }
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);

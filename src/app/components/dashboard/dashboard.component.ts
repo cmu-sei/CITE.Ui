@@ -10,7 +10,7 @@ import {
   Action,
   Evaluation,
   Move,
-  Role,
+  Duty,
   ScoringModel,
   Team,
   TeamUser,
@@ -20,8 +20,8 @@ import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { ActionQuery } from 'src/app/data/action/action.query';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
-import { RoleDataService } from 'src/app/data/role/role-data.service';
-import { RoleQuery } from 'src/app/data/role/role.query';
+import { DutyDataService } from 'src/app/data/duty/duty-data.service';
+import { DutyQuery } from 'src/app/data/duty/duty.query';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
@@ -32,7 +32,7 @@ import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialog/admin-action-edit-dialog.component';
-import { AdminRoleEditDialogComponent } from '../admin/admin-role-edit-dialog/admin-role-edit-dialog.component';
+import { AdminDutyEditDialogComponent } from '../admin/admin-duty-edit-dialog/admin-duty-edit-dialog.component';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { DateTimeFormatOptions } from 'luxon';
@@ -65,13 +65,13 @@ export class DashboardComponent implements OnDestroy {
   isLoading = false;
   actionList: Action[] = [];
   allActions: Action[] = [];
-  roleList: Role[] = [];
+  dutyList: Duty[] = [];
   moveList: Move[] = [];
   currentMoveNumber: number;
   displayedMoveNumber: number;
   activeTeamId = '';
   isActionEditMode = false;
-  isRoleEditMode = false;
+  isDutyEditMode = false;
   private unsubscribe$ = new Subject();
   editorConfig: AngularEditorConfig = {
     editable: false,
@@ -90,20 +90,20 @@ export class DashboardComponent implements OnDestroy {
     sanitize: true,
   };
   galleryUrl = '';
-  originalRole: Role = {};
-  modifiedRole: Role = {};
+  originalDuty: Duty = {};
+  modifiedDuty: Duty = {};
   completeSituationDescription = '';
   loggedInUserId = '';
   showPermissions = false;
-  showRoles = false;
+  showDuties = false;
 
   constructor(
     private actionDataService: ActionDataService,
     private actionQuery: ActionQuery,
     private evaluationQuery: EvaluationQuery,
     private moveQuery: MoveQuery,
-    private roleDataService: RoleDataService,
-    private roleQuery: RoleQuery,
+    private dutyDataService: DutyDataService,
+    private dutyQuery: DutyQuery,
     private scoringModelQuery: ScoringModelQuery,
     private teamQuery: TeamQuery,
     private teamUserDataService: TeamUserDataService,
@@ -178,23 +178,23 @@ export class DashboardComponent implements OnDestroy {
           .filter((a) => +a.moveNumber === +this.displayedMoveNumber)
           .sort((a, b) => (a.description < b.description ? -1 : 1));
       });
-    // observe the Role list
-    this.roleQuery
+    // observe the Duty list
+    this.dutyQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((roles) => {
-        this.roleList = [];
-        roles.forEach((role) => {
-          const newRole = { ...role };
+      .subscribe((duties) => {
+        this.dutyList = [];
+        duties.forEach((duty) => {
+          const newDuty = { ...duty };
           const newUsers: User[] = [];
-          newRole.users.forEach((user) => {
+          newDuty.users.forEach((user) => {
             const addUser = this.usersOnTheTeam?.find(
               (tu) => tu.id === user.id
             );
             newUsers.push(addUser);
           });
-          newRole.users = newUsers;
-          this.roleList.push(newRole);
+          newDuty.users = newUsers;
+          this.dutyList.push(newDuty);
         });
       });
     // observe the scoring model
@@ -323,7 +323,7 @@ export class DashboardComponent implements OnDestroy {
         this.selectedEvaluation.id,
         this.activeTeamId
       );
-      this.roleDataService.loadByEvaluationTeam(
+      this.dutyDataService.loadByEvaluationTeam(
         this.selectedEvaluation.id,
         this.activeTeamId
       );
@@ -423,81 +423,81 @@ export class DashboardComponent implements OnDestroy {
       : nameList;
   }
 
-  addOrEditRole(role: Role) {
-    if (!role) {
-      role = {
+  addOrEditDuty(duty: Duty) {
+    if (!duty) {
+      duty = {
         name: '',
         evaluationId: this.selectedEvaluation.id,
         teamId: this.activeTeamId,
       };
     } else {
-      role = { ...role };
+      duty = { ...duty };
     }
-    const dialogRef = this.matDialog.open(AdminRoleEditDialogComponent, {
+    const dialogRef = this.matDialog.open(AdminDutyEditDialogComponent, {
       width: '800px',
       data: {
-        role: role,
+        duty: duty,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
-      if (result.saveChanges && result.role) {
-        this.saveRole(result.role);
+      if (result.saveChanges && result.duty) {
+        this.saveDuty(result.duty);
       }
       dialogRef.close();
     });
   }
 
-  saveRole(role: Role) {
-    if (role.id) {
-      this.roleDataService.updateRole(role);
+  saveDuty(duty: Duty) {
+    if (duty.id) {
+      this.dutyDataService.updateDuty(duty);
     } else {
-      this.roleDataService.add(role);
+      this.dutyDataService.add(duty);
     }
   }
 
-  deleteRoleRequest(role: Role) {
+  deleteDutyRequest(duty: Duty) {
     this.dialogService
       .confirm(
-        'Delete this role?',
-        'Are you sure that you want to delete this role?'
+        'Delete this duty?',
+        'Are you sure that you want to delete this duty?'
       )
       .subscribe((result) => {
         if (result['confirm']) {
-          this.roleDataService.delete(role.id);
+          this.dutyDataService.delete(duty.id);
         }
       });
   }
 
-  openRoleUsers(role: Role) {
-    Object.assign(this.originalRole, role);
-    Object.assign(this.modifiedRole, role);
+  openDutyUsers(duty: Duty) {
+    Object.assign(this.originalDuty, duty);
+    Object.assign(this.modifiedDuty, duty);
   }
 
-  updateRoleUsers(roleId: string, event: any) {
-    if (roleId !== this.originalRole.id || roleId !== this.modifiedRole.id) {
+  updateDutyUsers(dutyId: string, event: any) {
+    if (dutyId !== this.originalDuty.id || dutyId !== this.modifiedDuty.id) {
       alert(
         'There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.'
       );
     }
-    this.modifiedRole.users = event.value;
+    this.modifiedDuty.users = event.value;
   }
 
-  closeRoleUsers(roleId: string) {
-    if (roleId !== this.originalRole.id || roleId !== this.modifiedRole.id) {
+  closeDutyUsers(dutyId: string) {
+    if (dutyId !== this.originalDuty.id || dutyId !== this.modifiedDuty.id) {
       alert(
         'There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.'
       );
     }
-    const newUserIds = this.modifiedRole.users.map(({ id }) => id);
-    const oldUserIds = this.originalRole.users.map(({ id }) => id);
+    const newUserIds = this.modifiedDuty.users.map(({ id }) => id);
+    const oldUserIds = this.originalDuty.users.map(({ id }) => id);
     newUserIds.forEach((nru) => {
       if (!oldUserIds.some((ru) => ru === nru)) {
-        this.roleDataService.addRoleUser(roleId, nru);
+        this.dutyDataService.addDutyUser(dutyId, nru);
       }
     });
     oldUserIds.forEach((ru) => {
       if (!newUserIds.some((nru) => ru === nru)) {
-        this.roleDataService.removeRoleUser(roleId, ru);
+        this.dutyDataService.removeDutyUser(dutyId, ru);
       }
     });
   }

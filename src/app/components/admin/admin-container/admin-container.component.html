@@ -46,11 +46,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-list-item>
       }
       @if (canAccessAdminSection) {
-        <mat-list-item [ngClass]="getSelectedClass(rolesText)" id="wrapper showhand"
-          (click)="gotoSection(rolesText)">
+        <mat-list-item [ngClass]="getSelectedClass(dutiesText)" id="wrapper showhand"
+          (click)="gotoSection(dutiesText)">
           <mat-icon matListItemIcon fontIcon="mdi-clipboard-account-outline"></mat-icon>
-          {{ rolesText }}
-          <button aria-labelledby="rolesText" mat-icon-button class="pull-right">
+          {{ dutiesText }}
+          <button aria-labelledby="dutiesText" mat-icon-button class="pull-right">
             <mat-icon fontIcon="mdi-menu-right"></mat-icon>
           </button>
         </mat-list-item>
@@ -128,10 +128,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </app-admin-actions>
       </span>
     }
-    @if (canAccessAdminSection && (showSection === rolesText)) {
+    @if (canAccessAdminSection && (showSection === dutiesText)) {
       <span>
-        <app-admin-roles [showSelectionControls]="canSwitchEvaluations | async">
-        </app-admin-roles>
+        <app-admin-duties [showSelectionControls]="canSwitchEvaluations | async">
+        </app-admin-duties>
       </span>
     }
     @if (isSuperUser && (showSection === submissionsText)) {

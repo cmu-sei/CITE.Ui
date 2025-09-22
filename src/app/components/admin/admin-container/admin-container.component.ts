@@ -45,7 +45,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   evaluationsText = 'Evaluations';
   scoringModelsText = 'Scoring Models';
   actionsText = 'Actions';
-  rolesText = 'Roles';
+  dutiesText = 'Duties';
   submissionsText = 'Submissions';
   groupsText = 'Groups';
   teamsText = 'Teams';

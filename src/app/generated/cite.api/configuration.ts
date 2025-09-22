@@ -1,8 +1,4 @@
-/*
-Copyright 2022 Carnegie Mellon University. All Rights Reserved. 
- Released under a MIT (SEI)-style license. See LICENSE.md in the
-// project root for license information.
-*/
+import { HttpParameterCodec } from '@angular/common/http';
 
 export interface ConfigurationParameters {
     apiKeys?: {[ key: string ]: string};
@@ -11,6 +7,7 @@ export interface ConfigurationParameters {
     accessToken?: string | (() => string);
     basePath?: string;
     withCredentials?: boolean;
+    encoder?: HttpParameterCodec;
 }
 
 export class Configuration {
@@ -20,6 +17,7 @@ export class Configuration {
     accessToken?: string | (() => string);
     basePath?: string;
     withCredentials?: boolean;
+    encoder?: HttpParameterCodec;
 
     constructor(configurationParameters: ConfigurationParameters = {}) {
         this.apiKeys = configurationParameters.apiKeys;
@@ -28,6 +26,7 @@ export class Configuration {
         this.accessToken = configurationParameters.accessToken;
         this.basePath = configurationParameters.basePath;
         this.withCredentials = configurationParameters.withCredentials;
+        this.encoder = configurationParameters.encoder;
     }
 
     /**
@@ -42,7 +41,7 @@ export class Configuration {
             return undefined;
         }
 
-        let type = contentTypes.find(x => this.isJsonMime(x));
+        const type = contentTypes.find((x: string) => this.isJsonMime(x));
         if (type === undefined) {
             return contentTypes[0];
         }
@@ -61,7 +60,7 @@ export class Configuration {
             return undefined;
         }
 
-        let type = accepts.find(x => this.isJsonMime(x));
+        const type = accepts.find((x: string) => this.isJsonMime(x));
         if (type === undefined) {
             return accepts[0];
         }

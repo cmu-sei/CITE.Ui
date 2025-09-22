@@ -65,8 +65,8 @@ import { AdminMovesComponent } from './components/admin/admin-moves/admin-moves.
 import { AdminMoveEditDialogComponent } from './components/admin/admin-move-edit-dialog/admin-move-edit-dialog.component';
 import { AdminObserversComponent } from './components/admin/admin-observers/admin-observers.component';
 import { AdminPreviewComponent } from './components/admin/admin-preview/admin-preview.component';
-import { AdminRoleEditDialogComponent } from './components/admin/admin-role-edit-dialog/admin-role-edit-dialog.component';
-import { AdminRolesComponent } from 'src/app/components/admin/admin-roles/admin-roles.component';
+import { AdminDutyEditDialogComponent } from './components/admin/admin-duty-edit-dialog/admin-duty-edit-dialog.component';
+import { AdminDutiesComponent } from 'src/app/components/admin/admin-duties/admin-duties.component';
 import { AdminScoringCategoriesComponent } from './components/admin/admin-scoring-categories/admin-scoring-categories.component';
 import { AdminScoringCategoryEditDialogComponent } from './components/admin/admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
 import { AdminScoringModelsComponent } from './components/admin/admin-scoring-models/admin-scoring-models.component';
@@ -141,8 +141,8 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     AdminMoveEditDialogComponent,
     AdminObserversComponent,
     AdminPreviewComponent,
-    AdminRoleEditDialogComponent,
-    AdminRolesComponent,
+    AdminDutyEditDialogComponent,
+    AdminDutiesComponent,
     AdminScoringCategoriesComponent,
     AdminScoringCategoryEditDialogComponent,
     AdminScoringModelsComponent,

@@ -12,10 +12,8 @@ import {
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Team, TeamUser, User } from 'src/app/generated/cite.api';
+import { Team, User } from 'src/app/generated/cite.api';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
-import { TeamUserQuery } from 'src/app/data/team-user/team-user.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -41,8 +39,6 @@ export class AdminObserversComponent implements OnDestroy, OnInit {
 
   constructor(
     private teamQuery: TeamQuery,
-    private teamUserDataService: TeamUserDataService,
-    private teamUserQuery: TeamUserQuery,
     private userDataService: UserDataService
   ) {
     this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {

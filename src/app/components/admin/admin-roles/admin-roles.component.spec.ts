@@ -1,22 +1,21 @@
-// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the
-// project root for license information or contact permission@sei.cmu.edu for full terms.
+/*
+Copyright 2021 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+*/
 
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { AdminRolesComponent } from './admin-roles.component';
 
 describe('AdminRolesComponent', () => {
   let component: AdminRolesComponent;
   let fixture: ComponentFixture<AdminRolesComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ AdminRolesComponent ]
-    })
-      .compileComponents();
-  }));
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [AdminRolesComponent],
+    }).compileComponents();
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(AdminRolesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -26,4 +25,3 @@ describe('AdminRolesComponent', () => {
     expect(component).toBeTruthy();
   });
 });
-

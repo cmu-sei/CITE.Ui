@@ -1,33 +1,35 @@
-/*
-Copyright 2022 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license. See LICENSE.md in the
-// project root for license information.
-*/
-
 import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
 import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
 
 import { ActionService } from './api/action.service';
+import { DutyService } from './api/duty.service';
 import { EvaluationService } from './api/evaluation.service';
+import { EvaluationMembershipsService } from './api/evaluationMemberships.service';
+import { EvaluationPermissionsService } from './api/evaluationPermissions.service';
+import { EvaluationRolesService } from './api/evaluationRoles.service';
 import { GalleryService } from './api/gallery.service';
+import { GroupService } from './api/group.service';
 import { HealthCheckService } from './api/healthCheck.service';
 import { MoveService } from './api/move.service';
-import { PermissionService } from './api/permission.service';
-import { RoleService } from './api/role.service';
 import { ScoringCategoryService } from './api/scoringCategory.service';
 import { ScoringModelService } from './api/scoringModel.service';
+import { ScoringModelMembershipsService } from './api/scoringModelMemberships.service';
+import { ScoringModelPermissionsService } from './api/scoringModelPermissions.service';
+import { ScoringModelRolesService } from './api/scoringModelRoles.service';
 import { ScoringOptionService } from './api/scoringOption.service';
 import { SubmissionService } from './api/submission.service';
 import { SubmissionCategoryService } from './api/submissionCategory.service';
 import { SubmissionCommentService } from './api/submissionComment.service';
 import { SubmissionOptionService } from './api/submissionOption.service';
+import { SystemPermissionsService } from './api/systemPermissions.service';
+import { SystemRolesService } from './api/systemRoles.service';
 import { TeamService } from './api/team.service';
+import { TeamMembershipsService } from './api/teamMemberships.service';
+import { TeamPermissionsService } from './api/teamPermissions.service';
 import { TeamTypeService } from './api/teamType.service';
-import { TeamUserService } from './api/teamUser.service';
 import { UserService } from './api/user.service';
-import { UserPermissionService } from './api/userPermission.service';
 
 @NgModule({
   imports:      [],
@@ -35,27 +37,35 @@ import { UserPermissionService } from './api/userPermission.service';
   exports:      [],
   providers: [
     ActionService,
+    DutyService,
     EvaluationService,
+    EvaluationMembershipsService,
+    EvaluationPermissionsService,
+    EvaluationRolesService,
     GalleryService,
+    GroupService,
     HealthCheckService,
     MoveService,
-    PermissionService,
-    RoleService,
     ScoringCategoryService,
     ScoringModelService,
+    ScoringModelMembershipsService,
+    ScoringModelPermissionsService,
+    ScoringModelRolesService,
     ScoringOptionService,
     SubmissionService,
     SubmissionCategoryService,
     SubmissionCommentService,
     SubmissionOptionService,
+    SystemPermissionsService,
+    SystemRolesService,
     TeamService,
+    TeamMembershipsService,
+    TeamPermissionsService,
     TeamTypeService,
-    TeamUserService,
-    UserService,
-    UserPermissionService ]
+    UserService ]
 })
 export class ApiModule {
-    public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders<ApiModule> {
+    public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders {
         return {
             ngModule: ApiModule,
             providers: [ { provide: Configuration, useFactory: configurationFactory } ]

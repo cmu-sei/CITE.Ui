@@ -182,36 +182,6 @@ export class SubmissionDataService {
       });
   }
 
-  loadTeamAverageSubmission(submission: Submission) {
-    this.submissionStore.setLoading(true);
-    this.submissionService
-      .fillTeamAverageSubmission(submission)
-      .pipe(
-        tap(() => {
-          this.submissionStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe((n) => {
-        this.updateStore(n);
-      });
-  }
-
-  loadTeamTypeAverageSubmission(submission: Submission) {
-    this.submissionStore.setLoading(true);
-    this.submissionService
-      .fillTeamTypeAverageSubmission(submission)
-      .pipe(
-        tap(() => {
-          this.submissionStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe((n) => {
-        this.updateStore(n);
-      });
-  }
-
   unload() {
     this.submissionStore.set([]);
     this.setActive('');

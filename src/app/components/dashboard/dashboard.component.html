@@ -88,39 +88,39 @@ project root for license information or contact permission@sei.cmu.edu for full 
           }
         </div>
       </div>
-      <!-- Roles Section -->
-      @if (!showRoles) {
+      <!-- Duties Section -->
+      @if (!showDuties) {
         <div class="row-container">
           <div class="section-container four-cell">
             <div class="row-container">
               <div class="two-cell center-self">
-                <button mat-icon-button (click)="showRoles = true" title="Expand the roles">
+                <button mat-icon-button (click)="showDuties = true" title="Expand the duties">
                   <mat-icon class="mdi-24px self-center" fontIcon="mdi-menu-down"></mat-icon>
                 </button>
-                <b title="Participant Responsibilities during an Exercise">Roles:</b>
+                <b title="Participant Responsibilities during an Exercise">Duties:</b>
               </div>
               <div class="checkboxes-cell">&nbsp;</div>
             </div>
           </div>
         </div>
       }
-      @if (showRoles) {
+      @if (showDuties) {
         <div class="row-container">
           <div class="section-container mat-elevation-z8 four-cell">
             <div class="row-container">
               <div class="five-cell center-self">
-                <button mat-icon-button (click)="showRoles = false" title="Collapse the roles">
+                <button mat-icon-button (click)="showDuties = false" title="Collapse the duties">
                   <mat-icon class="mdi-24px self-center" fontIcon="mdi-menu-up"></mat-icon>
                 </button>
-                <b title="Participant Responsibilities during an Exercise">Roles:</b>
+                <b title="Participant Responsibilities during an Exercise">Duties:</b>
               </div>
               @if (myTeamId === activeTeamId) {
                 <div class="right-cell">
-                  @if (!isRoleEditMode) {
+                  @if (!isDutyEditMode) {
                     <button
                       mat-icon-button
-                      (click)="isRoleEditMode = true"
-                      title="Edit Roles"
+                      (click)="isDutyEditMode = true"
+                      title="Edit Duties"
                       [disabled]="noChanges"
                       >
                       <mat-icon
@@ -129,49 +129,49 @@ project root for license information or contact permission@sei.cmu.edu for full 
                       </mat-icon>
                     </button>
                   }
-                  @if (isRoleEditMode) {
-                    <button mat-icon-button (click)="addOrEditRole(null)" style="outline: none; margin-left: 20px;"
-                      title="Add Role">
+                  @if (isDutyEditMode) {
+                    <button mat-icon-button (click)="addOrEditDuty(null)" style="outline: none; margin-left: 20px;"
+                      title="Add Duty">
                       <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
                     </button>
                   }
-                  @if (isRoleEditMode) {
-                    <button mat-icon-button (click)="isRoleEditMode = false" style="outline: none; margin-left: 20px;"
-                      title="Close Role Editing">
+                  @if (isDutyEditMode) {
+                    <button mat-icon-button (click)="isDutyEditMode = false" style="outline: none; margin-left: 20px;"
+                      title="Close Duty Editing">
                       <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
                     </button>
                   }
                 </div>
               }
             </div>
-            @for (role of roleList; track role) {
+            @for (duty of dutyList; track duty) {
               <div class="row-container">
-                @if (isRoleEditMode) {
-                  <div class="role-cell">
+                @if (isDutyEditMode) {
+                  <div class="duty-cell">
                     <button
                       mat-icon-button
-                      (click)="addOrEditRole(role); $event.stopPropagation()"
-                      title="Edit Role"
+                      (click)="addOrEditDuty(duty); $event.stopPropagation()"
+                      title="Edit Duty"
                       >
                       <mat-icon
                         class="mdi-24px"
                         fontIcon="mdi-square-edit-outline">
                       </mat-icon>
                     </button>
-                    <button mat-icon-button class="button-end" (click)="deleteRoleRequest(role); $event.stopPropagation()"
-                      title="Delete Role">
+                    <button mat-icon-button class="button-end" (click)="deleteDutyRequest(duty); $event.stopPropagation()"
+                      title="Delete Duty">
                       <mat-icon class="mdi-24px" fontIcon="mdi-trash-can"></mat-icon>
                     </button>
                   </div>
                 }
                 <div class="five-cell center-self">
-                  <label>{{ role.name }}</label>
+                  <label>{{ duty.name }}</label>
                 </div>
                 <div class="five-cell center-self">
-                  @if (!isRoleEditMode) {
-                    <mat-select placeholder="Assign Users" [value]="role.users" multiple
-                      (opened)="openRoleUsers(role)" (selectionChange)="updateRoleUsers(role.id, $event)"
-                      (closed)="closeRoleUsers(role.id)" [disabled]="noChanges || myTeamId !== activeTeamId"
+                  @if (!isDutyEditMode) {
+                    <mat-select placeholder="Assign Users" [value]="duty.users" multiple
+                      (opened)="openDutyUsers(duty)" (selectionChange)="updateDutyUsers(duty.id, $event)"
+                      (closed)="closeDutyUsers(duty.id)" [disabled]="noChanges || myTeamId !== activeTeamId"
                       title="Select a Team Member">
                       @for (user of usersOnTheTeam; track user) {
                         <mat-option [value]="user">{{ user.name }}
@@ -179,8 +179,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
                       }
                     </mat-select>
                   }
-                  @if (isRoleEditMode) {
-                    <span>{{ getUserNames(role.users) }}</span>
+                  @if (isDutyEditMode) {
+                    <span>{{ getUserNames(duty.users) }}</span>
                   }
                 </div>
               </div>

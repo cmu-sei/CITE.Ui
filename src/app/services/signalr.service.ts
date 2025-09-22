@@ -5,11 +5,11 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
 import * as signalR from '@microsoft/signalr';
-import { Action, Evaluation, ItemStatus, Move, Role, ScoringModel, Submission, Team, TeamUser, User } from 'src/app/generated/cite.api';
+import { Action, Evaluation, ItemStatus, Move, Duty, ScoringModel, Submission, Team, TeamUser, User } from 'src/app/generated/cite.api';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { MoveDataService } from '../data/move/move-data.service';
-import { RoleDataService } from 'src/app/data/role/role-data.service';
+import { DutyDataService } from 'src/app/data/duty/duty-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
@@ -40,7 +40,7 @@ export class SignalRService implements OnDestroy {
     private actionDataService: ActionDataService,
     private evaluationDataService: EvaluationDataService,
     private moveDataService: MoveDataService,
-    private roleDataService: RoleDataService,
+    private dutyDataService: DutyDataService,
     private scoringModelDataService: ScoringModelDataService,
     private submissionDataService: SubmissionDataService,
     private teamDataService: TeamDataService,
@@ -136,7 +136,7 @@ export class SignalRService implements OnDestroy {
     this.addActionHandlers();
     this.addEvaluationHandlers();
     this.addMoveHandlers();
-    this.addRoleHandlers();
+    this.addDutyHandlers();
     this.addScoringModelHandlers();
     this.addSubmissionHandlers();
     this.addTeamHandlers();
@@ -208,19 +208,19 @@ export class SignalRService implements OnDestroy {
     });
   }
 
-  private addRoleHandlers() {
+  private addDutyHandlers() {
     this.hubConnection.on(
-      'RoleUpdated', (role: Role) => {
-        this.roleDataService.updateStore(role);
+      'DutyUpdated', (duty: Duty) => {
+        this.dutyDataService.updateStore(duty);
       }
     );
 
-    this.hubConnection.on('RoleCreated', (role: Role) => {
-      this.roleDataService.updateStore(role);
+    this.hubConnection.on('DutyCreated', (duty: Duty) => {
+      this.dutyDataService.updateStore(duty);
     });
 
-    this.hubConnection.on('RoleDeleted', (id: string) => {
-      this.roleDataService.deleteFromStore(id);
+    this.hubConnection.on('DutyDeleted', (id: string) => {
+      this.dutyDataService.deleteFromStore(id);
     });
   }
 
