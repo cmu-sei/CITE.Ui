@@ -43,6 +43,7 @@ export interface Action {
   selector: 'app-admin-user-list',
   templateUrl: './admin-user-list.component.html',
   styleUrls: ['./admin-user-list.component.scss'],
+  standalone: false
 })
 export class AdminUserListComponent implements OnInit, OnChanges {
   displayedColumns: string[] = ['id', 'name'];

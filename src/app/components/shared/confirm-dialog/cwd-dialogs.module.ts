@@ -3,7 +3,7 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { ConfirmDialogComponent } from './components/confirm-dialog.component';
 import { ConfirmDialogService } from './service/confirm-dialog.service';
@@ -23,7 +23,6 @@ import { FormsModule } from '@angular/forms';
     MatTooltipModule,
     FormsModule,
   ],
-  entryComponents: [ConfirmDialogComponent],
   providers: [ConfirmDialogService],
 })
 export class CwdDialogsModule {}

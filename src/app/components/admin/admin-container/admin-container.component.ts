@@ -8,18 +8,17 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { map, tap, take, takeUntil } from 'rxjs/operators';
-import { PermissionService } from 'src/app/generated/cite.api/api/api';
-import {
-  Permission,
-  Team,
-  User,
-  UserPermission,
-} from 'src/app/generated/cite.api/model/models';
+import { User } from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
+import { CurrentUserQuery } from 'src/app/data/user/user.query';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { ComnAuthService } from '@cmusei/crucible-common';
+import { SystemPermission } from 'src/app/generated/cite.api';
 import { TopbarView } from 'src/app/components/shared/top-bar/topbar.models';
 import {
   ComnSettingsService,
@@ -40,7 +39,6 @@ import { HealthCheckService } from 'src/app/generated/cite.api/api/api';
   standalone: false,
 })
 export class AdminContainerComponent implements OnDestroy, OnInit {
-  loggedInUser = this.userDataService.loggedInUser;
   usersText = 'Users';
   evaluationsText = 'Evaluations';
   scoringModelsText = 'Scoring Models';
@@ -61,8 +59,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   canSwitchEvaluations = new BehaviorSubject<boolean>(false);
   evaluationList = this.evaluationDataService.EvaluationList;
   scoringModelList = this.scoringModelDataService.scoringModelList;
-  userList = this.userDataService.userList;
-  permissionList: Observable<Permission[]>;
   pageSize: Observable<number>;
   pageIndex: Observable<number>;
   private unsubscribe$ = new Subject();
@@ -74,51 +70,37 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   theme$: Observable<Theme>;
   uiVersion = environment.VERSION;
   apiVersion = 'API ERROR!';
+  username = '';
+  permissions: SystemPermission[] = [];
+  userList: Observable<User[]>;
+  canViewScoringModels = false;
+  canEditScoringModels = false;
+  canCreateScoringModels = false;
+  canViewEvaluations = false;
+  canEditEvaluations = false;
+  canCreateEvaluations = false;
+  readonly SystemPermission = SystemPermission;
 
   constructor(
     private router: Router,
+    private authService: ComnAuthService,
     private evaluationDataService: EvaluationDataService,
     private evaluationQuery: EvaluationQuery,
     private scoringModelDataService: ScoringModelDataService,
     private teamTypeDataService: TeamTypeDataService,
     private userDataService: UserDataService,
+    private userQuery: UserQuery,
     activatedRoute: ActivatedRoute,
-    private permissionService: PermissionService,
     private healthCheckService: HealthCheckService,
     private settingsService: ComnSettingsService,
     private authQuery: ComnAuthQuery,
+    private currentUserQuery: CurrentUserQuery,
+    private permissionDataService: PermissionDataService,
     titleService: Title,
     private signalRService: SignalRService
   ) {
     this.theme$ = this.authQuery.userTheme$;
     this.hideTopbar = this.inIframe();
-    this.userDataService.isSuperUser
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((result) => {
-        if (result !== this.isSuperUser) {
-          this.isSuperUser = result;
-          this.canSwitchEvaluations.next(result);
-          if (this.isSuperUser) {
-            this.evaluationDataService.load();
-            this.userDataService.getUsersFromApi();
-            this.userDataService
-              .getPermissionsFromApi()
-              .pipe(takeUntil(this.unsubscribe$))
-              .subscribe();
-            this.permissionList = this.permissionService.getPermissions();
-          }
-        }
-      });
-    this.userDataService.canAccessAdminSection
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((result) => {
-        if (result !== this.canAccessAdminSection) {
-          this.canAccessAdminSection = result;
-          if (this.canAccessAdminSection && !this.isSuperUser) {
-            this.evaluationDataService.loadMine();
-          }
-        }
-      });
     this.pageSize = activatedRoute.queryParamMap.pipe(
       map((params) => parseInt(params.get('pagesize') || '20', 10))
     );
@@ -157,6 +139,19 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
+    this.userList = this.userQuery.selectAll();
+    this.userDataService.load().pipe(take(1)).subscribe();
+    this.permissionDataService.load().subscribe((x) => {
+      this.permissions = this.permissionDataService.permissions;
+      this.canViewScoringModels = this.canViewScoringModels || this.permissionDataService.hasPermission(SystemPermission.ViewScoringModels);
+      this.canEditScoringModels = this.permissionDataService.hasPermission(SystemPermission.EditScoringModels);
+      this.canCreateScoringModels = this.permissionDataService.hasPermission(SystemPermission.CreateScoringModels);
+      this.canViewEvaluations = this.canViewEvaluations || this.permissionDataService.hasPermission(SystemPermission.ViewEvaluations);
+      this.canEditEvaluations = this.permissionDataService.hasPermission(SystemPermission.EditEvaluations);
+      this.canCreateEvaluations = this.permissionDataService.hasPermission(SystemPermission.CreateEvaluations);
+    });
+    this.permissionDataService.loadScoringModelPermissions().subscribe();
+    this.permissionDataService.loadEvaluationPermissions().subscribe();
     this.signalRService
       .startConnection(ApplicationArea.admin)
       .then(() => {
@@ -165,6 +160,13 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
       .catch((err) => {
         console.log(err);
       });
+    this.currentUserQuery
+      .select()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((cu) => {
+        this.username = cu.name;
+      });
+    this.userDataService.setCurrentUser();
   }
 
   gotoSection(section: string) {
@@ -193,23 +195,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   }
 
   logout() {
-    this.userDataService.logout();
-  }
-
-  addUserHandler(user: User) {
-    this.userDataService.addUser(user);
-  }
-
-  deleteUserHandler(user: User) {
-    this.userDataService.deleteUser(user);
-  }
-
-  addUserPermissionHandler(userPermission: UserPermission) {
-    this.userDataService.addUserPermission(userPermission);
-  }
-
-  removeUserPermissionHandler(userPermission: UserPermission) {
-    this.userDataService.deleteUserPermission(userPermission);
+    this.authService.logout();
   }
 
   inIframe() {

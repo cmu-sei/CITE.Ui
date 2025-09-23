@@ -28,6 +28,7 @@ const NAME_VALUE = 'nameValue';
   templateUrl: './admin-groups.component.html',
   styleUrls: ['./admin-groups.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false
 })
 export class AdminGroupsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;

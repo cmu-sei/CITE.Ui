@@ -13,16 +13,17 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { User } from 'src/app/generated/api';
+import { MatTableDataSource } from '@angular/material/table';
+import { User } from 'src/app/generated/cite.api';
 
 @Component({
   selector: 'app-admin-groups-membership-list',
   templateUrl: './admin-groups-membership-list.component.html',
   styleUrls: ['./admin-groups-membership-list.component.scss'],
+  standalone: false
 })
 export class AdminGroupsMembershipListComponent
   implements OnInit, OnChanges, AfterViewInit

@@ -30,8 +30,12 @@
             ],
             "styles": [
               "src/styles/styles.scss",
-              "node_modules/@kolkov/angular-editor/themes/default.scss"
+              "node_modules/@kolkov/angular-editor/themes/default.scss",
+              "node_modules/bootstrap/scss/bootstrap-utilities.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles", "./node_modules/bootstrap/scss"]
+            },
             "scripts": [],
             "extractLicenses": false,
             "sourceMap": true,

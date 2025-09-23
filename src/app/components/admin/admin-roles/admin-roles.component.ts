@@ -10,5 +10,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './admin-roles.component.html',
   styleUrls: ['./admin-roles.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false
 })
 export class AdminRolesComponent {}

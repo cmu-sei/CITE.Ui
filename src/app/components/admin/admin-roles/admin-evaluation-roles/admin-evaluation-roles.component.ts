@@ -17,6 +17,7 @@ import { EvaluationRoleDataService } from 'src/app/data/evaluation/evaluation-ro
   selector: 'app-admin-evaluation-roles',
   templateUrl: './admin-evaluation-roles.component.html',
   styleUrls: ['./admin-evaluation-roles.component.scss'],
+  standalone: false
 })
 export class AdminEvaluationRolesComponent implements OnInit {
   private evaluationRoleService = inject(EvaluationRoleDataService);

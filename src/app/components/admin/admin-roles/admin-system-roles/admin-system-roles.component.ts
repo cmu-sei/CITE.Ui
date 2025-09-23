@@ -26,6 +26,7 @@ const NAME_VALUE = 'nameValue';
   selector: 'app-admin-system-roles',
   templateUrl: './admin-system-roles.component.html',
   styleUrls: ['./admin-system-roles.component.scss'],
+  standalone: false
 })
 export class AdminSystemRolesComponent implements OnInit {
   private roleService = inject(RoleDataService);

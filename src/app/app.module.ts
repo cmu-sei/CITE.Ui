@@ -87,7 +87,23 @@ import { EvaluationInfoComponent } from './components/evaluation-info/evaluation
 import { ScoreSummaryComponent } from './components/score-summary/score-summary.component';
 import { ScoresheetComponent } from './components/scoresheet/scoresheet.component';
 import { ReportComponent } from './components/report/report.component';
-import { ConfirmDialogComponent } from './components/shared/confirm-dialog/confirm-dialog.component';
+import { AdminGroupsComponent } from './components/admin/admin-groups/admin-groups.component';
+import { AdminGroupsDetailComponent } from './components/admin/admin-groups/admin-groups-detail/admin-groups-detail.component';
+import { AdminGroupsMemberListComponent } from './components/admin/admin-groups/admin-groups-member-list/admin-groups-member-list.component';
+import { AdminGroupsMembershipListComponent } from './components/admin/admin-groups/admin-groups-membership-list/admin-groups-membership-list.component';
+import { AdminRolesComponent } from './components/admin/admin-roles/admin-roles.component';
+import { AdminEvaluationRolesComponent } from './components/admin/admin-roles/admin-evaluation-roles/admin-evaluation-roles.component';
+import { AdminScoringModelRolesComponent } from './components/admin/admin-roles/admin-scoring-model-roles/admin-scoring-model-roles.component';
+import { AdminScoringModelMembershipsComponent } from './components/admin/admin-scoring-model-memberships/admin-scoring-model-memberships/admin-scoring-model-memberships.component';
+import { AdminScoringModelMemberListComponent } from './components/admin/admin-scoring-model-memberships/admin-scoring-model-member-list/admin-scoring-model-member-list.component';
+import { AdminScoringModelMembershipListComponent } from './components/admin/admin-scoring-model-memberships/admin-scoring-model-membership-list/admin-scoring-model-membership-list.component';
+import { AdminEvaluationMembershipsComponent } from './components/admin/admin-evaluation-memberships/admin-evaluation-memberships/admin-evaluation-memberships.component';
+import { AdminEvaluationMemberListComponent } from './components/admin/admin-evaluation-memberships/admin-evaluation-member-list/admin-evaluation-member-list.component';
+import { AdminEvaluationMembershipListComponent } from './components/admin/admin-evaluation-memberships/admin-evaluation-membership-list/admin-evaluation-membership-list.component';
+import { AdminSystemRolesComponent } from './components/admin/admin-roles/admin-system-roles/admin-system-roles.component';
+import { AdminUserListComponent } from './components/admin/admin-users/admin-user-list/admin-user-list.component';
+import { CwdDialogsModule } from './components/shared/confirm-dialog/cwd-dialogs.module';
+import { NameDialogComponent } from './components/shared/name-dialog/name-dialog.component';
 import { RightSideHtmlComponent } from './components/right-side-html/right-side-html.component';
 import { RightSideIframeComponent } from './components/right-side-iframe/right-side-iframe.component';
 import { SystemMessageComponent } from './components/shared/system-message/system-message.component';
@@ -117,7 +133,8 @@ const settings: ComnSettingsConfig = {
   envUrl: 'assets/config/settings.env.json',
 };
 
-export function getBasePath(settingsSvc: ComnSettingsService) {
+export function getBasePath(settingsSvc: ComnSettingsService)
+ {
   return settingsSvc.settings.ApiUrl;
 }
 
@@ -131,7 +148,6 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     AggregateComponent,
     ReportComponent,
     SystemMessageComponent,
-    ConfirmDialogComponent,
     AdminActionsComponent,
     AdminActionEditDialogComponent,
     AdminContainerComponent,
@@ -155,7 +171,25 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     AdminTeamTypesComponent,
     AdminTeamUsersComponent,
     AdminUsersComponent,
+    AdminUserListComponent,
+    AdminGroupsComponent,
+    AdminGroupsDetailComponent,
+    AdminGroupsMemberListComponent,
+    AdminGroupsMembershipListComponent,
+    AdminRolesComponent,
+    AdminEvaluationRolesComponent,
+    AdminScoringModelRolesComponent,
+    AdminEvaluationsComponent,
+    AdminScoringModelsComponent,
+    AdminSystemRolesComponent,
+    AdminScoringModelMemberListComponent,
+    AdminScoringModelMembershipListComponent,
+    AdminScoringModelMembershipsComponent,
+    AdminEvaluationMemberListComponent,
+    AdminEvaluationMembershipListComponent,
+    AdminEvaluationMembershipsComponent,
     DashboardComponent,
+    NameDialogComponent,
     RightSideHtmlComponent,
     RightSideIframeComponent,
     TopbarComponent,
@@ -171,6 +205,7 @@ export function getBasePath(settingsSvc: ComnSettingsService) {
     AppRoutingModule,
     BrowserAnimationsModule,
     ClipboardModule,
+    CwdDialogsModule,
     SwaggerCodegenApiModule,
     FormsModule,
     ReactiveFormsModule,

@@ -16,6 +16,7 @@ import { ComnSettingsService } from '@cmusei/crucible-common';
   selector: 'app-admin-users',
   templateUrl: './admin-users.component.html',
   styleUrls: ['./admin-users.component.scss'],
+  standalone: false
 })
 export class AdminUsersComponent implements OnInit {
   matcher = new UserErrorStateMatcher();

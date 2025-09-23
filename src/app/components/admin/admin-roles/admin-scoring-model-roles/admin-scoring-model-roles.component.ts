@@ -17,6 +17,7 @@ import { ScoringModelRoleDataService } from 'src/app/data/scoring-model/scoring-
   selector: 'app-admin-scoring-model-roles',
   templateUrl: './admin-scoring-model-roles.component.html',
   styleUrls: ['./admin-scoring-model-roles.component.scss'],
+  standalone: false
 })
 export class AdminScoringModelRolesComponent implements OnInit {
   private scoringModelRoleService = inject(ScoringModelRoleDataService);

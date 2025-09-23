@@ -14,6 +14,7 @@ import { UserQuery } from 'src/app/data/user/user.query';
   selector: 'app-admin-groups-detail',
   templateUrl: './admin-groups-detail.component.html',
   styleUrls: ['./admin-groups-detail.component.scss'],
+  standalone: false
 })
 export class AdminGroupsDetailComponent implements OnInit, OnChanges {
   @Input() groupId: string;

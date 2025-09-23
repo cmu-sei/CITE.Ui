@@ -9,6 +9,7 @@ import { NameValidatorModel } from './name-dialog.models';
   selector: 'name-dialog',
   templateUrl: './name-dialog.component.html',
   styleUrls: ['./name-dialog.component.scss'],
+  standalone: false
 })
 export class NameDialogComponent {
   public title: string;
