@@ -51,17 +51,13 @@ export class EvaluationPermissionsService {
 
     /**
      * Get all SystemPermissions for the calling User.
-     * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getMyEvaluationPermissions(id: string, observe?: 'body', reportProgress?: boolean): Observable<Array<EvaluationPermissionClaim>>;
-    public getMyEvaluationPermissions(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<EvaluationPermissionClaim>>>;
-    public getMyEvaluationPermissions(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<EvaluationPermissionClaim>>>;
-    public getMyEvaluationPermissions(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling getMyEvaluationPermissions.');
-        }
+    public getMyEvaluationPermissions(observe?: 'body', reportProgress?: boolean): Observable<Array<EvaluationPermissionClaim>>;
+    public getMyEvaluationPermissions(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<EvaluationPermissionClaim>>>;
+    public getMyEvaluationPermissions(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<EvaluationPermissionClaim>>>;
+    public getMyEvaluationPermissions(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -85,7 +81,7 @@ export class EvaluationPermissionsService {
         }
 
 
-        return this.httpClient.get<Array<EvaluationPermissionClaim>>(`${this.configuration.basePath}/api/evaluations/${encodeURIComponent(String(id))}/me/permissions`,
+        return this.httpClient.get<Array<EvaluationPermissionClaim>>(`${this.configuration.basePath}/api/evaluation-permissions`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

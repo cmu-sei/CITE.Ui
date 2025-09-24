@@ -148,11 +148,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     }
     @if (isSuperUser && (showSection === usersText)) {
       <span>
-        <app-admin-users [userList]="userList | async" [permissionList]="permissionList | async"
-          (removeUserPermission)="removeUserPermissionHandler($event)"
-          (addUserPermission)="addUserPermissionHandler($event)" (addUser)="addUserHandler($event)"
-          (deleteUser)="deleteUserHandler($event)">
-        </app-admin-users>
+        <app-admin-users></app-admin-users>
       </span>
     }
   </mat-sidenav-content>

@@ -65,6 +65,7 @@ export * from './team';
 export * from './teamMembership';
 export * from './teamPermission';
 export * from './teamPermissionClaim';
+export * from './teamRole';
 export * from './teamType';
 export * from './type';
 export * from './typeAttributes';

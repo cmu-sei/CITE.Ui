@@ -9,14 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { TeamRole } from './teamRole';
+import { TeamPermission } from './teamPermission';
 
 
-export interface TeamMembership { 
+export interface TeamRole { 
     id?: string;
-    teamId?: string;
-    userId?: string | null;
-    roleId?: string;
-    role?: TeamRole;
+    name?: string | null;
+    permissions?: Array<TeamPermission> | null;
 }
 

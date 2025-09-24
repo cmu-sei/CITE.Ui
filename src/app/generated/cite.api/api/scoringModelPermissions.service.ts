@@ -51,17 +51,13 @@ export class ScoringModelPermissionsService {
 
     /**
      * Get all SystemPermissions for the calling User.
-     * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getMyScoringModelPermissions(id: string, observe?: 'body', reportProgress?: boolean): Observable<Array<ScoringModelPermissionClaim>>;
-    public getMyScoringModelPermissions(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<ScoringModelPermissionClaim>>>;
-    public getMyScoringModelPermissions(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<ScoringModelPermissionClaim>>>;
-    public getMyScoringModelPermissions(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling getMyScoringModelPermissions.');
-        }
+    public getMyScoringModelPermissions(observe?: 'body', reportProgress?: boolean): Observable<Array<ScoringModelPermissionClaim>>;
+    public getMyScoringModelPermissions(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<ScoringModelPermissionClaim>>>;
+    public getMyScoringModelPermissions(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<ScoringModelPermissionClaim>>>;
+    public getMyScoringModelPermissions(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -85,7 +81,7 @@ export class ScoringModelPermissionsService {
         }
 
 
-        return this.httpClient.get<Array<ScoringModelPermissionClaim>>(`${this.configuration.basePath}/api/scoringmodels/${encodeURIComponent(String(id))}/me/permissions`,
+        return this.httpClient.get<Array<ScoringModelPermissionClaim>>(`${this.configuration.basePath}/api/scoringmodels-permissions`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

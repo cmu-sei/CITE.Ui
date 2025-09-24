@@ -13,19 +13,19 @@ import {
   Duty,
   ScoringModel,
   Team,
-  TeamUser,
+  TeamMembership,
   User
 } from 'src/app/generated/cite.api/model/models';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { ActionQuery } from 'src/app/data/action/action.query';
+import { CurrentUserQuery } from 'src/app/data/user/user.query';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { DutyDataService } from 'src/app/data/duty/duty-data.service';
 import { DutyQuery } from 'src/app/data/duty/duty.query';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
-import { TeamUserQuery } from 'src/app/data/team-user/team-user.query';
+import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { Title } from '@angular/platform-browser';
@@ -59,7 +59,7 @@ export class DashboardComponent implements OnDestroy {
   @Input() myTeamId: string;
   @Input() noChanges: boolean;
   usersOnTheTeam: User[] = [];
-  teamUsers: TeamUser[] = [];
+  teamMemberships: TeamMembership[] = [];
   selectedEvaluation: Evaluation = {};
   scoringModel: ScoringModel = {};
   isLoading = false;
@@ -100,14 +100,14 @@ export class DashboardComponent implements OnDestroy {
   constructor(
     private actionDataService: ActionDataService,
     private actionQuery: ActionQuery,
+    private currentUserQuery: CurrentUserQuery,
     private evaluationQuery: EvaluationQuery,
     private moveQuery: MoveQuery,
     private dutyDataService: DutyDataService,
     private dutyQuery: DutyQuery,
     private scoringModelQuery: ScoringModelQuery,
     private teamQuery: TeamQuery,
-    private teamUserDataService: TeamUserDataService,
-    private teamUserQuery: TeamUserQuery,
+    private teamMembershipDataService: TeamMembershipDataService,
     private unreadArticlesDataService: UnreadArticlesDataService,
     public dialogService: DialogService,
     public matDialog: MatDialog,
@@ -116,6 +116,14 @@ export class DashboardComponent implements OnDestroy {
     private settingsService: ComnSettingsService
   ) {
     this.titleService.setTitle('CITE Dashboard');
+    //observe the current user
+    this.currentUserQuery
+      .select()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((cu) => {
+        this.loggedInUserId = cu.id;
+      });
+    this.userDataService.setCurrentUser();
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>)
       .pipe(takeUntil(this.unsubscribe$))
@@ -204,20 +212,12 @@ export class DashboardComponent implements OnDestroy {
         this.scoringModel = scoringModel;
         this.setCompleteSituationDescription();
       });
-    // observe the TeamUsers
-    this.teamUserQuery
-      .selectAll()
+    // observe the TeamMemberships
+    this.teamMembershipDataService
+      .teamMemberships$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((tUsers) => {
-        this.teamUsers = tUsers;
-      });
-    // observe the logged in user ID
-    this.userDataService.loggedInUser
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((user) => {
-        if (user && user.profile && user.profile.sub !== this.loggedInUserId) {
-          this.loggedInUserId = user.profile.sub;
-        }
+        this.teamMemberships = tUsers;
       });
   }
 
@@ -327,7 +327,7 @@ export class DashboardComponent implements OnDestroy {
         this.selectedEvaluation.id,
         this.activeTeamId
       );
-      this.teamUserDataService.loadByTeam(this.activeTeamId);
+      this.teamMembershipDataService.loadMemberships(this.activeTeamId);
     }
   }
 
@@ -502,24 +502,24 @@ export class DashboardComponent implements OnDestroy {
     });
   }
 
-  setManagerValue(teamUserId: string, value: boolean) {
-    this.teamUserDataService.setManagerValue(teamUserId, value);
+  setManagerValue(teamMembershipId: string, value: boolean) {
+    this.teamMembershipDataService.setManagerValue(teamMembershipId, value);
   }
 
-  setIncrementerValue(teamUserId: string, value: boolean) {
-    this.teamUserDataService.setIncrementerValue(teamUserId, value);
+  setIncrementerValue(teamMembershipId: string, value: boolean) {
+    this.teamMembershipDataService.setIncrementerValue(teamMembershipId, value);
   }
 
-  setModifierValue(teamUserId: string, value: boolean) {
-    this.teamUserDataService.setModifierValue(teamUserId, value);
+  setModifierValue(teamMembershipId: string, value: boolean) {
+    this.teamMembershipDataService.setModifierValue(teamMembershipId, value);
   }
 
-  setSubmitterValue(teamUserId: string, value: boolean) {
-    this.teamUserDataService.setSubmitterValue(teamUserId, value);
+  setSubmitterValue(teamMembershipId: string, value: boolean) {
+    this.teamMembershipDataService.setSubmitterValue(teamMembershipId, value);
   }
 
   loggedInUserCanManageTeam(): boolean {
-    return this.teamUsers.some(
+    return this.teamMemberships.some(
       (tu) => tu.userId === this.loggedInUserId && tu.canManageTeam
     );
   }

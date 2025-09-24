@@ -216,37 +216,31 @@ project root for license information or contact permission@sei.cmu.edu for full 
               </div>
               <div class="checkboxes-cell">
                 <div class="one-cell center-self">Manage</div>
-                <div class="one-cell center-self">Advance</div>
                 <div class="one-cell center-self">Submit</div>
                 <div class="one-cell center-self">Modify</div>
               </div>
             </div>
-            @for (teamUser of teamUsers; track teamUser) {
+            @for (teamMembership of teamMemberships; track teamMembership) {
               <div class="row-container">
                 <div class="two-cell center-self">
-                  <label>{{ getUserName(teamUser.userId) }}</label>
+                  <label>{{ getUserName(teamMembership.userId) }}</label>
                 </div>
                 <div class="checkboxes-cell">
                   <div class="one-cell center-self">
-                    <mat-checkbox [checked]="teamUser.canManageTeam" (change)="setManagerValue(teamUser.id, $event.checked)"
-                    [disabled]="noChanges || teamUser.userId === loggedInUserId || !loggedInUserCanManageTeam()"></mat-checkbox>
-                  </div>
-                  <div class="one-cell center-self">
-                    <mat-checkbox [checked]="teamUser.canIncrementMove"
-                      (change)="setIncrementerValue(teamUser.id, $event.checked)"
-                    [disabled]="noChanges || !loggedInUserCanManageTeam()"></mat-checkbox>
+                    <mat-checkbox [checked]="teamMembership.roleId ==" (change)="setManagerValue(teamMembership.id, $event.checked)"
+                    [disabled]="noChanges || teamMembership.userId === loggedInUserId || !loggedInUserCanManageTeam()"></mat-checkbox>
                   </div>
                   <div class="one-cell center-self">
                     <mat-checkbox
-                      [checked]="teamUser.canSubmit"
-                      (change)="setSubmitterValue(teamUser.id, $event.checked)"
+                      [checked]="teamMembership.canSubmit"
+                      (change)="setSubmitterValue(teamMembership.id, $event.checked)"
                       [disabled]="noChanges || !loggedInUserCanManageTeam()"
                     ></mat-checkbox>
                   </div>
                   <div class="one-cell center-self">
                     <mat-checkbox
-                      [checked]="teamUser.canModify"
-                      (change)="setModifierValue(teamUser.id, $event.checked)"
+                      [checked]="teamMembership.canModify"
+                      (change)="setModifierValue(teamMembership.id, $event.checked)"
                       [disabled]="noChanges || !loggedInUserCanManageTeam()"
                     ></mat-checkbox>
                   </div>

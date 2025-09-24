@@ -11,7 +11,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     (urlNavigate)="topBarNavigate($event)"></app-topbar>
   }
 
-  @if (!isStarted) {
+  @if (!permissions) {
     <span>
       <mat-card>
         <mat-card-header>
@@ -23,7 +23,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-card>
     </span>
   }
-  @if (isStarted) {
+  @if (permissions) {
     <span>
       @if (!(evaluationsAreLoading$ | async) && evaluationList.length === 0) {
         <div

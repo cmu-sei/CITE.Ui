@@ -51,17 +51,13 @@ export class TeamPermissionsService {
 
     /**
      * Get all SystemPermissions for the calling User.
-     * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getMyTeamPermissions(id: string, observe?: 'body', reportProgress?: boolean): Observable<Array<TeamPermissionClaim>>;
-    public getMyTeamPermissions(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<TeamPermissionClaim>>>;
-    public getMyTeamPermissions(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<TeamPermissionClaim>>>;
-    public getMyTeamPermissions(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling getMyTeamPermissions.');
-        }
+    public getMyTeamPermissions(observe?: 'body', reportProgress?: boolean): Observable<Array<TeamPermissionClaim>>;
+    public getMyTeamPermissions(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<TeamPermissionClaim>>>;
+    public getMyTeamPermissions(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<TeamPermissionClaim>>>;
+    public getMyTeamPermissions(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -85,7 +81,7 @@ export class TeamPermissionsService {
         }
 
 
-        return this.httpClient.get<Array<TeamPermissionClaim>>(`${this.configuration.basePath}/api/teams/${encodeURIComponent(String(id))}/me/permissions`,
+        return this.httpClient.get<Array<TeamPermissionClaim>>(`${this.configuration.basePath}/api/team-permissions`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

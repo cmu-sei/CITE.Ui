@@ -9,12 +9,13 @@ import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.s
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { TeamUserQuery } from 'src/app/data/team-user/team-user.query';
+import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
 import { Observable, Subject } from 'rxjs';
 import { Section } from 'src/app/components/home-app/home-app.component';
 import { takeUntil } from 'rxjs';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
+import { CurrentUserQuery } from 'src/app/data/user/user.query';
 
 @Component({
     selector: 'app-evaluation-info',
@@ -49,16 +50,18 @@ export class EvaluationInfoComponent implements OnDestroy {
   canIncrementMove = false;
   basePageUrl = location.origin + '/report/';
   private unsubscribe$ = new Subject();
+  loggedInUserId = '';
 
   constructor(
     private evaluationQuery: EvaluationQuery,
     private moveQuery: MoveQuery,
     private teamQuery: TeamQuery,
-    private teamUserQuery: TeamUserQuery,
+    private teamMembershipDataService: TeamMembershipDataService,
     private uiDataService: UIDataService,
     private evaluationDataService: EvaluationDataService,
     public dialogService: DialogService,
-    private userDataService: UserDataService
+    private userDataService: UserDataService,
+    private currentUserQuery: CurrentUserQuery
   ) {
     // observe the active evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(e => {
@@ -77,11 +80,17 @@ export class EvaluationInfoComponent implements OnDestroy {
         this.selectedTeamId = t ? t.id : this.selectedTeamId;
       }
     });
+    //observe the current user
+    this.currentUserQuery
+      .select()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((cu) => {
+        this.loggedInUserId = cu.id;
+      });
+    this.userDataService.setCurrentUser();
     // observe the team users to get permissions
-    this.teamUserQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamUsers => {
-      const userId = this.userDataService.loggedInUser?.value?.profile?.sub;
-      const currentTeamUser = teamUsers.find(tu => tu.userId === userId);
-      this.canIncrementMove = currentTeamUser ? currentTeamUser.canIncrementMove : false;
+    this.teamMembershipDataService.teamMemberships$.pipe(takeUntil(this.unsubscribe$)).subscribe(teamMemberships => {
+      const currentTeamMembership = teamMemberships.find(tu => tu.userId === this.loggedInUserId);
     });
     this.selectedTeamId = this.uiDataService.getTeam(this.selectedEvaluationId);
   }

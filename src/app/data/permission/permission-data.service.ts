@@ -13,6 +13,9 @@ import {
   ScoringModelPermissionsService,
   SystemPermission,
   SystemPermissionsService,
+  TeamPermission,
+  TeamPermissionClaim,
+  TeamPermissionsService
 } from 'src/app/generated/cite.api';
 
 @Injectable({
@@ -24,9 +27,9 @@ export class PermissionDataService {
     return this._permissions;
   }
 
-  private _EvaluationPermissions: EvaluationPermissionClaim[] = [];
-  get EvaluationPermissions(): EvaluationPermissionClaim[] {
-    return this._EvaluationPermissions;
+  private _evaluationPermissions: EvaluationPermissionClaim[] = [];
+  get evaluationPermissions(): EvaluationPermissionClaim[] {
+    return this._evaluationPermissions;
   }
 
   private _scoringModelPermissions: ScoringModelPermissionClaim[] = [];
@@ -34,10 +37,16 @@ export class PermissionDataService {
     return this._scoringModelPermissions;
   }
 
+  private _teamPermissions: TeamPermissionClaim[] = [];
+  get TeamPermissions(): TeamPermissionClaim[] {
+    return this._teamPermissions;
+  }
+
   constructor(
     private permissionsService: SystemPermissionsService,
     private evaluationPermissionsService: EvaluationPermissionsService,
-    private scoringModelPermissionsService: ScoringModelPermissionsService
+    private scoringModelPermissionsService: ScoringModelPermissionsService,
+    private teamPermissionService: TeamPermissionsService
   ) {}
 
   load(): Observable<SystemPermission[]> {
@@ -51,21 +60,30 @@ export class PermissionDataService {
     return this._permissions.includes(permission);
   }
 
-  loadEvaluationPermissions(id: string): Observable<EvaluationPermissionClaim[]> {
+  loadEvaluationPermissions(): Observable<EvaluationPermissionClaim[]> {
     return this.evaluationPermissionsService
-      .getMyEvaluationPermissions(id)
+      .getMyEvaluationPermissions()
       .pipe(
         take(1),
-        tap((x) => (this._EvaluationPermissions = x))
+        tap((x) => (this._evaluationPermissions = x))
       );
   }
 
-  loadScoringModelPermissions(id: string): Observable<ScoringModelPermissionClaim[]> {
+  loadScoringModelPermissions(): Observable<ScoringModelPermissionClaim[]> {
     return this.scoringModelPermissionsService
-      .getMyScoringModelPermissions(id)
+      .getMyScoringModelPermissions()
       .pipe(
         take(1),
         tap((x) => (this._scoringModelPermissions = x))
+      );
+  }
+
+  loadTeamPermissions(): Observable<TeamPermissionClaim[]> {
+    return this.teamPermissionService
+      .getMyTeamPermissions()
+      .pipe(
+        take(1),
+        tap((x) => (this._teamPermissions = x))
       );
   }
 
@@ -101,7 +119,7 @@ export class PermissionDataService {
     evaluationPermission?: EvaluationPermission
   ) {
     const permissions = this._permissions;
-    const evaluationPermissionClaims = this._EvaluationPermissions;
+    const evaluationPermissionClaims = this._evaluationPermissions;
     if (permissions.includes(permission)) {
       return true;
     } else if (evaluationId !== null && evaluationPermission !== null) {
@@ -150,4 +168,30 @@ export class PermissionDataService {
 
     return false;
   }
+
+  private canTeam(
+    permission: SystemPermission,
+    teamId?: string,
+    teamPermission?: TeamPermission
+  ) {
+    const permissions = this._permissions;
+    const teamPermissionClaims = this._teamPermissions;
+    if (permissions.includes(permission)) {
+      return true;
+    } else if (teamId !== null && teamPermission !== null) {
+      const evaluationPermissionClaim = teamPermissionClaims.find(
+        (x) => x.teamId === teamId
+      );
+
+      if (
+        evaluationPermissionClaim &&
+        evaluationPermissionClaim.permissions.includes(teamPermission)
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 }

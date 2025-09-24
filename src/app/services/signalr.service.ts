@@ -5,7 +5,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
 import * as signalR from '@microsoft/signalr';
-import { Action, Evaluation, ItemStatus, Move, Duty, ScoringModel, Submission, Team, TeamUser, User } from 'src/app/generated/cite.api';
+import { Action, Evaluation, ItemStatus, Move, Duty, ScoringModel, Submission, Team, TeamMembership, User } from 'src/app/generated/cite.api';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { MoveDataService } from '../data/move/move-data.service';
@@ -13,7 +13,7 @@ import { DutyDataService } from 'src/app/data/duty/duty-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
-import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
+import { TeamMembershipDataService } from '../data/team/team-membership-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -44,7 +44,7 @@ export class SignalRService implements OnDestroy {
     private scoringModelDataService: ScoringModelDataService,
     private submissionDataService: SubmissionDataService,
     private teamDataService: TeamDataService,
-    private teamUserDataService: TeamUserDataService,
+    private teamMembershipDataService: TeamMembershipDataService,
     private userDataService: UserDataService
   ) {
     this.authService.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
@@ -140,7 +140,7 @@ export class SignalRService implements OnDestroy {
     this.addScoringModelHandlers();
     this.addSubmissionHandlers();
     this.addTeamHandlers();
-    this.addTeamUserHandlers();
+    this.addTeamMembershipHandlers();
     this.addUserHandlers();
   }
 
@@ -255,17 +255,17 @@ export class SignalRService implements OnDestroy {
     });
   }
 
-  private addTeamUserHandlers() {
-    this.hubConnection.on('TeamUserUpdated', (teamUser: TeamUser) => {
-      this.teamUserDataService.updateStore(teamUser);
+  private addTeamMembershipHandlers() {
+    this.hubConnection.on('TeamUserUpdated', (teamUser: TeamMembership) => {
+      this.teamMembershipDataService.updateStore(teamUser);
     });
 
-    this.hubConnection.on('TeamUserCreated', (teamUser: TeamUser) => {
-      this.teamUserDataService.updateStore(teamUser);
+    this.hubConnection.on('TeamUserCreated', (teamUser: TeamMembership) => {
+      this.teamMembershipDataService.updateStore(teamUser);
     });
 
     this.hubConnection.on('TeamUserDeleted', (id: string) => {
-      this.teamUserDataService.deleteFromStore(id);
+      this.teamMembershipDataService.deleteFromStore(id);
     });
   }
 
