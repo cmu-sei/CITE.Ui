@@ -11,7 +11,7 @@ import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.quer
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { UserDataService } from 'src/app/data/user/user-data.service';
+import { CurrentUserQuery } from 'src/app/data/user/user.query';
 import {
   ItemStatus,
   Evaluation,
@@ -66,7 +66,7 @@ export class ReportComponent implements OnDestroy {
     private submissionDataService: SubmissionDataService,
     private submissionQuery: SubmissionQuery,
     private evaluationQuery: EvaluationQuery,
-    private userDataService: UserDataService,
+    private currentUserQuery: CurrentUserQuery,
     private teamQuery: TeamQuery,
     private dialogService: DialogService,
     public matDialog: MatDialog,
@@ -97,12 +97,12 @@ export class ReportComponent implements OnDestroy {
       }
     });
     // observe the logged in user ID
-    this.userDataService.loggedInUser
+    this.currentUserQuery.select()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user) => {
-        if (user && user.profile && user.profile.sub !== this.loggedInUserId) {
-          this.loggedInUserId = user.profile.sub;
-          this.loggedInUserName = user.profile.name;
+        if (user && user.id !== this.loggedInUserId) {
+          this.loggedInUserId = user.id;
+          this.loggedInUserName = user.name;
         }
       });
     // observe the submission list

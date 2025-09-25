@@ -256,15 +256,15 @@ export class SignalRService implements OnDestroy {
   }
 
   private addTeamMembershipHandlers() {
-    this.hubConnection.on('TeamUserUpdated', (teamUser: TeamMembership) => {
-      this.teamMembershipDataService.updateStore(teamUser);
+    this.hubConnection.on('TeamMembershipUpdated', (teamMembership: TeamMembership) => {
+      this.teamMembershipDataService.updateStore(teamMembership);
     });
 
-    this.hubConnection.on('TeamUserCreated', (teamUser: TeamMembership) => {
-      this.teamMembershipDataService.updateStore(teamUser);
+    this.hubConnection.on('TeamMembershipCreated', (teamMembership: TeamMembership) => {
+      this.teamMembershipDataService.updateStore(teamMembership);
     });
 
-    this.hubConnection.on('TeamUserDeleted', (id: string) => {
+    this.hubConnection.on('TeamMembershipDeleted', (id: string) => {
       this.teamMembershipDataService.deleteFromStore(id);
     });
   }

@@ -3,20 +3,20 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { AdminTeamUsersComponent } from './admin-team-users.component';
+import { AdminTeamMembershipsComponent } from './admin-team-memberships.component';
 
 describe('AdminTeamUsersComponent', () => {
-  let component: AdminTeamUsersComponent;
-  let fixture: ComponentFixture<AdminTeamUsersComponent>;
+  let component: AdminTeamMembershipsComponent;
+  let fixture: ComponentFixture<AdminTeamMembershipsComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [AdminTeamUsersComponent],
+      declarations: [AdminTeamMembershipsComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AdminTeamUsersComponent);
+    fixture = TestBed.createComponent(AdminTeamMembershipsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

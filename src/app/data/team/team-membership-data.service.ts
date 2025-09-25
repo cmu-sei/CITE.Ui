@@ -17,13 +17,17 @@ export class TeamMembershipDataService {
     TeamMembership[]
   >([]);
   public teamMemberships$ = this.teamMembershipsSubject.asObservable();
+  public teamMemberships: TeamMembership[] = [];
 
   constructor(private teamMembershipsService: TeamMembershipsService) {}
 
   loadMemberships(teamId: string): Observable<TeamMembership[]> {
     return this.teamMembershipsService
       .getAllTeamMemberships(teamId)
-      .pipe(tap((x) => this.teamMembershipsSubject.next(x)));
+      .pipe(tap((x) => {
+        this.teamMemberships = x;
+        this.teamMembershipsSubject.next(x);
+      }));
   }
 
   createMembership(teamId: string, teamMembership: TeamMembership) {

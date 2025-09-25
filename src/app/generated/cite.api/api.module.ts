@@ -28,6 +28,7 @@ import { SystemRolesService } from './api/systemRoles.service';
 import { TeamService } from './api/team.service';
 import { TeamMembershipsService } from './api/teamMemberships.service';
 import { TeamPermissionsService } from './api/teamPermissions.service';
+import { TeamRolesService } from './api/teamRoles.service';
 import { TeamTypeService } from './api/teamType.service';
 import { UserService } from './api/user.service';
 
@@ -61,6 +62,7 @@ import { UserService } from './api/user.service';
     TeamService,
     TeamMembershipsService,
     TeamPermissionsService,
+    TeamRolesService,
     TeamTypeService,
     UserService ]
 })

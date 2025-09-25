@@ -21,7 +21,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminScoringModelEditDialogComponent } from '../admin-scoring-model-edit-dialog/admin-scoring-model-edit-dialog.component';
-import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -74,7 +74,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     private settingsService: ComnSettingsService,
     private scoringModelDataService: ScoringModelDataService,
     private scoringModelQuery: ScoringModelQuery,
-    private userDataService: UserDataService,
+    private userQuery: UserQuery,
     private dialog: MatDialog,
     public dialogService: DialogService,
     private activatedRoute: ActivatedRoute,
@@ -89,7 +89,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
       this.scoringModelList = scoringModels;
     });
     // oberve the users
-    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+    this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
       this.userList = users;
     });
     // subscribe to scoring models loading

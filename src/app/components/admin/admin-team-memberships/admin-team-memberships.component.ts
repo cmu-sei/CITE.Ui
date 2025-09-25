@@ -7,36 +7,35 @@ import {
   OnDestroy,
   OnInit,
   Input,
-  ViewChild,
 } from '@angular/core';
-import { PageEvent, MatPaginator } from '@angular/material/paginator';
-import { Sort, MatSort, MatSortable } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { Team, User } from 'src/app/generated/cite.api';
-import { UserDataService } from 'src/app/data/user/user-data.service';
+import { Team, TeamMembership, TeamRole, User } from 'src/app/generated/cite.api';
+import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UntypedFormControl } from '@angular/forms';
 
 @Component({
-    selector: 'app-admin-team-users',
-    templateUrl: './admin-team-users.component.html',
-    styleUrls: ['./admin-team-users.component.scss'],
+    selector: 'app-admin-team-memberships',
+    templateUrl: './admin-team-memberships.component.html',
+    styleUrls: ['./admin-team-memberships.component.scss'],
     standalone: false
 })
-export class AdminTeamUsersComponent implements OnDestroy, OnInit {
+export class AdminTeamMembershipsComponent implements OnDestroy, OnInit {
   @Input() teamId: string;
   @Input() noChanges: boolean;
   userList: User[] = [];
-  teamUsers: TeamUser[] = [];
-  otherTeamUsers: TeamUser[] = [];
+  teamMemberships: TeamMembership[] = [];
+  otherTeamMemberships: TeamMembership[] = [];
   teamList: Team[] = [];
   displayedUserColumns: string[] = ['name', 'id'];
-  displayedTeamUserColumns: string[] = ['name', 'isObserver', 'canManageTeam', 'canIncrementMove', 'canSubmit', 'canModify', 'id'];
+  displayedTeamMembershipColumns: string[] = ['name', 'canView', 'canModify', 'canSubmit', 'canManageTeam', 'id'];
   displayedTeamColumns: string[] = ['name', 'user'];
   userDataSource = new MatTableDataSource<User>(new Array<User>());
-  teamUserDataSource = new MatTableDataSource<TeamUser>(new Array<TeamUser>());
+  teamMembershipDataSource = new MatTableDataSource<TeamMembership>(new Array<TeamMembership>());
   filterControl = new UntypedFormControl();
   filterString = '';
   isAddMode = false;
@@ -47,16 +46,17 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   sort: Sort = {active: 'name', direction: 'asc'};
 
   constructor(
+    private teamMembershipDataService: TeamMembershipDataService,
     private teamQuery: TeamQuery,
-    private userDataService: UserDataService
+    private userQuery: UserQuery
   ) {
-    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+    this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
       this.userList = users;
       this.setDataSources();
     });
-    this.teamUserQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(tUsers => {
-      this.teamUsers = tUsers.filter(tu => tu.teamId === this.teamId);
-      this.otherTeamUsers = tUsers.filter(tu => tu.teamId !== this.teamId);
+    this.teamMembershipDataService.teamMemberships$.pipe(takeUntil(this.unsubscribe$)).subscribe(tUsers => {
+      this.teamMemberships = tUsers.filter(tu => tu.teamId === this.teamId);
+      this.otherTeamMemberships = tUsers.filter(tu => tu.teamId !== this.teamId);
       this.setDataSources();
     });
     // observe the evaluation teams
@@ -70,13 +70,13 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
       this.filterString = this.filterControl.value;
       this.applyFilter();
     });
-    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+    this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
       this.userList = users;
       this.applyFilter();
     });
     this.filterControl.setValue('');
-    this.teamUsers = this.teamUserQuery.getAll().filter(tu => tu.teamId === this.teamId);
-    this.otherTeamUsers = this.teamUserQuery.getAll().filter(tu => tu.teamId !== this.teamId);
+    this.teamMemberships = this.teamMembershipDataService.teamMemberships.filter(tu => tu.teamId === this.teamId);
+    this.otherTeamMemberships = this.teamMembershipDataService.teamMemberships.filter(tu => tu.teamId !== this.teamId);
     this.setDataSources();
   }
 
@@ -85,7 +85,7 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
   }
 
   setDataSources() {
-    this.teamUserDataSource.data = this.teamUsers.sort((a, b) => {
+    this.teamMembershipDataSource.data = this.teamMemberships.sort((a, b) => {
       const aName = this.getUserName(a.userId).toLowerCase();
       const bName = this.getUserName(b.userId).toLowerCase();
       if (aName < bName) {
@@ -97,7 +97,7 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
       }
     });
     const newAllUsers = !this.userList ? new Array<User>() : this.userList.slice(0);
-    this.teamUserDataSource.data.forEach((tu) => {
+    this.teamMembershipDataSource.data.forEach((tu) => {
       const index = newAllUsers.findIndex((u) => u.id === tu.userId);
       if (index >= 0) {
         newAllUsers.splice(index, 1);
@@ -134,27 +134,21 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
     this.userDataSource.data = data;
   }
 
-  sortTeamUserData(teamUserData: TeamUser[]) {
-    teamUserData.sort((a, b) => {
+  sortTeamMembershipData(teamMembershipData: TeamMembership[]) {
+    teamMembershipData.sort((a, b) => {
         const aName = this.getUserName(a.userId).toLowerCase(); // Assumption: getUserName resolves the user's name by ID
         const bName = this.getUserName(b.userId).toLowerCase();
         let isAsc = this.sort.direction === 'asc';
         switch (this.sort.active) {
             case 'name':
                 return this.compare(aName, bName, isAsc);
-            case 'isObserver':
-                return this.compare(String(a.isObserver), String(b.isObserver), isAsc);
-            case 'canIncrementMove':
-                return this.compare(String(a.canIncrementMove), String(b.canIncrementMove), isAsc);
-            case 'canModify':
-                return this.compare(String(a.canModify), String(b.canModify), isAsc);
-            case 'canSubmit':
-                return this.compare(String(a.canSubmit), String(b.canSubmit), isAsc);
+            case 'role':
+                return this.compare(String(a.role.name), String(b.role.name), isAsc);
             default:
                 return 0;
         }
     });
-    this.teamUserDataSource.data = teamUserData;
+    this.teamMembershipDataSource.data = teamMembershipData;
 }
 
   compare(a: string, b: string, isAsc: boolean) {
@@ -168,64 +162,49 @@ export class AdminTeamUsersComponent implements OnDestroy, OnInit {
 
   onSortTeamChange(sort: Sort) {
     this.sort = sort;
-    this.sortTeamUserData(this.teamUsers);
+    this.sortTeamMembershipData(this.teamMemberships);
   }
 
   addUserToTeam(user: User): void {
-    const teamUser = {
+    const teamMembership = {
       teamId: this.teamId,
       userId: user.id
-    } as TeamUser;
-    this.teamUserDataService.add(teamUser);
+    } as TeamMembership;
+    this.teamMembershipDataService.createMembership(this.teamId, teamMembership);
   }
 
   /**
    * Removes a user from the current team
    * @param user The user to remove from team
    */
-  removeUserFromTeam(teamUser: TeamUser): void {
-    this.teamUserDataService.delete(teamUser.id);
+  removeUserFromTeam(teamMembership: TeamMembership): void {
+    this.teamMembershipDataService.deleteMembership(teamMembership.id);
   }
 
-  setObserverValue(teamUserId: string, value: boolean) {
-    this.teamUserDataService.setObserverValue(teamUserId, value);
-  }
-
-  setIncrementerValue(teamUserId: string, value: boolean) {
-    this.teamUserDataService.setIncrementerValue(teamUserId, value);
-  }
-
-  setManagerValue(teamUserId: string, value: boolean) {
-    this.teamUserDataService.setManagerValue(teamUserId, value);
-  }
-
-  setModifierValue(teamUserId: string, value: boolean) {
-    this.teamUserDataService.setModifierValue(teamUserId, value);
-  }
-
-  setSubmitterValue(teamUserId: string, value: boolean) {
-    this.teamUserDataService.setSubmitterValue(teamUserId, value);
+  updateRole(teamMembership: TeamMembership, teamRole: TeamRole) {
+    teamMembership.roleId = teamRole.id;
+    this.teamMembershipDataService.editMembership(teamMembership);
   }
 
   toggleAddMode(value: boolean) {
     this.isAddMode = value;
     if (value) {
-      this.displayedTeamUserColumns = ['name', 'id'];
+      this.displayedTeamMembershipColumns = ['name', 'id'];
 
     } else {
-      this.displayedTeamUserColumns = ['name', 'isObserver', 'canIncrementMove', 'canModify', 'canSubmit', 'id'];
+      this.displayedTeamMembershipColumns = ['name', 'canView', 'canModify', 'canSubmit', 'canManage', 'id'];
     }
   }
 
   onAnotherTeam(userId: string): boolean {
-    return this.otherTeamUsers.some(tu => tu.userId === userId);
+    return this.otherTeamMemberships.some(tu => tu.userId === userId);
   }
 
   getUserTeamName(userId: string): string {
     let teamName = '';
-    const teamUser = this.otherTeamUsers.find(tu => tu.userId === userId);
-    if (teamUser && teamUser.teamId) {
-      const team = this.teamList.find(t => t.id === teamUser.teamId);
+    const teamMembership = this.otherTeamMemberships.find(tu => tu.userId === userId);
+    if (teamMembership && teamMembership.teamId) {
+      const team = this.teamList.find(t => t.id === teamMembership.teamId);
       if (team) {
         teamName = team.shortName;
       }

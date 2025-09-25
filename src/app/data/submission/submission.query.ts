@@ -6,12 +6,11 @@ import { Order, Query, QueryConfig, QueryEntity } from '@datorama/akita';
 import { SubmissionState, SubmissionStore } from './submission.store';
 import { Submission } from 'src/app/generated/cite.api';
 import { Injectable } from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
 import { combineLatest, Observable } from 'rxjs';
 import { PopulatedSubmission, SubmissionType } from './submission.models';
 import { TeamQuery } from '../team/team.query';
-import { filter, map, switchMap } from 'rxjs/operators';
-import { UserDataService } from 'src/app/data/user/user-data.service';
+import { map } from 'rxjs/operators';
+import { UserQuery } from '../user/user.query';
 
 @QueryConfig({
   sortBy: 'name',
@@ -24,7 +23,7 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
   constructor(
     protected store: SubmissionStore,
     protected teamQuery: TeamQuery,
-    protected userDataService: UserDataService
+    protected userQuery: UserQuery
   ) {
     super(store);
   }
@@ -37,7 +36,7 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
     return combineLatest([
       this.selectAll(),
       this.teamQuery.selectAll(),
-      this.userDataService.userList
+      this.userQuery.selectAll()
     ]).pipe(
       map(([submissions, teams, users]) => {
         const populatedSubmissions: Array<PopulatedSubmission> = [];

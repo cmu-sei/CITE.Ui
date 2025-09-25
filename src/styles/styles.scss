@@ -4,21 +4,23 @@
 @use "@angular/material" as mat;
 @use "./theme-colors" as theme;
 @use '@mdi/font/scss/materialdesignicons.scss';
-@use '~@fortawesome/fontawesome-free/css/all.css';
-/* BOOTSTRAP */
+
+@import '@fortawesome/fontawesome-free/css/all.css';
+@include mat.core();
+/* BOOTSTRAP IMPORTS */
 /* Required */
-@use '../../node_modules/bootstrap/scss/functions';
-@use '../../node_modules/bootstrap/scss/variables';
-@use '../../node_modules/bootstrap/scss/maps';
-@use '../../node_modules/bootstrap/scss/mixins';
-@use '../../node_modules/bootstrap/scss/root';
+@import '../../node_modules/bootstrap/scss/functions';
+@import '../../node_modules/bootstrap/scss/variables';
+@import '../../node_modules/bootstrap/scss/maps';
+@import '../../node_modules/bootstrap/scss/mixins';
+@import '../../node_modules/bootstrap/scss/root';
 
 /* Optional */
-@use '../../node_modules/bootstrap/scss/utilities';
-/* END BOOTSRAP */
+@import '../../node_modules/bootstrap/scss/utilities';
+/* END BOOTSRAP IMPORTS */
+
 @include mat.elevation-classes();
 @include mat.app-background();
-@include mat.core();
 
 html {
   @include mat.theme((color: theme.$primary-palette,

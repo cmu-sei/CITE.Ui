@@ -77,7 +77,7 @@ import { AdminSubmissionsComponent } from './components/admin/admin-submissions/
 import { AdminTeamsComponent } from './components/admin/admin-teams/admin-teams.component';
 import { AdminTeamEditDialogComponent } from './components/admin/admin-team-edit-dialog/admin-team-edit-dialog.component';
 import { AdminTeamTypesComponent } from './components/admin/admin-teamtypes/admin-teamtypes.component';
-import { AdminTeamUsersComponent } from './components/admin/admin-team-users/admin-team-users.component';
+import { AdminTeamMembershipsComponent } from './components/admin/admin-team-memberships/admin-team-memberships.component';
 import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
 import { AggregateComponent } from './components/aggregate/aggregate.component';
 import { ClipboardModule } from 'ngx-clipboard';
@@ -169,7 +169,7 @@ export function getBasePath(settingsSvc: ComnSettingsService)
     AdminTeamsComponent,
     AdminTeamEditDialogComponent,
     AdminTeamTypesComponent,
-    AdminTeamUsersComponent,
+    AdminTeamMembershipsComponent,
     AdminUsersComponent,
     AdminUserListComponent,
     AdminGroupsComponent,

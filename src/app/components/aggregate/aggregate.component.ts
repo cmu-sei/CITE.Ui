@@ -9,7 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { UserDataService } from 'src/app/data/user/user-data.service';
+import { CurrentUserQuery } from 'src/app/data/user/user.query';
 import { ItemStatus,
   Evaluation,
   Move,
@@ -57,10 +57,8 @@ export class AggregateComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject();
 
   constructor(
-    private scoringModelQuery: ScoringModelQuery,
     private submissionService: SubmissionService,
-    private evaluationQuery: EvaluationQuery,
-    private userDataService: UserDataService,
+    private currentUserQuery: CurrentUserQuery,
     private teamService: TeamService,
     private teamQuery: TeamQuery,
     public matDialog: MatDialog,
@@ -70,11 +68,11 @@ export class AggregateComponent implements OnInit, OnDestroy {
   ) {
     this.titleService.setTitle('CITE Report');
     // observe the logged in user ID
-    this.userDataService.loggedInUser
+    this.currentUserQuery.select()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user) => {
-        if (user && user.profile && user.profile.sub !== this.loggedInUserId) {
-          this.loggedInUserId = user.profile.sub;
+        if (user && user.id !== this.loggedInUserId) {
+          this.loggedInUserId = user.id;
           this.userId = this.loggedInUserId;
         }
       });

@@ -17,7 +17,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </span>
     </div>
 
-    <mat-table class="mat-table-all-users" #table [dataSource]="teamUserDataSource" matSort>
+    <mat-table class="mat-table-all-users" #table [dataSource]="teamMembershipDataSource" matSort>
       <ng-container matColumnDef="team">
         <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -43,11 +43,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-cell>
       </ng-container>
 
-      <mat-header-row *matHeaderRowDef="displayedTeamUserColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedTeamUserColumns"></mat-row>
+      <mat-header-row *matHeaderRowDef="displayedTeamMembershipColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedTeamMembershipColumns"></mat-row>
     </mat-table>
 
-    @if (teamUserDataSource.filteredData.length === 0) {
+    @if (teamMembershipDataSource.filteredData.length === 0) {
       <div>No results found</div>
     }
   </div>

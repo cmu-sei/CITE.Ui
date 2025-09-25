@@ -94,7 +94,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-card>
     }
 
-    <mat-table class="mat-table-all-users" #table [dataSource]="teamUserDataSource" matSort
+    <mat-table class="mat-table-all-users" #table [dataSource]="teamMembershipDataSource" matSort
       (matSortChange)="onSortTeamChange($event)">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
@@ -171,8 +171,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   </mat-cell>
                 </ng-container>
 
-                <mat-header-row *matHeaderRowDef="displayedTeamUserColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedTeamUserColumns"></mat-row>
+                <mat-header-row *matHeaderRowDef="displayedTeamMembershipColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedTeamMembershipColumns"></mat-row>
               </mat-table>
 
             </div>

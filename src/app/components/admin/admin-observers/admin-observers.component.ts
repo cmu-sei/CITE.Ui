@@ -9,12 +9,13 @@ import {
   Input,
   ViewChild,
 } from '@angular/core';
-import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Team, User } from 'src/app/generated/cite.api';
+import { Team, TeamMembership, User } from 'src/app/generated/cite.api';
+import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 @Component({
@@ -27,25 +28,26 @@ export class AdminObserversComponent implements OnDestroy, OnInit {
   @Input() evaluationId: string;
   @Input() noChanges: boolean;
   userList: User[] = [];
-  teamUsers: TeamUser[] = [];
+  teamMemberships: TeamMembership[] = [];
   displayedObserverColumns: string[] = ['team', 'name', 'id'];
-  displayedTeamUserColumns: string[] = ['team', 'name', 'id'];
-  observerDataSource = new MatTableDataSource<TeamUser>(new Array<TeamUser>());
-  teamUserDataSource = new MatTableDataSource<TeamUser>(new Array<TeamUser>());
+  displayedTeamMembershipColumns: string[] = ['team', 'name', 'id'];
+  observerDataSource = new MatTableDataSource<TeamMembership>(new Array<TeamMembership>());
+  teamMembershipDataSource = new MatTableDataSource<TeamMembership>(new Array<TeamMembership>());
   teamList: Team[] = [];
   private unsubscribe$ = new Subject();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
+    private teamMembershipDataService: TeamMembershipDataService,
     private teamQuery: TeamQuery,
-    private userDataService: UserDataService
+    private userQuery: UserQuery
   ) {
-    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+    this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
       this.userList = users;
     });
-    this.teamUserQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(tUsers => {
-      this.teamUsers = tUsers
+    this.teamMembershipDataService.teamMemberships$.pipe(takeUntil(this.unsubscribe$)).subscribe(tUsers => {
+      this.teamMemberships = tUsers
         .sort((a, b) => {
           const aTeam = this.getTeamName(a.teamId).toLowerCase();
           const bTeam = this.getTeamName(b.teamId).toLowerCase();
@@ -78,23 +80,23 @@ export class AdminObserversComponent implements OnDestroy, OnInit {
   }
 
   setDataSources() {
-    // filter the list for each data source
-    this.teamUserDataSource.data = this.teamUsers
-      .filter(tu => !tu.isObserver);
-    this.observerDataSource.data = this.teamUsers
-      .filter(tu => tu.isObserver);
+    // // filter the list for each data source
+    // this.teamMembershipDataSource.data = this.teamMemberships
+    //   .filter(tu => !tu.isObserver);
+    // this.observerDataSource.data = this.teamMemberships
+    //   .filter(tu => tu.isObserver);
   }
 
   addObserver(id: string): void {
-    this.teamUserDataService.setObserverValue(id, true);
+    // this.teamMembershipDataService.setObserverValue(id, true);
   }
 
   removeObserver(id: string): void {
-    this.teamUserDataService.setObserverValue(id, false);
+    // this.teamMembershipDataService.setObserverValue(id, false);
   }
 
-  setObserverValue(teamUserId: string, value: boolean) {
-    this.teamUserDataService.setObserverValue(teamUserId, value);
+  setObserverValue(teamMembershipId: string, value: boolean) {
+    // this.teamMembershipDataService.setObserverValue(teamMembershipId, value);
   }
 
   compare(a: string, b: string, isAsc: boolean) {

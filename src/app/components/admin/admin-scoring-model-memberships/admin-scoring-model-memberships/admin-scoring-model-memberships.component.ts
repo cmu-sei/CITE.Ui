@@ -74,7 +74,7 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
       this.groupDataService.load(),
     ]).subscribe();
     this.permissionDataService
-      .loadScoringModelPermissions(this.scoringModelId)
+      .loadScoringModelPermissions()
       .subscribe((x) =>
         this.canEdit$ = of(this.permissionDataService.canEditScoringModel(this.scoringModelId)));
   }

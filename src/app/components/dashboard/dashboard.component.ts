@@ -14,6 +14,7 @@ import {
   ScoringModel,
   Team,
   TeamMembership,
+  TeamRole,
   User
 } from 'src/app/generated/cite.api/model/models';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
@@ -502,26 +503,10 @@ export class DashboardComponent implements OnDestroy {
     });
   }
 
-  setManagerValue(teamMembershipId: string, value: boolean) {
-    this.teamMembershipDataService.setManagerValue(teamMembershipId, value);
-  }
-
-  setIncrementerValue(teamMembershipId: string, value: boolean) {
-    this.teamMembershipDataService.setIncrementerValue(teamMembershipId, value);
-  }
-
-  setModifierValue(teamMembershipId: string, value: boolean) {
-    this.teamMembershipDataService.setModifierValue(teamMembershipId, value);
-  }
-
-  setSubmitterValue(teamMembershipId: string, value: boolean) {
-    this.teamMembershipDataService.setSubmitterValue(teamMembershipId, value);
-  }
-
-  loggedInUserCanManageTeam(): boolean {
-    return this.teamMemberships.some(
-      (tu) => tu.userId === this.loggedInUserId && tu.canManageTeam
-    );
+  setTeamMembershipRole(teamMembership: TeamMembership, teamRole: TeamRole) {
+    teamMembership.role = teamRole;
+    teamMembership.roleId = teamRole.id;
+    this.teamMembershipDataService.editMembership(teamMembership);
   }
 
   ngOnDestroy() {
