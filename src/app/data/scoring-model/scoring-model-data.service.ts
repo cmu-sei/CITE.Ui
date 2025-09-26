@@ -228,8 +228,8 @@ export class ScoringModelDataService {
   uploadJson(file: File, observe: any, reportProgress: boolean) {
     this.scoringModelStore.setLoading(true);
     this.scoringModelService
-      .uploadJson(file, observe, reportProgress)
-      .subscribe((event) => {
+      .uploadJsonFiles(file, observe, reportProgress)
+      .subscribe((event: any) => {
         if (event.type === HttpEventType.UploadProgress) {
           const uploadProgress = Math.round((100 * event.loaded) / event.total);
           this.uploadProgress.next(uploadProgress);

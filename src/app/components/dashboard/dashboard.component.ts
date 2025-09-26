@@ -27,6 +27,7 @@ import { DutyQuery } from 'src/app/data/duty/duty.query';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
+import { TeamRoleDataService } from 'src/app/data/team/team-role-data.service';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { Title } from '@angular/platform-browser';
@@ -61,6 +62,7 @@ export class DashboardComponent implements OnDestroy {
   @Input() noChanges: boolean;
   usersOnTheTeam: User[] = [];
   teamMemberships: TeamMembership[] = [];
+  teamRoles: TeamRole[] = [];
   selectedEvaluation: Evaluation = {};
   scoringModel: ScoringModel = {};
   isLoading = false;
@@ -109,6 +111,7 @@ export class DashboardComponent implements OnDestroy {
     private scoringModelQuery: ScoringModelQuery,
     private teamQuery: TeamQuery,
     private teamMembershipDataService: TeamMembershipDataService,
+    private teamRoleDataService: TeamRoleDataService,
     private unreadArticlesDataService: UnreadArticlesDataService,
     public dialogService: DialogService,
     public matDialog: MatDialog,
@@ -217,8 +220,15 @@ export class DashboardComponent implements OnDestroy {
     this.teamMembershipDataService
       .teamMemberships$
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((tUsers) => {
-        this.teamMemberships = tUsers;
+      .subscribe((m) => {
+        this.teamMemberships = m;
+      });
+    // observe the TeamRoles
+    this.teamRoleDataService
+      .teamRoles$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((m) => {
+        this.teamRoles = m;
       });
   }
 

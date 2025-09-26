@@ -15,16 +15,11 @@ import {
 export class TeamRoleDataService {
   private teamRolesSubject = new BehaviorSubject<TeamRole[]>([]);
   public teamRoles$ = this.teamRolesSubject.asObservable();
+  public teamRoles: TeamRole[] = [];
 
   constructor(private teamRolesService: TeamRolesService) {}
 
   loadRoles(): Observable<TeamRole[]> {
-    return this.teamRolesService
-      .getAllTeamRoles()
-      .pipe(tap((x) => this.teamRolesSubject.next(x)));
-  }
-
-  getTeamRoles() {
     return this.teamRolesService
       .getAllTeamRoles()
       .pipe(tap((x) => this.teamRolesSubject.next(x)));

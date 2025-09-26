@@ -113,6 +113,30 @@ export class PermissionDataService {
     );
   }
 
+  canEditTeamScore(teamId: string): boolean {
+    return this.canTeam(
+      null,
+      teamId,
+      TeamPermission.EditTeamScore
+    );
+  }
+
+  canSubmitTeamScore(teamId: string): boolean {
+    return this.canTeam(
+      null,
+      teamId,
+      TeamPermission.SubmitTeamScore
+    );
+  }
+
+  canManageTeam(teamId: string): boolean {
+    return this.canTeam(
+      null,
+      teamId,
+      TeamPermission.ManageTeam
+    );
+  }
+
   private canEvaluation(
     permission: SystemPermission,
     evaluationId?: string,

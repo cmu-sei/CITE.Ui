@@ -42,6 +42,7 @@ import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
+import { TeamRoleDataService } from 'src/app/data/team/team-role-data.service';
 import {
   ApplicationArea,
   SignalRService,
@@ -146,6 +147,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
     private teamMembershipDataService: TeamMembershipDataService,
+    private teamRoleDataService: TeamRoleDataService,
     private signalRService: SignalRService,
     private gallerySignalRService: GallerySignalRService,
     private moveQuery: MoveQuery,
@@ -173,7 +175,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.topbarTextColor = this.settingsService.settings.AppTopBarHexTextColor
       ? this.settingsService.settings.AppTopBarHexTextColor
       : this.topbarTextColor;
-    this._document.getElementById('appTitle').innerHTML = this.settingsService.settings.AppTitle;
    }
 
   ngOnInit() {
@@ -338,6 +339,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     });
     // load the user's evaluations
     this.evaluationDataService.loadMine();
+    // load team roles
+    this.teamRoleDataService.loadRoles();
     // join signalR
     this.signalRService
       .startConnection(ApplicationArea.home)

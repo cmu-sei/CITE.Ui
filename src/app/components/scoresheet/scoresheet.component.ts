@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
@@ -78,6 +79,7 @@ export class ScoresheetComponent implements OnDestroy {
   private unsubscribe$ = new Subject();
 
   constructor(
+    private permissionDataService: PermissionDataService,
     private scoringModelQuery: ScoringModelQuery,
     private submissionDataService: SubmissionDataService,
     private submissionQuery: SubmissionQuery,
@@ -151,7 +153,7 @@ export class ScoresheetComponent implements OnDestroy {
       .subscribe((active) => {
         if (active) {
           this.activeTeamId = active.id;
-          this.teamMemberships = active.users;
+          this.teamMemberships = active.memberships;
         }
       });
     //observe the current user
@@ -191,14 +193,11 @@ export class ScoresheetComponent implements OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((teamMemberships) => {
         const currentTeamMembership = teamMemberships.find((tu) => tu.userId === this.loggedInUserId);
-        this.canIncrementMove = currentTeamMembership
-          ? currentTeamMembership.canIncrementMove
-          : false;
         this.hasCanModifyPermission = currentTeamMembership
-          ? currentTeamMembership.canModify
+          ? this.permissionDataService.canEditTeamScore(this.activeTeamId)
           : false;
         this.hasCanSubmitPermission = currentTeamMembership
-          ? currentTeamMembership.canSubmit
+          ? this.permissionDataService.canSubmitTeamScore(this.activeTeamId)
           : false;
       });
   }

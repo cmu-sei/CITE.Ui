@@ -23,8 +23,6 @@ export * from './groupMembership';
 export * from './healthReport';
 export * from './healthReportEntry';
 export * from './healthStatus';
-export * from './inlineObject';
-export * from './inlineObject1';
 export * from './itemStatus';
 export * from './layoutKind';
 export * from './memberInfo';

@@ -226,24 +226,17 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   <label>{{ getUserName(teamMembership.userId) }}</label>
                 </div>
                 <div class="checkboxes-cell">
-                  <div class="one-cell center-self">
-                    <mat-checkbox [checked]="teamMembership.roleId ==" (change)="setManagerValue(teamMembership.id, $event.checked)"
-                    [disabled]="noChanges || teamMembership.userId === loggedInUserId || !loggedInUserCanManageTeam()"></mat-checkbox>
-                  </div>
-                  <div class="one-cell center-self">
-                    <mat-checkbox
-                      [checked]="teamMembership.canSubmit"
-                      (change)="setSubmitterValue(teamMembership.id, $event.checked)"
-                      [disabled]="noChanges || !loggedInUserCanManageTeam()"
-                    ></mat-checkbox>
-                  </div>
-                  <div class="one-cell center-self">
-                    <mat-checkbox
-                      [checked]="teamMembership.canModify"
-                      (change)="setModifierValue(teamMembership.id, $event.checked)"
-                      [disabled]="noChanges || !loggedInUserCanManageTeam()"
-                    ></mat-checkbox>
-                  </div>
+                  <mat-form-field class="button-margins full-width">
+                    <mat-label>Role</mat-label>
+                    <mat-select placeholder="Role" [(ngModel)]="teamMembership.roleId">
+                      <mat-option value="''">None</mat-option>
+                      @for (role of teamRoles; track role) {
+                        <mat-option [value]="role.id">
+                          {{ role.name }}
+                        </mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
                 </div>
               </div>
             }
