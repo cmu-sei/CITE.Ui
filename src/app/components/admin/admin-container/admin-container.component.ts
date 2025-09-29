@@ -44,7 +44,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   dutiesText = 'Duties';
   submissionsText = 'Submissions';
   groupsText = 'Groups';
-  teamsText = 'Teams';
+  rolesText = 'Roles';
   teamTypesText = 'Team Types';
   topbarText = 'Set AppTopBarText in Settings';
   showSection$: Observable<string>;
@@ -72,11 +72,13 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   permissions: SystemPermission[] = [];
   userList: Observable<User[]>;
   canViewScoringModels = false;
-  canEditScoringModels = false;
   canCreateScoringModels = false;
   canViewEvaluations = false;
-  canEditEvaluations = false;
   canCreateEvaluations = false;
+  canViewTeamTypes = false;
+  canViewUsers = false;
+  canViewGroups = false;
+  canViewRoles = false;
   readonly SystemPermission = SystemPermission;
 
   constructor(
@@ -119,6 +121,8 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
         this.displayedSection = section;
       });
     this.originalEvaluationId = this.evaluationQuery.getActiveId();
+    // load Evaluations
+    this.evaluationDataService.load();
     // load and subscribe to TeamTypes
     this.teamTypeDataService.load();
     // Set the display settings from config file
@@ -142,11 +146,13 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.permissionDataService.load().subscribe((x) => {
       this.permissions = this.permissionDataService.permissions;
       this.canViewScoringModels = this.canViewScoringModels || this.permissionDataService.hasPermission(SystemPermission.ViewScoringModels);
-      this.canEditScoringModels = this.permissionDataService.hasPermission(SystemPermission.EditScoringModels);
       this.canCreateScoringModels = this.permissionDataService.hasPermission(SystemPermission.CreateScoringModels);
       this.canViewEvaluations = this.canViewEvaluations || this.permissionDataService.hasPermission(SystemPermission.ViewEvaluations);
-      this.canEditEvaluations = this.permissionDataService.hasPermission(SystemPermission.EditEvaluations);
       this.canCreateEvaluations = this.permissionDataService.hasPermission(SystemPermission.CreateEvaluations);
+      this.canViewGroups = this.permissionDataService.hasPermission(SystemPermission.ViewGroups);
+      this.canViewRoles = this.permissionDataService.hasPermission(SystemPermission.ViewRoles);
+      this.canViewTeamTypes = this.permissionDataService.hasPermission(SystemPermission.ViewTeamTypes);
+      this.canViewUsers = this.permissionDataService.hasPermission(SystemPermission.ViewUsers);
     });
     this.permissionDataService.loadScoringModelPermissions().subscribe();
     this.permissionDataService.loadEvaluationPermissions().subscribe();

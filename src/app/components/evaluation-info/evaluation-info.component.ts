@@ -38,7 +38,6 @@ export class EvaluationInfoComponent implements OnDestroy {
   @Output() nextEvaluationMove = new EventEmitter<number>();
   @Output() changeTeam = new EventEmitter<string>();
   @Output() changeSection = new EventEmitter<string>();
-  @Output() changeEvaluation = new EventEmitter<string>();
   selectedEvaluationId = '';
   dashboardSection = Section.dashboard;
   scoresheetSection = Section.scoresheet;
@@ -47,10 +46,13 @@ export class EvaluationInfoComponent implements OnDestroy {
   displayedMoveNumber = -1;
   currentMoveNumber = -1;
   selectedTeamId = '';
-  canIncrementMove = false;
+  canAdvanceMove = false;
   basePageUrl = location.origin + '/report/';
   private unsubscribe$ = new Subject();
   loggedInUserId = '';
+  isMinMoveNumber = true;
+  isCurrentMoveNumber = true;
+  showAdvanceMoveButton = false;
 
   constructor(
     private evaluationQuery: EvaluationQuery,
@@ -73,6 +75,9 @@ export class EvaluationInfoComponent implements OnDestroy {
     // observe the active move
     (this.moveQuery.selectActive() as Observable<Move>).pipe(takeUntil(this.unsubscribe$)).subscribe(m => {
       this.displayedMoveNumber = m ? m.moveNumber : this.displayedMoveNumber;
+      this.isMinMoveNumber = this.sortedMoveList().length === 0 ? true : +this.displayedMoveNumber === +this.sortedMoveList()[0].moveNumber;
+      this.isCurrentMoveNumber = +this.displayedMoveNumber === +this.currentMoveNumber;
+      this.showAdvanceMoveButton = this.canAdvanceMove && this.selectedEvaluationId && +this.displayedMoveNumber === +this.currentMoveNumber && +this.displayedMoveNumber < +this.getMaxMoveNumber();
     });
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(t => {
@@ -97,18 +102,6 @@ export class EvaluationInfoComponent implements OnDestroy {
 
   sortedMoveList() {
     return this.moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
-  }
-
-  isMinMoveNumber() {
-    return this.sortedMoveList().length === 0 ? true : +this.displayedMoveNumber === +this.sortedMoveList()[0].moveNumber;
-  }
-
-  isCurrentMoveNumber() {
-    return +this.displayedMoveNumber === +this.currentMoveNumber;
-  }
-
-  showAdvanceMove(): boolean {
-    return this.canIncrementMove && this.selectedEvaluationId && +this.displayedMoveNumber === +this.currentMoveNumber && +this.displayedMoveNumber < +this.getMaxMoveNumber();
   }
 
   getMinMoveNumber() {
@@ -158,13 +151,6 @@ export class EvaluationInfoComponent implements OnDestroy {
         this.nextEvaluationMove.emit(+this.displayedMoveNumber + 1);
       }
     });
-  }
-
-  selectEvaluation(evaluationId: string) {
-    if (evaluationId !== this.selectedEvaluationId) {
-      this.selectedEvaluationId = evaluationId;
-      this.changeEvaluation.emit(evaluationId);
-    }
   }
 
   setSection(section: Section) {

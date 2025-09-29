@@ -12,12 +12,10 @@ import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
 import { Sort } from '@angular/material/sort';
 import {
-  Evaluation,
   Duty,
   Team,
   User,
 } from 'src/app/generated/cite.api/model/models';
-import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { DutyDataService } from 'src/app/data/duty/duty-data.service';
 import { DutyQuery } from 'src/app/data/duty/duty.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
@@ -37,17 +35,14 @@ import { AdminDutyEditDialogComponent } from '../admin-duty-edit-dialog/admin-du
     standalone: false
 })
 export class AdminDutiesComponent implements OnDestroy, OnInit {
-  @Input() showSelectionControls: boolean;
+  @Input() selectedEvaluationId: string;
   pageIndex: number = 0;
   pageSize: number = 10;
   isLoading = false;
   topbarColor = '#ef3a47';
   dutyList: Duty[] = [];
   displayedDuties: Duty[] = [];
-  filteredDutyList: Duty[] = [];
   dataSource = new MatTableDataSource<Duty>();
-  selectedEvaluationId = '';
-  evaluationList: Evaluation[] = [];
   selectedTeamId = '';
   teamList: Team[] = [];
   userList$: User[] = [];
@@ -60,7 +55,6 @@ export class AdminDutiesComponent implements OnDestroy, OnInit {
 
   constructor(
     private settingsService: ComnSettingsService,
-    private evaluationQuery: EvaluationQuery,
     private dutyDataService: DutyDataService,
     private dutyQuery: DutyQuery,
     private teamDataService: TeamDataService,
@@ -73,26 +67,12 @@ export class AdminDutiesComponent implements OnDestroy, OnInit {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
-    this.evaluationQuery
-      .selectAll()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((evaluations) => {
-        this.evaluationList = evaluations;
-        if (!evaluations.some((e) => e.id === this.selectedEvaluationId)) {
-          this.selectedEvaluationId = '';
-          this.selectedTeamId = '';
-          this.teamList = [];
-          this.dutyList = [];
-          this.criteriaChanged();
-        }
-      });
     this.teamQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((teams) => {
         this.teamList = teams;
       });
-    this.dutyDataService.unload();
     this.dutyQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
@@ -109,27 +89,8 @@ export class AdminDutiesComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    if (
-      !this.showSelectionControls &&
-      this.selectedEvaluationId &&
-      this.selectedTeamId
-    ) {
-      this.dutyDataService.loadByEvaluationTeam(
-        this.selectedEvaluationId,
-        this.selectedTeamId
-      );
-      this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
-    } else if (this.showSelectionControls && this.selectedEvaluationId) {
-      this.selectEvaluation(this.selectedEvaluationId);
-    }
-  }
-
-  selectEvaluation(evaluationId: string) {
-    this.selectedEvaluationId = evaluationId;
-    this.selectedTeamId = '';
-    this.dutyDataService.unload();
-    this.teamDataService.loadByEvaluationId(evaluationId);
     this.dutyDataService.loadByEvaluation(this.selectedEvaluationId);
+    this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
   }
 
   selectTeam(teamId: string) {
@@ -192,21 +153,19 @@ export class AdminDutiesComponent implements OnDestroy, OnInit {
 
   criteriaChanged() {
     if (this.selectedTeamId && this.dutyList && this.dutyList.length > 0) {
-      this.filteredDutyList = this.dutyList.filter(
+      this.displayedDuties = this.dutyList.filter(
         (r) => r.teamId === this.selectedTeamId
       );
     } else {
-      this.filteredDutyList = this.dutyList;
+      this.displayedDuties = this.dutyList;
     }
-    this.applyPagination();
   }
 
   sortChanged(sort: Sort) {
     this.sort = sort;
-    this.filteredDutyList.sort((a, b) =>
+    this.displayedDuties.sort((a, b) =>
       this.sortDuties(a, b, sort.active, sort.direction)
     );
-    this.applyPagination();
   }
 
   private sortDuties(a: Duty, b: Duty, column: string, direction: string) {
@@ -238,20 +197,6 @@ export class AdminDutiesComponent implements OnDestroy, OnInit {
       }
     }
     return teamName;
-  }
-
-  paginatorEvent(event: PageEvent) {
-    this.pageIndex = event.pageIndex;
-    this.pageSize = event.pageSize;
-    this.applyPagination();
-  }
-
-  applyPagination() {
-    const startIndex = this.pageIndex * this.pageSize;
-    this.displayedDuties = this.filteredDutyList.slice(
-      startIndex,
-      startIndex + this.pageSize
-    );
   }
 
   ngOnDestroy() {

@@ -8,7 +8,6 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import {
   Evaluation,
@@ -39,28 +38,26 @@ import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admi
     standalone: false
 })
 export class AdminActionsComponent implements OnDestroy, OnInit {
-  @Input() showSelectionControls: boolean;
+  @Input() selectedEvaluationId: string;
+  teamList: Team[] = [];
+  moveList: Move[] = [];
   pageIndex: number = 0;
   pageSize: number = 10;
   isLoading = false;
   topbarColor = '#ef3a47';
   actionList: Action[] = [];
   dataSource = new MatTableDataSource<Action>();
-  selectedEvaluationId = '';
   evaluationList: Evaluation[] = [];
   filteredActionList: Action[] = [];
   filterString = '';
   selectedTeamId = '';
-  teamList: Team[] = [];
   displayedActions: Action[] = [];
-  selectedMoveNumber = -1;
-  moveList: Move[] = [];
-  userList$: User[] = [];
+  selectedMoveNumber = -99;
   sort: Sort = {
     active: 'description',
     direction: 'asc',
   };
-  displayedColumns: string[] = ['description', 'teamId', 'isChecked'];
+  displayedColumns: string[] = ['description', 'moveNumber', 'teamId', 'isChecked'];
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -92,19 +89,11 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
           this.criteriaChanged();
         }
       });
-    this.moveDataService.unload();
     this.moveQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((moves) => {
         this.moveList = moves;
-        if (this.selectedMoveNumber === -1) {
-          this.selectedMoveNumber = moves[0] ? +moves[0].moveNumber : -1;
-          this.actionDataService.loadByEvaluationMove(
-            this.selectedEvaluationId,
-            this.selectedMoveNumber
-          );
-        }
       });
     this.teamQuery
       .selectAll()
@@ -112,7 +101,6 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
       .subscribe((teams) => {
         this.teamList = teams;
       });
-    this.actionDataService.unload();
     this.actionQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
@@ -123,45 +111,13 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    if (this.showSelectionControls) {
-      if (this.selectedEvaluationId) {
-        this.selectEvaluation(this.selectedEvaluationId);
-        if (this.selectedMoveNumber >= 0) {
-          this.selectMove(this.selectedMoveNumber);
-        }
-      }
-    } else {
-      if (
-        this.selectedEvaluationId &&
-        this.selectedMoveNumber >= 0 &&
-        this.selectedTeamId
-      ) {
-        this.actionDataService.loadByEvaluationMoveTeam(
-          this.selectedEvaluationId,
-          +this.selectedMoveNumber,
-          this.selectedTeamId
-        );
-        this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
-      }
-    }
-  }
-
-  selectEvaluation(evaluationId: string) {
-    this.selectedEvaluationId = evaluationId;
-    this.selectedTeamId = '';
-    this.selectedMoveNumber = -1;
-    this.actionDataService.unload();
-    this.moveDataService.unload();
-    this.moveDataService.loadByEvaluation(evaluationId);
-    this.teamDataService.loadByEvaluationId(evaluationId);
+    this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
+    this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
+    this.actionDataService.loadByEvaluation(this.selectedEvaluationId);
   }
 
   selectMove(moveNumber: number) {
     this.selectedMoveNumber = moveNumber;
-    this.actionDataService.loadByEvaluationMove(
-      this.selectedEvaluationId,
-      this.selectedMoveNumber
-    );
     this.criteriaChanged();
   }
 
@@ -225,22 +181,16 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   }
 
   criteriaChanged() {
-    if (this.selectedTeamId) {
-      this.filteredActionList = this.actionList.filter(
-        (r) => r.teamId === this.selectedTeamId
-      );
-    } else {
-      this.filteredActionList = this.actionList;
-    }
-    this.applyPagination();
+    this.displayedActions = this.actionList.filter(
+      (r) => (!this.selectedTeamId || r.teamId === this.selectedTeamId) && (+this.selectedMoveNumber === -99 || +r.moveNumber === +this.selectedMoveNumber)
+    );
   }
 
   sortChanged(sort: Sort) {
     this.sort = sort;
-    this.filteredActionList.sort((a, b) =>
+    this.displayedActions.sort((a, b) =>
       this.sortActions(a, b, sort.active, sort.direction)
     );
-    this.applyPagination();
   }
 
   private sortActions(a: Action, b: Action, column: string, direction: string) {
@@ -270,20 +220,6 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
       }
     }
     return teamName;
-  }
-
-  paginatorEvent(event: PageEvent) {
-    this.pageIndex = event.pageIndex;
-    this.pageSize = event.pageSize;
-    this.applyPagination();
-  }
-
-  applyPagination() {
-    const startIndex = this.pageIndex * this.pageSize;
-    this.displayedActions = this.filteredActionList.slice(
-      startIndex,
-      startIndex + this.pageSize
-    );
   }
 
   ngOnDestroy() {

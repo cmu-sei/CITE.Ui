@@ -77,7 +77,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   selectedSection = Section.dashboard;
   loggedInUser$ = this.currentUserQuery.select();
   loggedInUserId = '';
-  canAccessAdminSection$ = new BehaviorSubject<boolean>(false);
   isAuthorizedUser = false;
   isSidebarOpen = true;
   private unsubscribe$ = new Subject();
@@ -248,13 +247,15 @@ export class HomeAppComponent implements OnDestroy, OnInit {
               this.nextDisplayedMove(newMove);
             }
           }
-          // get the current user information
-          if (user.name) {
-            this.username = user.name;
-            this.isAuthorizedUser = !!user.id;
-            this.loggedInUserId = user.id;
-          }
         }
+        // get the current user information
+        if (user.name) {
+          this.username = user.name;
+          this.isAuthorizedUser = !!user.id;
+          this.loggedInUserId = user.id;
+        }
+        // set the teams
+        this.setTeams(teams);
       });
     this.userDataService.setCurrentUser();
     // observe active evaluation
@@ -382,14 +383,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
   }
 
-  changeEvaluation(evaluationId: string) {
-    this.selectedEvaluationId = evaluationId;
-    this.moveDataService.unload();
-    this.teamDataService.unload();
-    this.uiDataService.setEvaluation(evaluationId);
-    this.router.navigate([], {
-      queryParams: { evaluation: evaluationId },
-    });
+  selectingAnEvaluation(evaluationId: string) {
+    this.uiDataService.setSection(evaluationId, Section.dashboard);
   }
 
   nextDisplayedMove(move: Move) {
@@ -492,7 +487,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       : '';
     // find the user's team
     teams.forEach((t) => {
-      if (t.users.some((u) => u.id === this.loggedInUserId)) {
+      if (t.memberships.some((m) => m.userId === this.loggedInUserId)) {
         this.myTeamId = t.id;
         this.myTeamId$.next(t.id);
         // if the saved team wasn't in the list, set the user's team to the active team
@@ -574,27 +569,27 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   makeNewSubmission() {
-    if (!this.isSubmissionDataServiceLoading && !this.addingSubmission) {
-      this.addingSubmission = true;
-      const evaluation = this.evaluationQuery.getAll().find(e => e.id === this.selectedEvaluationId);
-      const scoringModel = this.scoringModelQuery.getActive() as ScoringModel;
-      const activeTeam = this.teamQuery.getActive() as Team;
-      if (!evaluation || ! scoringModel || !activeTeam) {
-        this.addingSubmission = false;
-        return;
-      }
-      const userId = !scoringModel.useUserScore || activeTeam.id !== this.myTeamId ? null : this.loggedInUserId;
-      const submission = {
-        teamId: activeTeam ? activeTeam.id : this.myTeamId,
-        evaluationId: evaluation.id,
-        moveNumber: this.displayedMoveNumber,
-        score: 0,
-        scoringModelId: evaluation.scoringModelId,
-        status: ItemStatus.Active,
-        userId: userId,
-      } as Submission;
-      this.submissionDataService.add(submission);
-    }
+    // if (!this.isSubmissionDataServiceLoading && !this.addingSubmission) {
+    //   this.addingSubmission = true;
+    //   const evaluation = this.evaluationQuery.getAll().find(e => e.id === this.selectedEvaluationId);
+    //   const scoringModel = this.scoringModelQuery.getActive() as ScoringModel;
+    //   const activeTeam = this.teamQuery.getActive() as Team;
+    //   if (!evaluation || ! scoringModel || !activeTeam) {
+    //     this.addingSubmission = false;
+    //     return;
+    //   }
+    //   const userId = !scoringModel.useUserScore || activeTeam.id !== this.myTeamId ? null : this.loggedInUserId;
+    //   const submission = {
+    //     teamId: activeTeam ? activeTeam.id : this.myTeamId,
+    //     evaluationId: evaluation.id,
+    //     moveNumber: this.displayedMoveNumber,
+    //     score: 0,
+    //     scoringModelId: evaluation.scoringModelId,
+    //     status: ItemStatus.Active,
+    //     userId: userId,
+    //   } as Submission;
+    //   this.submissionDataService.add(submission);
+    // }
   }
 
   setActiveSubmission(submission: Submission) {

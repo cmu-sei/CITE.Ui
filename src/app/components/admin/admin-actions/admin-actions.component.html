@@ -13,48 +13,28 @@ project root for license information or contact permission@sei.cmu.edu for full 
     [disabled]="!selectedEvaluationId || selectedMoveNumber < 0">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
-  @if (showSelectionControls) {
-    <mat-form-field class="button-margins">
-      <mat-label>Evaluation</mat-label>
-      <mat-select placeholder="Evaluation" [value]="selectedEvaluationId"
-        (selectionChange)="selectEvaluation($event.value)">
-        @for (evaluation of evaluationList; track evaluation) {
-          <mat-option [value]="evaluation.id">
-            {{ evaluation.description }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
-  @if (showSelectionControls) {
-    <mat-form-field class="button-margins">
-      <mat-label>Move</mat-label>
-      <mat-select placeholder="Move" [value]="selectedMoveNumber" (selectionChange)="selectMove($event.value)">
-        @for (move of moveList; track move) {
-          <mat-option [value]="+move.moveNumber">
-            {{ move.moveNumber }} - {{ move.description }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
-  @if (showSelectionControls) {
-    <mat-form-field class="button-margins team-selector">
-      <mat-label>Team</mat-label>
-      <mat-select placeholder="Team" [value]="selectedTeamId" (selectionChange)="selectTeam($event.value)">
-        <mat-option value="">All Teams</mat-option>
-        @for (team of teamList; track team) {
-          <mat-option [value]="team.id">
-            {{ team.name }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
-  <div>
-    <mat-paginator #paginator [length]="filteredActionList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
-  </div>
+  <mat-form-field class="button-margins">
+    <mat-label>Move</mat-label>
+    <mat-select placeholder="Move" [value]="selectedMoveNumber" (selectionChange)="selectMove($event.value)">
+      <mat-option value="-99">All Moves</mat-option>
+      @for (move of moveList; track move.id) {
+        <mat-option [value]="+move.moveNumber">
+          {{ move.moveNumber }} - {{ move.description }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="button-margins team-selector">
+    <mat-label>Team</mat-label>
+    <mat-select placeholder="Team" [value]="selectedTeamId" (selectionChange)="selectTeam($event.value)">
+      <mat-option value="">All Teams</mat-option>
+      @for (team of teamList; track team.id) {
+        <mat-option [value]="team.id">
+          {{ team.name }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 </div>
 
 <!-- Table -->
@@ -79,6 +59,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
         </button>
         {{ row.description }}
+      </td>
+    </ng-container>
+
+    <!-- Move Column -->
+    <ng-container matColumnDef="moveNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Move</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.moveNumber }}
       </td>
     </ng-container>
 

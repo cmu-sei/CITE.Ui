@@ -119,6 +119,29 @@ export class ActionDataService {
     }
   }
 
+  loadByEvaluation(evaluationId: string) {
+    this.actionStore.setLoading(true);
+    this.actionService
+      .getActionsByEvaluation(evaluationId)
+      .pipe(
+        tap(() => {
+          this.actionStore.setLoading(false);
+        }),
+        take(1)
+      )
+      .subscribe(
+        (actions) => {
+          actions.forEach(e => {
+            this.setAsDates(e);
+          });
+          this.actionStore.set(actions);
+        },
+        (error) => {
+          this.actionStore.set([]);
+        }
+      );
+  }
+
   loadByEvaluationTeam(evaluationId: string, teamId: string) {
     this.actionStore.setLoading(true);
     this.actionService

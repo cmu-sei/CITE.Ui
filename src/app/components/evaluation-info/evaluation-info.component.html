@@ -7,121 +7,121 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <div class="evaluation-info-container">
   @if (!selectedEvaluationId) {
     <h2>&nbsp;</h2>
-    } <!-- Adds spacing to the selection box before a selection is made -->
-    @if (selectedEvaluationId && displayedMoveNumber > -1) {
-      <div class="move-div">
-        <h1 class="nowrap">Move:&nbsp;</h1>
-        <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="isMinMoveNumber()"
-          (click)="decrementDisplayedMove()" title="Decrement Move">
-          <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
+  } <!-- Adds spacing to the selection box before a selection is made -->
+  @if (selectedEvaluationId && displayedMoveNumber > -1) {
+    <div class="move-div">
+      <h1 class="nowrap">Move:&nbsp;</h1>
+      <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="isMinMoveNumber"
+        (click)="decrementDisplayedMove()" title="Decrement Move">
+        <mat-icon class="icon-color" svgIcon="ic_chevron_left"></mat-icon>
+      </button>
+      <h1 class="nowrap" [ngStyle]='getMoveStyle()'>{{ displayedMoveNumber }}</h1>
+      <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isCurrentMoveNumber"
+        (click)="incrementDisplayedMove()" title="Increment Move">
+        <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
+      </button>
+      <h1>&nbsp;of&nbsp;&nbsp;&nbsp;{{ getMaxMoveNumber() }}</h1>
+      @if (showAdvanceMoveButton) {
+        <div class="move-div">
+          <button aria-label="Advance Move" mat-flat-button (click)="advanceCurrentMove()" class="advance-button"
+            title="Advance the evaluation to the next move for all participants" [disabled]="noChanges">
+            Advance Move
+          </button>
+        </div>
+      }
+      <span class="description-span">
+        <h1>&nbsp;{{ getEvaluationDescriptionById(selectedEvaluationId) }}</h1>
+      </span>
+    </div>
+  }
+  @if (!selectedEvaluationId || displayedMoveNumber < 0) {
+    <div class="move-div">
+      &nbsp;
+    </div>
+  }
+  @if (selectedEvaluationId && selectedTeamId) {
+    <div class="right-buttons">
+      @if (selectedTeamId === myTeamId) {
+        <span
+        class="mat-select center-self bold-text">Team:&nbsp;&nbsp;</span>
+      }
+      @if (selectedTeamId !== myTeamId) {
+        <span
+        class="mat-select center-self bold-text">Observing:&nbsp;&nbsp;</span>
+      }
+      @if (teamList && teamList.length <= 1) {
+        <span class="mat-select center-self">{{
+        getTeamShortName() }}</span>
+      }
+      @if (teamList && teamList.length > 1) {
+        <mat-select class="center-self" placeholder="Team"
+          [value]="selectedTeamId" (selectionChange)="setActiveTeam($event.value)">
+          @for (team of teamList; track team.id) {
+            <mat-option [value]="team.id">
+              {{ team.shortName }}
+            </mat-option>
+          }
+        </mat-select>
+      }
+      @if (selectedSection !== dashboardSection) {
+        <button
+          mat-icon-button
+          style="outline: none;"
+          title="Dashboard"
+          (click)="setSection(dashboardSection)"
+          >
+          <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard"></mat-icon>
         </button>
-        <h1 class="nowrap" [ngStyle]='getMoveStyle()'>{{ displayedMoveNumber }}</h1>
-        <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isCurrentMoveNumber()"
-          (click)="incrementDisplayedMove()" title="Increment Move">
-          <mat-icon class="icon-color" svgIcon="ic_chevron_right"></mat-icon>
+      }
+      @if (selectedSection !== scoresheetSection && !hideScoresheet()) {
+        <button mat-icon-button style="outline: none;" title="Scoresheet" (click)="setSection(scoresheetSection)"
+          >
+          <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>
         </button>
-        <h1>&nbsp;of&nbsp;&nbsp;&nbsp;{{ getMaxMoveNumber() }}</h1>
-        @if (showAdvanceMove()) {
-          <div class="move-div">
-            <button aria-label="Advance Move" mat-flat-button (click)="advanceCurrentMove()" class="advance-button"
-              title="Advance the evaluation to the next move for all participants" [disabled]="noChanges">
-              Advance Move
-            </button>
-          </div>
-        }
-        <span class="description-span">
-          <h1>&nbsp;{{ getEvaluationDescriptionById(selectedEvaluationId) }}</h1>
-        </span>
-      </div>
-    }
-    @if (!selectedEvaluationId || displayedMoveNumber < 0) {
-      <div class="move-div">
-        &nbsp;
-      </div>
-    }
-    @if (selectedTeamId) {
-      <div class="right-buttons">
-        @if (selectedTeamId && selectedTeamId === myTeamId && selectedEvaluationId) {
-          <span
-          class="mat-select center-self bold-text">Team:&nbsp;&nbsp;</span>
-        }
-        @if (selectedTeamId && selectedTeamId !== myTeamId && selectedEvaluationId) {
-          <span
-          class="mat-select center-self bold-text">Observing:&nbsp;&nbsp;</span>
-        }
-        @if (teamList && teamList.length <= 1 && selectedEvaluationId) {
-          <span class="mat-select center-self">{{
-          getTeamShortName() }}</span>
-        }
-        @if (teamList && teamList.length > 1 && selectedEvaluationId) {
-          <mat-select class="center-self" placeholder="Team"
-            [value]="selectedTeamId" (selectionChange)="setActiveTeam($event.value)">
-            @for (team of teamList; track team) {
-              <mat-option [value]="team.id">
-                {{ team.shortName }}
-              </mat-option>
-            }
-          </mat-select>
-        }
-        @if (selectedTeamId && selectedEvaluationId && selectedSection !== dashboardSection) {
-          <button
-            mat-icon-button
-            style="outline: none;"
-            title="Dashboard"
-            (click)="setSection(dashboardSection)"
-            >
-            <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard"></mat-icon>
-          </button>
-        }
-        @if (selectedTeamId && selectedSection !== scoresheetSection && !hideScoresheet() && selectedEvaluationId) {
-          <button mat-icon-button style="outline: none;" title="Scoresheet" (click)="setSection(scoresheetSection)"
-            >
-            <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>
-          </button>
-        }
-        @if (selectedSection !== reportSection && selectedEvaluationId) {
-          <button
-            mat-icon-button
-            style="outline: none;"
-            title="SubmissionReview"
-            (click)="setSection(reportSection)"
-            >
-            <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
-          </button>
-        }
-        @if (showAdminButton && selectedSection !== aggregateSection && selectedEvaluationId) {
-          <button
-            mat-icon-button
-            style="outline: none;"
-            title="Aggregate Report"
-            (click)="setSection(aggregateSection)"
-            >
-            <mat-icon class="mdi-24px" fontIcon="mdi-file-document-multiple-outline"></mat-icon>
-          </button>
-        }
-        @if (showAdminButton) {
-          <button
-            aria-label="Show Administration Page"
-            mat-icon-button
-            [routerLink]="['/admin']"
-            [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}"
-            style="outline: none;"
-            title="Administration"
-            >
-            <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
-          </button>
-        }
-      </div>
-    }
-    @if (!selectedTeamId) {
-      <div class="right-buttons">
-        @if (showAdminButton) {
-          <button aria-label="Show Administration Page" mat-icon-button [routerLink]="['/admin']"
-            [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}" style="outline: none;"
-            title="Administration">
-            <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
-          </button>
-        }
-      </div>
-    }
-  </div>
+      }
+      @if (selectedSection !== reportSection) {
+        <button
+          mat-icon-button
+          style="outline: none;"
+          title="SubmissionReview"
+          (click)="setSection(reportSection)"
+          >
+          <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
+        </button>
+      }
+      @if (showAdminButton && selectedSection !== aggregateSection) {
+        <button
+          mat-icon-button
+          style="outline: none;"
+          title="Aggregate Report"
+          (click)="setSection(aggregateSection)"
+          >
+          <mat-icon class="mdi-24px" fontIcon="mdi-file-document-multiple-outline"></mat-icon>
+        </button>
+      }
+      @if (showAdminButton) {
+        <button
+          aria-label="Show Administration Page"
+          mat-icon-button
+          [routerLink]="['/admin']"
+          [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}"
+          style="outline: none;"
+          title="Administration"
+          >
+          <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
+        </button>
+      }
+    </div>
+  }
+  @if (!selectedTeamId) {
+    <div class="right-buttons">
+      @if (showAdminButton) {
+        <button aria-label="Show Administration Page" mat-icon-button [routerLink]="['/admin']"
+          [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}" style="outline: none;"
+          title="Administration">
+          <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
+        </button>
+      }
+    </div>
+  }
+</div>

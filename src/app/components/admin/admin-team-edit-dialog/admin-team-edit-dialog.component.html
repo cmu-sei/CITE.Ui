@@ -58,7 +58,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <div>
             <mat-form-field class="full-width">
               <mat-select placeholder="Team Type (required)" [formControl]="teamTypeIdFormControl" (selectionChange)="saveTeam('teamTypeId')">
-                @for (teamType of data.teamTypeList; track teamType) {
+                @for (teamType of data.teamTypeList; track teamType.id) {
                   <mat-option [value]="teamType.id">
                     {{ teamType.name }}
                   </mat-option>

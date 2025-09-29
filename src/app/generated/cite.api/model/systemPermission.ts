@@ -25,7 +25,9 @@ export const SystemPermission = {
     ViewRoles: 'ViewRoles',
     ManageRoles: 'ManageRoles',
     ViewGroups: 'ViewGroups',
-    ManageGroups: 'ManageGroups'
+    ManageGroups: 'ManageGroups',
+    ViewTeamTypes: 'ViewTeamTypes',
+    ManageTeamTypes: 'ManageTeamTypes'
 } as const;
 export type SystemPermission = typeof SystemPermission[keyof typeof SystemPermission];
 

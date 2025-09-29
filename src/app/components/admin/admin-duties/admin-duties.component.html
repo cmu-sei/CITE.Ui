@@ -13,36 +13,17 @@ project root for license information or contact permission@sei.cmu.edu for full 
     [disabled]="!selectedEvaluationId">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
-  @if (showSelectionControls) {
-    <mat-form-field class="button-margins">
-      <mat-label>Evaluation</mat-label>
-      <mat-select placeholder="Evaluation" [value]="selectedEvaluationId"
-        (selectionChange)="selectEvaluation($event.value)">
-        @for (evaluation of evaluationList; track evaluation) {
-          <mat-option [value]="evaluation.id">
-            {{ evaluation.description }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
-  @if (showSelectionControls) {
-    <mat-form-field class="button-margins team-selector">
-      <mat-label>Team</mat-label>
-      <mat-select placeholder="Team" [value]="selectedTeamId" (selectionChange)="selectTeam($event.value)">
-        <mat-option value="">All Teams</mat-option>
-        @for (team of teamList; track team) {
-          <mat-option [value]="team.id">
-            {{ team.name }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
-  <div>
-    <mat-paginator #paginator [length]="filteredDutyList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
-  </div>
+  <mat-form-field class="button-margins team-selector">
+    <mat-label>Team</mat-label>
+    <mat-select placeholder="Team" [value]="selectedTeamId" (selectionChange)="selectTeam($event.value)">
+      <mat-option value="">All Teams</mat-option>
+      @for (team of teamList; track team.id) {
+        <mat-option [value]="team.id">
+          {{ team.name }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 </div>
 
 <!-- Table -->

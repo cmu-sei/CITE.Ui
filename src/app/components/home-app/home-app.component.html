@@ -33,7 +33,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <h1>You are not a team member for an active evaluation.</h1>
             <h2>Please contact the site administrator or your event facilator.</h2>
           </span>
-          @if (canAccessAdminSection$ | async) {
+          @if (canViewAdministration) {
             <button
               aria-label="Show Administration Page"
               mat-icon-button
@@ -55,7 +55,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           >
           <div class="app-header-container">
             <app-evaluation-info
-              [showAdminButton]="canAccessAdminSection$ | async"
+              [showAdminButton]="canViewAdministration"
               [showMoveArrows]="selectedSection === section.scoresheet"
               [teamList]="teamList$ | async"
               [myTeamId]="myTeamId$ | async"
@@ -69,7 +69,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
               (nextEvaluationMove)="nextEvaluationMove($event)"
               (changeTeam)="changeTeam($event)"
               (changeSection)="changeSection($event)"
-              (changeEvaluation)="changeEvaluation($event)"
             ></app-evaluation-info>
           </div>
           @if (!selectedEvaluationId) {
@@ -112,7 +111,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   <ng-container matColumnDef="description">
                     <mat-header-cell *matHeaderCellDef mat-sort-header="description">Name</mat-header-cell>
                     <mat-cell *matCellDef="let evaluation">
-                      <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }">
+                      <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }" (click)="selectingAnEvaluation(evaluation.id)">
                         {{ evaluation.description }}
                       </a>
                     </mat-cell>
