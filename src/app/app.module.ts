@@ -63,7 +63,6 @@ import { AdminEvaluationEditDialogComponent } from './components/admin/admin-eva
 import { AdminEvaluationsComponent } from './components/admin/admin-evaluations/admin-evaluations.component';
 import { AdminMovesComponent } from './components/admin/admin-moves/admin-moves.component';
 import { AdminMoveEditDialogComponent } from './components/admin/admin-move-edit-dialog/admin-move-edit-dialog.component';
-import { AdminObserversComponent } from './components/admin/admin-observers/admin-observers.component';
 import { AdminPreviewComponent } from './components/admin/admin-preview/admin-preview.component';
 import { AdminDutyEditDialogComponent } from './components/admin/admin-duty-edit-dialog/admin-duty-edit-dialog.component';
 import { AdminDutiesComponent } from 'src/app/components/admin/admin-duties/admin-duties.component';
@@ -157,7 +156,6 @@ export function getBasePath(settingsSvc: ComnSettingsService)
     AdminEvaluationsComponent,
     AdminMovesComponent,
     AdminMoveEditDialogComponent,
-    AdminObserversComponent,
     AdminPreviewComponent,
     AdminDutyEditDialogComponent,
     AdminDutiesComponent,
