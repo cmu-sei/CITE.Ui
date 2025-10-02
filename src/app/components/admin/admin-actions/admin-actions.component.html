@@ -10,15 +10,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-icon class="mdi-24px" fontIcon="mdi-clipboard-list-outline" [ngStyle]="{'color': topbarColor}"></mat-icon>
   </div>
   <button mat-icon-button (click)="addOrEditAction(null)" style="outline: none; margin-left: 20px;" title="Add Action"
-    [disabled]="!selectedEvaluationId || selectedMoveNumber < 0">
+    [disabled]="!selectedEvaluationId">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
   <mat-form-field class="button-margins">
     <mat-label>Move</mat-label>
-    <mat-select placeholder="Move" [value]="selectedMoveNumber" (selectionChange)="selectMove($event.value)">
-      <mat-option value="-99">All Moves</mat-option>
+    <mat-select placeholder="Move" [value]="selectedMoveNumber.toString()" (selectionChange)="selectMove($event.value)">
+      <mat-option value="{{ allMovesValue }}">All Moves</mat-option>
       @for (move of moveList; track move.id) {
-        <mat-option [value]="+move.moveNumber">
+        <mat-option [value]="move.moveNumber">
           {{ move.moveNumber }} - {{ move.description }}
         </mat-option>
       }
@@ -39,7 +39,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <!-- Table -->
 <div class="elevate">
-  <table mat-table [dataSource]="displayedActions" matSort (matSortChange)="sortChanged($event)">
+  <table mat-table [dataSource]="dataSource" matSort>
     <!-- Description Column -->
     <ng-container matColumnDef="description">
       <th mat-header-cell *matHeaderCellDef mat-sort-header><span style="margin-left: 80px;">Description</span></th>

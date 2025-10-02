@@ -15,7 +15,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </a>
     </mat-toolbar>
     <mat-list class="appitems-container">
-      @if (canViewEvaluations) {
+      @if (canViewEvaluations || canCreateEvaluations) {
         <mat-list-item id="wrapper showhand" (click)="gotoSection(evaluationsText)"
           [ngClass]="getSelectedClass(evaluationsText)">
           <mat-icon matListItemIcon fontIcon="mdi-briefcase-outline"></mat-icon>
@@ -25,7 +25,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </button>
         </mat-list-item>
       }
-      @if (canViewScoringModels) {
+      @if (canViewScoringModels || canCreateScoringModels) {
         <mat-list-item [ngClass]="getSelectedClass(scoringModelsText)" id="wrapper showhand"
           (click)="gotoSection(scoringModelsText)">
           <mat-icon matListItemIcon fontIcon="mdi-grid"></mat-icon>
@@ -35,7 +35,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </button>
         </mat-list-item>
       }
-      @if (canViewEvaluations) {
+      @if (canViewEvaluations || canCreateEvaluations) {
         <mat-list-item [ngClass]="getSelectedClass(submissionsText)" id="wrapper showhand"
           (click)="gotoSection(submissionsText)">
           <mat-icon matListItemIcon fontIcon="mdi-playlist-play"></mat-icon>
@@ -110,19 +110,19 @@ project root for license information or contact permission@sei.cmu.edu for full 
         [topbarColor]="topbarColor" [topbarTextColor]="topbarTextColor" [sidenav]="sidenav"
       (sidenavToggle)="sidenav.toggle()"></app-topbar>
     }
-    @if (canViewScoringModels && (showSection === scoringModelsText)) {
+    @if ((canViewScoringModels || canCreateScoringModels) && (showSection === scoringModelsText)) {
       <span>
         <app-admin-scoring-models [evaluationList]="evaluationList | async">
         </app-admin-scoring-models>
       </span>
     }
-    @if (canViewEvaluations && (showSection === evaluationsText)) {
+    @if ((canViewEvaluations || canCreateEvaluations) && (showSection === evaluationsText)) {
       <span>
         <app-admin-evaluations [evaluationList]="evaluationList | async">
         </app-admin-evaluations>
       </span>
     }
-    @if (canViewEvaluations && (showSection === submissionsText)) {
+    @if ((canViewEvaluations || canCreateEvaluations) && (showSection === submissionsText)) {
       <span>
         <app-admin-submissions>
         </app-admin-submissions>

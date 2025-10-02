@@ -7,14 +7,14 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  ViewChild
 } from '@angular/core';
-import { Sort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import {
   Evaluation,
   Action,
   Move,
   Team,
-  User,
 } from 'src/app/generated/cite.api/model/models';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
@@ -31,12 +31,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admin-action-edit-dialog.component';
 
+const ALL_MOVES_VALUE: number = -999;
+
 @Component({
     selector: 'app-admin-actions',
     templateUrl: './admin-actions.component.html',
     styleUrls: ['./admin-actions.component.scss'],
     standalone: false
 })
+
 export class AdminActionsComponent implements OnDestroy, OnInit {
   @Input() selectedEvaluationId: string;
   teamList: Team[] = [];
@@ -46,19 +49,17 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   isLoading = false;
   topbarColor = '#ef3a47';
   actionList: Action[] = [];
-  dataSource = new MatTableDataSource<Action>();
   evaluationList: Evaluation[] = [];
   filteredActionList: Action[] = [];
   filterString = '';
   selectedTeamId = '';
   displayedActions: Action[] = [];
-  selectedMoveNumber = -99;
-  sort: Sort = {
-    active: 'description',
-    direction: 'asc',
-  };
+  selectedMoveNumber = ALL_MOVES_VALUE;
+  allMovesValue = ALL_MOVES_VALUE;
   displayedColumns: string[] = ['description', 'moveNumber', 'teamId', 'isChecked'];
   private unsubscribe$ = new Subject();
+  dataSource = new MatTableDataSource<Action>();
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private settingsService: ComnSettingsService,
@@ -116,6 +117,18 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
     this.actionDataService.loadByEvaluation(this.selectedEvaluationId);
   }
 
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    const initialSortState: Sort = {
+      active: 'moveNumber',
+      direction: 'asc'
+    };
+    this.dataSource.data = this.displayedActions;
+    this.sort.active = initialSortState.active;
+    this.sort.direction = initialSortState.direction;
+    this.sort.sortChange.emit(initialSortState);
+  }
+
   selectMove(moveNumber: number) {
     this.selectedMoveNumber = moveNumber;
     this.criteriaChanged();
@@ -142,6 +155,8 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
       data: {
         action: action,
         teamList: this.teamList,
+        moveList: this.moveList,
+        allMovesValue: ALL_MOVES_VALUE
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -156,14 +171,19 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
     if (action.id) {
       this.actionDataService.updateAction(action);
     } else {
-      if (action.teamId) {
-        this.actionDataService.add(action);
-      } else {
-        this.teamList.forEach((team) => {
-          action.teamId = team.id;
-          this.actionDataService.add(action);
-        });
-      }
+      const addAllMoves = +action.moveNumber === ALL_MOVES_VALUE;
+      const addAllTeams = !action.teamId;
+      this.moveList.forEach((move) => {
+        if (addAllMoves || +move.moveNumber === +action.moveNumber) {
+          action.moveNumber = move.moveNumber;
+          this.teamList.forEach((team) => {
+            if (addAllTeams || action.teamId === team.id) {
+              action.teamId = team.id;
+              this.actionDataService.add(action);
+            }
+          });
+        }
+      });
     }
   }
 
@@ -182,33 +202,9 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
 
   criteriaChanged() {
     this.displayedActions = this.actionList.filter(
-      (r) => (!this.selectedTeamId || r.teamId === this.selectedTeamId) && (+this.selectedMoveNumber === -99 || +r.moveNumber === +this.selectedMoveNumber)
+      (r) => (!this.selectedTeamId || r.teamId === this.selectedTeamId) && (+this.selectedMoveNumber === ALL_MOVES_VALUE || +r.moveNumber === +this.selectedMoveNumber)
     );
-  }
-
-  sortChanged(sort: Sort) {
-    this.sort = sort;
-    this.displayedActions.sort((a, b) =>
-      this.sortActions(a, b, sort.active, sort.direction)
-    );
-  }
-
-  private sortActions(a: Action, b: Action, column: string, direction: string) {
-    const isAsc = direction !== 'desc';
-    switch (column) {
-      case 'description':
-        return (
-          (a.description.toLowerCase() < b.description.toLowerCase() ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
-      case 'teamId':
-        return (
-          (this.getTeamName(a.teamId) < this.getTeamName(b.teamId) ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
-      default:
-        return 0;
-    }
+    this.dataSource.data = this.displayedActions;
   }
 
   getTeamName(teamId: string) {

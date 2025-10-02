@@ -28,7 +28,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </section>
 
-  @for (move of sortedMoves; track move) {
+  @for (move of sortedMoves; track move.id) {
     <mat-expansion-panel [disabled]="true">
       @if (!isLoading) {
         <mat-expansion-panel-header class="row">

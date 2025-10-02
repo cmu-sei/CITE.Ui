@@ -102,38 +102,48 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </span>
         </mat-expansion-panel-header>
       }
-      <div class="move-container">
-        <mat-expansion-panel class="bottom-space">
-          <mat-expansion-panel-header>
-            <h4>Moves</h4>
-          </mat-expansion-panel-header>
-          <app-admin-moves [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)"></app-admin-moves>
-        </mat-expansion-panel>
-        <mat-expansion-panel class="bottom-space">
-          <mat-expansion-panel-header>
-            <h4>Teams</h4>
-          </mat-expansion-panel-header>
-          <app-admin-teams [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)"></app-admin-teams>
-        </mat-expansion-panel>
-        <mat-expansion-panel class="bottom-space">
-          <mat-expansion-panel-header>
-            <h4>Observers</h4>
-          </mat-expansion-panel-header>
-          <app-admin-observers [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)"></app-admin-observers>
-        </mat-expansion-panel>
-        <mat-expansion-panel class="bottom-space">
-          <mat-expansion-panel-header>
-            <h4>Actions</h4>
-          </mat-expansion-panel-header>
-          <app-admin-actions [selectedEvaluationId]="evaluation.id"></app-admin-actions>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <h4>Duties</h4>
-          </mat-expansion-panel-header>
-          <app-admin-duties [selectedEvaluationId]="evaluation.id"></app-admin-duties>
-        </mat-expansion-panel>
-      </div>
+      @if (editEvaluation.id === evaluation.id) {
+        <div class="move-container">
+          <mat-expansion-panel class="bottom-space">
+            <mat-expansion-panel-header>
+              <h4>Moves</h4>
+            </mat-expansion-panel-header>
+            <app-admin-moves [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)"></app-admin-moves>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="bottom-space">
+            <mat-expansion-panel-header>
+              <h4>Teams</h4>
+            </mat-expansion-panel-header>
+            <app-admin-teams [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)"></app-admin-teams>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="bottom-space">
+            <mat-expansion-panel-header>
+              <h4>Observers</h4>
+            </mat-expansion-panel-header>
+            <app-admin-observers [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)"></app-admin-observers>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="bottom-space">
+            <mat-expansion-panel-header>
+              <h4>Actions</h4>
+            </mat-expansion-panel-header>
+            <app-admin-actions [selectedEvaluationId]="evaluation.id"></app-admin-actions>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="bottom-space">
+            <mat-expansion-panel-header>
+              <h4>Duties</h4>
+            </mat-expansion-panel-header>
+            <app-admin-duties [selectedEvaluationId]="evaluation.id"></app-admin-duties>
+          </mat-expansion-panel>
+          @if (canManageEvaluation) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <h4>Memberships</h4>
+              </mat-expansion-panel-header>
+              <app-admin-evaluation-memberships [evaluationId]="evaluation.id" [embedded]="false"></app-admin-evaluation-memberships>
+            </mat-expansion-panel>
+          }
+        </div>
+      }
     </mat-expansion-panel>
   }
 </mat-accordion>

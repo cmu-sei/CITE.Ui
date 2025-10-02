@@ -24,6 +24,7 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dialog/admin-evaluation-edit-dialog.component';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 
 @Component({
     selector: 'app-admin-evaluations',
@@ -64,12 +65,14 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   userList: User[] = [];
   isBusy = false;
   uploadProgress = 0;
+  canManageEvaluation = false;
   @ViewChild('jsonInput') jsonInput: ElementRef<HTMLInputElement>;
 
   constructor(
     private settingsService: ComnSettingsService,
     private evaluationDataService: EvaluationDataService,
     private evaluationQuery: EvaluationQuery,
+    private permissionDataService: PermissionDataService,
     private scoringModelDataService: ScoringModelDataService,
     private scoringModelQuery: ScoringModelQuery,
     private teamMembershipDataService: TeamMembershipDataService,
@@ -152,6 +155,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     this.evaluationDataService.setActive(this.editEvaluation.id);
     // if an evaluation has been selected, load the evaluation, so that we have its details
     if (this.editEvaluation.id) {
+      this.canManageEvaluation = this.permissionDataService.canManageEvaluation(this.editEvaluation.id);
       this.evaluationDataService.loadById(this.editEvaluation.id);
       this.teamMembershipDataService.loadMemberships(this.editEvaluation.id);
     }

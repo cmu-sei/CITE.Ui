@@ -3,14 +3,14 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import {
+  AfterViewInit,
   Component,
   Input,
   OnDestroy,
   OnInit,
+  ViewChild
 } from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
-import { Sort } from '@angular/material/sort';
 import {
   Duty,
   Team,
@@ -25,6 +25,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSort, Sort } from '@angular/material/sort';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminDutyEditDialogComponent } from '../admin-duty-edit-dialog/admin-duty-edit-dialog.component';
 
@@ -34,7 +35,7 @@ import { AdminDutyEditDialogComponent } from '../admin-duty-edit-dialog/admin-du
     styleUrls: ['./admin-duties.component.scss'],
     standalone: false
 })
-export class AdminDutiesComponent implements OnDestroy, OnInit {
+export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() selectedEvaluationId: string;
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -46,12 +47,9 @@ export class AdminDutiesComponent implements OnDestroy, OnInit {
   selectedTeamId = '';
   teamList: Team[] = [];
   userList$: User[] = [];
-  sort: Sort = {
-    active: 'name',
-    direction: 'asc',
-  };
   displayedColumns: string[] = ['name', 'teamId', 'users'];
   private unsubscribe$ = new Subject();
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private settingsService: ComnSettingsService,
@@ -91,6 +89,17 @@ export class AdminDutiesComponent implements OnDestroy, OnInit {
   ngOnInit() {
     this.dutyDataService.loadByEvaluation(this.selectedEvaluationId);
     this.teamDataService.loadByEvaluationId(this.selectedEvaluationId);
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    const initialSortState: Sort = {
+      active: 'teamId',
+      direction: 'asc'
+    };
+    this.sort.active = initialSortState.active;
+    this.sort.direction = initialSortState.direction;
+    this.sort.sortChange.emit(initialSortState);
   }
 
   selectTeam(teamId: string) {
@@ -159,33 +168,7 @@ export class AdminDutiesComponent implements OnDestroy, OnInit {
     } else {
       this.displayedDuties = this.dutyList;
     }
-  }
-
-  sortChanged(sort: Sort) {
-    this.sort = sort;
-    this.displayedDuties.sort((a, b) =>
-      this.sortDuties(a, b, sort.active, sort.direction)
-    );
-  }
-
-  private sortDuties(a: Duty, b: Duty, column: string, direction: string) {
-    const isAsc = direction !== 'desc';
-    switch (column) {
-      case 'name':
-        return (
-          (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
-      case 'teamId':
-        return (
-          (this.getTeamName(a.teamId) < this.getTeamName(b.teamId) ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
-      case 'users':
-        return (a.users < b.users ? -1 : 1) * (isAsc ? 1 : -1);
-      default:
-        return 0;
-    }
+    this.dataSource.data = this.displayedDuties;
   }
 
   getTeamName(teamId: string) {

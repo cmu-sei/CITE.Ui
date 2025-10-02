@@ -33,7 +33,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
   </section>
 
-  @for (team of sortedTeams; track team) {
+  @for (team of sortedTeams; track team.id) {
     <mat-expansion-panel [expanded]="editTeam.id === team.id">
       @if (!isLoading) {
         <mat-expansion-panel-header class="row" (click)="togglePanel(team); $event.stopPropagation()">
@@ -70,8 +70,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="panel-container">
           <div class="user-div">
             @if (team.id === editTeam.id) {
-              <app-admin-team-users [teamId]="team.id"
-              [noChanges]="noChanges"></app-admin-team-users>
+              <app-admin-team-memberships [teamId]="team.id"
+              [noChanges]="noChanges"></app-admin-team-memberships>
             }
           </div>
         </div>

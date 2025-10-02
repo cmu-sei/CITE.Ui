@@ -26,7 +26,26 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-form-field>
       </div>
     </div>
-    @if (data.teamlist) {
+    @if (data.moveList.length > 0) {
+      <div class="add-margin">
+        <div>
+          <mat-form-field class="button-margins full-width">
+            <mat-label>Move {{ data.action.moveNumber }}</mat-label>
+            <mat-select placeholder="Move" [value]="data.action.moveNumber.toString()" (selectionChange)="selectMove($event.value)">
+              @if (!data.action.id && data.moveList.length > 1) {
+                <mat-option value="{{ data.allMovesValue }}">All Moves</mat-option>
+              }
+              @for (move of data.moveList; track move) {
+                <mat-option [value]="move.moveNumber.toString()">
+                  {{ move.moveNumber }} - {{ move.description }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    }
+    @if (data.teamList.length > 0) {
       <div class="add-margin">
         <div>
           <mat-form-field class="button-margins full-width">

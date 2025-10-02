@@ -28,7 +28,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <!-- Table -->
 <div class="elevate">
-  <table mat-table [dataSource]="displayedDuties" matSort (matSortChange)="sortChanged($event)">
+  <table mat-table [dataSource]="dataSource" matSort>
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header><span style="margin-left: 80px;">Name</span></th>

@@ -44,6 +44,10 @@ export class AdminActionEditDialogComponent {
     dialogRef.disableClose = true;
   }
 
+  selectMove(moveNumber: string) {
+    this.data.action.moveNumber = moveNumber;
+  }
+
   errorFree() {
     return this.data.action.description.length > 0;
   }

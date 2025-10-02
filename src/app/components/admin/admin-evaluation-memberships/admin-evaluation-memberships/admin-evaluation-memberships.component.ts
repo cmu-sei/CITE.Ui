@@ -13,9 +13,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { combineLatest, forkJoin, Observable } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
-import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
-import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
+import { map } from 'rxjs/operators';
 import { EvaluationMembershipDataService } from 'src/app/data/evaluation/evaluation-membership-data.service';
 import { EvaluationRoleDataService } from 'src/app/data/evaluation/evaluation-role-data.service';
 import { UserQuery } from 'src/app/data/user/user.query';
@@ -53,7 +51,6 @@ export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
   canEdit: boolean;
 
   constructor(
-    private evaluationQuery: EvaluationQuery,
     private evaluationMembershipDataService: EvaluationMembershipDataService,
     private evaluationRolesDataService: EvaluationRoleDataService,
     private userDataService: UserDataService,
@@ -72,12 +69,7 @@ export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.evaluation$ = this.evaluationQuery.selectEntity(this.evaluationId).pipe(
-      filter((x) => x != null),
-      tap(
-        (x) => (this.canEdit = this.permissionDataService.canEditEvaluation(x.id))
-      )
-    );
+    this.canEdit = this.permissionDataService.canEditEvaluation(this.evaluationId);
   }
 
   selectUsers(members: boolean) {
