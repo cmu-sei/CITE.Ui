@@ -10,7 +10,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-icon class="mdi-24px" fontIcon="mdi-clipboard-list-outline" [ngStyle]="{'color': topbarColor}"></mat-icon>
   </div>
   <button mat-icon-button (click)="addOrEditAction(null)" style="outline: none; margin-left: 20px;" title="Add Action"
-    [disabled]="!selectedEvaluationId">
+    [disabled]="!selectedEvaluationId || !canEdit">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
   <mat-form-field class="button-margins">
@@ -47,7 +47,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <button
           mat-icon-button
           (click)="addOrEditAction(row); $event.stopPropagation()"
-          title="Edit Action"
+          title="Edit Action" [disabled]="!canEdit"
           >
           <mat-icon
             class="mdi-18px"
@@ -55,7 +55,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </mat-icon>
         </button>
         <button mat-icon-button class="button-end" (click)="deleteActionRequest(row); $event.stopPropagation()"
-          title="Delete Action">
+          title="Delete Action" [disabled]="!canEdit">
           <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
         </button>
         {{ row.description }}

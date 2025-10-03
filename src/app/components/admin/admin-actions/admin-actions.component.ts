@@ -42,6 +42,7 @@ const ALL_MOVES_VALUE: number = -999;
 
 export class AdminActionsComponent implements OnDestroy, OnInit {
   @Input() selectedEvaluationId: string;
+  @Input() canEdit: boolean;
   teamList: Team[] = [];
   moveList: Move[] = [];
   pageIndex: number = 0;

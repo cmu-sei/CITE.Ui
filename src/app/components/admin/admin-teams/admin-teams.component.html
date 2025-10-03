@@ -8,7 +8,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
     <div class="header-cell one-cell">
       <button mat-icon-button (click)="addOrEditTeam(null)" style="outline: none;" title="Add Team"
-        [disabled]="noChanges">
+        [disabled]="!canEdit">
         <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
       </button>
     </div>
@@ -40,11 +40,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <div class="cell one-cell">
             <div class="button-div">
               <button mat-icon-button (click)="addOrEditTeam(team); $event.stopPropagation()" title="Edit {{ team.name }}"
-                [disabled]="noChanges" class="team-button">
+                [disabled]="!canEdit" class="team-button">
                 <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
               </button>
               <button mat-icon-button (click)="deleteTeam(team); $event.stopPropagation()" title="Delete {{ team.name }}"
-                [disabled]="noChanges" class="team-button">
+                [disabled]="!canEdit" class="team-button">
                 <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can"></mat-icon>
               </button>
             </div>
@@ -70,8 +70,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="panel-container">
           <div class="user-div">
             @if (team.id === editTeam.id) {
-              <app-admin-team-memberships [teamId]="team.id"
-              [noChanges]="noChanges"></app-admin-team-memberships>
+              <app-admin-team-memberships [teamId]="team.id"></app-admin-team-memberships>
             }
           </div>
         </div>

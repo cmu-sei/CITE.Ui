@@ -32,11 +32,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
       <span class="header-cell first-cell">
         <button mat-icon-button (click)="addOrEditScoringModel(null)" style="outline: none; margin-left: 20px;"
-          title="Add Scoring Model" [disabled]="isBusy">
+          title="Add Scoring Model" [disabled]="isBusy || !canCreateScoringModels">
           <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
         </button>
         <button mat-icon-button (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
-          title="Upload Scoring Model" [disabled]="isBusy">
+          title="Upload Scoring Model" [disabled]="isBusy || !canCreateScoringModels">
           <mat-icon class="mdi-18px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
         </button>
       </span>
@@ -62,7 +62,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline" alt="Edit"></mat-icon>
               </button>
               <button mat-icon-button (click)="copyScoringModel(scoringModel.id); $event.stopPropagation();"
-                title="Copy {{ scoringModel.description }}" [disabled]="isBusy">
+                title="Copy {{ scoringModel.description }}" [disabled]="isBusy || !canCreateScoringModels">
                 <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
               </button>
               <button mat-icon-button (click)="downloadScoringModel(scoringModel); $event.stopPropagation();"
@@ -70,7 +70,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 <mat-icon class="mdi-18px" fontIcon="mdi-download" alt="Download"></mat-icon>
               </button>
               <button mat-icon-button (click)="deleteScoringModelRequest(scoringModel); $event.stopPropagation()"
-                title="Delete {{ scoringModel.description }}" [disabled]="isBusy || scoringModel.evaluationId">
+                title="Delete {{ scoringModel.description }}" [disabled]="isBusy || scoringModel.evaluationId || !canManage(scoringModel.id)">
                 <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can" alt="Delete"></mat-icon>
               </button>
             </span>
@@ -92,9 +92,26 @@ project root for license information or contact permission@sei.cmu.edu for full 
         }
         @if (editScoringModel.id === scoringModel.id) {
           <div class="sub-container">
-            <app-admin-scoring-categories [scoringModelId]="scoringModel.id" [editScoringCategoryId]="scoringCategoryId"
-              [displayScoringModelbyMoveNumber]="scoringModel.displayScoringModelByMoveNumber"
-            (scoringCategoryClick)="scoringCategoryId = $event.toString()"></app-admin-scoring-categories>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                Scoring Categories
+              </mat-expansion-panel-header>
+              <app-admin-scoring-categories
+                [scoringModelId]="scoringModel.id"
+                [editScoringCategoryId]="scoringCategoryId"
+                [displayScoringModelbyMoveNumber]="scoringModel.displayScoringModelByMoveNumber"
+                [canEdit]="canEdit(scoringModel.id)"
+                (scoringCategoryClick)="scoringCategoryId = $event.toString()"
+              ></app-admin-scoring-categories>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                Memberships
+              </mat-expansion-panel-header>
+              <app-admin-scoring-model-memberships
+                [scoringModelId]="scoringModel.id"
+              ></app-admin-scoring-model-memberships>
+            </mat-expansion-panel>
           </div>
         }
       </mat-expansion-panel>

@@ -3,18 +3,14 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 -->
 
-<div *ngIf="scoringModel$ | async as scoringModel" class="d-flex justify-content-center align-items-center">
-  <button *ngIf="embedded" mat-icon-button (click)="goBack.emit()" matTooltip="Return">
-    <mat-icon class="mdi-24px" fontIcon="mdi-keyboard-return"></mat-icon>
-  </button>
-  <h1>{{ scoringModel.description }}</h1>
-</div>
-<div class="d-flex gap-5 justify-content-center">
-  <app-admin-scoring-model-membership-list [users]="nonMembers$ | async" [groups]="groupNonMembers$ | async"
-    [canEdit]="canEdit$ | async" (createMembership)="createMembership($event)"></app-admin-scoring-model-membership-list>
+@if (scoringModel$ | async) {
+  <div class="d-flex gap-5 justify-content-center">
+    <app-admin-scoring-model-membership-list [users]="nonMembers$ | async" [groups]="groupNonMembers$ | async"
+      [canEdit]="canManage$ | async" (createMembership)="createMembership($event)"></app-admin-scoring-model-membership-list>
 
-  <app-admin-scoring-model-member-list [memberships]="memberships$ | async" [users]="members$ | async"
-    [groups]="groupMembers$ | async" [roles]="roles$ | async" [canEdit]="canEdit$ | async"
-    (deleteMembership)="deleteMembership($event)"
-    (editMembership)="editMembership($event)"></app-admin-scoring-model-member-list>
-</div>
+    <app-admin-scoring-model-member-list [memberships]="memberships$ | async" [users]="members$ | async"
+      [groups]="groupMembers$ | async" [roles]="roles$ | async" [canEdit]="canManage$ | async"
+      (deleteMembership)="deleteMembership($event)"
+      (editMembership)="editMembership($event)"></app-admin-scoring-model-member-list>
+  </div>
+}

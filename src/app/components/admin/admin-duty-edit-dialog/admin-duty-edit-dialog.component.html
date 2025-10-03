@@ -22,16 +22,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="name-field full-width">
           <mat-label>Duty Name</mat-label>
-          <input matInput [(ngModel)]="data.duty.name" />
+          <input matInput [(ngModel)]="data.duty.name" [disabled]="!data.canEdit" />
         </mat-form-field>
       </div>
     </div>
-    @if (data.teamlist) {
+    @if (data.teamList) {
       <div class="add-margin">
         <div>
           <mat-form-field class="button-margins full-width">
             <mat-label>Team</mat-label>
-            <mat-select placeholder="Team" [(ngModel)]="data.duty.teamId">
+            <mat-select placeholder="Team" [(ngModel)]="data.duty.teamId" [disabled]="!data.canEdit">
               @if (!data.duty.id && data.teamList.length > 1) {
                 <mat-option value="">All Teams</mat-option>
               }
@@ -47,7 +47,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     }
     <div class="cssLayoutRowStartCenter bottom-button">
       <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>
+        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree() || !data.canEdit" style="margin-left: 40px;">Save</button>
       </div>
       <div class="delete-button">
         <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>

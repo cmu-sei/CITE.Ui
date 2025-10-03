@@ -51,7 +51,7 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
   groupNonMembers$ = this.selectGroups(false);
   groupMembers$ = this.selectGroups(true);
 
-  canEdit$: Observable<boolean>;
+  canManage$: Observable<boolean>;
 
   constructor(
     private scoringModelQuery: ScoringModelQuery,
@@ -76,7 +76,7 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
     this.permissionDataService
       .loadScoringModelPermissions()
       .subscribe((x) =>
-        this.canEdit$ = of(this.permissionDataService.canEditScoringModel(this.scoringModelId)));
+        this.canManage$ = of(this.permissionDataService.canManageScoringModel(this.scoringModelId)));
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -86,7 +86,7 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
         filter((x) => x != null),
         tap(
           (x) => {
-            this.canEdit$ = of(this.permissionDataService.canEditScoringModel(this.scoringModelId));
+            this.canManage$ = of(this.permissionDataService.canEditScoringModel(this.scoringModelId));
           })
       );
   }

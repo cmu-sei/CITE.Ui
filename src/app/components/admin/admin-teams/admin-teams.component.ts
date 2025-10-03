@@ -26,7 +26,7 @@ import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
   @Input() evaluationId: string;
-  @Input() noChanges: boolean;
+  @Input() canEdit: boolean;
   filterControl = new UntypedFormControl();
   filterString = '';
   newTeam: Team = { id: '', name: '' };

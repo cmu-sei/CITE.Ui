@@ -21,6 +21,7 @@ import { AdminScoringOptionEditDialogComponent } from '../admin-scoring-option-e
 })
 export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
   @Input() scoringCategoryId: string;
+  @Input() canEdit: boolean;
   newScoringOption: ScoringOption = { id: '', description: '' };
   scoringOptionList: ScoringOption[];
   isLoading = false;

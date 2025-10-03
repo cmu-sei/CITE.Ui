@@ -23,6 +23,7 @@ import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminScoringModelEditDialogComponent } from '../admin-scoring-model-edit-dialog/admin-scoring-model-edit-dialog.component';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 
 @Component({
     selector: 'app-admin-scoring-models',
@@ -69,6 +70,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   uploadProgress = 0;
   @ViewChild('jsonInput') jsonInput: ElementRef<HTMLInputElement>;
   showAll = false;
+  canCreateScoringModels = this.permissionDataService.canCreateScoringModels();
 
   constructor(
     private settingsService: ComnSettingsService,
@@ -78,7 +80,8 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public dialogService: DialogService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private permissionDataService: PermissionDataService
   ) {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
@@ -153,6 +156,14 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   togglePanel(scoringModel: ScoringModel) {
     this.editScoringModel =
       this.editScoringModel.id === scoringModel.id ? this.editScoringModel = {} : this.editScoringModel = { ...scoringModel};
+  }
+
+  canEdit(id: string): boolean {
+    return this.permissionDataService.canEditScoringModel(id);
+  }
+
+  canManage(id: string): boolean {
+    return this.permissionDataService.canManageScoringModel(id);
   }
 
   saveScoringModel(scoringModel: ScoringModel) {

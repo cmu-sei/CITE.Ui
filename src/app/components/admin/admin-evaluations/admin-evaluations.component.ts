@@ -65,7 +65,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   userList: User[] = [];
   isBusy = false;
   uploadProgress = 0;
-  canManageEvaluation = false;
+  canCreateEvaluations = this.permissionDataService.canCreateEvaluations();
   @ViewChild('jsonInput') jsonInput: ElementRef<HTMLInputElement>;
 
   constructor(
@@ -139,7 +139,8 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
         evaluation: evaluation,
         scoringModels: this.scoringModels,
         itemStatuses: this.itemStatuses,
-        isExisting: !!evaluation.dateCreated
+        isExisting: !!evaluation.dateCreated,
+        canEdit: this.permissionDataService.canEditEvaluation(evaluation.id)
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -155,14 +156,17 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     this.evaluationDataService.setActive(this.editEvaluation.id);
     // if an evaluation has been selected, load the evaluation, so that we have its details
     if (this.editEvaluation.id) {
-      this.canManageEvaluation = this.permissionDataService.canManageEvaluation(this.editEvaluation.id);
       this.evaluationDataService.loadById(this.editEvaluation.id);
       this.teamMembershipDataService.loadMemberships(this.editEvaluation.id);
     }
   }
 
-  evaluationFrozen(evaluation: Evaluation) {
-    return evaluation.status !== ItemStatus.Pending && evaluation.status !== ItemStatus.Active;
+  canManageEvaluation(id: string): boolean {
+    return this.permissionDataService.canManageEvaluation(id);
+  }
+
+  canEdit(evaluation: Evaluation) {
+    return (evaluation.status === ItemStatus.Pending || evaluation.status === ItemStatus.Active) && this.permissionDataService.canEditEvaluation(evaluation.id);
   }
 
   saveEvaluation(evaluation: Evaluation) {

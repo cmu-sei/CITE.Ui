@@ -8,7 +8,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
     <div class="header-cell cell-two">
       <button mat-icon-button (click)="addOrEditMove(null)" style="outline: none;" title="Add Move"
-        [disabled]="noChanges">
+        [disabled]="!canEdit">
         <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
       </button>
     </div>
@@ -38,7 +38,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
             </button>
             <button mat-icon-button (click)="deleteMoveRequest(move); $event.stopPropagation()" title="Delete Move"
-              [disabled]="noChanges">
+              [disabled]="!canEdit">
               <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
             </button>
           </div>

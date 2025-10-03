@@ -37,6 +37,7 @@ import { AdminDutyEditDialogComponent } from '../admin-duty-edit-dialog/admin-du
 })
 export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() selectedEvaluationId: string;
+  @Input() canEdit: boolean;
   pageIndex: number = 0;
   pageSize: number = 10;
   isLoading = false;
@@ -122,6 +123,7 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
       data: {
         duty: duty,
         teamList: this.teamList,
+        canEdit: this.canEdit
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

@@ -87,14 +87,17 @@ export class PermissionDataService {
       );
   }
 
+  canCreateEvaluations(): boolean {
+    return this.canEvaluation(
+      SystemPermission.CreateEvaluations,
+      '',
+      null
+    );
+  }
+
   canEditEvaluation(EvaluationId: string): boolean {
     return this.canEvaluation(SystemPermission.EditEvaluations, EvaluationId, EvaluationPermission.EditEvaluation) ||
       this.canEvaluation(SystemPermission.ManageEvaluations, EvaluationId, EvaluationPermission.ManageEvaluation);
-  }
-
-  canEditScoringModel(scoringModelId: string): boolean {
-    return this.canScoringModel(SystemPermission.EditScoringModels, scoringModelId, ScoringModelPermission.EditScoringModel) ||
-      this.canScoringModel(SystemPermission.ManageScoringModels, scoringModelId, ScoringModelPermission.ManageScoringModel);
   }
 
   canManageEvaluation(EvaluationId: string): boolean {
@@ -103,6 +106,19 @@ export class PermissionDataService {
       EvaluationId,
       EvaluationPermission.ManageEvaluation
     );
+  }
+
+  canCreateScoringModels(): boolean {
+    return this.canScoringModel(
+      SystemPermission.CreateScoringModels,
+      '',
+      null
+    );
+  }
+
+  canEditScoringModel(scoringModelId: string): boolean {
+    return this.canScoringModel(SystemPermission.EditScoringModels, scoringModelId, ScoringModelPermission.EditScoringModel) ||
+      this.canScoringModel(SystemPermission.ManageScoringModels, scoringModelId, ScoringModelPermission.ManageScoringModel);
   }
 
   canManageScoringModel(scoringModelId: string): boolean {
