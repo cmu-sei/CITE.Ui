@@ -127,14 +127,17 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   }
 
   addOrEditScoringModel(scoringModel: ScoringModel) {
+    var hasPermission = false;
     if (!scoringModel) {
       scoringModel = {
         description: '',
         calculationEquation: '{average}',
         status: ItemStatus.Pending
       };
+      hasPermission = this.permissionDataService.canCreateScoringModels();
     } else {
       scoringModel = {... scoringModel};
+      hasPermission = this.permissionDataService.canEditScoringModel(scoringModel.id);
     }
     const dialogRef = this.dialog.open(AdminScoringModelEditDialogComponent, {
       width: '800px',
@@ -142,7 +145,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
         scoringModel: scoringModel,
         itemStatuses: this.itemStatuses,
         rightSideDisplays: this.rightSideDisplays,
-        canEdit: scoringModel?.id && !scoringModel.evaluationId
+        canEdit: (scoringModel?.id && !scoringModel.evaluationId) && hasPermission
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

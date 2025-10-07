@@ -106,10 +106,10 @@ export class SubmissionDataService {
     }
   }
 
-  load(evaluationId?: string, scoringModelId?: string, userId?: string, teamId?: string) {
+  loadByEvaluation(evaluationId?: string) {
     this.submissionStore.setLoading(true);
     this.submissionService
-      .getSubmissions(evaluationId, scoringModelId, userId, teamId)
+      .getByEvaluation(evaluationId)
       .pipe(
         tap(() => {
           this.submissionStore.setLoading(false);

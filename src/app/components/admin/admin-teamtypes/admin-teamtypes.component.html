@@ -8,8 +8,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <div class="sp-icon">
     <mat-icon class="mdi-24px" fontIcon="mdi-account" [ngStyle]="{'color': topbarColor}"></mat-icon>
   </div>
-  <button mat-icon-button (click)="addingNewTeamType = true" style="outline: none; margin-left: 20px;"
-    title="Add TeamType">
+  <button mat-icon-button (click)="addOrEditTeamType(null)" style="outline: none; margin-left: 20px;"
+    title="Add TeamType" [disabled]="!canEdit">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
   <mat-form-field style="width: 200px; margin-left: 10px;">
@@ -27,40 +27,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
 </div>
 
 <mat-accordion displayMode="flat" class="table">
-  @if (addingNewTeamType) {
-    <mat-expansion-panel [disabled]="true">
-      <mat-expansion-panel-header class="row">
-        <span class="cell new-teamtype-cell">
-          <label>@if (newTeamType.id) {
-            <span>Edit</span>
-            }@if (!newTeamType.id) {
-            <span>Add New</span>
-          } TeamType:</label>
-          <mat-form-field class="new-teamtype-spacing">
-            <input class="edit-teamtype-name" matInput placeholder="TeamType Name" [(ngModel)]="newTeamType.name"
-              matTooltip="Must have a minimum of 4 characters" />
-            </mat-form-field>
-            <mat-checkbox [(ngModel)]="newTeamType.isOfficialScoreContributor" style="margin-right: 20px;">Official Score
-            Contributor</mat-checkbox>
-            <mat-checkbox [(ngModel)]="newTeamType.showTeamTypeAverage" style="margin-right: 20px;">Show
-            TeamTypeAverage</mat-checkbox>
-            <button mat-icon-button class="new-user-spacing" (click)="addTeamTypeRequest(true)"
-              [disabled]="!newTeamType.name || newTeamType.name.length < 4">
-              <mat-icon class="mdi-24px" fontIcon="mdi-account-plus" matTooltip="Add this teamType"></mat-icon>
-            </button>
-            <button mat-icon-button (click)="addTeamTypeRequest(false)" matTooltip="Cancel">
-              <mat-icon class="mdi-24px" fontIcon="mdi-account-remove"></mat-icon>
-            </button>
-          </span>
-        </mat-expansion-panel-header>
-      </mat-expansion-panel>
-    }
-
     <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
       <div class="header-cell button-cell"><span style="margin-left: 40px;"></span></div>
       <div class="header-cell name-cell" mat-sort-header="name"><span>TeamType</span></div>
       <div class="header-cell flag-cell" mat-sort-header="isOfficialScoreContributor">Is Official Score Contributor</div>
-      <div class="header-cell flag-cell" mat-sort-header="showTeamTypeAverage">Show Group Average</div>
+      <div class="header-cell flag-cell" mat-sort-header="showTeamTypeAverage">Show TeamType Average</div>
     </section>
 
     @for (teamType of paginateTeamtypes(); track teamType) {
@@ -68,12 +39,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
         @if (!isLoading) {
           <mat-expansion-panel-header class="row">
             <span class="cell button-cell">
-              <button mat-icon-button (click)="editTeamType(teamType); $event.stopPropagation()" style="outline: none;"
-                title="Edit Evaluation">
+              <button mat-icon-button (click)="addOrEditTeamType(teamType); $event.stopPropagation()" style="outline: none;"
+                title="Edit Evaluation" [disabled]="!canEdit">
                 <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
               </button>
               <button mat-icon-button (click)="deleteTeamTypeRequest(teamType); $event.stopPropagation()"
-                style="outline: none;" title="Delete Evaluation">
+                style="outline: none;" title="Delete Evaluation" [disabled]="!canEdit">
                 <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can"></mat-icon>
               </button>
             </span>
@@ -82,13 +53,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
             </span>
             <span class="cell flag-cell center-self">
               <div class="cssLayoutRowStartCenter center-self">
-                <mat-checkbox class="checkbox-div" [checked]="teamType.isOfficialScoreContributor"
+                <mat-checkbox class="checkbox-div" [checked]="teamType.isOfficialScoreContributor" [disabled]="!canEdit"
                 (change)="toggleIsOfficialScoreContributor(teamType)" style="margin-right: 20px;"></mat-checkbox>
               </div>
             </span>
             <span class="cell flag-cell center-self">
               <div class="cssLayoutRowStartCenter center-self">
-                <mat-checkbox class="checkbox-div" [checked]="teamType.showTeamTypeAverage"
+                <mat-checkbox class="checkbox-div" [checked]="teamType.showTeamTypeAverage" [disabled]="!canEdit"
                 (change)="toggleShowTeamTypeAverage(teamType)" style="margin-right: 20px;"></mat-checkbox>
               </div>
             </span>

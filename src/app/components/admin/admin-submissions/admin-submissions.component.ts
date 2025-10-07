@@ -28,6 +28,7 @@ import {
 } from 'src/app/data/submission/submission.models';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 
 @Component({
     selector: 'app-admin-submissions',
@@ -76,7 +77,8 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
     private submissionQuery: SubmissionQuery,
     private teamDataService: TeamDataService,
     private dialogService: DialogService,
-    public matDialog: MatDialog
+    public matDialog: MatDialog,
+    private permissionDataService: PermissionDataService
   ) {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
@@ -86,7 +88,13 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((evaluations) => {
-        this.evaluationList = evaluations;
+        const managedEvaluations: Evaluation[] = [];
+        evaluations.forEach((evaluation) => {
+          if (this.permissionDataService.canManageEvaluation(evaluation.id)) {
+            managedEvaluations.push(evaluation);
+          }
+        });
+        this.evaluationList = managedEvaluations;
       });
 
     this.submissionDataService.unload();
@@ -112,7 +120,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   }
 
   selectEvaluation(evaluationId: string) {
-    this.submissionDataService.load(evaluationId, '', '', '');
+    this.submissionDataService.loadByEvaluation(evaluationId);
     this.teamDataService.loadByEvaluationId(evaluationId);
   }
 
