@@ -52,8 +52,8 @@ export class ScoresheetComponent implements OnDestroy {
   userId = '';
   activeTeamId = '';
   teamMemberships: User[];
-  currentMoveNumber = -1;
-  displayedMoveNumber = -1;
+  currentMoveNumber: number;
+  displayedMoveNumber: number;
   selectedEvaluation: Evaluation = {};
   selectedScoringModel: ScoringModel = {};
   displayedSubmission: Submission = {};

@@ -5,307 +5,299 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <div class="form-container">
-  @if (
-    selectedEvaluation.id &&
-    activeTeamId &&
-    selectedScoringModel &&
-    displayedMoveNumber >= 0 &&
-    submissionList.length > 0
-    ) {
-    <mat-table [dataSource]="getDisplayedScoringCategories() | displayOrder" class="full-width full-height">
-      <!-- Description Definition -->
-      <ng-container matColumnDef="scoringCategoryDescription">
-        <mat-header-cell *matHeaderCellDef [ngClass]="matHeaderClass()">
-          @if (haveSomeScoringCategories) {
-            <div
-              class="navigation-font"
-              >
-              <span style="transform: scale(0.8)">
-                <!-- User -->
-                @if (displaying === 'user') {
-                  <button mat-flat-button color="accent" class="move-button" [ngClass]="tableClass"
-                    (click)="selectDisplayedSubmission.emit('user')"
-                    [disabled]="myTeamId !== activeTeamId" title="Your personal score">
-                    User
+  <mat-table [dataSource]="getDisplayedScoringCategories() | displayOrder" class="full-width full-height">
+    <!-- Description Definition -->
+    <ng-container matColumnDef="scoringCategoryDescription">
+      <mat-header-cell *matHeaderCellDef [ngClass]="matHeaderClass()">
+        @if (haveSomeScoringCategories) {
+          <div
+            class="navigation-font"
+            >
+            <span style="transform: scale(0.8)">
+              <!-- User -->
+              @if (displaying === 'user') {
+                <button mat-flat-button color="accent" class="move-button" [ngClass]="tableClass"
+                  (click)="selectDisplayedSubmission.emit('user')"
+                  [disabled]="myTeamId !== activeTeamId" title="Your personal score">
+                  User
+                </button>
+              }
+              @if (displaying !== 'user') {
+                <button mat-stroked-button class="move-button" (click)="selectDisplayedSubmission.emit('user')"
+                  [disabled]="myTeamId !== activeTeamId" title="Your personal score">
+                  User
+                </button>
+              }
+              <!-- Team -->
+              @if (displaying === 'team') {
+                <button mat-flat-button color="accent" class="move-button" [ngClass]="tableClass"
+                  (click)="selectDisplayedSubmission.emit('team')" title="The team's score">
+                  Team
+                </button>
+              }
+              @if (displaying !== 'team') {
+                <button
+                  mat-stroked-button
+                  class="move-button"
+                  (click)="selectDisplayedSubmission.emit('team')"
+                  title="The team's score"
+                  >
+                  Team
+                </button>
+              }
+              @if (!rightSideDisplay) {
+                <span>
+                  <!-- Team Avg -->
+                  @if (displaying === 'team-avg') {
+                    <button
+                      mat-flat-button
+                      color="accent"
+                      class="move-button"
+                      [ngClass]="tableClass"
+                      (click)="selectDisplayedSubmission.emit('team-avg')"
+                      [disabled]="myTeamId !== activeTeamId"
+                      title="The average of all user scores for your team"
+                      >
+                      Team Avg
+                    </button>
+                  }
+                  @if (displaying !== 'team-avg') {
+                    <button
+                      mat-stroked-button
+                      class="move-button"
+                      (click)="selectDisplayedSubmission.emit('team-avg')"
+                      [disabled]="myTeamId !== activeTeamId"
+                      title="The average of all user scores for your team"
+                      >
+                      Team Avg
+                    </button>
+                  }
+                  <!-- Group Avg -->
+                  @if (displaying === 'group-avg') {
+                    <button
+                      mat-flat-button
+                      color="accent"
+                      class="move-button"
+                      [ngClass]="tableClass"
+                      (click)="selectDisplayedSubmission.emit('group-avg')"
+                      title="The average of all team scores for your group"
+                      >
+                      Group Avg
+                    </button>
+                  }
+                  @if (displaying !== 'group-avg' && showGroupAvgScore) {
+                    <button
+                      mat-stroked-button
+                      class="plain-button move-button"
+                      (click)="selectDisplayedSubmission.emit('group-avg')"
+                      title="The average of all team scores for your group"
+                      >
+                      Group Avg
+                    </button>
+                  }
+                  <!-- Official -->
+                  @if (displaying === 'official') {
+                    <button
+                      mat-flat-button
+                      color="accent"
+                      class="move-button"
+                      [ngClass]="tableClass"
+                      (click)="selectDisplayedSubmission.emit('official')"
+                      title="The official score for this move"
+                      >
+                      Official
+                    </button>
+                  }
+                  @if (displaying !== 'official' && showOfficialScore) {
+                    <button
+                      mat-stroked-button
+                      class="move-button"
+                      (click)="selectDisplayedSubmission.emit('official')"
+                      title="The official score for this move"
+                      >
+                      Official
+                    </button>
+                  }
+                </span>
+              }
+            </span>
+          </div>
+        }
+        @if (!selectedScoringModel.hideScoresOnScoreSheet && haveSomeScoringCategories) {
+          <div>
+            <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}">{{
+            displayedSubmission.score | number: '1.2-2' }}</span>
+          </div>
+        }
+        @if (selectedScoringModel.useSubmit && haveSomeScoringCategories) {
+          <div class="title-font">
+            @if (myTeamId === activeTeamId) {
+              <span class="move-buttons">
+                @if (showSubmitButton) {
+                  <button mat-flat-button [ngClass]="buttonClass" class="move-button background-button"
+                    (click)="completeSubmission()" title="Submit completed score"
+                    [disabled]="noChanges">
+                    Submit
                   </button>
                 }
-                @if (displaying !== 'user') {
-                  <button mat-stroked-button class="move-button" (click)="selectDisplayedSubmission.emit('user')"
-                    [disabled]="myTeamId !== activeTeamId" title="Your personal score">
-                    User
+                @if (showReopenButton) {
+                  <button mat-flat-button [ngClass]="buttonClass" class="move-button background-button"
+                    (click)="activateSubmission()" title="Reopen to change score"
+                    [disabled]="noChanges">
+                    Reopen
                   </button>
                 }
-                <!-- Team -->
-                @if (displaying === 'team') {
-                  <button mat-flat-button color="accent" class="move-button" [ngClass]="tableClass"
-                    (click)="selectDisplayedSubmission.emit('team')" title="The team's score">
-                    Team
+                @if (showModifyControls) {
+                  <button mat-flat-button [ngClass]="buttonClass" class="move-button background-button"
+                    (click)="clearSelections()" title="Clear all selections"
+                    [disabled]="noChanges">
+                    Clear
                   </button>
                 }
-                @if (displaying !== 'team') {
+                @if (showModifyControls) {
                   <button
-                    mat-stroked-button
-                    class="move-button"
-                    (click)="selectDisplayedSubmission.emit('team')"
-                    title="The team's score"
+                    mat-raised-button
+                    [ngClass]="buttonClass"
+                    class="move-button background-button"
+                    (click)="presetSelections()"
+                    title="Preset selections to the previous move"
+                    [disabled]="noChanges"
                     >
-                    Team
+                    Preset
                   </button>
-                }
-                @if (!rightSideDisplay) {
-                  <span>
-                    <!-- Team Avg -->
-                    @if (displaying === 'team-avg') {
-                      <button
-                        mat-flat-button
-                        color="accent"
-                        class="move-button"
-                        [ngClass]="tableClass"
-                        (click)="selectDisplayedSubmission.emit('team-avg')"
-                        [disabled]="myTeamId !== activeTeamId"
-                        title="The average of all user scores for your team"
-                        >
-                        Team Avg
-                      </button>
-                    }
-                    @if (displaying !== 'team-avg') {
-                      <button
-                        mat-stroked-button
-                        class="move-button"
-                        (click)="selectDisplayedSubmission.emit('team-avg')"
-                        [disabled]="myTeamId !== activeTeamId"
-                        title="The average of all user scores for your team"
-                        >
-                        Team Avg
-                      </button>
-                    }
-                    <!-- Group Avg -->
-                    @if (displaying === 'group-avg') {
-                      <button
-                        mat-flat-button
-                        color="accent"
-                        class="move-button"
-                        [ngClass]="tableClass"
-                        (click)="selectDisplayedSubmission.emit('group-avg')"
-                        title="The average of all team scores for your group"
-                        >
-                        Group Avg
-                      </button>
-                    }
-                    @if (displaying !== 'group-avg' && showGroupAvgScore) {
-                      <button
-                        mat-stroked-button
-                        class="plain-button move-button"
-                        (click)="selectDisplayedSubmission.emit('group-avg')"
-                        title="The average of all team scores for your group"
-                        >
-                        Group Avg
-                      </button>
-                    }
-                    <!-- Official -->
-                    @if (displaying === 'official') {
-                      <button
-                        mat-flat-button
-                        color="accent"
-                        class="move-button"
-                        [ngClass]="tableClass"
-                        (click)="selectDisplayedSubmission.emit('official')"
-                        title="The official score for this move"
-                        >
-                        Official
-                      </button>
-                    }
-                    @if (displaying !== 'official' && showOfficialScore) {
-                      <button
-                        mat-stroked-button
-                        class="move-button"
-                        (click)="selectDisplayedSubmission.emit('official')"
-                        title="The official score for this move"
-                        >
-                        Official
-                      </button>
-                    }
-                  </span>
                 }
               </span>
-            </div>
-          }
-          @if (!selectedScoringModel.hideScoresOnScoreSheet && haveSomeScoringCategories) {
-            <div>
-              <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}">{{
-              displayedSubmission.score | number: '1.2-2' }}</span>
-            </div>
-          }
-          @if (selectedScoringModel.useSubmit && haveSomeScoringCategories) {
-            <div class="title-font">
-              @if (myTeamId === activeTeamId) {
-                <span class="move-buttons">
-                  @if (showSubmitButton) {
-                    <button mat-flat-button [ngClass]="buttonClass" class="move-button background-button"
-                      (click)="completeSubmission()" title="Submit completed score"
-                      [disabled]="noChanges">
-                      Submit
-                    </button>
-                  }
-                  @if (showReopenButton) {
-                    <button mat-flat-button [ngClass]="buttonClass" class="move-button background-button"
-                      (click)="activateSubmission()" title="Reopen to change score"
-                      [disabled]="noChanges">
-                      Reopen
-                    </button>
-                  }
-                  @if (showModifyControls) {
-                    <button mat-flat-button [ngClass]="buttonClass" class="move-button background-button"
-                      (click)="clearSelections()" title="Clear all selections"
-                      [disabled]="noChanges">
-                      Clear
-                    </button>
-                  }
-                  @if (showModifyControls) {
-                    <button
-                      mat-raised-button
-                      [ngClass]="buttonClass"
-                      class="move-button background-button"
-                      (click)="presetSelections()"
-                      title="Preset selections to the previous move"
-                      [disabled]="noChanges"
-                      >
-                      Preset
-                    </button>
-                  }
-                </span>
-              }
-              @if (myTeamId !== activeTeamId) {
-                <span class="move-buttons status-font">
-                  @if (!displayedSubmission.scoreIsAnAverage) {
-                    <span>{{ getSubmissionStatusText() }}</span>
-                  }
-                </span>
-              }
-            </div>
-          }
-          @if (!haveSomeScoringCategories) {
-            <div>
-              <h2>No responses required for this move.</h2>
-            </div>
-          }
-        </mat-header-cell>
-        <!-- scoresheet display -->
-        <mat-cell *matCellDef="let scoringCategory" class="form-container" [ngClass]="tableClass">
-          <div class="scoring-category-description" [ngClass]="tableClass">
-            {{ scoringCategory.displayOrder }}. {{ scoringCategory.description }}
-            @if (scoringCategory.calculationMethodId > 0) {
-              <span>
-                &nbsp;&nbsp;-&nbsp;&nbsp;[{{
-                categoryScore(scoringCategory.id) | number: '1.0-0'
-                }}]
+            }
+            @if (myTeamId !== activeTeamId) {
+              <span class="move-buttons status-font">
+                @if (!displayedSubmission.scoreIsAnAverage) {
+                  <span>{{ getSubmissionStatusText() }}</span>
+                }
               </span>
             }
           </div>
-          <mat-table [dataSource]="scoringCategory.scoringOptions | displayOrder" class="full-width"
-            [ngClass]="tableClass">
-            <ng-container matColumnDef="scoringOptionDescription">
-              <mat-cell *matCellDef="let scoringOption" [ngClass]="tableClass">
-                <div [ngClass]="tableClass" style="width: 100%;">
-                  @if (scoringCategory.scoringOptionSelection !== 'None') {
-                    <div [ngClass]="tableClass">
-                      @if (!displayedSubmission.scoreIsAnAverage) {
-                        <mat-checkbox [aria-label]="scoringOption.description"
-                          [checked]="isSelected(scoringCategory.id, scoringOption.id)"
-                          [disabled]="noChanges || !showModifyControls || myTeamId !== activeTeamId"
-                    [matTooltip]="selectedBy(scoringCategory.id, scoringOption.id)" (change)="
-                      toggleOption($event, scoringCategory.id, scoringOption.id)
-                    " [ngClass]="tableClass">
-                          {{ scoringOption.description }} &nbsp;
-                        </mat-checkbox>
-                      }
-                      @if (displayedSubmission.scoreIsAnAverage) {
-                        <span>
-                          [{{ selectedCount(scoringCategory.id, scoringOption.id) }}]
-                          &nbsp;&nbsp;{{ scoringOption.description }}
-                        </span>
-                      }
-                      @if (showModifyControls && myTeamId === activeTeamId && !selectedScoringModel.displayCommentTextBoxes) {
-                        <button id="add-comment" aria-label="Add Comment" mat-icon-button class="small-button"
-                          (click)="addComment(addCommenttemplate, scoringOption)" title="Add Comment" [disabled]="noChanges">
-                          <mat-icon class="small-icon" [ngClass]="tableClass" svgIcon="add-comment"
-                          aria-hidden="false"></mat-icon>
-                        </button>
-                      }
-                    </div>
-                  }
-                  @if (scoringCategory.scoringOptionSelection === 'None') {
-                    <div [ngClass]="tableClass">
-                      {{ scoringOption.description }}
-                    </div>
-                  }
-                  @if (!selectedScoringModel.displayCommentTextBoxes) {
-                    <div class="comment-list">
-                      @for (
-                        comment of optionComments(
-                        scoringCategory.id,
-                        scoringOption.id
-                        )
-                        ; track
-                        comment) {
-                        <div>
-                          {{ comment.comment }}
-                          @if (displaying === 'team') {
-                            <span> - {{ getUserName(comment.createdBy) }}</span>
-                          }
-                          @if (showModifyControls && myTeamId === activeTeamId) {
-                            <button aria-label="Edit Comment" mat-icon-button class="small-button"
-                      (click)="
-                        editComment(addCommenttemplate, scoringOption, comment)
-                      " title="Edit Comment" [disabled]="noChanges">
-                              <mat-icon class="icon-color small-icon" svgIcon="ic_square_edit_outline"
-                              aria-hidden="false"></mat-icon>
-                            </button>
-                          }
-                          @if (showModifyControls && myTeamId === activeTeamId) {
-                            <button aria-label="Delete Comment" mat-icon-button class="small-button"
-                              (click)="deleteComment(comment)"
-                              title="Delete Comment" [disabled]="noChanges">
-                              <mat-icon class="icon-color small-icon" svgIcon="ic_trash_can" aria-hidden="false"></mat-icon>
-                            </button>
-                          }
-                        </div>
-                      }
-                    </div>
-                  }
-                  @if (selectedScoringModel.displayCommentTextBoxes) {
-                    <div class="comment-box">
-                      <textarea matInput [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
-                        (change)="changeComment(scoringCategory.id, scoringOption.id, $event)" class="comment"
-                      [disabled]="noChanges || (selectedScoringModel.useSubmit && !showSubmitButton)"></textarea>
-                    </div>
-                  }
-                </div>
-              </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="value">
-              <mat-cell *matCellDef="let scoringOption" class="value-container" [ngClass]="tableClass">
-                @if (!selectedScoringModel.hideScoresOnScoreSheet) {
-                  <div class="value-div">
-                    {{
-                    scoringCategory.calculationMethodId == 0 ||
-                    scoringOption.isModifier
-                    ? ' '
-                    : scoringOption.value
-                    }}
+        }
+        @if (!haveSomeScoringCategories) {
+          <div>
+            <h2>No responses required for this move.</h2>
+          </div>
+        }
+      </mat-header-cell>
+      <!-- scoresheet display -->
+      <mat-cell *matCellDef="let scoringCategory" class="form-container" [ngClass]="tableClass">
+        <div class="scoring-category-description" [ngClass]="tableClass">
+          {{ scoringCategory.displayOrder }}. {{ scoringCategory.description }}
+          @if (scoringCategory.calculationMethodId > 0) {
+            <span>
+              &nbsp;&nbsp;-&nbsp;&nbsp;[{{
+              categoryScore(scoringCategory.id) | number: '1.0-0'
+              }}]
+            </span>
+          }
+        </div>
+        <mat-table [dataSource]="scoringCategory.scoringOptions | displayOrder" class="full-width"
+          [ngClass]="tableClass">
+          <ng-container matColumnDef="scoringOptionDescription">
+            <mat-cell *matCellDef="let scoringOption" [ngClass]="tableClass">
+              <div [ngClass]="tableClass" style="width: 100%;">
+                @if (scoringCategory.scoringOptionSelection !== 'None') {
+                  <div [ngClass]="tableClass">
+                    @if (!displayedSubmission.scoreIsAnAverage) {
+                      <mat-checkbox [aria-label]="scoringOption.description"
+                        [checked]="isSelected(scoringCategory.id, scoringOption.id)"
+                        [disabled]="noChanges || !showModifyControls || myTeamId !== activeTeamId"
+                  [matTooltip]="selectedBy(scoringCategory.id, scoringOption.id)" (change)="
+                    toggleOption($event, scoringCategory.id, scoringOption.id)
+                  " [ngClass]="tableClass">
+                        {{ scoringOption.description }} &nbsp;
+                      </mat-checkbox>
+                    }
+                    @if (displayedSubmission.scoreIsAnAverage) {
+                      <span>
+                        [{{ selectedCount(scoringCategory.id, scoringOption.id) }}]
+                        &nbsp;&nbsp;{{ scoringOption.description }}
+                      </span>
+                    }
+                    @if (showModifyControls && myTeamId === activeTeamId && !selectedScoringModel.displayCommentTextBoxes) {
+                      <button id="add-comment" aria-label="Add Comment" mat-icon-button class="small-button"
+                        (click)="addComment(addCommenttemplate, scoringOption)" title="Add Comment" [disabled]="noChanges">
+                        <mat-icon class="small-icon" [ngClass]="tableClass" svgIcon="add-comment"
+                        aria-hidden="false"></mat-icon>
+                      </button>
+                    }
                   </div>
                 }
-              </mat-cell>
-            </ng-container>
-            <mat-row *matRowDef="let row; columns: ['scoringOptionDescription', 'value']"></mat-row>
-          </mat-table>
-        </mat-cell>
-      </ng-container>
-      <!-- Header and Row Declarations -->
-      <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']" [ngClass]="matHeaderClass()"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']"></mat-row>
-    </mat-table>
-  }
+                @if (scoringCategory.scoringOptionSelection === 'None') {
+                  <div [ngClass]="tableClass">
+                    {{ scoringOption.description }}
+                  </div>
+                }
+                @if (!selectedScoringModel.displayCommentTextBoxes) {
+                  <div class="comment-list">
+                    @for (
+                      comment of optionComments(
+                      scoringCategory.id,
+                      scoringOption.id
+                      )
+                      ; track
+                      comment) {
+                      <div>
+                        {{ comment.comment }}
+                        @if (displaying === 'team') {
+                          <span> - {{ getUserName(comment.createdBy) }}</span>
+                        }
+                        @if (showModifyControls && myTeamId === activeTeamId) {
+                          <button aria-label="Edit Comment" mat-icon-button class="small-button"
+                    (click)="
+                      editComment(addCommenttemplate, scoringOption, comment)
+                    " title="Edit Comment" [disabled]="noChanges">
+                            <mat-icon class="icon-color small-icon" svgIcon="ic_square_edit_outline"
+                            aria-hidden="false"></mat-icon>
+                          </button>
+                        }
+                        @if (showModifyControls && myTeamId === activeTeamId) {
+                          <button aria-label="Delete Comment" mat-icon-button class="small-button"
+                            (click)="deleteComment(comment)"
+                            title="Delete Comment" [disabled]="noChanges">
+                            <mat-icon class="icon-color small-icon" svgIcon="ic_trash_can" aria-hidden="false"></mat-icon>
+                          </button>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+                @if (selectedScoringModel.displayCommentTextBoxes) {
+                  <div class="comment-box">
+                    <textarea matInput [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
+                      (change)="changeComment(scoringCategory.id, scoringOption.id, $event)" class="comment"
+                    [disabled]="noChanges || (selectedScoringModel.useSubmit && !showSubmitButton)"></textarea>
+                  </div>
+                }
+              </div>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="value">
+            <mat-cell *matCellDef="let scoringOption" class="value-container" [ngClass]="tableClass">
+              @if (!selectedScoringModel.hideScoresOnScoreSheet) {
+                <div class="value-div">
+                  {{
+                  scoringCategory.calculationMethodId == 0 ||
+                  scoringOption.isModifier
+                  ? ' '
+                  : scoringOption.value
+                  }}
+                </div>
+              }
+            </mat-cell>
+          </ng-container>
+          <mat-row *matRowDef="let row; columns: ['scoringOptionDescription', 'value']"></mat-row>
+        </mat-table>
+      </mat-cell>
+    </ng-container>
+    <!-- Header and Row Declarations -->
+    <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']" [ngClass]="matHeaderClass()"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']"></mat-row>
+  </mat-table>
 
   @if (!selectedEvaluation.id || !selectedScoringModel) {
     <div class="text-center">

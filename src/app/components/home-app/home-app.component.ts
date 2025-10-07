@@ -418,9 +418,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             !s.groupId &&
             !s.scoreIsAnAverage
         );
-        if (!newSubmission) {
-          this.makeNewSubmission();
-        }
       } else {
         // select the team score
         newSubmission = submissions.find(
@@ -568,36 +565,17 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
   }
 
-  makeNewSubmission() {
-    // if (!this.isSubmissionDataServiceLoading && !this.addingSubmission) {
-    //   this.addingSubmission = true;
-    //   const evaluation = this.evaluationQuery.getAll().find(e => e.id === this.selectedEvaluationId);
-    //   const scoringModel = this.scoringModelQuery.getActive() as ScoringModel;
-    //   const activeTeam = this.teamQuery.getActive() as Team;
-    //   if (!evaluation || ! scoringModel || !activeTeam) {
-    //     this.addingSubmission = false;
-    //     return;
-    //   }
-    //   const userId = !scoringModel.useUserScore || activeTeam.id !== this.myTeamId ? null : this.loggedInUserId;
-    //   const submission = {
-    //     teamId: activeTeam ? activeTeam.id : this.myTeamId,
-    //     evaluationId: evaluation.id,
-    //     moveNumber: this.displayedMoveNumber,
-    //     score: 0,
-    //     scoringModelId: evaluation.scoringModelId,
-    //     status: ItemStatus.Active,
-    //     userId: userId,
-    //   } as Submission;
-    //   this.submissionDataService.add(submission);
-    // }
-  }
-
   setActiveSubmission(submission: Submission) {
-    this.submissionDataService.setActive(submission.id);
-    const activeMove = this.sortedMoveList.find(
-      (m) => +m.moveNumber === +submission.moveNumber
-    );
-    this.moveDataService.setActive(activeMove.id);
+    if (submission.id != this.submissionQuery.getActiveId()) {
+      this.submissionDataService.setActive(submission.id);
+      if (!submission.scoreIsAnAverage) {
+        this.submissionDataService.loadById(submission.id);
+      }
+      const activeMove = this.sortedMoveList.find(
+        (m) => +m.moveNumber === +submission.moveNumber
+      );
+      this.moveDataService.setActive(activeMove.id);
+    }
   }
 
   selectDisplayedSubmission(selection: string) {
@@ -660,8 +638,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
         this.setActiveSubmission(newSubmission);
         this.addingSubmission = false;
-      } else if (!this.addingSubmission) {
-        this.makeNewSubmission();
       }
     }
   }
