@@ -20,6 +20,8 @@ import { Observable }                                        from 'rxjs';
 import { ProblemDetails } from '../model/problemDetails';
 // @ts-ignore
 import { User } from '../model/user';
+// @ts-ignore
+import { UserIdentity } from '../model/userIdentity';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -152,6 +154,66 @@ export class UserService extends BaseService {
         let localVarPath = `/api/users/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: "uuid"})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Gets all Users in the evaluation
+     * Returns a list of all of the Users in the evaluation.
+     * @param evaluationId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getEvaluationUsers(evaluationId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<UserIdentity>>;
+    public getEvaluationUsers(evaluationId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<UserIdentity>>>;
+    public getEvaluationUsers(evaluationId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<UserIdentity>>>;
+    public getEvaluationUsers(evaluationId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (evaluationId === null || evaluationId === undefined) {
+            throw new Error('Required parameter evaluationId was null or undefined when calling getEvaluationUsers.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (oauth2) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('oauth2', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/evaluations/${this.configuration.encodeParam({name: "evaluationId", value: evaluationId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: "uuid"})}/users`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<UserIdentity>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

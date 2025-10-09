@@ -187,7 +187,7 @@ export class AggregateComponent implements OnInit, OnDestroy {
   getUserListFromTeams(teams: Team[]): User[] {
     const users: User[] = [];
     teams.forEach(team => {
-      team.users.forEach(user => {
+      team.memberships.forEach(user => {
         users.push(user);
       });
     });

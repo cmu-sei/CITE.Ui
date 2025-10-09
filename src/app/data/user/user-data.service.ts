@@ -33,6 +33,18 @@ export class UserDataService {
     );
   }
 
+  loadByEvaluation(evaluationId: string): Observable<User[]> {
+    this.userStore.setLoading(true);
+    return this.userService.getEvaluationUsers(evaluationId).pipe(
+      tap((users: User[]) => {
+        this.userStore.set(users);
+      }),
+      tap(() => {
+        this.userStore.setLoading(false);
+      })
+    );
+  }
+
   loadById(id: string): Observable<User> {
     this.userStore.setLoading(true);
     return this.userService.getUser(id).pipe(

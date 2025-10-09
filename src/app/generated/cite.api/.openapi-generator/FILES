@@ -108,6 +108,7 @@ model/typeAttributes.ts
 model/typeInfo.ts
 model/unreadArticles.ts
 model/user.ts
+model/userIdentity.ts
 param.ts
 provide-api.ts
 variables.ts

@@ -272,7 +272,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       .subscribe((users) => {
         this.userList = users;
       });
-    this.userDataService.load().pipe(take(1)).subscribe();
     // observe route changes
     this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       // get and set the evaluation
@@ -341,7 +340,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     // load the user's evaluations
     this.evaluationDataService.loadMine();
     // load team roles
-    this.teamRoleDataService.loadRoles();
+    this.teamRoleDataService.loadRoles().subscribe();
     // join signalR
     this.signalRService
       .startConnection(ApplicationArea.home)
@@ -379,6 +378,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.scoringModelDataService.loadById(evaluation.scoringModelId);
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
       this.teamDataService.loadMine(this.selectedEvaluationId);
+      this.userDataService.loadByEvaluation(this.selectedEvaluationId).pipe(take(1)).subscribe();
       this.currentMoveNumber = evaluation.currentMoveNumber;
     }
   }

@@ -39,6 +39,8 @@ import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { DateTimeFormatOptions } from 'luxon';
 import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -60,7 +62,8 @@ export class DashboardComponent implements OnDestroy {
   @Input() unreadArticles: UnreadArticles;
   @Input() myTeamId: string;
   @Input() noChanges: boolean;
-  usersOnTheTeam: User[] = [];
+  evaluationUsers: User[] = [];
+  teamUsers: User[] = [];
   teamMemberships: TeamMembership[] = [];
   teamRoles: TeamRole[] = [];
   selectedEvaluation: Evaluation = {};
@@ -117,6 +120,8 @@ export class DashboardComponent implements OnDestroy {
     public matDialog: MatDialog,
     private titleService: Title,
     private userDataService: UserDataService,
+    private userQuery: UserQuery,
+    private permissionDataService: PermissionDataService,
     private settingsService: ComnSettingsService
   ) {
     this.titleService.setTitle('CITE Dashboard');
@@ -128,6 +133,12 @@ export class DashboardComponent implements OnDestroy {
         this.loggedInUserId = cu.id;
       });
     this.userDataService.setCurrentUser();
+    // observe the evaluation users
+    this.userQuery.selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(users => {
+        this.evaluationUsers = users;
+      });
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>)
       .pipe(takeUntil(this.unsubscribe$))
@@ -166,15 +177,12 @@ export class DashboardComponent implements OnDestroy {
             .sort((a, b) => (a.description < b.description ? -1 : 1));
         }
         this.setCompleteSituationDescription();
-        // load the team data
-        this.loadTeamData();
       });
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((active) => {
         if (active) {
-          this.usersOnTheTeam = active.users;
           this.activeTeamId = active.id;
           // load the team data for this team
           this.loadTeamData();
@@ -200,7 +208,7 @@ export class DashboardComponent implements OnDestroy {
           const newDuty = { ...duty };
           const newUsers: User[] = [];
           newDuty.users.forEach((user) => {
-            const addUser = this.usersOnTheTeam?.find(
+            const addUser = this.evaluationUsers?.find(
               (tu) => tu.id === user.id
             );
             newUsers.push(addUser);
@@ -248,7 +256,6 @@ export class DashboardComponent implements OnDestroy {
     } as DateTimeFormatOptions;
     let description = '';
     let pastMovesBannerAdded = false;
-    let lastDisplayedMoveNumber = 0;
     const isDisplayedMoveCurrent = +this.displayedMoveNumber === +this.currentMoveNumber;
 
     if (isDisplayedMoveCurrent) {
@@ -290,7 +297,6 @@ export class DashboardComponent implements OnDestroy {
         '<br /></h4>' +
         displayedMove.situationDescription;
       pastMovesBannerAdded = true;
-      lastDisplayedMoveNumber = +this.displayedMoveNumber;
     }
 
     if (this.scoringModel && this.scoringModel.showPastSituationDescriptions) {
@@ -338,7 +344,7 @@ export class DashboardComponent implements OnDestroy {
         this.selectedEvaluation.id,
         this.activeTeamId
       );
-      this.teamMembershipDataService.loadMemberships(this.activeTeamId);
+      this.teamMembershipDataService.loadMemberships(this.activeTeamId).subscribe();
     }
   }
 
@@ -419,7 +425,7 @@ export class DashboardComponent implements OnDestroy {
   }
 
   getUserName(id) {
-    const theUser = this.usersOnTheTeam?.find((u) => u.id === id);
+    const theUser = this.evaluationUsers?.find((u) => u.id === id);
     return theUser ? theUser.name : '';
   }
 
@@ -517,6 +523,18 @@ export class DashboardComponent implements OnDestroy {
     teamMembership.role = teamRole;
     teamMembership.roleId = teamRole.id;
     this.teamMembershipDataService.editMembership(teamMembership);
+  }
+
+  canManage(): boolean {
+    return this.permissionDataService.canManageTeam(this.activeTeamId);
+  }
+
+  canSubmit(): boolean {
+    return this.canManage() || this.permissionDataService.canSubmitTeamScore(this.activeTeamId);
+  }
+
+  canContribute(): boolean {
+    return this.canSubmit() || this.permissionDataService.canEditTeamScore(this.activeTeamId);
   }
 
   ngOnDestroy() {

@@ -8,7 +8,6 @@
  * Do not edit the class manually.
  */
 import { TeamType } from './teamType';
-import { User } from './user';
 import { Submission } from './submission';
 import { TeamMembership } from './teamMembership';
 
@@ -24,7 +23,6 @@ export interface Team {
     evaluationId?: string | null;
     teamTypeId?: string;
     teamType?: TeamType;
-    users?: Array<User> | null;
     submissions?: Array<Submission> | null;
     hideScoresheet?: boolean;
     memberships?: Array<TeamMembership> | null;

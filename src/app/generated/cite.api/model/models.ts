@@ -70,3 +70,4 @@ export * from './typeAttributes';
 export * from './typeInfo';
 export * from './unreadArticles';
 export * from './user';
+export * from './userIdentity';
