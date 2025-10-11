@@ -96,7 +96,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   submissionList$ = this.submissionQuery.selectAll();
   activeTeam$ = this.teamQuery.selectActive() as Team;
   displayedSubmission: Submission;
-  addingSubmission = false;
   evaluationsAreLoading$ = this.evaluationQuery.selectLoading();
   currentMoveNumber = -1;
   displayedMoveNumber = -1;
@@ -177,6 +176,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
    }
 
   ngOnInit() {
+    // load system permissions
     this.permissionDataService
       .load()
       .subscribe(
@@ -185,6 +185,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           this.canViewAdministration = this.permissions.some((y) => y.startsWith('View'));
         }
       );
+    // load evaluation permissions
+    this.permissionDataService.loadEvaluationPermissions().subscribe();
+    // load team permissions
+    this.permissionDataService.loadTeamPermissions().subscribe();
     // observe the vital information and process it when it is all present
     combineLatest([
       this.evaluationList$,
@@ -637,7 +641,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       if (newSubmission) {
         this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
         this.setActiveSubmission(newSubmission);
-        this.addingSubmission = false;
       }
     }
   }

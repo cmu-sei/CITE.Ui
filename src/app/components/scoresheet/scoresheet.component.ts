@@ -32,6 +32,7 @@ import {
   User,
   ScoringCategory,
   ScoringOptionSelection,
+  TeamPermission,
 } from 'src/app/generated/cite.api/model/models';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { Title } from '@angular/platform-browser';
@@ -562,13 +563,10 @@ export class ScoresheetComponent implements OnDestroy {
     // set proper permissions for this selection
     const canModify =
       this.displaying === 'user' ||
-      (this.displaying === 'team' &&
-        (this.hasCanModifyPermission || this.hasCanSubmitPermission)) ||
-      this.canIncrementMove;
+      this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.EditTeamScore);
     const canSubmit =
       this.displaying === 'user' ||
-      (this.displaying === 'team' && this.hasCanSubmitPermission) ||
-      this.canIncrementMove;
+      this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.SubmitTeamScore);
     this.showReopenButton =
       this.displayedSubmission &&
       canSubmit &&

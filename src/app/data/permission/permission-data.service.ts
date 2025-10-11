@@ -87,6 +87,10 @@ export class PermissionDataService {
       );
   }
 
+  hasTeamPermission(teamId: string, permission: TeamPermission) {
+    return this._teamPermissions.some(claim => claim.teamId === teamId && claim.permissions.some(p => p === permission));
+  }
+
   canCreateEvaluations(): boolean {
     return this.canEvaluation(
       SystemPermission.CreateEvaluations,
@@ -95,16 +99,27 @@ export class PermissionDataService {
     );
   }
 
-  canEditEvaluation(EvaluationId: string): boolean {
-    return this.canEvaluation(SystemPermission.EditEvaluations, EvaluationId, EvaluationPermission.EditEvaluation) ||
-      this.canEvaluation(SystemPermission.ManageEvaluations, EvaluationId, EvaluationPermission.ManageEvaluation);
+  canEditEvaluation(evaluationId: string): boolean {
+    return this.canEvaluation(SystemPermission.EditEvaluations, evaluationId, EvaluationPermission.EditEvaluation) ||
+      this.canEvaluation(SystemPermission.ManageEvaluations, evaluationId, EvaluationPermission.ManageEvaluation);
   }
 
-  canManageEvaluation(EvaluationId: string): boolean {
+  canManageEvaluation(evaluationId: string): boolean {
     return this.canEvaluation(
       SystemPermission.ManageEvaluations,
-      EvaluationId,
+      evaluationId,
       EvaluationPermission.ManageEvaluation
+    );
+  }
+
+  canAdvanceMove(evaluationId: string): boolean {
+    return this.canEvaluation(
+      SystemPermission.ManageEvaluations,
+      evaluationId,
+      EvaluationPermission.ManageEvaluation) || this.canEvaluation(
+      SystemPermission.ExecuteEvaluations,
+      evaluationId,
+      EvaluationPermission.ExecuteEvaluation
     );
   }
 

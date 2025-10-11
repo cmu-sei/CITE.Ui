@@ -3,7 +3,6 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, Input, OnDestroy } from '@angular/core';
-import { animate, state, style, transition, trigger} from '@angular/animations';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -46,16 +45,6 @@ import { PermissionDataService } from 'src/app/data/permission/permission-data.s
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition(
-        'expanded <=> collapsed',
-        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
-      ),
-    ]),
-  ],
   standalone: false
 })
 export class DashboardComponent implements OnDestroy {
@@ -424,6 +413,9 @@ export class DashboardComponent implements OnDestroy {
     return;
   }
 
+  getUser(id) {
+    return this.evaluationUsers?.find((u) => u.id === id);
+  }
   getUserName(id) {
     const theUser = this.evaluationUsers?.find((u) => u.id === id);
     return theUser ? theUser.name : '';
@@ -454,6 +446,7 @@ export class DashboardComponent implements OnDestroy {
       width: '800px',
       data: {
         duty: duty,
+        canEdit: this.canManage()
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -496,7 +489,13 @@ export class DashboardComponent implements OnDestroy {
         'There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.'
       );
     }
-    this.modifiedDuty.users = event.value;
+    this.modifiedDuty.users = [];
+    event.value.forEach(m => {
+      var user = this.evaluationUsers.find(u => u.id === m.id);
+      if (user) {
+        this.modifiedDuty.users.push(user);
+      }
+    });
   }
 
   closeDutyUsers(dutyId: string) {

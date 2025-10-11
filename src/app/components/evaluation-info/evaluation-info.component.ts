@@ -16,6 +16,7 @@ import { takeUntil } from 'rxjs';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { CurrentUserQuery } from 'src/app/data/user/user.query';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 
 @Component({
     selector: 'app-evaluation-info',
@@ -63,7 +64,8 @@ export class EvaluationInfoComponent implements OnDestroy {
     private evaluationDataService: EvaluationDataService,
     public dialogService: DialogService,
     private userDataService: UserDataService,
-    private currentUserQuery: CurrentUserQuery
+    private currentUserQuery: CurrentUserQuery,
+    private permissionDataService: PermissionDataService
   ) {
     // observe the active evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(e => {
@@ -91,6 +93,7 @@ export class EvaluationInfoComponent implements OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((cu) => {
         this.loggedInUserId = cu.id;
+        this.canAdvanceMove = this.permissionDataService.canAdvanceMove(this.selectedEvaluationId);
       });
     this.userDataService.setCurrentUser();
     // observe the team users to get permissions

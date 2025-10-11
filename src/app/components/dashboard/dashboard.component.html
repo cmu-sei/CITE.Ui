@@ -81,7 +81,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               @if (!isActionEditMode) {
                 <mat-checkbox [checked]="action.isChecked" (change)="checkAction(action.id, $event.checked)"
                   [matTooltip]="changedBy(action.id)"
-                [disabled]="noChanges || myTeamId !== activeTeamId || !canContribute()"></mat-checkbox>
+                  [disabled]="noChanges || myTeamId !== activeTeamId || !canContribute()"></mat-checkbox>
                 }{{ action.description }}
               </div>
             </div>
@@ -170,7 +170,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                       (closed)="closeDutyUsers(duty.id)" [disabled]="noChanges || myTeamId !== activeTeamId"
                       title="Select a Team Member">
                       @for (membership of teamMemberships; track membership.id) {
-                        <mat-option [value]="membership">{{ getUserName(membership.userId) }}
+                        <mat-option [value]="getUser(membership.userId)">{{ getUserName(membership.userId) }}
                         </mat-option>
                       }
                     </mat-select>
@@ -193,7 +193,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 <button mat-icon-button (click)="showPermissions = true" title="Expand the permissions">
                   <mat-icon class="mdi-24px self-center" fontIcon="mdi-menu-down"></mat-icon>
                 </button>
-                <b title="Participant permissions for this Exercise">Permissions:</b>
+                <b title="Participant permissions for this Exercise">Roles:</b>
               </div>
               <div class="checkboxes-cell">&nbsp;</div>
             </div>
@@ -219,7 +219,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 <div class="checkboxes-cell">
                   <mat-form-field class="button-margins full-width">
                     <mat-label>Role</mat-label>
-                    <mat-select placeholder="Role" [(ngModel)]="teamMembership.roleId">
+                    <mat-select placeholder="Role" [(ngModel)]="teamMembership.roleId" [disabled]="noChanges || !canManage() || teamMembership.userId === loggedInUserId">
                       @for (role of teamRoles; track role.id) {
                         <mat-option [value]="role.id">
                           {{ role.name }}
