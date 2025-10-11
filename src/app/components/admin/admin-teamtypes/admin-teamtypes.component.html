@@ -34,7 +34,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="header-cell flag-cell" mat-sort-header="showTeamTypeAverage">Show TeamType Average</div>
     </section>
 
-    @for (teamType of paginateTeamtypes(); track teamType) {
+    @for (teamType of paginateTeamtypes(); track teamType.id) {
       <mat-expansion-panel [disabled]="true">
         @if (!isLoading) {
           <mat-expansion-panel-header class="row">

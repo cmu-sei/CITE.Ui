@@ -57,7 +57,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
       .subscribe((teamTypes) => {
         const newTeamTypes = new Array<TeamType>();
         teamTypes.forEach((tt) => {
-          newTeamTypes.push(Object.assign(tt));
+          newTeamTypes.push({ ...tt });
         });
         this.teamTypeList = newTeamTypes;
         this.sortChanged(this.sort);
