@@ -19,6 +19,7 @@ import { PermissionDataService } from 'src/app/data/permission/permission-data.s
 import { ConfirmDialogComponent } from 'src/app/components/shared/confirm-dialog/components/confirm-dialog.component';
 import { NameDialogComponent } from 'src/app/components/shared/name-dialog/name-dialog.component';
 import { UserDataService } from 'src/app/data/user/user-data.service';
+import { ComnSettingsService } from '@cmusei/crucible-common';
 
 const WAS_CANCELLED = 'wasCancelled';
 const NAME_VALUE = 'nameValue';
@@ -36,13 +37,19 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
   filterString = '';
   displayedColumns: string[] = ['name'];
   dataSource: MatTableDataSource<Group> = new MatTableDataSource();
+  topbarColor = '#ef3a47';
 
   constructor(
     private groupDataService: GroupDataService,
     private userDataService: UserDataService,
     private dialog: MatDialog,
-    private permissionDataService: PermissionDataService
-  ) {}
+    private permissionDataService: PermissionDataService,
+    private settingsService: ComnSettingsService
+  ) {
+    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
+      ? this.settingsService.settings.AppTopBarHexColor
+      : this.topbarColor;
+  }
 
   dataSource$ = this.groupDataService.groups$.pipe(
     map((x) => {

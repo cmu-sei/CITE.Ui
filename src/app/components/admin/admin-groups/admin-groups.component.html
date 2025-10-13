@@ -3,31 +3,33 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 -->
 
-<div class="mat-elevation-z8 w-75 mx-auto mt-5">
-  <div>
-    <mat-toolbar class="toolbar background">
-      <mat-toolbar-row>
-        <mat-icon fontSet="fas" fontIcon="fa-search" class="fa-search"></mat-icon>
-        <mat-form-field>
-          <input matInput [(ngModel)]="filterString" (keyup)="applyFilter($event.target.value)"
-            placeholder="Search Groups" />
-        </mat-form-field>
-        <button *ngIf="filterString != ''" matTooltip="Clear Search" mat-icon-button (click)="clearFilter()"
-          style="outline: none">
-          <mat-icon class="mdi-24px" fontIcon="mdi-close-circle"></mat-icon>
-        </button>
-        <div class="spacer"></div>
-        <button *ngIf="canEdit" mat-icon-button matTooltip="Add New Group" (click)="createGroup()">
-          <mat-icon fontSet="fas" fontIcon="fa-plus"></mat-icon>
-        </button>
-      </mat-toolbar-row>
-    </mat-toolbar>
+<div class="cssLayoutColumnCenterStart">
+  <div class="move-container">
+    <div>
+      <mat-icon class="mdi-24px" fontIcon="mdi-account-group" [ngStyle]="{'color': topbarColor}"></mat-icon>
+    </div>
+    <mat-form-field class="search-field">
+      <input matInput [(ngModel)]="filterString" (keyup)="applyFilter($event.target.value)" placeholder="Search Groups" />
+    </mat-form-field>
+    <div style="width: 24px;">
+      <button mat-icon-button style="outline: none;" title="Clear Search" (click)="clearFilter()">
+        <mat-icon class="mdi-18px" fontIcon="mdi-close-circle-outline"></mat-icon>
+      </button>
+    </div>
   </div>
-
   <mat-table [dataSource]="dataSource$ | async" matSort>
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
+        @if (canEdit) {
+          <div class="sp-icon">
+            @if (canEdit) {
+              <button mat-icon-button matTooltip="Add New Group" (click)="createGroup()">
+                <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+              </button>
+            }
+          </div>
+        }
         Group Name
         <button mat-icon-button color="primary"
           matTooltip="Users can be added to Groups here or, if enabled in your environment, can be matched to Group Names from the token of the Identity Provider in use."
@@ -39,16 +41,18 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
         <mat-expansion-panel class="w-100">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              <ng-container *ngIf="canEdit">
-                <button mat-icon-button matTooltip="Delete {{ element.name }}"
-                  (click)="$event.stopPropagation(); deleteGroup(element)">
-                  <mat-icon color="primary" fontSet="fas" fontIcon="fa-trash"></mat-icon>
-                </button>
-                <button mat-icon-button matTooltip="Rename">
-                  <mat-icon color="primary" fontSet="fas" fontIcon="fa-pencil-alt"
-                    (click)="$event.stopPropagation(); updateGroup(element)"></mat-icon>
-                </button>
-              </ng-container>
+              @if (canEdit) {
+                <ng-container>
+                  <button mat-icon-button matTooltip="Delete {{ element.name }}"
+                    (click)="$event.stopPropagation(); deleteGroup(element)">
+                    <mat-icon class="mdi-18px" color="primary" fontIcon="mdi-trash-can"></mat-icon>
+                  </button>
+                  <button mat-icon-button matTooltip="Rename">
+                    <mat-icon class="mdi-18px" color="primary" fontIcon="mdi-square-edit-outline"
+                      (click)="$event.stopPropagation(); updateGroup(element)"></mat-icon>
+                  </button>
+                </ng-container>
+              }
               {{ element.name }}
             </mat-panel-title>
           </mat-expansion-panel-header>
