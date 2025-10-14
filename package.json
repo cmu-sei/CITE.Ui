@@ -27,7 +27,6 @@
     "@angular/forms": "^20.2.1",
     "@angular/material": "^20.2.0",
     "@angular/platform-browser": "^20.2.1",
-    "@angular/platform-browser-dynamic": "^20.2.1",
     "@angular/router": "^20.2.1",
     "@cmusei/crucible-common": "^0.3.0",
     "@datorama/akita": "^8.0.0",
