@@ -12,8 +12,8 @@ not IE 9-11
 not op_mini all
 not and_qq 14.9
 not and_uc 15.5
-not android 139
 not kaios 2.5-3.1
 not op_mob 80
-not opera 116-117
+not opera 121-122
 not samsung 27-28
+not android 141
