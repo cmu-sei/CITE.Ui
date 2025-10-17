@@ -54,7 +54,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="cssLayoutRowStartCenter bottom-button">
         <div class="delete-button">
-          <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="data.noChanges || !errorFree()" style="margin-left: 40px;">Save</button>
+          <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!data.canEdit || !errorFree()" style="margin-left: 40px;">Save</button>
         </div>
         <div class="delete-button">
           <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>

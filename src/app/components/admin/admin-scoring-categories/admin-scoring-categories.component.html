@@ -4,18 +4,17 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="cssLayoutRowStartCenter">
-  <h2>Scoring Categories</h2>
-  <button mat-icon-button (click)="addOrEditScoringCategory(null)" style="outline: none; margin-left: 20px;"
-    title="Add Scoring Category">
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
-  </button>
-</div>
 @if (!isLoading) {
   <div class="mat-elevation-z2">
     <mat-accordion displayMode="flat">
       <section class="header-row">
-        <div class="header-cell nine-cell center-self"><span style="margin-left: 80px;">Description</span></div>
+        <div class="header-cell nine-cell center-self">
+          <button mat-icon-button (click)="addOrEditScoringCategory(null)" style="outline: none; margin-left: 20px;"
+            title="Add Scoring Category" [disabled]="!canEdit">
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+          </button>
+          <span style="margin-left: 20px;">Description</span>
+        </div>
         <div class="header-cell one-cell center-text center-self">Order</div>
         <div class="header-cell one-cell center-text center-self">First Move</div>
         <div class="header-cell one-cell center-text center-self">Last Move</div>
@@ -26,11 +25,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <mat-expansion-panel-header class="row" (click)="togglePanel(scoringCategory.id); $event.stopPropagation()">
             <div class="cell nine-cell">
               <button mat-icon-button (click)="addOrEditScoringCategory(scoringCategory); $event.stopPropagation()"
-                style="outline: none;" title="Edit Scoring Category">
+                style="outline: none;" title="Edit Scoring Category" [disabled]="!canEdit">
                 <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
               </button>
               <button mat-icon-button (click)="deleteScoringCategoryRequest(scoringCategory); $event.stopPropagation()"
-                style="outline: none;" title="Delete Scoring Category">
+                style="outline: none;" title="Delete Scoring Category" [disabled]="!canEdit">
                 <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can"></mat-icon>
               </button>
               <span class="center-self">
@@ -49,7 +48,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </mat-expansion-panel-header>
           @if (editScoringCategoryId === scoringCategory.id) {
             <div class="sub-container">
-              <app-admin-scoring-options [scoringCategoryId]="scoringCategory.id"></app-admin-scoring-options>
+              <app-admin-scoring-options [scoringCategoryId]="scoringCategory.id" [canEdit]="canEdit"></app-admin-scoring-options>
             </div>
           }
         </mat-expansion-panel>

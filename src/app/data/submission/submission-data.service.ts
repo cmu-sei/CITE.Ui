@@ -106,10 +106,10 @@ export class SubmissionDataService {
     }
   }
 
-  load(evaluationId?: string, scoringModelId?: string, userId?: string, teamId?: string) {
+  loadByEvaluation(evaluationId?: string) {
     this.submissionStore.setLoading(true);
     this.submissionService
-      .getSubmissions(evaluationId, scoringModelId, userId, teamId)
+      .getByEvaluation(evaluationId)
       .pipe(
         tap(() => {
           this.submissionStore.setLoading(false);
@@ -179,36 +179,6 @@ export class SubmissionDataService {
       .subscribe((s) => {
         this.submissionStore.upsert(s.id, { ...s });
         this.setActive(s.id);
-      });
-  }
-
-  loadTeamAverageSubmission(submission: Submission) {
-    this.submissionStore.setLoading(true);
-    this.submissionService
-      .fillTeamAverageSubmission(submission)
-      .pipe(
-        tap(() => {
-          this.submissionStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe((n) => {
-        this.updateStore(n);
-      });
-  }
-
-  loadTeamTypeAverageSubmission(submission: Submission) {
-    this.submissionStore.setLoading(true);
-    this.submissionService
-      .fillTeamTypeAverageSubmission(submission)
-      .pipe(
-        tap(() => {
-          this.submissionStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe((n) => {
-        this.updateStore(n);
       });
   }
 

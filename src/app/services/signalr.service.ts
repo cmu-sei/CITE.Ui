@@ -5,15 +5,15 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
 import * as signalR from '@microsoft/signalr';
-import { Action, Evaluation, ItemStatus, Move, Role, ScoringModel, Submission, Team, TeamUser, User } from 'src/app/generated/cite.api';
+import { Action, Evaluation, ItemStatus, Move, Duty, ScoringModel, Submission, Team, TeamMembership, User } from 'src/app/generated/cite.api';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { MoveDataService } from '../data/move/move-data.service';
-import { RoleDataService } from 'src/app/data/role/role-data.service';
+import { DutyDataService } from 'src/app/data/duty/duty-data.service';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
-import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
+import { TeamMembershipDataService } from '../data/team/team-membership-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -40,11 +40,11 @@ export class SignalRService implements OnDestroy {
     private actionDataService: ActionDataService,
     private evaluationDataService: EvaluationDataService,
     private moveDataService: MoveDataService,
-    private roleDataService: RoleDataService,
+    private dutyDataService: DutyDataService,
     private scoringModelDataService: ScoringModelDataService,
     private submissionDataService: SubmissionDataService,
     private teamDataService: TeamDataService,
-    private teamUserDataService: TeamUserDataService,
+    private teamMembershipDataService: TeamMembershipDataService,
     private userDataService: UserDataService
   ) {
     this.authService.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
@@ -136,11 +136,11 @@ export class SignalRService implements OnDestroy {
     this.addActionHandlers();
     this.addEvaluationHandlers();
     this.addMoveHandlers();
-    this.addRoleHandlers();
+    this.addDutyHandlers();
     this.addScoringModelHandlers();
     this.addSubmissionHandlers();
     this.addTeamHandlers();
-    this.addTeamUserHandlers();
+    this.addTeamMembershipHandlers();
     this.addUserHandlers();
   }
 
@@ -208,19 +208,19 @@ export class SignalRService implements OnDestroy {
     });
   }
 
-  private addRoleHandlers() {
+  private addDutyHandlers() {
     this.hubConnection.on(
-      'RoleUpdated', (role: Role) => {
-        this.roleDataService.updateStore(role);
+      'DutyUpdated', (duty: Duty) => {
+        this.dutyDataService.updateStore(duty);
       }
     );
 
-    this.hubConnection.on('RoleCreated', (role: Role) => {
-      this.roleDataService.updateStore(role);
+    this.hubConnection.on('DutyCreated', (duty: Duty) => {
+      this.dutyDataService.updateStore(duty);
     });
 
-    this.hubConnection.on('RoleDeleted', (id: string) => {
-      this.roleDataService.deleteFromStore(id);
+    this.hubConnection.on('DutyDeleted', (id: string) => {
+      this.dutyDataService.deleteFromStore(id);
     });
   }
 
@@ -255,17 +255,17 @@ export class SignalRService implements OnDestroy {
     });
   }
 
-  private addTeamUserHandlers() {
-    this.hubConnection.on('TeamUserUpdated', (teamUser: TeamUser) => {
-      this.teamUserDataService.updateStore(teamUser);
+  private addTeamMembershipHandlers() {
+    this.hubConnection.on('TeamMembershipUpdated', (teamMembership: TeamMembership) => {
+      this.teamMembershipDataService.updateStore(teamMembership);
     });
 
-    this.hubConnection.on('TeamUserCreated', (teamUser: TeamUser) => {
-      this.teamUserDataService.updateStore(teamUser);
+    this.hubConnection.on('TeamMembershipCreated', (teamMembership: TeamMembership) => {
+      this.teamMembershipDataService.updateStore(teamMembership);
     });
 
-    this.hubConnection.on('TeamUserDeleted', (id: string) => {
-      this.teamUserDataService.deleteFromStore(id);
+    this.hubConnection.on('TeamMembershipDeleted', (id: string) => {
+      this.teamMembershipDataService.deleteFromStore(id);
     });
   }
 

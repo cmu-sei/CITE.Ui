@@ -1,284 +1,71 @@
-// Copyright 2022 Carnegie Mellon University. All Rights Reserved.
-// Released under a MIT (SEI)-style license, please see LICENSE.md in the
-// project root for license information or contact permission@sei.cmu.edu for full terms.
+/*
+Copyright 2025 Carnegie Mellon University. All Rights Reserved.
+ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+*/
 
-import { RoleStore } from './role.store';
-import { RoleQuery } from './role.query';
-import { Injectable } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
-import { Router, ActivatedRoute } from '@angular/router';
+import { inject, Injectable } from '@angular/core';
 import {
-  Role,
-  RoleService,
+  SystemRole,
+  SystemRolesService,
 } from 'src/app/generated/cite.api';
-import { map, take, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoleDataService {
-  private _requestedRoleId: string;
-  private _requestedRoleId$ = this.activatedRoute.queryParamMap.pipe(
-    map((params) => params.get('roleId') || '')
-  );
-  readonly RoleList: Observable<Role[]>;
-  readonly filterControl = new UntypedFormControl();
-  private filterTerm: Observable<string>;
-  private sortColumn: Observable<string>;
-  private sortIsAscending: Observable<boolean>;
-  private _pageEvent: PageEvent = { length: 0, pageIndex: 0, pageSize: 10 };
-  readonly pageEvent = new BehaviorSubject<PageEvent>(this._pageEvent);
-  private pageSize: Observable<number>;
-  private pageIndex: Observable<number>;
+  private roleService = inject(SystemRolesService);
 
-  constructor(
-    private roleStore: RoleStore,
-    private roleQuery: RoleQuery,
-    private roleService: RoleService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {
-    this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('rolemask') || '')
-    );
-    this.filterControl.valueChanges.subscribe((term) => {
-      this.router.navigate([], {
-        queryParams: { rolemask: term },
-        queryParamsHandling: 'merge',
-      });
-    });
-    this.sortColumn = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('sorton') || 'name')
-    );
-    this.sortIsAscending = activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('sortdir') || 'asc') === 'asc')
-    );
-    this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
-    );
-    this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
-    );
-    this.RoleList = combineLatest([
-      this.roleQuery.selectAll(),
-      this.filterTerm,
-      this.sortColumn,
-      this.sortIsAscending,
-      this.pageSize,
-      this.pageIndex,
-    ]).pipe(
-      map(
-        ([
-          items,
-          filterTerm,
-          sortColumn,
-          sortIsAscending,
-          pageSize,
-          pageIndex,
-        ]) =>
-          items
-            ? (items as Role[])
-              .sort((a: Role, b: Role) =>
-                this.sortRoles(a, b, sortColumn, sortIsAscending)
-              )
-              .filter(
-                (role) =>
-                  ('' + role.name)
-                    .toLowerCase()
-                    .includes(filterTerm.toLowerCase()) ||
-                    role.id
-                      .toLowerCase()
-                      .includes(filterTerm.toLowerCase())
-              )
-            : []
-      )
-    );
-  }
+  rolesSubject = new BehaviorSubject<SystemRole[]>([]);
+  roles$ = this.rolesSubject.asObservable();
 
-  private sortRoles(
-    a: Role,
-    b: Role,
-    column: string,
-    isAsc: boolean
-  ) {
-    switch (column) {
-      case 'name':
-        return (
-          (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
-      case 'dateCreated':
-        return (
-          (a.dateCreated.valueOf() < b.dateCreated.valueOf() ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
-      default:
-        return 0;
-    }
-  }
-
-  loadByEvaluation(evaluationId: string) {
-    this.roleStore.setLoading(true);
-    this.roleService
-      .getRolesByEvaluation(evaluationId)
-      .pipe(
-        tap(() => {
-          this.roleStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe(
-        (roles) => {
-          roles.forEach(e => {
-            this.setAsDates(e);
-          });
-          this.roleStore.set(roles);
-        },
-        (error) => {
-          this.roleStore.set([]);
-        }
-      );
-  }
-
-  loadByEvaluationTeam(evaluationId: string, teamId: string) {
-    this.roleStore.setLoading(true);
-    this.roleService
-      .getRolesByEvaluationTeam(evaluationId, teamId)
-      .pipe(
-        tap(() => {
-          this.roleStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe(
-        (roles) => {
-          roles.forEach(e => {
-            this.setAsDates(e);
-          });
-          this.roleStore.set(roles);
-        },
-        (error) => {
-          this.roleStore.set([]);
-        }
-      );
-  }
-
-  loadById(id: string) {
-    this.roleStore.setLoading(true);
+  getRoles() {
     return this.roleService
-      .getRole(id)
-      .pipe(
-        tap(() => {
-          this.roleStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe((s) => {
-        this.roleStore.upsert(s.id, { ...s });
-      });
+      .getAllSystemRoles()
+      .pipe(tap((x) => this.rolesSubject.next(x)));
   }
 
-  unload() {
-    this.roleStore.setActive('');
-    this.roleStore.set([]);
+  editRole(role: SystemRole) {
+    return this.roleService.updateSystemRole(role.id, role).pipe(
+      tap((x) => {
+        this.upsert(role.id, x);
+      })
+    );
   }
 
-  add(role: Role) {
-    this.roleStore.setLoading(true);
-    this.roleService
-      .createRole(role)
-      .pipe(
-        tap(() => {
-          this.roleStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe((s) => {
-        this.setAsDates(s);
-        this.roleStore.add(s);
-      });
+  createRole(role: SystemRole) {
+    return this.roleService.createSystemRole(role).pipe(
+      tap((x) => {
+        this.upsert(x.id, x);
+      })
+    );
   }
 
-  updateRole(role: Role) {
-    this.roleStore.setLoading(true);
-    this.roleService
-      .updateRole(role.id, role)
-      .pipe(
-        tap(() => {
-          this.roleStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe((n) => {
-        this.updateStore(n);
-      });
+  deleteRole(id: string) {
+    return this.roleService.deleteSystemRole(id).pipe(
+      tap(() => {
+        this.remove(id);
+      })
+    );
   }
 
-  addRoleUser(roleId: string, userId: string) {
-    this.roleStore.setLoading(true);
-    this.roleService
-      .addUserToRole(roleId, userId)
-      .pipe(
-        tap(() => {
-          this.roleStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe((n) => {
-        this.updateStore(n);
-      });
+  upsert(id: string, role: Partial<SystemRole>) {
+    const roles = this.rolesSubject.getValue();
+    const roleToUpdate = roles.find((x) => x.id === id);
+
+    if (roleToUpdate != null) {
+      Object.assign(roleToUpdate, role);
+    } else {
+      roles.push({ ...role, id } as SystemRole);
+    }
+
+    this.rolesSubject.next(roles);
   }
 
-  removeRoleUser(roleId: string, userId: string) {
-    this.roleStore.setLoading(true);
-    this.roleService
-      .removeUserFromRole(roleId, userId)
-      .pipe(
-        tap(() => {
-          this.roleStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe((n) => {
-        this.updateStore(n);
-      });
+  remove(id: string) {
+    let roles = this.rolesSubject.getValue();
+    roles = roles.filter((x) => x.id !== id);
+    this.rolesSubject.next(roles);
   }
-
-  delete(id: string) {
-    this.roleService
-      .deleteRole(id)
-      .pipe(take(1))
-      .subscribe((r) => {
-        if (this.roleQuery.getActiveId.toString() === id) {
-          this.roleStore.setActive('');
-        }
-        this.deleteFromStore(id);
-      });
-  }
-
-  setActive(id: string) {
-    this.roleStore.setActive(id);
-  }
-
-  setPageEvent(pageEvent: PageEvent) {
-    this.roleStore.update({ pageEvent: pageEvent });
-  }
-
-  updateStore(role: Role) {
-    this.setAsDates(role);
-    this.roleStore.upsert(role.id, role);
-  }
-
-  deleteFromStore(id: string) {
-    this.roleStore.remove(id);
-  }
-
-  setAsDates(role: Role) {
-    // set to a date object.
-    role.dateCreated = new Date(role.dateCreated);
-    role.dateModified = new Date(role.dateModified);
-  }
-
 }

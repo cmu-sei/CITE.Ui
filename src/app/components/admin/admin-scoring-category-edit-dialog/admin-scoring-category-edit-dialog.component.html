@@ -22,7 +22,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Scoring Category Description</mat-label>
-          <textarea matInput [(ngModel)]="data.scoringCategory.description"></textarea>
+          <textarea matInput [(ngModel)]="data.scoringCategory.description" [disabled]="!data.canEdit"></textarea>
         </mat-form-field>
       </div>
     </div>
@@ -30,7 +30,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field">
           <mat-label>Display Order</mat-label>
-          <input matInput [(ngModel)]="data.scoringCategory.displayOrder" />
+          <input matInput [(ngModel)]="data.scoringCategory.displayOrder" [disabled]="!data.canEdit" />
         </mat-form-field>
       </div>
     </div>
@@ -39,7 +39,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div>
           <mat-form-field class="description-field">
             <mat-label>First Move to Display</mat-label>
-            <input matInput [(ngModel)]="data.scoringCategory.moveNumberFirstDisplay" />
+            <input matInput [(ngModel)]="data.scoringCategory.moveNumberFirstDisplay" [disabled]="!data.canEdit" />
           </mat-form-field>
         </div>
       }
@@ -49,7 +49,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div>
           <mat-form-field class="description-field">
             <mat-label>Last Move to Display</mat-label>
-            <input matInput [(ngModel)]="data.scoringCategory.moveNumberLastDisplay" />
+            <input matInput [(ngModel)]="data.scoringCategory.moveNumberLastDisplay" [disabled]="!data.canEdit" />
           </mat-form-field>
         </div>
       }
@@ -58,7 +58,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Calculation Equation</mat-label>
-          <textarea matInput [(ngModel)]="data.scoringCategory.calculationEquation"></textarea>
+          <textarea matInput [(ngModel)]="data.scoringCategory.calculationEquation" [disabled]="!data.canEdit"></textarea>
         </mat-form-field>
       </div>
     </div>
@@ -66,7 +66,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field">
           <mat-label>Calculation Weight</mat-label>
-          <input matInput [(ngModel)]="data.scoringCategory.scoringWeight" />
+          <input matInput [(ngModel)]="data.scoringCategory.scoringWeight" [disabled]="!data.canEdit" />
         </mat-form-field>
       </div>
     </div>
@@ -74,7 +74,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Scoring Option Selection Type</mat-label>
-          <mat-select placeholder="Select a Scoring Option Selection Type" [(ngModel)]="data.scoringCategory.scoringOptionSelection">
+          <mat-select placeholder="Select a Scoring Option Selection Type" [(ngModel)]="data.scoringCategory.scoringOptionSelection" [disabled]="!data.canEdit">
             @for (item of data.scoringOptionSelections; track item) {
               <mat-option [value]="item">
                 {{ item }}
@@ -86,12 +86,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
     <div class="add-margin">
       <div>
-        <mat-checkbox [(ngModel)]="data.scoringCategory.isModifierRequired">Modifier Selection Required</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.scoringCategory.isModifierRequired" [disabled]="!data.canEdit">Modifier Selection Required</mat-checkbox>
       </div>
     </div>
     <div class="cssLayoutRowStartCenter bottom-button">
       <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>
+        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree() || !data.canEdit" style="margin-left: 40px;">Save</button>
       </div>
       <div class="delete-button">
         <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>

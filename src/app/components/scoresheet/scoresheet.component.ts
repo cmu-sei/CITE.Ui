@@ -13,12 +13,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { TeamUserQuery } from 'src/app/data/team-user/team-user.query';
+import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
+import { CurrentUserQuery } from 'src/app/data/user/user.query';
 import {
   ItemStatus,
   Evaluation,
@@ -30,6 +32,7 @@ import {
   User,
   ScoringCategory,
   ScoringOptionSelection,
+  TeamPermission,
 } from 'src/app/generated/cite.api/model/models';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { Title } from '@angular/platform-browser';
@@ -49,9 +52,9 @@ export class ScoresheetComponent implements OnDestroy {
   loggedInUserId = '';
   userId = '';
   activeTeamId = '';
-  teamUsers: User[];
-  currentMoveNumber = -1;
-  displayedMoveNumber = -1;
+  teamMemberships: User[];
+  currentMoveNumber: number;
+  displayedMoveNumber: number;
   selectedEvaluation: Evaluation = {};
   selectedScoringModel: ScoringModel = {};
   displayedSubmission: Submission = {};
@@ -77,13 +80,15 @@ export class ScoresheetComponent implements OnDestroy {
   private unsubscribe$ = new Subject();
 
   constructor(
+    private permissionDataService: PermissionDataService,
     private scoringModelQuery: ScoringModelQuery,
     private submissionDataService: SubmissionDataService,
     private submissionQuery: SubmissionQuery,
     private evaluationQuery: EvaluationQuery,
     private userDataService: UserDataService,
+    private currentUserQuery: CurrentUserQuery,
     private teamQuery: TeamQuery,
-    private teamUserQuery: TeamUserQuery,
+    private teamMembershipDataService: TeamMembershipDataService,
     private dialogService: DialogService,
     public matDialog: MatDialog,
     private titleService: Title,
@@ -149,18 +154,17 @@ export class ScoresheetComponent implements OnDestroy {
       .subscribe((active) => {
         if (active) {
           this.activeTeamId = active.id;
-          this.teamUsers = active.users;
+          this.teamMemberships = active.memberships;
         }
       });
-    // observe the logged in user ID
-    this.userDataService.loggedInUser
+    //observe the current user
+    this.currentUserQuery
+      .select()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((user) => {
-        if (user && user.profile && user.profile.sub !== this.loggedInUserId) {
-          this.loggedInUserId = user.profile.sub;
-          this.userId = this.loggedInUserId;
-        }
+      .subscribe((cu) => {
+        this.loggedInUserId = cu.id;
       });
+    this.userDataService.setCurrentUser();
     // observe the submission list
     this.submissionQuery
       .selectAll()
@@ -185,20 +189,16 @@ export class ScoresheetComponent implements OnDestroy {
         this.setFormatting();
       });
     // observe the team users to get permissions
-    this.teamUserQuery
-      .selectAll()
+    this.teamMembershipDataService
+      .teamMemberships$
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((teamUsers) => {
-        const userId = this.userDataService.loggedInUser?.value?.profile?.sub;
-        const currentTeamUser = teamUsers.find((tu) => tu.userId === userId);
-        this.canIncrementMove = currentTeamUser
-          ? currentTeamUser.canIncrementMove
+      .subscribe((teamMemberships) => {
+        const currentTeamMembership = teamMemberships.find((tu) => tu.userId === this.loggedInUserId);
+        this.hasCanModifyPermission = currentTeamMembership
+          ? this.permissionDataService.canEditTeamScore(this.activeTeamId)
           : false;
-        this.hasCanModifyPermission = currentTeamUser
-          ? currentTeamUser.canModify
-          : false;
-        this.hasCanSubmitPermission = currentTeamUser
-          ? currentTeamUser.canSubmit
+        this.hasCanSubmitPermission = currentTeamMembership
+          ? this.permissionDataService.canSubmitTeamScore(this.activeTeamId)
           : false;
       });
   }
@@ -433,7 +433,7 @@ export class ScoresheetComponent implements OnDestroy {
   }
 
   getUserName(id) {
-    const theUser = this.teamUsers?.find((tu) => tu.id === id);
+    const theUser = this.teamMemberships?.find((tu) => tu.id === id);
     return theUser ? theUser.name : '';
   }
 
@@ -563,13 +563,10 @@ export class ScoresheetComponent implements OnDestroy {
     // set proper permissions for this selection
     const canModify =
       this.displaying === 'user' ||
-      (this.displaying === 'team' &&
-        (this.hasCanModifyPermission || this.hasCanSubmitPermission)) ||
-      this.canIncrementMove;
+      this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.EditTeamScore);
     const canSubmit =
       this.displaying === 'user' ||
-      (this.displaying === 'team' && this.hasCanSubmitPermission) ||
-      this.canIncrementMove;
+      this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.SubmitTeamScore);
     this.showReopenButton =
       this.displayedSubmission &&
       canSubmit &&

@@ -16,7 +16,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Evaluation Description</mat-label>
-          <input matInput [(ngModel)]="data.evaluation.description" />
+          <input matInput [(ngModel)]="data.evaluation.description" [disabled]="!data.canEdit" />
         </mat-form-field>
       </div>
     </div>
@@ -25,7 +25,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-form-field class="description-field full-width">
           <mat-label>Scoring Model</mat-label>
           <mat-select placeholder="Select a Scoring Model" [(value)]="data.evaluation.scoringModelId"
-            (click)="$event.stopPropagation()" [disabled]="data.isExisting">
+            (click)="$event.stopPropagation()" [disabled]="data.isExisting || !data.canEdit">
             @for (scoringModel of data.scoringModels; track scoringModel) {
               <mat-option [value]="scoringModel.id">
                 {{ scoringModel.description }}
@@ -39,7 +39,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Evaluation Status</mat-label>
-          <mat-select placeholder="Select a Status" [(value)]="data.evaluation.status" (click)="$event.stopPropagation()">
+          <mat-select placeholder="Select a Status" [(value)]="data.evaluation.status" (click)="$event.stopPropagation()" [disabled]="!data.canEdit">
             @for (status of data.itemStatuses; track status) {
               <mat-option [value]="status">
                 {{ status }}
@@ -53,7 +53,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Gallery Exhibit ID</mat-label>
-          <input matInput [(ngModel)]="data.evaluation.galleryExhibitId" />
+          <input matInput [(ngModel)]="data.evaluation.galleryExhibitId" [disabled]="!data.canEdit" />
         </mat-form-field>
       </div>
     </div>
@@ -61,7 +61,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field">
           <mat-label>Current Move</mat-label>
-          <input matInput [(ngModel)]="data.evaluation.currentMoveNumber" />
+          <input matInput [(ngModel)]="data.evaluation.currentMoveNumber" [disabled]="!data.canEdit" />
         </mat-form-field>
       </div>
     </div>
@@ -86,7 +86,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="cssLayoutRowStartCenter bottom-button">
         <div class="delete-button">
-          <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()"
+          <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree() || !data.canEdit"
           style="margin-left: 40px;">Save</button>
         </div>
         <div class="delete-button">

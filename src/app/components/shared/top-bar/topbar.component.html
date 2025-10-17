@@ -46,8 +46,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
     @if (currentUser$ | async; as currentUser) {
       <div class="options-text">
         <button mat-button class="menu-trigger" [matMenuTriggerFor]="menu" style="outline: none;">
-          @if (currentUser && currentUser.profile) {
-            <strong>{{ currentUser.profile.name }}</strong>
+          @if (currentUser) {
+            <strong>{{ currentUser.name }}</strong>
           }
           <mat-icon aria-hidden="false" class="icon-color" svgIcon="ic_expand_more"></mat-icon>
         </button>

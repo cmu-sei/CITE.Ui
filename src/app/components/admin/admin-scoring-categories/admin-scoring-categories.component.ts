@@ -24,6 +24,7 @@ import {
 export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   @Input() scoringModelId: string;
   @Input() editScoringCategoryId: string;
+  @Input() canEdit: boolean;
   @Output() scoringCategoryClick = new EventEmitter<string>();
   @Input() displayScoringModelbyMoveNumber: boolean;
   newScoringCategory: ScoringCategory = { id: '', description: '' };
@@ -88,7 +89,8 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
       data: {
         scoringCategory: scoringCategory,
         displayScoringModelbyMoveNumber: this.displayScoringModelbyMoveNumber,
-        scoringOptionSelections: this.scoringOptionSelections
+        scoringOptionSelections: this.scoringOptionSelections,
+        canEdit: this.canEdit
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

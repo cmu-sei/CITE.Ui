@@ -1,0 +1,52 @@
+<!--
+Copyright 2025 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license, please see LICENSE.md in the
+project root for license information or contact permission@sei.cmu.edu for full terms.
+-->
+
+<div mat-dialog-title>
+  &nbsp;
+  <button
+    mat-icon-button
+    (click)="handleEditComplete(false)"
+    title="Cancel"
+    class="close-button"
+    tabindex="-1"
+    >
+    <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
+  </button>
+</div>
+@if (data && data.teamType) {
+  <div mat-dialog-content>
+    <div class="add-margin">
+      <div>
+        <mat-form-field class="name-field full-width">
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="data.teamType.name" [disabled]="!data.canEdit" />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="add-margin">
+      <div>
+        <mat-checkbox [(ngModel)]="data.teamType.isOfficialScoreContributor" style="margin-right: 20px;">
+          Official Score Contributor
+        </mat-checkbox>
+      </div>
+    </div>
+    <div class="add-margin">
+      <div>
+        <mat-checkbox [(ngModel)]="data.teamType.showTeamTypeAverage" style="margin-right: 20px;">
+          Show TeamType Average
+        </mat-checkbox>
+      </div>
+    </div>
+    <div class="cssLayoutRowStartCenter bottom-button">
+      <div class="delete-button">
+        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree() || !data.canEdit" style="margin-left: 40px;">Save</button>
+      </div>
+      <div class="delete-button">
+        <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
+      </div>
+    </div>
+  </div>
+}

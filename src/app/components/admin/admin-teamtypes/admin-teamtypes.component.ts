@@ -5,15 +5,18 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import { TeamType } from 'src/app/generated/cite.api/model/models';
+import { SystemPermission, TeamType } from 'src/app/generated/cite.api/model/models';
 import { ComnSettingsService } from '@cmusei/crucible-common';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
+import { AdminTeamTypeEditDialogComponent } from '../admin-teamtype-edit-dialog/admin-teamtype-edit-dialog.component';
 import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 import { Subject } from 'rxjs';
 import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 
 @Component({
     selector: 'app-admin-teamtypes',
@@ -30,18 +33,19 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   filterControl = new UntypedFormControl();
   filterString = '';
   sort: Sort = { active: 'name', direction: 'asc' };
-  addingNewTeamType = false;
-  newTeamType: TeamType = {};
   isLoading = false;
   topbarColor = '#ef3a47';
+  canEdit = this.permissionDataService.hasPermission(SystemPermission.ManageTeamTypes);
   private unsubscribe$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
-    public dialogService: DialogService,
+    private dialog: MatDialog,
+    private dialogService: DialogService,
     private teamTypeDataService: TeamTypeDataService,
     private teamTypeQuery: TeamTypeQuery,
-    private settingsService: ComnSettingsService
+    private settingsService: ComnSettingsService,
+    private permissionDataService: PermissionDataService
   ) {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
@@ -53,7 +57,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
       .subscribe((teamTypes) => {
         const newTeamTypes = new Array<TeamType>();
         teamTypes.forEach((tt) => {
-          newTeamTypes.push(Object.assign(tt));
+          newTeamTypes.push({ ...tt });
         });
         this.teamTypeList = newTeamTypes;
         this.sortChanged(this.sort);
@@ -68,21 +72,41 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
       });
   }
 
-  addTeamTypeRequest(isAdd: boolean) {
-    if (isAdd) {
-      if (this.newTeamType.id) {
-        this.teamTypeDataService.updateTeamType(this.newTeamType);
-      } else {
-        this.teamTypeDataService.add(this.newTeamType);
-      }
+  addOrEditTeamType(teamType: TeamType) {
+    if (!teamType) {
+      teamType = {
+        name: '',
+        isOfficialScoreContributor: false,
+        showTeamTypeAverage: false
+      };
+    } else {
+      teamType = { ...teamType };
     }
-    this.newTeamType = {};
-    this.addingNewTeamType = false;
+    const dialogRef = this.dialog.open(AdminTeamTypeEditDialogComponent, {
+      width: '800px',
+      data: {
+        teamType: teamType,
+        canEdit: this.canEdit
+      },
+    });
+    dialogRef.componentInstance.editComplete.subscribe((result) => {
+      if (result.saveChanges && result.teamType) {
+        this.saveTeamType(result.teamType);
+      }
+      dialogRef.close();
+    });
   }
 
-  editTeamType(teamType: TeamType) {
-    this.newTeamType = Object.assign(teamType);
-    this.addingNewTeamType = true;
+  saveTeamType(teamType: TeamType) {
+    if (teamType.id) {
+      this.teamTypeDataService.updateTeamType(teamType);
+    } else {
+      if (teamType.id) {
+        this.teamTypeDataService.add(teamType);
+      } else {
+        this.teamTypeDataService.add(teamType);
+      }
+    }
   }
 
   deleteTeamTypeRequest(teamType: TeamType) {

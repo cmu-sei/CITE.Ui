@@ -9,7 +9,7 @@ import { Sort } from '@angular/material/sort';
 import { Team, TeamType, User } from 'src/app/generated/cite.api/model/models';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -26,7 +26,7 @@ import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
   @Input() evaluationId: string;
-  @Input() noChanges: boolean;
+  @Input() canEdit: boolean;
   filterControl = new UntypedFormControl();
   filterString = '';
   newTeam: Team = { id: '', name: '' };
@@ -53,7 +53,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
     private teamTypeQuery: TeamTypeQuery,
-    private userDataService: UserDataService
+    private userQuery: UserQuery
   ) {
     // subscribe to TeamTypes
     this.teamTypeQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamTypes => {
@@ -68,7 +68,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
       : this.topbarColor;
-    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+    this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
       this.userList = users;
     });
     this.filterControl.valueChanges

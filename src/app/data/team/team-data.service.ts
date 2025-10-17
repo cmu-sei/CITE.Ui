@@ -135,26 +135,6 @@ export class TeamDataService {
     }
   }
 
-  load() {
-    this.teamStore.setLoading(true);
-    this.teamService
-      .getTeams()
-      .pipe(
-        tap(() => {
-          this.teamStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe(
-        (teams) => {
-          this.teamStore.set(teams);
-        },
-        (error) => {
-          this.teamStore.set([]);
-        }
-      );
-  }
-
   loadById(id: string) {
     this.teamStore.setLoading(true);
     return this.teamService
@@ -169,26 +149,6 @@ export class TeamDataService {
         this.teamStore.upsert(s.id, { ...s });
         this.setActive(id);
       });
-  }
-
-  loadByUserId(userId: string) {
-    this.teamStore.setLoading(true);
-    this.teamService
-      .getTeamsByUser(userId)
-      .pipe(
-        tap(() => {
-          this.teamStore.setLoading(false);
-        }),
-        take(1)
-      )
-      .subscribe(
-        (teams) => {
-          this.teamStore.set(teams);
-        },
-        (error) => {
-          this.teamStore.set([]);
-        }
-      );
   }
 
   loadMine(evaluationId: string) {

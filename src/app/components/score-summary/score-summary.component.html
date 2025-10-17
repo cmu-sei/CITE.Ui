@@ -12,7 +12,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-header-cell *matHeaderCellDef class="title-font"> Scores </mat-header-cell>
       <mat-cell *matCellDef="let row" [ngClass]="row.color">
         <div>
-          @for (submission of currentSubmissions(); track submission) {
+          @for (submission of currentSubmissions(); track submission.id) {
             <div>{{ showScore(row, submission) }}</div>
           }
         </div>

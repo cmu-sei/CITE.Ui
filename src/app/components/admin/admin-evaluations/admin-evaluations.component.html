@@ -39,11 +39,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <section matSort (matSortChange)="sortList($event)" class="header-row">
     <div class="header-cell first-cell">
       <button mat-icon-button (click)="addOrEditEvaluation(null)" style="outline: none; margin-left: 20px;"
-        title="Add Evaluation" [disabled]="isBusy">
+        title="Add Evaluation" [disabled]="isBusy || !canCreateEvaluations">
         <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
       </button>
       <button mat-icon-button (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
-        title="Upload Evaluation" [disabled]="isBusy">
+        title="Upload Evaluation" [disabled]="isBusy || !canCreateEvaluations">
         <mat-icon class="mdi-24px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
       </button>
     </div>
@@ -65,7 +65,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline"></mat-icon>
             </button>
             <button mat-icon-button (click)="copyEvaluation(evaluation.id); $event.stopPropagation();"
-              title="Copy {{ evaluation.description }}" [disabled]="isBusy">
+              title="Copy {{ evaluation.description }}" [disabled]="isBusy || !canCreateEvaluations">
               <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
             </button>
             <button mat-icon-button (click)="downloadEvaluation(evaluation); $event.stopPropagation();"
@@ -73,20 +73,20 @@ project root for license information or contact permission@sei.cmu.edu for full 
               <mat-icon class="mdi-18px" fontIcon="mdi-download" alt="Download"></mat-icon>
             </button>
             <button mat-icon-button (click)="deleteEvaluationRequest(evaluation); $event.stopPropagation()"
-              title="Delete Evaluation" [disabled]="isBusy">
+              title="Delete Evaluation" [disabled]="isBusy || !canManageEvaluation(evaluation.id)">
               <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
             </button>
           </span>
           <span class="cell description-cell center-self">{{ evaluation.description }}</span>
           <span class="cell move-cell center-self">
             <button aria-label="Decrement Current Move" mat-icon-button
-              [disabled]="evaluationFrozen(evaluation) || evaluation.currentMoveNumber <= getLowestMoveNumber(evaluation)"
+              [disabled]="!canEdit(evaluation) || evaluation.currentMoveNumber <= getLowestMoveNumber(evaluation) || !canManageEvaluation(evaluation.id)"
               (click)="decrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Decrement Move">
               <mat-icon svgIcon="ic_chevron_left"></mat-icon>
             </button>
             {{ evaluation.currentMoveNumber }}
             <button aria-label="Increment Current Move" mat-icon-button
-              [disabled]="evaluationFrozen(evaluation) || evaluation.currentMoveNumber >= getHighestMoveNumber(evaluation)"
+              [disabled]="!canEdit(evaluation) || evaluation.currentMoveNumber >= getHighestMoveNumber(evaluation) || !canManageEvaluation(evaluation.id)"
               (click)="incrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Increment Move">
               <mat-icon svgIcon="ic_chevron_right"></mat-icon>
             </button>
@@ -102,28 +102,42 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </span>
         </mat-expansion-panel-header>
       }
-      <div class="move-container">
-        <mat-expansion-panel class="bottom-space">
-          <mat-expansion-panel-header>
-            <h4>Moves</h4>
-          </mat-expansion-panel-header>
-          <app-admin-moves [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)"></app-admin-moves>
-        </mat-expansion-panel>
-        <mat-expansion-panel class="bottom-space">
-          <mat-expansion-panel-header>
-            <h4>Teams</h4>
-          </mat-expansion-panel-header>
-          <app-admin-teams [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)">
-          </app-admin-teams>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <h4>Observers</h4>
-          </mat-expansion-panel-header>
-          <app-admin-observers [evaluationId]="evaluation.id" [noChanges]="evaluationFrozen(evaluation)">
-          </app-admin-observers>
-        </mat-expansion-panel>
-      </div>
+      @if (editEvaluation.id === evaluation.id) {
+        <div class="move-container">
+          <mat-expansion-panel class="bottom-space">
+            <mat-expansion-panel-header>
+              <h4>Moves</h4>
+            </mat-expansion-panel-header>
+            <app-admin-moves [evaluationId]="evaluation.id" [canEdit]="canEdit(evaluation)"></app-admin-moves>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="bottom-space">
+            <mat-expansion-panel-header>
+              <h4>Teams</h4>
+            </mat-expansion-panel-header>
+            <app-admin-teams [evaluationId]="evaluation.id" [canEdit]="canEdit(evaluation)"></app-admin-teams>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="bottom-space">
+            <mat-expansion-panel-header>
+              <h4>Actions</h4>
+            </mat-expansion-panel-header>
+            <app-admin-actions [selectedEvaluationId]="evaluation.id" [canEdit]="canEdit(evaluation)"></app-admin-actions>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="bottom-space">
+            <mat-expansion-panel-header>
+              <h4>Duties</h4>
+            </mat-expansion-panel-header>
+            <app-admin-duties [selectedEvaluationId]="evaluation.id" [canEdit]="canEdit(evaluation)"></app-admin-duties>
+          </mat-expansion-panel>
+          @if (canManageEvaluation) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <h4>Memberships</h4>
+              </mat-expansion-panel-header>
+              <app-admin-evaluation-memberships [evaluationId]="evaluation.id" [embedded]="false"></app-admin-evaluation-memberships>
+            </mat-expansion-panel>
+          }
+        </div>
+      }
     </mat-expansion-panel>
   }
 </mat-accordion>

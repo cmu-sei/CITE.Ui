@@ -21,8 +21,9 @@ import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminScoringModelEditDialogComponent } from '../admin-scoring-model-edit-dialog/admin-scoring-model-edit-dialog.component';
-import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 
 @Component({
     selector: 'app-admin-scoring-models',
@@ -69,16 +70,18 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   uploadProgress = 0;
   @ViewChild('jsonInput') jsonInput: ElementRef<HTMLInputElement>;
   showAll = false;
+  canCreateScoringModels = this.permissionDataService.canCreateScoringModels();
 
   constructor(
     private settingsService: ComnSettingsService,
     private scoringModelDataService: ScoringModelDataService,
     private scoringModelQuery: ScoringModelQuery,
-    private userDataService: UserDataService,
+    private userQuery: UserQuery,
     private dialog: MatDialog,
     public dialogService: DialogService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private permissionDataService: PermissionDataService
   ) {
     this.topbarColor = this.settingsService.settings.AppTopBarHexColor
       ? this.settingsService.settings.AppTopBarHexColor
@@ -89,7 +92,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
       this.scoringModelList = scoringModels;
     });
     // oberve the users
-    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+    this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
       this.userList = users;
     });
     // subscribe to scoring models loading
@@ -124,14 +127,17 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   }
 
   addOrEditScoringModel(scoringModel: ScoringModel) {
+    var hasPermission = false;
     if (!scoringModel) {
       scoringModel = {
         description: '',
         calculationEquation: '{average}',
         status: ItemStatus.Pending
       };
+      hasPermission = this.permissionDataService.canCreateScoringModels();
     } else {
       scoringModel = {... scoringModel};
+      hasPermission = this.permissionDataService.canEditScoringModel(scoringModel.id);
     }
     const dialogRef = this.dialog.open(AdminScoringModelEditDialogComponent, {
       width: '800px',
@@ -139,7 +145,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
         scoringModel: scoringModel,
         itemStatuses: this.itemStatuses,
         rightSideDisplays: this.rightSideDisplays,
-        canEdit: scoringModel?.id && !scoringModel.evaluationId
+        canEdit: (scoringModel?.id && !scoringModel.evaluationId) && hasPermission
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -153,6 +159,14 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   togglePanel(scoringModel: ScoringModel) {
     this.editScoringModel =
       this.editScoringModel.id === scoringModel.id ? this.editScoringModel = {} : this.editScoringModel = { ...scoringModel};
+  }
+
+  canEdit(id: string): boolean {
+    return this.permissionDataService.canEditScoringModel(id);
+  }
+
+  canManage(id: string): boolean {
+    return this.permissionDataService.canManageScoringModel(id);
   }
 
   saveScoringModel(scoringModel: ScoringModel) {

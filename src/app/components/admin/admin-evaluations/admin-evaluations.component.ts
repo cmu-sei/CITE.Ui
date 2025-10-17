@@ -16,14 +16,15 @@ import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.s
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
-import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
 import { ComnSettingsService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dialog/admin-evaluation-edit-dialog.component';
-import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
+import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 
 @Component({
     selector: 'app-admin-evaluations',
@@ -64,16 +65,18 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   userList: User[] = [];
   isBusy = false;
   uploadProgress = 0;
+  canCreateEvaluations = this.permissionDataService.canCreateEvaluations();
   @ViewChild('jsonInput') jsonInput: ElementRef<HTMLInputElement>;
 
   constructor(
     private settingsService: ComnSettingsService,
     private evaluationDataService: EvaluationDataService,
     private evaluationQuery: EvaluationQuery,
+    private permissionDataService: PermissionDataService,
     private scoringModelDataService: ScoringModelDataService,
     private scoringModelQuery: ScoringModelQuery,
-    private teamUserDataService: TeamUserDataService,
-    private userDataService: UserDataService,
+    private teamMembershipDataService: TeamMembershipDataService,
+    private userQuery: UserQuery,
     private dialog: MatDialog,
     public dialogService: DialogService
   ) {
@@ -88,7 +91,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     });
     this.scoringModelDataService.load();
     // oberve the users
-    this.userDataService.userList.pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
+    this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
       this.userList = users;
     });
     // subscribe to evaluations loading
@@ -136,7 +139,8 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
         evaluation: evaluation,
         scoringModels: this.scoringModels,
         itemStatuses: this.itemStatuses,
-        isExisting: !!evaluation.dateCreated
+        isExisting: !!evaluation.dateCreated,
+        canEdit: this.permissionDataService.canEditEvaluation(evaluation.id)
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -153,12 +157,16 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     // if an evaluation has been selected, load the evaluation, so that we have its details
     if (this.editEvaluation.id) {
       this.evaluationDataService.loadById(this.editEvaluation.id);
-      this.teamUserDataService.loadByEvaluation(this.editEvaluation.id);
+      this.teamMembershipDataService.loadMemberships(this.editEvaluation.id);
     }
   }
 
-  evaluationFrozen(evaluation: Evaluation) {
-    return evaluation.status !== ItemStatus.Pending && evaluation.status !== ItemStatus.Active;
+  canManageEvaluation(id: string): boolean {
+    return this.permissionDataService.canManageEvaluation(id);
+  }
+
+  canEdit(evaluation: Evaluation) {
+    return (evaluation.status === ItemStatus.Pending || evaluation.status === ItemStatus.Active) && this.permissionDataService.canEditEvaluation(evaluation.id);
   }
 
   saveEvaluation(evaluation: Evaluation) {

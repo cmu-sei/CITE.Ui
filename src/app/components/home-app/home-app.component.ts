@@ -1,18 +1,25 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
-import { Component, OnDestroy, ViewChild} from '@angular/core';
+
+import { DOCUMENT } from '@angular/common';
+import { Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import {
+  ComnAuthService,
   ComnSettingsService,
   Theme,
   ComnAuthQuery,
 } from '@cmusei/crucible-common';
 import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
+import { CurrentUserQuery } from 'src/app/data/user/user.query';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { SystemPermission } from 'src/app/generated/cite.api';
 import { TopbarView } from './../shared/top-bar/topbar.models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -34,7 +41,8 @@ import { SubmissionDataService } from 'src/app/data/submission/submission-data.s
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { TeamUserDataService } from 'src/app/data/team-user/team-user-data.service';
+import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
+import { TeamRoleDataService } from 'src/app/data/team/team-role-data.service';
 import {
   ApplicationArea,
   SignalRService,
@@ -59,7 +67,7 @@ export enum Section {
   styleUrls: ['./home-app.component.scss'],
   standalone: false,
 })
-export class HomeAppComponent implements OnDestroy {
+export class HomeAppComponent implements OnDestroy, OnInit {
   @ViewChild('sidenav') sidenav: MatSidenav;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   apiMessage = 'The API web service is not responding.';
@@ -67,8 +75,8 @@ export class HomeAppComponent implements OnDestroy {
   topbarText = 'blank';
   section = Section;
   selectedSection = Section.dashboard;
+  loggedInUser$ = this.currentUserQuery.select();
   loggedInUserId = '';
-  canAccessAdminSection$ = new BehaviorSubject<boolean>(false);
   isAuthorizedUser = false;
   isSidebarOpen = true;
   private unsubscribe$ = new Subject();
@@ -88,7 +96,6 @@ export class HomeAppComponent implements OnDestroy {
   submissionList$ = this.submissionQuery.selectAll();
   activeTeam$ = this.teamQuery.selectActive() as Team;
   displayedSubmission: Submission;
-  addingSubmission = false;
   evaluationsAreLoading$ = this.evaluationQuery.selectLoading();
   currentMoveNumber = -1;
   displayedMoveNumber = -1;
@@ -99,7 +106,6 @@ export class HomeAppComponent implements OnDestroy {
   evaluationForLoadedSubmissions: Evaluation;
   moveList$ = this.moveQuery.selectAll() as Observable<Move[]>;
   sortedMoveList: Move[] = [];
-  loggedInUser$ = this.userDataService.loggedInUser;
   teamList$ = this.teamQuery.selectAll();
   myTeamId = '';
   myTeamId$ = new BehaviorSubject<string>('');
@@ -113,12 +119,20 @@ export class HomeAppComponent implements OnDestroy {
   private isSubmissionDataServiceLoading: boolean;
   waitingForCurrentMoveNumber = 0;
   noChanges$ = new BehaviorSubject<boolean>(false);
-  isStarted = false;
+  username = '';
+  permissions: SystemPermission[] = [];
+  canViewAdministration = false;
+  readonly SystemPermission = SystemPermission;
 
   constructor(
+    @Inject(DOCUMENT) private _document: HTMLDocument,
+    private authService: ComnAuthService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private userDataService: UserDataService,
+    private userQuery: UserQuery,
+    private currentUserQuery: CurrentUserQuery,
+    private permissionDataService: PermissionDataService,
     private settingsService: ComnSettingsService,
     private authQuery: ComnAuthQuery,
     private evaluationDataService: EvaluationDataService,
@@ -130,7 +144,8 @@ export class HomeAppComponent implements OnDestroy {
     private submissionQuery: SubmissionQuery,
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
-    private teamUserDataService: TeamUserDataService,
+    private teamMembershipDataService: TeamMembershipDataService,
+    private teamRoleDataService: TeamRoleDataService,
     private signalRService: SignalRService,
     private gallerySignalRService: GallerySignalRService,
     private moveQuery: MoveQuery,
@@ -158,19 +173,22 @@ export class HomeAppComponent implements OnDestroy {
     this.topbarTextColor = this.settingsService.settings.AppTopBarHexTextColor
       ? this.settingsService.settings.AppTopBarHexTextColor
       : this.topbarTextColor;
-      this.userDataService.loggedInUser.pipe(takeUntil(this.unsubscribe$)).subscribe((user) => {
-        if (user && user.profile && user.profile.sub) {
-          this.startup();
-        }
-      });
-      setTimeout(() => {
-        if (!this.isStarted) {
-          window.location.reload();
-        }
-      }, 10000);
-    }
+   }
 
-  startup() {
+  ngOnInit() {
+    // load system permissions
+    this.permissionDataService
+      .load()
+      .subscribe(
+        (x) => {
+          this.permissions = this.permissionDataService.permissions;
+          this.canViewAdministration = this.permissions.some((y) => y.startsWith('View'));
+        }
+      );
+    // load evaluation permissions
+    this.permissionDataService.loadEvaluationPermissions().subscribe();
+    // load team permissions
+    this.permissionDataService.loadTeamPermissions().subscribe();
     // observe the vital information and process it when it is all present
     combineLatest([
       this.evaluationList$,
@@ -223,11 +241,6 @@ export class HomeAppComponent implements OnDestroy {
               }
             }
           }
-          if (teams.length > 0 && user && user.profile) {
-            this.loggedInUserId = user.profile.sub;
-            // set this user's team and the active team
-            this.setTeams(teams);
-          }
           // if we intiated advancing to next evaluation move, then display it
           if (this.waitingForCurrentMoveNumber > 0) {
             const newMove = this.sortedMoveList.find(
@@ -239,12 +252,16 @@ export class HomeAppComponent implements OnDestroy {
             }
           }
         }
-        if (user) {
-          this.canAccessAdminSection$.next(
-            this.userDataService.canAccessAdminSection.getValue()
-          );
+        // get the current user information
+        if (user.name) {
+          this.username = user.name;
+          this.isAuthorizedUser = !!user.id;
+          this.loggedInUserId = user.id;
         }
+        // set the teams
+        this.setTeams(teams);
       });
+    this.userDataService.setCurrentUser();
     // observe active evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active && active.id !== this.selectedEvaluationId) {
@@ -253,19 +270,12 @@ export class HomeAppComponent implements OnDestroy {
         this.noChanges$.next(active.status === ItemStatus.Complete);
       }
     });
-    // observe authorizedUser
-    this.userDataService.isAuthorizedUser
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((isAuthorized) => {
-        this.isAuthorizedUser = isAuthorized;
-      });
     //get users
-    this.userDataService.userList
+    this.userQuery.selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((users) => {
         this.userList = users;
       });
-    this.userDataService.getUsersFromApi();
     // observe route changes
     this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       // get and set the evaluation
@@ -333,6 +343,8 @@ export class HomeAppComponent implements OnDestroy {
     });
     // load the user's evaluations
     this.evaluationDataService.loadMine();
+    // load team roles
+    this.teamRoleDataService.loadRoles().subscribe();
     // join signalR
     this.signalRService
       .startConnection(ApplicationArea.home)
@@ -355,8 +367,6 @@ export class HomeAppComponent implements OnDestroy {
     const thisScope = this;
     this.filterString = '';
     this.evaluationDataSource.sort = this.sort;
-
-    this.isStarted = true;
   }
 
   setDataSources() {
@@ -372,18 +382,13 @@ export class HomeAppComponent implements OnDestroy {
       this.scoringModelDataService.loadById(evaluation.scoringModelId);
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
       this.teamDataService.loadMine(this.selectedEvaluationId);
+      this.userDataService.loadByEvaluation(this.selectedEvaluationId).pipe(take(1)).subscribe();
       this.currentMoveNumber = evaluation.currentMoveNumber;
     }
   }
 
-  changeEvaluation(evaluationId: string) {
-    this.selectedEvaluationId = evaluationId;
-    this.moveDataService.unload();
-    this.teamDataService.unload();
-    this.uiDataService.setEvaluation(evaluationId);
-    this.router.navigate([], {
-      queryParams: { evaluation: evaluationId },
-    });
+  selectingAnEvaluation(evaluationId: string) {
+    this.uiDataService.setSection(evaluationId, Section.dashboard);
   }
 
   nextDisplayedMove(move: Move) {
@@ -417,9 +422,6 @@ export class HomeAppComponent implements OnDestroy {
             !s.groupId &&
             !s.scoreIsAnAverage
         );
-        if (!newSubmission) {
-          this.makeNewSubmission();
-        }
       } else {
         // select the team score
         newSubmission = submissions.find(
@@ -486,7 +488,7 @@ export class HomeAppComponent implements OnDestroy {
       : '';
     // find the user's team
     teams.forEach((t) => {
-      if (t.users.some((u) => u.id === this.loggedInUserId)) {
+      if (t.memberships.some((m) => m.userId === this.loggedInUserId)) {
         this.myTeamId = t.id;
         this.myTeamId$.next(t.id);
         // if the saved team wasn't in the list, set the user's team to the active team
@@ -498,7 +500,7 @@ export class HomeAppComponent implements OnDestroy {
     });
     if (activeTeamId) {
       this.changeTeam(activeTeamId);
-      this.teamUserDataService.loadByTeam(activeTeamId);
+      this.teamMembershipDataService.loadMemberships(activeTeamId);
     }
   }
 
@@ -567,36 +569,17 @@ export class HomeAppComponent implements OnDestroy {
     }
   }
 
-  makeNewSubmission() {
-    if (!this.isSubmissionDataServiceLoading && !this.addingSubmission) {
-      this.addingSubmission = true;
-      const evaluation = this.evaluationQuery.getAll().find(e => e.id === this.selectedEvaluationId);
-      const scoringModel = this.scoringModelQuery.getActive() as ScoringModel;
-      const activeTeam = this.teamQuery.getActive() as Team;
-      if (!evaluation || ! scoringModel || !activeTeam) {
-        this.addingSubmission = false;
-        return;
-      }
-      const userId = !scoringModel.useUserScore || activeTeam.id !== this.myTeamId ? null : this.loggedInUserId;
-      const submission = {
-        teamId: activeTeam ? activeTeam.id : this.myTeamId,
-        evaluationId: evaluation.id,
-        moveNumber: this.displayedMoveNumber,
-        score: 0,
-        scoringModelId: evaluation.scoringModelId,
-        status: ItemStatus.Active,
-        userId: userId,
-      } as Submission;
-      this.submissionDataService.add(submission);
-    }
-  }
-
   setActiveSubmission(submission: Submission) {
-    this.submissionDataService.setActive(submission.id);
-    const activeMove = this.sortedMoveList.find(
-      (m) => +m.moveNumber === +submission.moveNumber
-    );
-    this.moveDataService.setActive(activeMove.id);
+    if (submission.id != this.submissionQuery.getActiveId()) {
+      this.submissionDataService.setActive(submission.id);
+      if (!submission.scoreIsAnAverage) {
+        this.submissionDataService.loadById(submission.id);
+      }
+      const activeMove = this.sortedMoveList.find(
+        (m) => +m.moveNumber === +submission.moveNumber
+      );
+      this.moveDataService.setActive(activeMove.id);
+    }
   }
 
   selectDisplayedSubmission(selection: string) {
@@ -658,15 +641,12 @@ export class HomeAppComponent implements OnDestroy {
       if (newSubmission) {
         this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
         this.setActiveSubmission(newSubmission);
-        this.addingSubmission = false;
-      } else if (!this.addingSubmission) {
-        this.makeNewSubmission();
       }
     }
   }
 
   logout() {
-    this.userDataService.logout();
+    this.authService.logout();
   }
 
   inIframe() {

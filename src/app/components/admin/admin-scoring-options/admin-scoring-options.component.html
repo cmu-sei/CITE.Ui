@@ -5,16 +5,18 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <div class="cssLayoutRowStartCenter">
-  <h2>Scoring Options</h2>
-  <button mat-icon-button (click)="addOrEditScoringOption(null); $event.stopPropagation()"
-    style="outline: none; margin-left: 20px;" title="Add Scoring Option">
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
-  </button>
+  <b>Scoring Options</b>
 </div>
 
 <div class="mat-elevation-z2">
   <div class="header-row">
-    <span class="header-cell eight-cell"><span style="margin-left: 80px;">Description</span></span>
+    <span class="header-cell eight-cell">
+      <button mat-icon-button (click)="addOrEditScoringOption(null); $event.stopPropagation()"
+        style="outline: none; margin-left: 20px;" title="Add Scoring Option" [disabled]="!canEdit">
+        <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+      </button>
+      <span style="margin-left: 20px;">Description</span>
+    </span>
     <span class="header-cell one-cell center-text">Value</span>
     <span class="header-cell one-cell center-text">Order</span>
     <span class="header-cell one-cell center-text">Modifier</span>
@@ -26,11 +28,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="row">
           <div class="cell eight-cell">
             <button mat-icon-button (click)="addOrEditScoringOption(scoringOption); $event.stopPropagation()"
-              style="outline: none;" title="Edit Scoring Option">
+              style="outline: none;" title="Edit Scoring Option" [disabled]="!canEdit">
               <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
             </button>
             <button mat-icon-button (click)="deleteScoringOptionRequest(scoringOption); $event.stopPropagation()"
-              style="outline: none;" title="Delete Scoring Option">
+              style="outline: none;" title="Delete Scoring Option" [disabled]="!canEdit">
               <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can"></mat-icon>
             </button>
             <span class="center-self">

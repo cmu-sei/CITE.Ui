@@ -1,7 +1,7 @@
 /*
-Copyright 2022 Carnegie Mellon University. All Rights Reserved.
+ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the
-// project root for license information.
+ project root for license information.
 */
 
 import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
@@ -9,50 +9,11 @@ import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
 
-import { ActionService } from './api/action.service';
-import { EvaluationService } from './api/evaluation.service';
-import { GalleryService } from './api/gallery.service';
-import { HealthCheckService } from './api/healthCheck.service';
-import { MoveService } from './api/move.service';
-import { PermissionService } from './api/permission.service';
-import { RoleService } from './api/role.service';
-import { ScoringCategoryService } from './api/scoringCategory.service';
-import { ScoringModelService } from './api/scoringModel.service';
-import { ScoringOptionService } from './api/scoringOption.service';
-import { SubmissionService } from './api/submission.service';
-import { SubmissionCategoryService } from './api/submissionCategory.service';
-import { SubmissionCommentService } from './api/submissionComment.service';
-import { SubmissionOptionService } from './api/submissionOption.service';
-import { TeamService } from './api/team.service';
-import { TeamTypeService } from './api/teamType.service';
-import { TeamUserService } from './api/teamUser.service';
-import { UserService } from './api/user.service';
-import { UserPermissionService } from './api/userPermission.service';
-
 @NgModule({
   imports:      [],
   declarations: [],
   exports:      [],
-  providers: [
-    ActionService,
-    EvaluationService,
-    GalleryService,
-    HealthCheckService,
-    MoveService,
-    PermissionService,
-    RoleService,
-    ScoringCategoryService,
-    ScoringModelService,
-    ScoringOptionService,
-    SubmissionService,
-    SubmissionCategoryService,
-    SubmissionCommentService,
-    SubmissionOptionService,
-    TeamService,
-    TeamTypeService,
-    TeamUserService,
-    UserService,
-    UserPermissionService ]
+  providers: []
 })
 export class ApiModule {
     public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders<ApiModule> {
