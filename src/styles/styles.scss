@@ -26,9 +26,14 @@ html {
   @include mat.theme((color: theme.$primary-palette,
       typography: '"Open Sans", sans-serif',
     ),
-    $overrides: ((background: #f1f1f2, surface: var(--mat-sys-background), surface-variant: var(--mat-sys-background))));
+    $overrides: ((background: #f1f1f2,
+        surface: var(--mat-sys-background),
+        surface-variant: var(--mat-sys-background),
+        icon: var(--mat-sys-primary),
+      )));
   @include mat.datepicker-overrides((calendar-container-background-color: var(--mat-sys-outline-variant),
-      calendar-date-selected-state-text-color: var(--mat-sys-primary), calendar-container-text-color: var(--mat-sys-on-background),
+      calendar-date-selected-state-text-color: var(--mat-sys-primary),
+      calendar-container-text-color: var(--mat-sys-on-background),
     ));
 }
 
@@ -37,10 +42,17 @@ html {
         theme-type: dark,
       ),
     ),
-    $overrides: ((background: #313131, surface: var(--mat-sys-background), surface-variant: var(--mat-sys-background))));
+    $overrides: ((background: #313131,
+        surface: var(--mat-sys-background),
+        surface-variant: var(--mat-sys-background))));
   @include mat.datepicker-overrides((calendar-container-background-color: var(--mat-sys-outline-variant),
-      calendar-date-selected-state-text-color: var(--mat-sys-primary), calendar-container-text-color: var(--mat-sys-on-background),
+      calendar-date-selected-state-text-color: var(--mat-sys-primary),
+      calendar-container-text-color: var(--mat-sys-on-background),
     ));
+}
+
+:root {
+  @include mat.icon-overrides((color: var(--mat-sys-primary)));
 }
 
 // classes for icon sizing
@@ -63,6 +75,62 @@ mat-paginator {
   --mat-form-field-outlined-hover-outline-color: transparent;
   --mat-form-field-outlined-focus-outline-color: transparent;
   min-width: 200px !important;
+}
+
+.mat-form-field {
+  color: var(--mat-sys-primary);
+}
+
+.twelve-cell {
+  flex: 12;
+}
+
+.eleven-cell {
+  flex: 11;
+}
+
+.ten-cell {
+  flex: 10;
+}
+
+.nine-cell {
+  flex: 9;
+}
+
+.eight-cell {
+  flex: 8;
+}
+
+.seven-cell {
+  flex: 7;
+}
+
+.six-cell {
+  flex: 6;
+}
+
+.five-cell {
+  flex: 5;
+}
+
+.four-cell {
+  flex: 4;
+}
+
+.three-cell {
+  flex: 3;
+}
+
+.two-cell {
+  flex: 2;
+}
+
+.one-cell {
+  flex: 1;
+}
+
+.center-self {
+  align-self: center;
 }
 
 /* The following acts as drop in replacement for the deprecation of Angular FlexLayout */

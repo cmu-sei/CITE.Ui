@@ -16,88 +16,85 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </mat-toolbar>
     <mat-list class="appitems-container">
       @if (canViewEvaluations || canCreateEvaluations) {
-        <mat-list-item id="wrapper showhand" (click)="gotoSection(evaluationsText)"
-          [ngClass]="getSelectedClass(evaluationsText)">
-          <mat-icon matListItemIcon fontIcon="mdi-briefcase-outline"></mat-icon>
-          {{ evaluationsText }}
-          <button aria-labelledby="evaluationsText" mat-icon-button class="pull-right">
-            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-          </button>
-        </mat-list-item>
+      <mat-list-item id="wrapper showhand" (click)="gotoSection(evaluationsText)"
+        [ngClass]="getSelectedClass(evaluationsText)">
+        <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-briefcase-outline"></mat-icon>
+        {{ evaluationsText }}
+        <button aria-labelledby="evaluationsText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
       }
       @if (canViewScoringModels || canCreateScoringModels) {
-        <mat-list-item [ngClass]="getSelectedClass(scoringModelsText)" id="wrapper showhand"
-          (click)="gotoSection(scoringModelsText)">
-          <mat-icon matListItemIcon fontIcon="mdi-grid"></mat-icon>
-          {{ scoringModelsText }}
-          <button aria-labelledby="scoringModelsText" mat-icon-button class="pull-right">
-            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-          </button>
-        </mat-list-item>
+      <mat-list-item [ngClass]="getSelectedClass(scoringModelsText)" id="wrapper showhand"
+        (click)="gotoSection(scoringModelsText)">
+        <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-grid"></mat-icon>
+        {{ scoringModelsText }}
+        <button aria-labelledby="scoringModelsText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
       }
       @if (canViewEvaluations || canCreateEvaluations) {
-        <mat-list-item [ngClass]="getSelectedClass(submissionsText)" id="wrapper showhand"
-          (click)="gotoSection(submissionsText)">
-          <mat-icon matListItemIcon fontIcon="mdi-playlist-play"></mat-icon>
-          {{ submissionsText }}
-          <button aria-labelledby="submissionsText" mat-icon-button class="pull-right">
-            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-          </button>
-        </mat-list-item>
+      <mat-list-item [ngClass]="getSelectedClass(submissionsText)" id="wrapper showhand"
+        (click)="gotoSection(submissionsText)">
+        <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-playlist-play"></mat-icon>
+        {{ submissionsText }}
+        <button aria-labelledby="submissionsText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
       }
       @if (canViewTeamTypes) {
-        <mat-list-item [ngClass]="getSelectedClass(teamTypesText)" id="wrapper showhand"
-          (click)="gotoSection(teamTypesText)">
-          <mat-icon matListItemIcon fontIcon="mdi-playlist-play"></mat-icon>
-          {{ teamTypesText }}
-          <button aria-labelledby="teamTypesText" mat-icon-button class="pull-right">
-            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-          </button>
-        </mat-list-item>
+      <mat-list-item [ngClass]="getSelectedClass(teamTypesText)" id="wrapper showhand"
+        (click)="gotoSection(teamTypesText)">
+        <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-playlist-play"></mat-icon>
+        {{ teamTypesText }}
+        <button aria-labelledby="teamTypesText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
       }
       @if (canViewUsers) {
-        <mat-list-item [ngClass]="getSelectedClass(usersText)" id="wrapper showhand"
-          (click)="gotoSection(usersText)">
-          <mat-icon matListItemIcon fontIcon="mdi-account"></mat-icon>
-          {{ usersText }}
-          <button aria-labelledby="usersText" mat-icon-button class="pull-right">
-            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-          </button>
-        </mat-list-item>
+      <mat-list-item [ngClass]="getSelectedClass(usersText)" id="wrapper showhand" (click)="gotoSection(usersText)">
+        <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-account"></mat-icon>
+        {{ usersText }}
+        <button aria-labelledby="usersText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
       }
       @if (canViewRoles) {
-        <mat-list-item [ngClass]="getSelectedClass(rolesText)" id="wrapper showhand"
-          (click)="gotoSection(rolesText)">
-          <mat-icon matListItemIcon fontIcon="mdi-lock"></mat-icon>
-          {{ rolesText }}
-          <button aria-labelledby="rolesText" mat-icon-button class="pull-right">
-            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-          </button>
-        </mat-list-item>
+      <mat-list-item [ngClass]="getSelectedClass(rolesText)" id="wrapper showhand" (click)="gotoSection(rolesText)">
+        <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-lock"></mat-icon>
+        {{ rolesText }}
+        <button aria-labelledby="rolesText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
       }
       @if (canViewGroups) {
-        <mat-list-item [ngClass]="getSelectedClass(groupsText)" id="wrapper showhand"
-          (click)="gotoSection(groupsText)">
-          <mat-icon matListItemIcon fontIcon="mdi-account-group"></mat-icon>
-          {{ groupsText }}
-          <button aria-labelledby="groupsText" mat-icon-button class="pull-right">
-            <mat-icon fontIcon="mdi-menu-right"></mat-icon>
-          </button>
-        </mat-list-item>
+      <mat-list-item [ngClass]="getSelectedClass(groupsText)" id="wrapper showhand" (click)="gotoSection(groupsText)">
+        <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-account-group"></mat-icon>
+        {{ groupsText }}
+        <button aria-labelledby="groupsText" mat-icon-button class="pull-right">
+          <mat-icon fontIcon="mdi-menu-right"></mat-icon>
+        </button>
+      </mat-list-item>
       }
     </mat-list>
     @if (!hideTopbar) {
-      <div class="app-versions" style="margin-bottom: 58px;">
-        Versions: UI {{ uiVersion }}, API {{ apiVersion }}
-      </div>
+    <div class="app-versions" style="margin-bottom: 58px;">
+      Versions: UI {{ uiVersion }}, API {{ apiVersion }}
+    </div>
     }
     @if (hideTopbar) {
-      <div class="app-versions">
-        Versions: UI {{ uiVersion }}, API {{ apiVersion }}
-      </div>
+    <div class="app-versions">
+      Versions: UI {{ uiVersion }}, API {{ apiVersion }}
+    </div>
     }
     @if (!hideTopbar) {
-<img class="crucible-logo" [src]="
+    <img class="crucible-logo" [src]="
                     (theme$ | async) === 'light-theme'
           ? 'assets/img/crucible-logo-light.png'
           : 'assets/img/crucible-logo-dark.png'
@@ -106,48 +103,47 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </mat-sidenav>
   <mat-sidenav-content>
     @if (!hideTopbar) {
-      <app-topbar [title]="showSection" [topbarView]="TopbarView.CITE_ADMIN"
-        [topbarColor]="topbarColor" [topbarTextColor]="topbarTextColor" [sidenav]="sidenav"
-      (sidenavToggle)="sidenav.toggle()"></app-topbar>
+    <app-topbar [title]="showSection" [topbarView]="TopbarView.CITE_ADMIN" [topbarColor]="topbarColor"
+      [topbarTextColor]="topbarTextColor" [sidenav]="sidenav" (sidenavToggle)="sidenav.toggle()"></app-topbar>
     }
     @if ((canViewScoringModels || canCreateScoringModels) && (showSection === scoringModelsText)) {
-      <span>
-        <app-admin-scoring-models [evaluationList]="evaluationList | async">
-        </app-admin-scoring-models>
-      </span>
+    <span>
+      <app-admin-scoring-models [evaluationList]="evaluationList | async">
+      </app-admin-scoring-models>
+    </span>
     }
     @if ((canViewEvaluations || canCreateEvaluations) && (showSection === evaluationsText)) {
-      <span>
-        <app-admin-evaluations [evaluationList]="evaluationList | async">
-        </app-admin-evaluations>
-      </span>
+    <span>
+      <app-admin-evaluations [evaluationList]="evaluationList | async">
+      </app-admin-evaluations>
+    </span>
     }
     @if ((canViewEvaluations || canCreateEvaluations) && (showSection === submissionsText)) {
-      <span>
-        <app-admin-submissions>
-        </app-admin-submissions>
-      </span>
+    <span>
+      <app-admin-submissions>
+      </app-admin-submissions>
+    </span>
     }
     @if (canViewTeamTypes && (showSection === teamTypesText)) {
-      <span>
-        <app-admin-teamtypes>
-        </app-admin-teamtypes>
-      </span>
+    <span>
+      <app-admin-teamtypes>
+      </app-admin-teamtypes>
+    </span>
     }
     @if (canViewUsers && (showSection === usersText)) {
-      <span>
-        <app-admin-users></app-admin-users>
-      </span>
+    <span>
+      <app-admin-users></app-admin-users>
+    </span>
     }
     @if (canViewRoles && (showSection === rolesText)) {
-      <span>
-        <app-admin-roles></app-admin-roles>
-      </span>
+    <span>
+      <app-admin-roles></app-admin-roles>
+    </span>
     }
     @if (canViewGroups && (showSection === groupsText)) {
-      <span>
-        <app-admin-groups></app-admin-groups>
-      </span>
+    <span>
+      <app-admin-groups></app-admin-groups>
+    </span>
     }
   </mat-sidenav-content>
 </mat-sidenav-container>
