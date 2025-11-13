@@ -6,10 +6,11 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
 <div class="cssLayoutColumnCenterStart">
   <div class="move-container">
     <div>
-      <mat-icon class="mdi-24px" fontIcon="mdi-account-group" [ngStyle]="{'color': topbarColor}"></mat-icon>
+      <mat-icon class="mdi-24px" fontIcon="mdi-account-group"></mat-icon>
     </div>
     <mat-form-field class="search-field">
-      <input matInput [(ngModel)]="filterString" (keyup)="applyFilter($event.target.value)" placeholder="Search Groups" />
+      <input matInput [(ngModel)]="filterString" (keyup)="applyFilter($event.target.value)"
+        placeholder="Search Groups" />
     </mat-form-field>
     <div style="width: 24px;">
       <button mat-icon-button style="outline: none;" title="Clear Search" (click)="clearFilter()">
@@ -22,13 +23,13 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         @if (canEdit) {
-          <div class="sp-icon">
-            @if (canEdit) {
-              <button mat-icon-button matTooltip="Add New Group" (click)="createGroup()">
-                <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
-              </button>
-            }
-          </div>
+        <div class="sp-icon">
+          @if (canEdit) {
+          <button mat-icon-button matTooltip="Add New Group" (click)="createGroup()">
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+          </button>
+          }
+        </div>
         }
         Group Name
         <button mat-icon-button color="primary"
@@ -42,16 +43,16 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
           <mat-expansion-panel-header>
             <mat-panel-title>
               @if (canEdit) {
-                <ng-container>
-                  <button mat-icon-button matTooltip="Delete {{ element.name }}"
-                    (click)="$event.stopPropagation(); deleteGroup(element)">
-                    <mat-icon class="mdi-18px" color="primary" fontIcon="mdi-trash-can"></mat-icon>
-                  </button>
-                  <button mat-icon-button matTooltip="Rename">
-                    <mat-icon class="mdi-18px" color="primary" fontIcon="mdi-square-edit-outline"
-                      (click)="$event.stopPropagation(); updateGroup(element)"></mat-icon>
-                  </button>
-                </ng-container>
+              <ng-container>
+                <button mat-icon-button matTooltip="Delete {{ element.name }}"
+                  (click)="$event.stopPropagation(); deleteGroup(element)">
+                  <mat-icon class="mdi-18px" color="primary" fontIcon="mdi-trash-can"></mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Rename">
+                  <mat-icon class="mdi-18px" color="primary" fontIcon="mdi-square-edit-outline"
+                    (click)="$event.stopPropagation(); updateGroup(element)"></mat-icon>
+                </button>
+              </ng-container>
               }
               {{ element.name }}
             </mat-panel-title>
