@@ -3,13 +3,9 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-.definition-list-container {
-  flex-direction: column;
-  min-width: 900px;
-  margin-top: 40px;
-  margin-left: 40px;
-  margin-right: 40px;
-  margin-bottom: 40px;
+.list-container {
+  width: 90%;
+  margin-left: 5%;
 }
 
 .mat-table {
@@ -40,7 +36,7 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
   overflow: hidden;
   word-wrap: break-word;
   align-items: center;
-  display:flex;
+  display: flex;
 }
 
 .button-end {
@@ -48,7 +44,10 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
 }
 
 .sp-icon {
-  margin-left: 10px;
+  width: 5%;
+  color: var(--mat-sys-primary);
+  text-align: center;
+  min-width: 30px;
 }
 
 .mat-accordion .mat-header-row {

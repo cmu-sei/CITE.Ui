@@ -14,6 +14,10 @@
   margin-bottom: 20px;
 }
 
+.mat-list-item-icon {
+  color: var(--mat-sys-primary) !important;
+}
+
 .nolink {
   text-decoration: none;
   color: inherit;

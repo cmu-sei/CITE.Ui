@@ -8,8 +8,7 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
     <ng-container matColumnDef="permissions">
       <th mat-header-cell *matHeaderCellDef>
         Permissions
-        <button mat-icon-button color="primary" (click)="addRole()" [disabled]="!canEdit"
-          matTooltip="Add New Role">
+        <button mat-icon-button color="primary" (click)="addRole()" [disabled]="!canEdit" matTooltip="Add New Role">
           <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle"> </mat-icon>
         </button>
         <button mat-icon-button color="primary"
@@ -38,7 +37,7 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
             </button>
             <button *ngIf="!role.immutable" mat-icon-button color="primary" (click)="deleteRole(role)"
               title="Delete Role">
-              <mat-icon class="mdi-24px" fontIcon="mdi-delete-forever-outline"></mat-icon>
+              <mat-icon class="mdi-24px" fontIcon="mdi-trash-can-outline"></mat-icon>
             </button>
           </ng-container>
         </div>

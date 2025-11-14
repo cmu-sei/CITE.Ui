@@ -34,54 +34,54 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </section>
 
   @for (team of sortedTeams; track team.id) {
-    <mat-expansion-panel [expanded]="editTeam.id === team.id">
-      @if (!isLoading) {
-        <mat-expansion-panel-header class="row" (click)="togglePanel(team); $event.stopPropagation()">
-          <div class="cell one-cell">
-            <div class="button-div">
-              <button mat-icon-button (click)="addOrEditTeam(team); $event.stopPropagation()" title="Edit {{ team.name }}"
-                [disabled]="!canEdit" class="team-button">
-                <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
-              </button>
-              <button mat-icon-button (click)="deleteTeam(team); $event.stopPropagation()" title="Delete {{ team.name }}"
-                [disabled]="!canEdit" class="team-button">
-                <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can"></mat-icon>
-              </button>
-            </div>
-          </div>
-          <div class="cell one-cell center-self">
-            <div class="panel-div">
-              {{ team.shortName }}
-            </div>
-          </div>
-          <div class="cell three-cell center-self">
-            <div class="panel-div">
-              {{ getTeamTypeName(team.teamTypeId) }}
-            </div>
-          </div>
-          <div class="cell five-cell center-self">
-            <div class="panel-div">
-              {{ team.name }}
-            </div>
-          </div>
-        </mat-expansion-panel-header>
-      }
-      @if (editTeam.id === team.id) {
-        <div class="panel-container">
-          <div class="user-div">
-            @if (team.id === editTeam.id) {
-              <app-admin-team-memberships [teamId]="team.id"></app-admin-team-memberships>
-            }
-          </div>
+  <mat-expansion-panel [expanded]="editTeam.id === team.id">
+    @if (!isLoading) {
+    <mat-expansion-panel-header class="row" (click)="togglePanel(team); $event.stopPropagation()">
+      <div class="cell one-cell">
+        <div class="button-div">
+          <button mat-icon-button (click)="addOrEditTeam(team); $event.stopPropagation()" title="Edit {{ team.name }}"
+            [disabled]="!canEdit" class="team-button">
+            <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+          </button>
+          <button mat-icon-button (click)="deleteTeam(team); $event.stopPropagation()" title="Delete {{ team.name }}"
+            [disabled]="!canEdit" class="team-button">
+            <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can-outline"></mat-icon>
+          </button>
         </div>
-      }
-    </mat-expansion-panel>
+      </div>
+      <div class="cell one-cell center-self">
+        <div class="panel-div">
+          {{ team.shortName }}
+        </div>
+      </div>
+      <div class="cell three-cell center-self">
+        <div class="panel-div">
+          {{ getTeamTypeName(team.teamTypeId) }}
+        </div>
+      </div>
+      <div class="cell five-cell center-self">
+        <div class="panel-div">
+          {{ team.name }}
+        </div>
+      </div>
+    </mat-expansion-panel-header>
+    }
+    @if (editTeam.id === team.id) {
+    <div class="panel-container">
+      <div class="user-div">
+        @if (team.id === editTeam.id) {
+        <app-admin-team-memberships [teamId]="team.id"></app-admin-team-memberships>
+        }
+      </div>
+    </div>
+    }
+  </mat-expansion-panel>
   }
 </mat-accordion>
 
 @if (isLoading) {
-  <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
-    <mat-progress-spinner color="primary" mode="indeterminate">
-    </mat-progress-spinner>
-  </mat-card>
+<mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
+  <mat-progress-spinner color="primary" mode="indeterminate">
+  </mat-progress-spinner>
+</mat-card>
 }

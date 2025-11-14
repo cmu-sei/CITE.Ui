@@ -45,18 +45,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <span class="spacer"></span>
     @if (currentUser$ | async; as currentUser) {
       <div class="options-text">
-        <button mat-button class="menu-trigger" [matMenuTriggerFor]="menu" style="outline: none;">
-          @if (currentUser) {
-            <strong>{{ currentUser.name }}</strong>
-          }
+        <button
+          mat-button
+          class="menu-trigger"
+          [matMenuTriggerFor]="menu"
+          style="outline: none;"
+        >
+          <strong>{{ currentUser.name }}</strong>
           <mat-icon aria-hidden="false" class="icon-color" svgIcon="ic_expand_more"></mat-icon>
         </button>
         <mat-menu #menu="matMenu" [overlapTrigger]="false">
-          @if (team && team.canManage) {
-            <button (click)="editFn($event)" mat-menu-item>
-              Edit View
-            </button>
-          }
           <button mat-menu-item (click)="logout()">Logout</button>
           <mat-slide-toggle class="mat-menu-item" color="primary"
             [checked]="(theme$ | async) === 'dark-theme' ? true : false" (click)="$event.stopPropagation()"
