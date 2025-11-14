@@ -52,7 +52,7 @@ html {
 }
 
 :root {
-  @include mat.icon-overrides((color: var(--mat-sys-primary)));
+  @include mat.icon-button-overrides((icon-color: var(--mat-sys-primary)));
 }
 
 // classes for icon sizing

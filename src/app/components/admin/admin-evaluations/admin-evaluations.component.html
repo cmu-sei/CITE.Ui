@@ -72,7 +72,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </button>
         <button mat-icon-button (click)="deleteEvaluationRequest(evaluation); $event.stopPropagation()"
           title="Delete Evaluation" [disabled]="isBusy || !canManageEvaluation(evaluation.id)">
-          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can-outline"></mat-icon>
         </button>
       </div>
       <div class="cell description-cell center-self">{{ evaluation.description }}</div>
