@@ -37,7 +37,6 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
   filterString = '';
   displayedColumns: string[] = ['name'];
   dataSource: MatTableDataSource<Group> = new MatTableDataSource();
-  topbarColor = '#ef3a47';
 
   constructor(
     private groupDataService: GroupDataService,
@@ -45,11 +44,7 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private permissionDataService: PermissionDataService,
     private settingsService: ComnSettingsService
-  ) {
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
-  }
+  ) { }
 
   dataSource$ = this.groupDataService.groups$.pipe(
     map((x) => {

@@ -29,34 +29,34 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </section>
 
   @for (move of sortedMoves; track move.id) {
-    <mat-expansion-panel [disabled]="true">
-      @if (!isLoading) {
-        <mat-expansion-panel-header class="row">
-          <div class="cell cell-two">
-            <button mat-icon-button (click)="addOrEditMove(move); $event.stopPropagation()" style="outline: none;"
-              title="Edit Move">
-              <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
-            </button>
-            <button mat-icon-button (click)="deleteMoveRequest(move); $event.stopPropagation()" title="Delete Move"
-              [disabled]="!canEdit">
-              <mat-icon class="mdi-18px" fontIcon="mdi-trash-can"></mat-icon>
-            </button>
-          </div>
-          <div class="cell cell-one center-self">
-            {{ move.moveNumber }}
-          </div>
-          <div class="cell cell-eight center-self">
-            {{ move.description }}
-          </div>
-        </mat-expansion-panel-header>
-      }
-    </mat-expansion-panel>
+  <mat-expansion-panel [disabled]="true">
+    @if (!isLoading) {
+    <mat-expansion-panel-header class="row">
+      <div class="cell cell-two">
+        <button mat-icon-button (click)="addOrEditMove(move); $event.stopPropagation()" style="outline: none;"
+          title="Edit Move">
+          <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+        </button>
+        <button mat-icon-button (click)="deleteMoveRequest(move); $event.stopPropagation()" title="Delete Move"
+          [disabled]="!canEdit">
+          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can-outline"></mat-icon>
+        </button>
+      </div>
+      <div class="cell cell-one center-self">
+        {{ move.moveNumber }}
+      </div>
+      <div class="cell cell-eight center-self">
+        {{ move.description }}
+      </div>
+    </mat-expansion-panel-header>
+    }
+  </mat-expansion-panel>
   }
 </mat-accordion>
 
 @if (isLoading) {
-  <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
-    <mat-progress-spinner color="primary" mode="indeterminate">
-    </mat-progress-spinner>
-  </mat-card>
+<mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
+  <mat-progress-spinner color="primary" mode="indeterminate">
+  </mat-progress-spinner>
+</mat-card>
 }

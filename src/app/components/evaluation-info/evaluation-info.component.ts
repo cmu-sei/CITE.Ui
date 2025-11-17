@@ -104,7 +104,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   sortedMoveList() {
-    return this.moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
+    return this.moveList ? this.moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1) : [];
   }
 
   getMinMoveNumber() {

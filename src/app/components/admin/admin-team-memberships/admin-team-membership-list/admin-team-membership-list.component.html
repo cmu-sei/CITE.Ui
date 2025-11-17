@@ -40,8 +40,9 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let model">
-        <button mat-flat-button color="primary" (click)="add(model.id, model.type)">
-          Add
+        <button mat-icon-button matTooltip="Add {{ model.name }}" (click)="add(model.id, model.type)"
+          [disabled]="!canEdit">
+          <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline"></mat-icon>
         </button>
       </td>
     </ng-container>

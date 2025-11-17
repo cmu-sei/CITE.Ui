@@ -88,16 +88,11 @@ export class AppComponent implements OnDestroy {
       }
       this.setTheme(theme);
     });
-    this.activatedRoute.queryParamMap
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((params) => {
-        const theme = params.get('theme');
-
-        if (theme != null) {
-          this.paramTheme = theme === Theme.DARK ? Theme.DARK : Theme.LIGHT;
-          this.authService.setUserTheme(this.paramTheme);
-        }
-      });
+    this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
+      const theme = params.get('theme');
+      this.paramTheme = theme === Theme.DARK ? Theme.DARK : Theme.LIGHT;
+      this.authService.setUserTheme(this.paramTheme);
+    });
   }
 
   registerIcons(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
@@ -367,15 +362,9 @@ export class AppComponent implements OnDestroy {
     const classList = this.overlayContainer.getContainerElement().classList;
     switch (theme) {
       case Theme.LIGHT:
-        // this.componentCssClass = theme;
-        // classList.add(theme);
-        // classList.remove(Theme.DARK);
         document.body.classList.toggle('darkMode', false);
         break;
       case Theme.DARK:
-        // this.componentCssClass = theme;
-        // classList.add(theme);
-        // classList.remove(Theme.LIGHT);
         document.body.classList.toggle('darkMode', true);
     }
   }

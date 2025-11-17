@@ -2,12 +2,20 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
-.move-container {
+:host {
+  @include mat.form-field-density(-5); // Adjust -3 for this specific form field
+}
+
+.sub-panel {
   width: 90%;
   margin-left: 5%;
   min-width: 700px;
+}
+
+.bottom-space {
+  margin-bottom: 20px;
 }
 
 .search-field {
@@ -35,7 +43,6 @@
 
 .cell,
 .header-cell {
-  flex: 1;
   overflow: hidden;
   word-wrap: break-word;
 }
@@ -56,10 +63,6 @@
 
 .mat-mdc-select {
   width: 100px;
-}
-
-.bottom-space {
-  margin-bottom: 20px;
 }
 
 .nator-div {

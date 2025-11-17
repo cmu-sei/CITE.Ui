@@ -22,56 +22,56 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   <div class="button-end">
     <mat-paginator #paginator [length]="teamTypeList?.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
+      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
   </div>
 </div>
 
 <mat-accordion displayMode="flat" class="table">
-    <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
-      <div class="header-cell button-cell"><span style="margin-left: 40px;"></span></div>
-      <div class="header-cell name-cell" mat-sort-header="name"><span>TeamType</span></div>
-      <div class="header-cell flag-cell" mat-sort-header="isOfficialScoreContributor">Is Official Score Contributor</div>
-      <div class="header-cell flag-cell" mat-sort-header="showTeamTypeAverage">Show TeamType Average</div>
-    </section>
+  <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
+    <div class="header-cell button-cell"><span style="margin-left: 40px;"></span></div>
+    <div class="header-cell name-cell" mat-sort-header="name"><span>TeamType</span></div>
+    <div class="header-cell flag-cell" mat-sort-header="isOfficialScoreContributor">Is Official Score Contributor</div>
+    <div class="header-cell flag-cell" mat-sort-header="showTeamTypeAverage">Show TeamType Average</div>
+  </section>
 
-    @for (teamType of paginateTeamtypes(); track teamType.id) {
-      <mat-expansion-panel [disabled]="true">
-        @if (!isLoading) {
-          <mat-expansion-panel-header class="row">
-            <span class="cell button-cell">
-              <button mat-icon-button (click)="addOrEditTeamType(teamType); $event.stopPropagation()" style="outline: none;"
-                title="Edit Evaluation" [disabled]="!canEdit">
-                <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
-              </button>
-              <button mat-icon-button (click)="deleteTeamTypeRequest(teamType); $event.stopPropagation()"
-                style="outline: none;" title="Delete Evaluation" [disabled]="!canEdit">
-                <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can"></mat-icon>
-              </button>
-            </span>
-            <span class="cell name-cell">
-              {{ teamType.name }}
-            </span>
-            <span class="cell flag-cell center-self">
-              <div class="cssLayoutRowStartCenter center-self">
-                <mat-checkbox class="checkbox-div" [checked]="teamType.isOfficialScoreContributor" [disabled]="!canEdit"
-                (change)="toggleIsOfficialScoreContributor(teamType)" style="margin-right: 20px;"></mat-checkbox>
-              </div>
-            </span>
-            <span class="cell flag-cell center-self">
-              <div class="cssLayoutRowStartCenter center-self">
-                <mat-checkbox class="checkbox-div" [checked]="teamType.showTeamTypeAverage" [disabled]="!canEdit"
-                (change)="toggleShowTeamTypeAverage(teamType)" style="margin-right: 20px;"></mat-checkbox>
-              </div>
-            </span>
-          </mat-expansion-panel-header>
-        }
-      </mat-expansion-panel>
+  @for (teamType of paginateTeamtypes(); track teamType.id) {
+  <mat-expansion-panel [disabled]="true">
+    @if (!isLoading) {
+    <mat-expansion-panel-header class="row">
+      <span class="cell button-cell">
+        <button mat-icon-button (click)="addOrEditTeamType(teamType); $event.stopPropagation()" style="outline: none;"
+          title="Edit Evaluation" [disabled]="!canEdit">
+          <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+        </button>
+        <button mat-icon-button (click)="deleteTeamTypeRequest(teamType); $event.stopPropagation()"
+          style="outline: none;" title="Delete Evaluation" [disabled]="!canEdit">
+          <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can-outline"></mat-icon>
+        </button>
+      </span>
+      <span class="cell name-cell">
+        {{ teamType.name }}
+      </span>
+      <span class="cell flag-cell center-self">
+        <div class="cssLayoutRowStartCenter center-self">
+          <mat-checkbox class="checkbox-div" [checked]="teamType.isOfficialScoreContributor" [disabled]="!canEdit"
+            (change)="toggleIsOfficialScoreContributor(teamType)" style="margin-right: 20px;"></mat-checkbox>
+        </div>
+      </span>
+      <span class="cell flag-cell center-self">
+        <div class="cssLayoutRowStartCenter center-self">
+          <mat-checkbox class="checkbox-div" [checked]="teamType.showTeamTypeAverage" [disabled]="!canEdit"
+            (change)="toggleShowTeamTypeAverage(teamType)" style="margin-right: 20px;"></mat-checkbox>
+        </div>
+      </span>
+    </mat-expansion-panel-header>
     }
-  </mat-accordion>
-
-  @if (isLoading) {
-    <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
-      <mat-progress-spinner color="primary" mode="indeterminate">
-      </mat-progress-spinner>
-    </mat-card>
+  </mat-expansion-panel>
   }
+</mat-accordion>
+
+@if (isLoading) {
+<mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
+  <mat-progress-spinner color="primary" mode="indeterminate">
+  </mat-progress-spinner>
+</mat-card>
+}
