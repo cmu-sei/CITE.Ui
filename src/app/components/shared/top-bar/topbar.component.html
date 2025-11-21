@@ -18,7 +18,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     @if (teams.length > 1) {
     <div>
       <button mat-button [matMenuTriggerFor]="teamMenu" style="outline: none;">
-        <mat-icon class="icon-color" svgIcon="ic_expand_more"></mat-icon>
+        <mat-icon class="icon-color" fontIcon="mdi-chevron-down"></mat-icon>
       </button>
       <mat-menu #teamMenu="matMenu" [overlapTrigger]="false">
         @for (val of teams; track val) {
@@ -35,7 +35,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="options-text">
       <button mat-button class="menu-trigger" [matMenuTriggerFor]="menu" style="outline: none;">
         <strong>{{ currentUser.name }}</strong>
-        <mat-icon aria-hidden="false" class="icon-color" svgIcon="ic_expand_more"></mat-icon>
+        <mat-icon aria-hidden="false" class="icon-color" fontIcon="mdi-chevron-down"></mat-icon>
       </button>
       <mat-menu #menu="matMenu" [overlapTrigger]="false">
         <button mat-menu-item (click)="logout()">Logout</button>
