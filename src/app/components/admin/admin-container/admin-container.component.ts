@@ -110,8 +110,8 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.showSection$ = activatedRoute.queryParamMap.pipe(
       tap(
         (params) =>
-          (this.displayedSection =
-            params.get('section') || this.evaluationsText)
+        (this.displayedSection =
+          params.get('section') || this.evaluationsText)
       ),
       map((params) => params.get('section') || this.evaluationsText)
     );
@@ -134,7 +134,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
       : this.topbarTextColor;
     const appTitle =
       this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
-    titleService.setTitle(appTitle);
+    titleService.setTitle(appTitle + ' Admin');
     this.topbarText =
       this.settingsService.settings.AppTopBarText || this.topbarText;
     this.getApiVersion();
@@ -187,14 +187,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
       return 'selected-item';
     } else {
       return 'non-selected-item';
-    }
-  }
-
-  isSelectedClass(section: string): boolean {
-    if (section === this.displayedSection) {
-      return true;
-    } else {
-      return false;
     }
   }
 

@@ -7,62 +7,45 @@ project root for license information or contact permission@sei.cmu.edu for full 
   [style.color]="topbarTextColor ? topbarTextColor : null">
   <mat-toolbar-row>
     <span class="margin-auto">
-      @if (sidenav && sidenav?.opened) {
-        <button class="menu-trigger" (click)="sidenavToggleFn()" mat-icon-button
-          matTooltip="Close Sidebar">
-          <mat-icon svgIcon="ic_chevron_left"></mat-icon>
-        </button>
-      }
-      @if (sidenav && !sidenav?.opened) {
-        <button class="menu-trigger" (click)="sidenavToggleFn()" mat-icon-button
-          matTooltip="Open Sidebar">
-          <mat-icon svgIcon="ic_chevron_right"></mat-icon>
-        </button>
-      }
       @if (!!imageFilePath) {
-        <img class="no-sidenav" [src]="imageFilePath" title="Home" (click)="goToUrl('/')" />
+      <img class="no-sidenav" [src]="imageFilePath" title="Home" (click)="goToUrl('/')" />
       }
     </span>
     <span class="view-text">{{ title }}</span>
     @if (teams && team && teams.length > 0) {
-      <div class="team-text">Team:</div>
-      <b class="team-text">{{ team.name }}</b>
-      @if (teams.length > 1) {
-        <div>
-          <button mat-button [matMenuTriggerFor]="teamMenu" style="outline: none;">
-            <mat-icon class="icon-color" svgIcon="ic_expand_more"></mat-icon>
-          </button>
-          <mat-menu #teamMenu="matMenu" [overlapTrigger]="false">
-            @for (val of teams; track val) {
-              <button mat-menu-item (click)="setTeamFn(val.id)">
-                {{ val.name }}
-              </button>
-            }
-          </mat-menu>
-        </div>
-      }
+    <div class="team-text">Team:</div>
+    <b class="team-text">{{ team.name }}</b>
+    @if (teams.length > 1) {
+    <div>
+      <button mat-button [matMenuTriggerFor]="teamMenu" style="outline: none;">
+        <mat-icon class="icon-color" svgIcon="ic_expand_more"></mat-icon>
+      </button>
+      <mat-menu #teamMenu="matMenu" [overlapTrigger]="false">
+        @for (val of teams; track val) {
+        <button mat-menu-item (click)="setTeamFn(val.id)">
+          {{ val.name }}
+        </button>
+        }
+      </mat-menu>
+    </div>
+    }
     }
     <span class="spacer"></span>
     @if (currentUser$ | async; as currentUser) {
-      <div class="options-text">
-        <button
-          mat-button
-          class="menu-trigger"
-          [matMenuTriggerFor]="menu"
-          style="outline: none;"
-        >
-          <strong>{{ currentUser.name }}</strong>
-          <mat-icon aria-hidden="false" class="icon-color" svgIcon="ic_expand_more"></mat-icon>
-        </button>
-        <mat-menu #menu="matMenu" [overlapTrigger]="false">
-          <button mat-menu-item (click)="logout()">Logout</button>
-          <mat-slide-toggle class="mat-menu-item" color="primary"
-            [checked]="(theme$ | async) === 'dark-theme' ? true : false" (click)="$event.stopPropagation()"
-            (change)="themeFn($event)">
-            Dark Theme
-          </mat-slide-toggle>
-        </mat-menu>
-      </div>
+    <div class="options-text">
+      <button mat-button class="menu-trigger" [matMenuTriggerFor]="menu" style="outline: none;">
+        <strong>{{ currentUser.name }}</strong>
+        <mat-icon aria-hidden="false" class="icon-color" svgIcon="ic_expand_more"></mat-icon>
+      </button>
+      <mat-menu #menu="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item (click)="logout()">Logout</button>
+        <mat-slide-toggle class="mat-menu-item" color="primary"
+          [checked]="(theme$ | async) === 'dark-theme' ? true : false" (click)="$event.stopPropagation()"
+          (change)="themeFn($event)">
+          Dark Theme
+        </mat-slide-toggle>
+      </mat-menu>
+    </div>
     }
   </mat-toolbar-row>
 </mat-toolbar>
