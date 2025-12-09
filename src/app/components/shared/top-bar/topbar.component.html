@@ -7,9 +7,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
   [style.color]="topbarTextColor ? topbarTextColor : null">
   <mat-toolbar-row>
     <span class="margin-auto">
-      @if (!!imageFilePath) {
-      <img class="no-sidenav" [src]="imageFilePath" title="Home" (click)="goToUrl('/')" />
-      }
+      <button mat-icon-button style="outline: none;" (click)="goToUrl('/')" title="Home">
+        <mat-icon svgIcon="crucible-icon-cite"></mat-icon>
+      </button>
     </span>
     <span class="view-text">{{ title }}</span>
     @if (teams && team && teams.length > 0) {
