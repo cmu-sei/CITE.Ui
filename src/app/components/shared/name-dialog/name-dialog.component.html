@@ -4,16 +4,11 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
 -->
 
 <h1 mat-dialog-title>{{ title }}</h1>
-<div style="font-family: 'open_sansregular', sans-serif">{{ message }}</div>
+<div>{{ message }}</div>
 
 <form [formGroup]="form" class="name-form">
   <mat-form-field class="form-full-width">
-    <input
-      formControlName="name"
-      matInput
-      placeholder="Name"
-      autocomplete="off"
-    />
+    <input formControlName="name" matInput placeholder="Name" autocomplete="off" />
 
     <mat-error *ngIf="name.invalid && (name.dirty || name.touched)">
       <ng-container *ngFor="let validator of validators">
@@ -26,13 +21,8 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
 </form>
 
 <mat-dialog-actions fxLayout="row" fxLayoutAlign="space-around center">
-  <button
-    mat-stroked-button
-    hotkeyAction="ENTER"
-    (click)="onClick()"
-    [disabled]="!form.valid || !form.dirty"
-    tabindex="3"
-  >
+  <button mat-stroked-button hotkeyAction="ENTER" (click)="onClick()" [disabled]="!form.valid || !form.dirty"
+    tabindex="3">
     Save
   </button>
   <button mat-stroked-button (click)="onCancel()" tabindex="3">Cancel</button>

@@ -43,7 +43,6 @@
   padding-bottom: 10px;
   padding-left: 20px;
   padding-right: 20px;
-  font-family: "Open Sans", sans-serif;
   width: 100%;
   @include mat.elevation(2);
 }
@@ -59,7 +58,6 @@
   justify-content: flex-start;
   align-items: flex-start;
   text-align: left;
-  font-family: "Open Sans", sans-serif;
 }
 
 .end-item {

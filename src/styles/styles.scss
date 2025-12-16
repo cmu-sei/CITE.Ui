@@ -39,6 +39,7 @@ html {
 
 .darkMode {
   @include mat.theme((color: (primary: theme.$primary-palette,
+        typography: '"Open Sans", sans-serif',
         theme-type: dark,
       ),
     ),
@@ -53,6 +54,10 @@ html {
 
 :root {
   @include mat.icon-button-overrides((icon-color: var(--mat-sys-primary)));
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
 }
 
 // classes for icon sizing
