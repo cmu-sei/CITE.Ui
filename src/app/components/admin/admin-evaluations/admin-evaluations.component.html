@@ -80,13 +80,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <button aria-label="Decrement Current Move" mat-icon-button
           [disabled]="!canEdit(evaluation) || evaluation.currentMoveNumber <= getLowestMoveNumber(evaluation) || !canManageEvaluation(evaluation.id)"
           (click)="decrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Decrement Move">
-          <mat-icon svgIcon="ic_chevron_left"></mat-icon>
+          <mat-icon fontIcon="mdi-chevron-left"></mat-icon>
         </button>
         {{ evaluation.currentMoveNumber }}
         <button aria-label="Increment Current Move" mat-icon-button
           [disabled]="!canEdit(evaluation) || evaluation.currentMoveNumber >= getHighestMoveNumber(evaluation) || !canManageEvaluation(evaluation.id)"
           (click)="incrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Increment Move">
-          <mat-icon svgIcon="ic_chevron_right"></mat-icon>
+          <mat-icon fontIcon="mdi-chevron-right"></mat-icon>
         </button>
       </div>
       <div class="cell one-cell center-self">
