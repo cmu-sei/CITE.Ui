@@ -62,7 +62,7 @@
     "@angular-eslint/eslint-plugin-template": "20.6.0",
     "@angular-eslint/schematics": "20.6.0",
     "@angular-eslint/template-parser": "20.6.0",
-    "@angular/cli": "^20.3.11",
+    "@angular/cli": "^21.1.0",
     "@angular/compiler-cli": "^20.3.15",
     "@angular/language-service": "^20.3.15",
     "@openapitools/openapi-generator-cli": "1.0.18-3.2.0",
