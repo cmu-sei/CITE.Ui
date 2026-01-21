@@ -8,8 +8,8 @@
     "test": "ng test",
     "lint": "eslint -c .eslintrc.js --ext .ts src/",
     "e2e": "ng e2e",
-    "swagger:gen": "curl --insecure http://localhost:4720/swagger/v1/swagger.json --output swagger.json && node_modules/@openapitools/openapi-generator-cli/bin/openapi-generator generate -i ./swagger.json -g typescript-angular -o src/app/generated/cite.api --additional-properties ngVersion=20 --additional-properties useRxJS6=true --additional-properties modelPropertyNaming=original --type-mappings=DateTime=Date --skip-validate-spec",
-    "swagger:gen-docker": "docker run --rm -v %CD%:/local openapitools/openapi-generator-cli:v7.15.0 generate -i http://host.docker.internal:4720/swagger/v1/swagger.json -g typescript-angular -o /local/src/app/generated/cite.api --additional-properties ngVersion=20 --additional-properties useRxJS6=true --additional-properties modelPropertyNaming=original --type-mappings=DateTime=Date --skip-validate-spec",
+    "swagger:gen": "curl --insecure http://localhost:4720/swagger/v1/swagger.json --output swagger.json && node_modules/@openapitools/openapi-generator-cli/bin/openapi-generator generate -i ./swagger.json -g typescript-angular -o src/app/generated/cite.api --additional-properties ngVersion=21 --additional-properties useRxJS6=true --additional-properties modelPropertyNaming=original --type-mappings=DateTime=Date --skip-validate-spec",
+    "swagger:gen-docker": "docker run --rm -v %CD%:/local openapitools/openapi-generator-cli:v7.15.0 generate -i http://host.docker.internal:4720/swagger/v1/swagger.json -g typescript-angular -o /local/src/app/generated/cite.api --additional-properties ngVersion=21 --additional-properties useRxJS6=true --additional-properties modelPropertyNaming=original --type-mappings=DateTime=Date --skip-validate-spec",
     "docker:init": "docker network create identity --driver=overlay",
     "docker:stack": "npm run docker:stack:identity && npm run docker:stack:api",
     "docker:stack:api": "docker stack deploy -c docker-compose.yml -c docker/compose/api.yml cite_stack",
@@ -18,15 +18,15 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^20.3.16",
-    "@angular/cdk": "^20.2.14",
-    "@angular/common": "^20.3.16",
-    "@angular/compiler": "^20.3.16",
-    "@angular/core": "^20.3.16",
-    "@angular/forms": "^20.3.16",
-    "@angular/material": "^20.2.14",
-    "@angular/platform-browser": "^20.3.16",
-    "@angular/router": "^20.3.16",
+    "@angular/animations": "^21.1.0",
+    "@angular/cdk": "^21.1.0",
+    "@angular/common": "^21.1.0",
+    "@angular/compiler": "^21.1.0",
+    "@angular/core": "^21.1.0",
+    "@angular/forms": "^21.1.0",
+    "@angular/material": "^21.1.0",
+    "@angular/platform-browser": "^21.1.0",
+    "@angular/router": "^21.1.0",
     "@cmusei/crucible-common": "^0.3.0",
     "@datorama/akita": "^8.0.0",
     "@datorama/akita-ng-router-store": "^7.0.0",
@@ -53,18 +53,18 @@
     "rxjs": "^7.8.1",
     "rxjs-compat": "^6.6.7",
     "tslib": "^2.2.0",
-    "zone.js": "~0.15.1"
+    "zone.js": "~0.16.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^20.3.15",
-    "@angular-eslint/builder": "20.6.0",
-    "@angular-eslint/eslint-plugin": "20.6.0",
-    "@angular-eslint/eslint-plugin-template": "20.6.0",
-    "@angular-eslint/schematics": "20.6.0",
-    "@angular-eslint/template-parser": "20.6.0",
-    "@angular/cli": "^20.3.15",
-    "@angular/compiler-cli": "^20.3.16",
-    "@angular/language-service": "^20.3.16",
+    "@angular-devkit/build-angular": "^21.1.0",
+    "@angular-eslint/builder": "21.1.0",
+    "@angular-eslint/eslint-plugin": "21.1.0",
+    "@angular-eslint/eslint-plugin-template": "21.1.0",
+    "@angular-eslint/schematics": "21.1.0",
+    "@angular-eslint/template-parser": "21.1.0",
+    "@angular/cli": "^21.1.0",
+    "@angular/compiler-cli": "^21.1.0",
+    "@angular/language-service": "^21.1.0",
     "@openapitools/openapi-generator-cli": "1.0.18-3.2.0",
     "@types/jasmine": "~3.7.8",
     "@types/jasminewd2": "~2.0.9",
@@ -79,6 +79,26 @@
     "typescript": "~5.9.3"
   },
   "overrides": {
-    "memfs": "4.17.1"
+    "memfs": "4.17.1",
+    "@ngxmc/datetime-picker": {
+      "@angular/cdk": "$@angular/cdk",
+      "@angular/common": "$@angular/common",
+      "@angular/core": "$@angular/core",
+      "@angular/forms": "$@angular/forms",
+      "@angular/material": "$@angular/material",
+      "@angular/platform-browser": "$@angular/platform-browser"
+    },
+    "@datorama/akita": {
+      "tslib": "$tslib",
+      "rxjs": "$rxjs"
+    },
+    "@datorama/akita-ng-router-store": {
+      "tslib": "$tslib",
+      "rxjs": "$rxjs"
+    },
+    "@datorama/akita-ngdevtools": {
+      "tslib": "$tslib",
+      "rxjs": "$rxjs"
+    }
   }
 }
