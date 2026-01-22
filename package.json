@@ -43,7 +43,7 @@
     "core-js": "^3.14.0",
     "glob-parent": "^6.0.1",
     "ini": "^3.0.1",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "luxon": "^1.28.1",
     "material-design-icons": "^3.0.1",
     "minimatch": "^4.0.0",
