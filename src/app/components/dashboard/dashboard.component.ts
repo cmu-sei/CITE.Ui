@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -91,6 +91,9 @@ export class DashboardComponent implements OnDestroy {
   loggedInUserId = '';
   showPermissions = false;
   showDuties = false;
+  canManageTeam = false;
+  canSubmitTeamScore = false;
+  canContributeToTeamScore = false;
 
   constructor(
     private actionDataService: ActionDataService,
@@ -111,7 +114,8 @@ export class DashboardComponent implements OnDestroy {
     private userDataService: UserDataService,
     private userQuery: UserQuery,
     private permissionDataService: PermissionDataService,
-    private settingsService: ComnSettingsService
+    private settingsService: ComnSettingsService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.titleService.setTitle('CITE Dashboard');
     //observe the current user
@@ -175,6 +179,7 @@ export class DashboardComponent implements OnDestroy {
           this.activeTeamId = active.id;
           // load the team data for this team
           this.loadTeamData();
+          this.updatePermissions();
         }
       });
     // observe the Action list
@@ -446,7 +451,7 @@ export class DashboardComponent implements OnDestroy {
       width: '800px',
       data: {
         duty: duty,
-        canEdit: this.canManage()
+        canEdit: this.canManageTeam
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -524,16 +529,11 @@ export class DashboardComponent implements OnDestroy {
     this.teamMembershipDataService.editMembership(teamMembership);
   }
 
-  canManage(): boolean {
-    return this.permissionDataService.canManageTeam(this.activeTeamId);
-  }
-
-  canSubmit(): boolean {
-    return this.canManage() || this.permissionDataService.canSubmitTeamScore(this.activeTeamId);
-  }
-
-  canContribute(): boolean {
-    return this.canSubmit() || this.permissionDataService.canEditTeamScore(this.activeTeamId);
+  updatePermissions() {
+    this.canManageTeam = this.permissionDataService.canManageTeam(this.activeTeamId);
+    this.canSubmitTeamScore = this.canManageTeam || this.permissionDataService.canSubmitTeamScore(this.activeTeamId);
+    this.canContributeToTeamScore = this.canSubmitTeamScore || this.permissionDataService.canEditTeamScore(this.activeTeamId);
+    this.changeDetectorRef.detectChanges();
   }
 
   ngOnDestroy() {
