@@ -3,7 +3,7 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import {
@@ -16,7 +16,8 @@ import { ConfirmDialogService } from 'src/app/components/shared/confirm-dialog/s
 import { SystemRolesModel } from './admin-system-roles.models';
 import { map, take } from 'rxjs/operators';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { NameDialogComponent } from 'src/app/components/shared/name-dialog/name-dialog.component';
 import { SignalRService } from 'src/app/services/signalr.service';
 
@@ -28,16 +29,16 @@ const NAME_VALUE = 'nameValue';
   styleUrls: ['./admin-system-roles.component.scss'],
   standalone: false
 })
-export class AdminSystemRolesComponent implements OnInit {
+export class AdminSystemRolesComponent implements OnInit, OnDestroy {
   private roleService = inject(RoleDataService);
   private dialog = inject(MatDialog);
   private confirmService = inject(ConfirmDialogService);
   private permissionDataService = inject(PermissionDataService);
   private signalRService = inject(SignalRService);
+  private changeDetectorRef = inject(ChangeDetectorRef);
+  private unsubscribe$ = new Subject();
 
-  public canEdit = this.permissionDataService.hasPermission(
-    SystemPermission.ManageRoles
-  );
+  public canEdit = false;
 
   public allPermission = 'All';
 
@@ -70,6 +71,15 @@ export class AdminSystemRolesComponent implements OnInit {
 
   ngOnInit(): void {
     this.roleService.getRoles().subscribe();
+    this.permissionDataService.load().pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+      this.canEdit = this.permissionDataService.hasPermission(SystemPermission.ManageRoles);
+      this.changeDetectorRef.detectChanges();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next(null);
+    this.unsubscribe$.complete();
   }
 
   trackById(index: number, item: any) {

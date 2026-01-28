@@ -1,6 +1,6 @@
 FROM node:24-alpine AS builder
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc ./
 
 # Storing node modules on a separate layer will prevent unnecessary npm install at each build
 RUN npm set progress=false && \

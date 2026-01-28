@@ -31,7 +31,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="right-cell">
           @if (!isActionEditMode) {
           <button mat-icon-button (click)="isActionEditMode = true" title="Edit Actions"
-            [disabled]="noChanges || !canManage()">
+            [disabled]="noChanges || !canManageTeam">
             <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline">
             </mat-icon>
           </button>
@@ -69,7 +69,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           @if (!isActionEditMode) {
           <mat-checkbox [checked]="action.isChecked" (change)="checkAction(action.id, $event.checked)"
             [matTooltip]="changedBy(action.id)"
-            [disabled]="noChanges || myTeamId !== activeTeamId || !canContribute()"></mat-checkbox>
+            [disabled]="noChanges || myTeamId !== activeTeamId || !canContributeToTeamScore"></mat-checkbox>
           }{{ action.description }}
         </div>
       </div>
@@ -105,7 +105,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="right-cell">
           @if (!isDutyEditMode) {
           <button mat-icon-button (click)="isDutyEditMode = true" title="Edit Duties"
-            [disabled]="noChanges || !canManage()">
+            [disabled]="noChanges || !canManageTeam">
             <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline">
             </mat-icon>
           </button>
@@ -140,7 +140,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <label>{{ duty.name }}</label>
         </div>
         <div class="five-cell center-self">
-          @if (!isDutyEditMode && canManage()) {
+          @if (!isDutyEditMode && canManageTeam) {
           <mat-select placeholder="Assign Users" [value]="duty.users" multiple (opened)="openDutyUsers(duty)"
             (selectionChange)="updateDutyUsers(duty.id, $event)" (closed)="closeDutyUsers(duty.id)"
             [disabled]="noChanges || myTeamId !== activeTeamId" title="Select a Team Member">
@@ -150,7 +150,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             }
           </mat-select>
           }
-          @if (isDutyEditMode || !canManage()) {
+          @if (isDutyEditMode || !canManageTeam) {
           <span>{{ getUserNames(duty.users) }}</span>
           }
         </div>
@@ -195,7 +195,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <mat-form-field class="button-margins full-width">
             <mat-label>Role</mat-label>
             <mat-select placeholder="Role" [(ngModel)]="teamMembership.roleId"
-              [disabled]="noChanges || !canManage() || teamMembership.userId === loggedInUserId">
+              [disabled]="noChanges || !canManageTeam || teamMembership.userId === loggedInUserId">
               @for (role of teamRoles; track role.id) {
               <mat-option [value]="role.id">
                 {{ role.name }}

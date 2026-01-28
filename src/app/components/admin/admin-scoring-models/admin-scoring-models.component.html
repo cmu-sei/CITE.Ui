@@ -46,7 +46,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <span class="header-cell one-cell" mat-sort-header="status">Status</span>
   </section>
 
-  @for (scoringModel of displayedScoringModels; track scoringModel) {
+  @for (scoringModel of displayedScoringModels; track scoringModel.id) {
   <mat-expansion-panel [expanded]="editScoringModel.id === scoringModel.id">
     @if (!isLoading) {
     <mat-expansion-panel-header class="row" (click)="togglePanel(scoringModel); $event.stopPropagation()">
