@@ -13,7 +13,7 @@
     "silent_redirect_uri": "http://localhost:4721/auth-callback-silent"
   },
   "AppTitle": "CITE",
-  "AppTopBarHexColor": "#E81717",
+  "AppTopBarHexColor": "#BB0000",
   "AppTopBarHexTextColor": "#FFFFFF",
   "AppTopBarText": "CITE - Collaborative Incident Threat Evaluator",
   "AppTopBarImage": "/assets/img/account-group-white.png",
