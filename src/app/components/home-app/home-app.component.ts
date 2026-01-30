@@ -81,8 +81,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   isSidebarOpen = true;
   private unsubscribe$ = new Subject();
   hideTopbar = false;
-  topbarColor = '#ef3a47';
-  topbarTextColor = '#FFFFFF';
   topbarImage = this.settingsService.settings.AppTopBarImage;
   TopbarView = TopbarView;
   theme$: Observable<Theme>;
@@ -167,12 +165,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.isSubmissionDataServiceLoading = isLoading;
     });
     // Set the display settings from config file
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
-    this.topbarTextColor = this.settingsService.settings.AppTopBarHexTextColor
-      ? this.settingsService.settings.AppTopBarHexTextColor
-      : this.topbarTextColor;
    }
 
   ngOnInit() {

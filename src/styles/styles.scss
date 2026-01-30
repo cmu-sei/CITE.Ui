@@ -35,6 +35,7 @@ html {
       calendar-date-selected-state-text-color: var(--mat-sys-primary),
       calendar-container-text-color: var(--mat-sys-on-background),
     ));
+  @include mat.icon-button-overrides((icon-color: var(--mat-sys-primary)));
 }
 
 .darkMode {
@@ -45,14 +46,13 @@ html {
     ),
     $overrides: ((background: #313131,
         surface: var(--mat-sys-background),
-        surface-variant: var(--mat-sys-background))));
+        surface-variant: var(--mat-sys-background),
+        icon: var(--mat-sys-primary),
+      )));
   @include mat.datepicker-overrides((calendar-container-background-color: var(--mat-sys-outline-variant),
       calendar-date-selected-state-text-color: var(--mat-sys-primary),
       calendar-container-text-color: var(--mat-sys-on-background),
     ));
-}
-
-:root {
   @include mat.icon-button-overrides((icon-color: var(--mat-sys-primary)));
 }
 
@@ -84,6 +84,27 @@ mat-paginator {
 
 .mat-form-field {
   color: var(--mat-sys-primary);
+}
+
+// Ensure mat-select dropdown panels match the mat-select background color
+.mat-mdc-select-panel {
+  background-color: var(--mat-sys-outline-variant) !important;
+}
+
+// Ensure mat-option elements match the mat-select background color
+.mat-mdc-option {
+  --mat-option-label-text-color: var(--mat-sys-on-background);
+  --mat-option-hover-state-layer-color: var(--mat-sys-outline);
+  --mat-option-focus-state-layer-color: var(--mat-sys-outline);
+  --mat-option-selected-state-layer-color: var(--mat-sys-outline);
+}
+
+.mat-mdc-option:not(.mat-mdc-option-disabled) {
+  background-color: var(--mat-sys-background);
+}
+
+.mat-mdc-option:hover:not(.mat-mdc-option-disabled) {
+  background-color: var(--mat-sys-surface-variant);
 }
 
 .twelve-cell {

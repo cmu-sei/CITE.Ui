@@ -62,8 +62,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   private unsubscribe$ = new Subject();
   hideTopbar = false;
   TopbarView = TopbarView;
-  topbarColor = '#ef3a47';
-  topbarTextColor = '#FFFFFF';
   topbarImage = this.settingsService.settings.AppTopBarImage;
   theme$: Observable<Theme>;
   uiVersion = environment.VERSION;
@@ -126,12 +124,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     // load and subscribe to TeamTypes
     this.teamTypeDataService.load();
     // Set the display settings from config file
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
-    this.topbarTextColor = this.settingsService.settings.AppTopBarHexTextColor
-      ? this.settingsService.settings.AppTopBarHexTextColor
-      : this.topbarTextColor;
     const appTitle =
       this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
     titleService.setTitle(appTitle + ' Admin');

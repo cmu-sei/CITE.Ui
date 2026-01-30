@@ -60,7 +60,6 @@ export class AdminUserListComponent implements OnInit, OnChanges {
   sortEvents$: Observable<Sort>;
   pageEvents$: Observable<PageEvent>;
   roles$ = this.roleDataService.roles$;
-  topbarColor = '#BB0000';
 
   @Input() users: User[];
   @Input() isLoading: boolean;

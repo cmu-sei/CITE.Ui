@@ -6,8 +6,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div class="app-events-container">
   @if (!hideTopbar) {
-  <app-topbar [title]="topbarText" [topbarView]="TopbarView.CITE_HOME" [topbarColor]="topbarColor"
-    [topbarTextColor]="topbarTextColor" [imageFilePath]="topbarImage"
+  <app-topbar [title]="topbarText" [topbarView]="TopbarView.CITE_HOME" [imageFilePath]="topbarImage"
     (urlNavigate)="topBarNavigate($event)"></app-topbar>
   }
 

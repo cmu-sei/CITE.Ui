@@ -7,7 +7,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 @if (!previewScoringModelId) {
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon">
-    <mat-icon class="mdi-24px" fontIcon="mdi-grid" [ngStyle]="{'color': topbarColor}"></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-grid" [ngStyle]="{'color': 'var(--mat-sys-primary)'}"></mat-icon>
   </div>
   <mat-form-field style="width: 300px; margin-left: 20px;">
     <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()" />

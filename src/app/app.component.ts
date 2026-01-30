@@ -7,9 +7,15 @@ import { Component, HostListener, OnDestroy } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ComnAuthQuery, ComnAuthService, Theme } from '@cmusei/crucible-common';
+import {
+  ComnAuthQuery,
+  ComnAuthService,
+  ComnSettingsService,
+  Theme,
+} from '@cmusei/crucible-common';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { DynamicThemeService } from './services/dynamic-theme.service';
 
 @Component({
   selector: 'app-root',
@@ -76,7 +82,9 @@ export class AppComponent implements OnDestroy {
     private authQuery: ComnAuthQuery,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private authService: ComnAuthService
+    private authService: ComnAuthService,
+    private themeService: DynamicThemeService,
+    private settingsService: ComnSettingsService
   ) {
     this.registerIcons(iconRegistry, sanitizer);
     this.theme$.pipe(takeUntil(this.unsubscribe$)).subscribe((theme) => {
@@ -90,8 +98,10 @@ export class AppComponent implements OnDestroy {
     });
     this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       const theme = params.get('theme');
-      this.paramTheme = theme === Theme.DARK ? Theme.DARK : Theme.LIGHT;
-      this.authService.setUserTheme(this.paramTheme);
+      if (theme) {
+        this.paramTheme = theme === Theme.DARK ? Theme.DARK : Theme.LIGHT;
+        this.authService.setUserTheme(this.paramTheme);
+      }
     });
   }
 
@@ -108,12 +118,18 @@ export class AppComponent implements OnDestroy {
 
   setTheme(theme: Theme) {
     const classList = this.overlayContainer.getContainerElement().classList;
+    const hexColor =
+      this.settingsService.settings.AppPrimaryThemeColor || '#E81717';
+
     switch (theme) {
       case Theme.LIGHT:
         document.body.classList.toggle('darkMode', false);
+        this.themeService.applyLightTheme(hexColor);
         break;
       case Theme.DARK:
         document.body.classList.toggle('darkMode', true);
+        this.themeService.applyDarkTheme(hexColor);
+        break;
     }
   }
   ngOnDestroy(): void {
