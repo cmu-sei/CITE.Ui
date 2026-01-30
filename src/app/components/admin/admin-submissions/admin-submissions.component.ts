@@ -80,9 +80,6 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
     public matDialog: MatDialog,
     private permissionDataService: PermissionDataService
   ) {
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
 
     this.evaluationQuery
       .selectAll()

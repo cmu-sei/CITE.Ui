@@ -80,9 +80,6 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public dialogService: DialogService
   ) {
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
       // observe the scoring models
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {
       this.scoringModels = scoringModels;

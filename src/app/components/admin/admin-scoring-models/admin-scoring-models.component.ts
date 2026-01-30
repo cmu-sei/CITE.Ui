@@ -83,9 +83,6 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     private router: Router,
     private permissionDataService: PermissionDataService
   ) {
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
     this.scoringModelDataService.load();
     // observe the scoring models
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {

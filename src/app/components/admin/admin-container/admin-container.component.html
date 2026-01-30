@@ -103,8 +103,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </mat-sidenav>
   <mat-sidenav-content>
     @if (!hideTopbar) {
-    <app-topbar [title]="showSection" [topbarView]="TopbarView.CITE_ADMIN" [topbarColor]="topbarColor"
-      [topbarTextColor]="topbarTextColor" [sidenav]="sidenav" (sidenavToggle)="sidenav.toggle()"></app-topbar>
+    <app-topbar [title]="showSection" [topbarView]="TopbarView.CITE_ADMIN" [sidenav]="sidenav" (sidenavToggle)="sidenav.toggle()"></app-topbar>
     }
     @if ((canViewScoringModels || canCreateScoringModels) && (showSection === scoringModelsText)) {
     <span>

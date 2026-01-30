@@ -26,7 +26,6 @@ export class AdminUsersComponent implements OnInit {
   canEdit = this.permissionDataService.hasPermission(
     SystemPermission.ManageUsers
   );
-  topbarColor;
 
   constructor(
     private userDataService: UserDataService,
@@ -41,7 +40,6 @@ export class AdminUsersComponent implements OnInit {
   ngOnInit() {
     this.users$ = this.userQuery.selectAll();
     this.isLoading$ = this.userQuery.selectLoading();
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor;
   }
 
   create(newUser: User) {

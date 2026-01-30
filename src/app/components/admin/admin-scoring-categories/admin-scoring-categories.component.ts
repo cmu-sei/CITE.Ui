@@ -55,9 +55,6 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public dialogService: DialogService
   ) {
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
     this.scoringCategoryQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringCategories => {
       this.scoringCategoryList = [];
       scoringCategories.sort((a, b) => +a.displayOrder < +b.displayOrder ? -1 : 1).forEach(scoringCategory => {

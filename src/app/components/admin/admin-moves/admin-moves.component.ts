@@ -41,9 +41,6 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private dialog: MatDialog
   ) {
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
     this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
       this.moveList = moves;
       this.sortedMoves = this.getSortedMoves(this.getFilteredMoves(this.moveList));

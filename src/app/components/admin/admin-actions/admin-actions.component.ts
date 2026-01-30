@@ -75,9 +75,6 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
     public dialogService: DialogService,
     public matDialog: MatDialog
   ) {
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
     this.evaluationQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))

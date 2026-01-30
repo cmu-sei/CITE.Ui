@@ -63,9 +63,6 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
     public matDialog: MatDialog,
     private activatedRoute: ActivatedRoute
   ) {
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
     this.teamQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
