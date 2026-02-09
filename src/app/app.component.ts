@@ -16,6 +16,7 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DynamicThemeService } from './services/dynamic-theme.service';
+import { FaviconService } from './services/favicon.service';
 
 @Component({
   selector: 'app-root',
@@ -84,7 +85,8 @@ export class AppComponent implements OnDestroy {
     private router: Router,
     private authService: ComnAuthService,
     private themeService: DynamicThemeService,
-    private settingsService: ComnSettingsService
+    private settingsService: ComnSettingsService,
+    private faviconService: FaviconService
   ) {
     this.registerIcons(iconRegistry, sanitizer);
     this.theme$.pipe(takeUntil(this.unsubscribe$)).subscribe((theme) => {
@@ -125,10 +127,12 @@ export class AppComponent implements OnDestroy {
       case Theme.LIGHT:
         document.body.classList.toggle('darkMode', false);
         this.themeService.applyLightTheme(hexColor);
+        this.faviconService.updateFavicon(hexColor);
         break;
       case Theme.DARK:
         document.body.classList.toggle('darkMode', true);
         this.themeService.applyDarkTheme(hexColor);
+        this.faviconService.updateFavicon(hexColor);
         break;
     }
   }

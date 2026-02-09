@@ -9,13 +9,12 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
   </div>
   <mat-form-field style="width: 300px">
     <input matInput [(ngModel)]="filterString" (keyup)="applyFilter($event.target.value)" placeholder="Search" />
-  </mat-form-field>
-  <div style="width: 30px">
-    <button fxLayoutAlign="start center" mat-icon-button (click)="applyFilter('')" style="outline: none"
-      title="Clear Search" [disabled]="!filterString">
-      <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+    @if (filterString) {
+    <button mat-icon-button matSuffix (click)="applyFilter('')" title="Clear Search">
+      <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline"></mat-icon>
     </button>
-  </div>
+    }
+  </mat-form-field>
   <div class="button-end">
     <mat-paginator #paginator [length]="totalRows$ | async" [pageIndex]="0" [pageSize]="20"
       [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"></mat-paginator>

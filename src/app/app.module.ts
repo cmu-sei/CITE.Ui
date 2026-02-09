@@ -129,6 +129,7 @@ import {
   NgxMatDatetimepicker,
 } from '@ngxmc/datetime-picker';
 import { DynamicThemeService } from './services/dynamic-theme.service';
+import { FaviconService } from './services/favicon.service';
 import { initializeTheme } from './services/theme-initializer.factory';
 
 
@@ -270,6 +271,7 @@ export function getBasePath(settingsSvc: ComnSettingsService)
     UserDataService,
     UIDataService,
     DynamicThemeService,
+    FaviconService,
     {
       provide: BASE_PATH,
       useFactory: getBasePath,
