@@ -6,7 +6,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon">
-    <mat-icon class="mdi-24px" fontIcon="mdi-account" [ngStyle]="{'color': topbarColor}"></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-account" [ngStyle]="{'color': 'var(--mat-sys-primary)'}"></mat-icon>
   </div>
   <button mat-icon-button (click)="addOrEditTeamType(null)" style="outline: none; margin-left: 20px;"
     title="Add TeamType" [disabled]="!canEdit">
@@ -14,12 +14,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </button>
   <mat-form-field style="width: 200px; margin-left: 10px;">
     <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter('')" />
-  </mat-form-field>
-  <div style="width: 30px;">
-    <button mat-icon-button (click)="clearFilter()" style="outline: none;" title="Clear Search">
-      <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+    @if (filterControl.value) {
+    <button mat-icon-button matSuffix (click)="clearFilter()" title="Clear Search">
+      <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline"></mat-icon>
     </button>
-  </div>
+    }
+  </mat-form-field>
   <div class="button-end">
     <mat-paginator #paginator [length]="teamTypeList?.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
       [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>

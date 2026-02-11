@@ -47,9 +47,6 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     private settingsService: ComnSettingsService,
     private permissionDataService: PermissionDataService
   ) {
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
     // subscribe to TeamTypes
     this.teamTypeQuery
       .selectAll()

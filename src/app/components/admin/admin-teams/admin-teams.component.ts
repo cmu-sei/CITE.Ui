@@ -65,9 +65,6 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
       this.teamList = teams ? teams : [];
       this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
     });
-    this.topbarColor = this.settingsService.settings.AppTopBarHexColor
-      ? this.settingsService.settings.AppTopBarHexColor
-      : this.topbarColor;
     this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
       this.userList = users;
     });

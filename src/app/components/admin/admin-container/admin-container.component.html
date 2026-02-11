@@ -9,7 +9,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-toolbar class="sidenav-header" title="Exit Administration" (click)="exitAdminPages()">
       <a class="nolink" (click)="exitAdminPages()">
         <div class="cssLayoutRowStartCenter">
-          <mat-icon class="icon-35px" svgIcon="crucible-icon-cite"></mat-icon>
+          <mat-icon class="icon-35px crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
           <h2 class="icon-text">CITE Admin</h2>
         </div>
       </a>
@@ -103,8 +103,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </mat-sidenav>
   <mat-sidenav-content>
     @if (!hideTopbar) {
-    <app-topbar [title]="showSection" [topbarView]="TopbarView.CITE_ADMIN" [topbarColor]="topbarColor"
-      [topbarTextColor]="topbarTextColor" [sidenav]="sidenav" (sidenavToggle)="sidenav.toggle()"></app-topbar>
+    <app-topbar [title]="showSection" [topbarView]="TopbarView.CITE_ADMIN" [sidenav]="sidenav"
+      (sidenavToggle)="sidenav.toggle()"></app-topbar>
     }
     @if ((canViewScoringModels || canCreateScoringModels) && (showSection === scoringModelsText)) {
     <span>

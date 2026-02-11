@@ -6,16 +6,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon">
-    <mat-icon class="mdi-24px" fontIcon="mdi-briefcase-outline" [ngStyle]="{'color': topbarColor}"></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-briefcase-outline" [ngStyle]="{'color': 'var(--mat-sys-primary)'}"></mat-icon>
   </div>
   <mat-form-field class="search-field">
     <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()" />
-  </mat-form-field>
-  <div style="width: 24px;">
-    <button mat-icon-button style="outline: none;" title="Clear Search" (click)="clearFilter()">
-      <mat-icon class="mdi-18px" fontIcon="mdi-close-circle-outline"></mat-icon>
+    @if (filterControl.value) {
+    <button mat-icon-button matSuffix (click)="clearFilter()" title="Clear Search">
+      <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline"></mat-icon>
     </button>
-  </div>
+    }
+  </mat-form-field>
   @if (!addingNewEvaluation) {
   <mat-form-field class="status-ff">
     <mat-label>Statuses</mat-label>

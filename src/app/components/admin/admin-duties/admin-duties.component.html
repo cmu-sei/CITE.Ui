@@ -7,7 +7,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <!-- Header -->
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon" style="margin-right: 10px;">
-    <mat-icon class="mdi-24px" fontIcon="mdi-clipboard-account-outline" [ngStyle]="{'color': topbarColor}"></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-clipboard-account-outline" [ngStyle]="{'color': 'var(--mat-sys-primary)'}"></mat-icon>
   </div>
   <button mat-icon-button (click)="addOrEditDuty(null)" style="outline: none; margin-left: 20px;" title="Add Duty"
     [disabled]="!selectedEvaluationId || !canEdit">

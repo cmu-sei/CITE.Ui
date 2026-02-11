@@ -7,16 +7,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
 @if (!previewScoringModelId) {
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon">
-    <mat-icon class="mdi-24px" fontIcon="mdi-grid" [ngStyle]="{'color': topbarColor}"></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-grid" [ngStyle]="{'color': 'var(--mat-sys-primary)'}"></mat-icon>
   </div>
   <mat-form-field style="width: 300px; margin-left: 20px;">
     <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()" />
-  </mat-form-field>
-  <div style="width: 30px;">
-    <button mat-icon-button style="outline: none;" title="Clear Search" (click)="clearFilter()">
-      <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+    @if (filterControl.value) {
+    <button mat-icon-button matSuffix (click)="clearFilter()" title="Clear Search">
+      <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline"></mat-icon>
     </button>
-  </div>
+    }
+  </mat-form-field>
   <div style="width: 150px; margin-left: 20px;">
     <mat-checkbox [(ngModel)]="showAll" (change)="applyFilter()">Show All</mat-checkbox>
   </div>
