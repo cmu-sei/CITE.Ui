@@ -36,6 +36,10 @@ html {
       calendar-container-text-color: var(--mat-sys-on-background),
     ));
   @include mat.icon-button-overrides((icon-color: var(--mat-sys-primary)));
+  @include mat.form-field-overrides((filled-container-color: transparent));
+
+  // Override to use exact primary color
+  --mat-sys-primary: #E81717;
 }
 
 .darkMode {
@@ -54,6 +58,10 @@ html {
       calendar-container-text-color: var(--mat-sys-on-background),
     ));
   @include mat.icon-button-overrides((icon-color: var(--mat-sys-primary)));
+  @include mat.form-field-overrides((filled-container-color: transparent));
+
+  // Override to use exact primary color
+  --mat-sys-primary: #E81717;
 }
 
 body {
@@ -84,6 +92,17 @@ mat-paginator {
 
 .mat-form-field {
   color: var(--mat-sys-primary);
+}
+
+// Make filled form fields transparent
+.mat-mdc-text-field-wrapper.mdc-text-field--filled {
+  --mdc-filled-text-field-container-color: transparent !important;
+  --mat-form-field-container-color: transparent !important;
+  background-color: transparent !important;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: transparent !important;
 }
 
 // Ensure mat-select dropdown panels match the mat-select background color

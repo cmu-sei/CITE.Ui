@@ -3,30 +3,32 @@
 
 import { Injectable } from '@angular/core';
 import {
-  themeFromSourceColor,
   argbFromHex,
   hexFromArgb,
-  Scheme,
+  Hct,
+  SchemeTonalSpot,
 } from '@material/material-color-utilities';
+import type { DynamicScheme } from '@material/material-color-utilities';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DynamicThemeService {
   /**
-   * Generates Material 3 theme from a hex color
-   * @param hexColor Source color in hex format (e.g., "#E81717")
-   * @returns Object containing light and dark theme schemes
+   * Generates Material 3 theme from a hex color using DynamicScheme
+   * @param hexColor Source color in hex format (e.g., "#008740")
+   * @returns Object containing light and dark DynamicScheme instances
    */
   generateThemeFromHex(hexColor: string): {
-    light: Scheme;
-    dark: Scheme;
+    light: DynamicScheme;
+    dark: DynamicScheme;
   } {
     const argb = argbFromHex(hexColor);
-    const theme = themeFromSourceColor(argb);
+    const sourceColorHct = Hct.fromInt(argb);
+
     return {
-      light: theme.schemes.light,
-      dark: theme.schemes.dark,
+      light: new SchemeTonalSpot(sourceColorHct, false, 0),
+      dark: new SchemeTonalSpot(sourceColorHct, true, 0),
     };
   }
 
@@ -36,8 +38,8 @@ export class DynamicThemeService {
    */
   applyThemeToDocument(hexColor: string): void {
     const { light, dark } = this.generateThemeFromHex(hexColor);
-    this.injectLightTheme(light);
-    this.injectDarkTheme(dark);
+    this.injectLightTheme(light, hexColor);
+    this.injectDarkTheme(dark, hexColor);
   }
 
   /**
@@ -46,7 +48,7 @@ export class DynamicThemeService {
    */
   applyLightTheme(hexColor: string): void {
     const { light } = this.generateThemeFromHex(hexColor);
-    this.injectLightTheme(light);
+    this.injectLightTheme(light, hexColor);
   }
 
   /**
@@ -55,15 +57,22 @@ export class DynamicThemeService {
    */
   applyDarkTheme(hexColor: string): void {
     const { dark } = this.generateThemeFromHex(hexColor);
-    this.injectDarkTheme(dark);
+    this.injectDarkTheme(dark, hexColor);
   }
 
   /**
    * Injects light theme CSS variables into :root
-   * @param scheme Material 3 light scheme
+   * @param scheme Material 3 light DynamicScheme
+   * @param exactPrimaryColor Optional exact hex color to use instead of Material 3 tone 40
    */
-  private injectLightTheme(scheme: Scheme): void {
+  private injectLightTheme(scheme: DynamicScheme, exactPrimaryColor?: string): void {
     const variables = this.buildCssVariables(scheme);
+
+    // Override primary color with exact value if provided
+    if (exactPrimaryColor) {
+      variables['--mat-sys-primary'] = exactPrimaryColor;
+    }
+
     Object.entries(variables).forEach(([prop, value]) => {
       document.documentElement.style.setProperty(prop, value);
     });
@@ -71,10 +80,16 @@ export class DynamicThemeService {
 
   /**
    * Injects dark theme CSS variables into body.darkMode
-   * @param scheme Material 3 dark scheme
+   * @param scheme Material 3 dark DynamicScheme
+   * @param exactPrimaryColor Optional exact hex color to use instead of Material 3 tone 80
    */
-  private injectDarkTheme(scheme: Scheme): void {
+  private injectDarkTheme(scheme: DynamicScheme, exactPrimaryColor?: string): void {
     const variables = this.buildCssVariables(scheme);
+
+    // Override primary color with exact value if provided
+    if (exactPrimaryColor) {
+      variables['--mat-sys-primary'] = exactPrimaryColor;
+    }
 
     // Create a style element for dark mode if it doesn't exist
     let styleElement = document.getElementById('dynamic-dark-theme');
@@ -93,17 +108,24 @@ export class DynamicThemeService {
   }
 
   /**
-   * Builds CSS variable object from Material 3 scheme
-   * @param scheme Material 3 color scheme
+   * Builds CSS variable object from Material 3 DynamicScheme
+   * @param scheme Material 3 DynamicScheme
    * @returns Object mapping CSS variable names to hex colors
    */
-  private buildCssVariables(scheme: Scheme): Record<string, string> {
+  private buildCssVariables(scheme: DynamicScheme): Record<string, string> {
     return {
       // Primary
       '--mat-sys-primary': hexFromArgb(scheme.primary),
       '--mat-sys-on-primary': hexFromArgb(scheme.onPrimary),
       '--mat-sys-primary-container': hexFromArgb(scheme.primaryContainer),
       '--mat-sys-on-primary-container': hexFromArgb(scheme.onPrimaryContainer),
+      '--mat-sys-inverse-primary': hexFromArgb(scheme.inversePrimary),
+
+      // Primary Fixed (for consistent colors across themes)
+      '--mat-sys-primary-fixed': hexFromArgb(scheme.primaryFixed),
+      '--mat-sys-primary-fixed-dim': hexFromArgb(scheme.primaryFixedDim),
+      '--mat-sys-on-primary-fixed': hexFromArgb(scheme.onPrimaryFixed),
+      '--mat-sys-on-primary-fixed-variant': hexFromArgb(scheme.onPrimaryFixedVariant),
 
       // Secondary
       '--mat-sys-secondary': hexFromArgb(scheme.secondary),
@@ -113,6 +135,12 @@ export class DynamicThemeService {
         scheme.onSecondaryContainer
       ),
 
+      // Secondary Fixed
+      '--mat-sys-secondary-fixed': hexFromArgb(scheme.secondaryFixed),
+      '--mat-sys-secondary-fixed-dim': hexFromArgb(scheme.secondaryFixedDim),
+      '--mat-sys-on-secondary-fixed': hexFromArgb(scheme.onSecondaryFixed),
+      '--mat-sys-on-secondary-fixed-variant': hexFromArgb(scheme.onSecondaryFixedVariant),
+
       // Tertiary
       '--mat-sys-tertiary': hexFromArgb(scheme.tertiary),
       '--mat-sys-on-tertiary': hexFromArgb(scheme.onTertiary),
@@ -120,6 +148,12 @@ export class DynamicThemeService {
       '--mat-sys-on-tertiary-container': hexFromArgb(
         scheme.onTertiaryContainer
       ),
+
+      // Tertiary Fixed
+      '--mat-sys-tertiary-fixed': hexFromArgb(scheme.tertiaryFixed),
+      '--mat-sys-tertiary-fixed-dim': hexFromArgb(scheme.tertiaryFixedDim),
+      '--mat-sys-on-tertiary-fixed': hexFromArgb(scheme.onTertiaryFixed),
+      '--mat-sys-on-tertiary-fixed-variant': hexFromArgb(scheme.onTertiaryFixedVariant),
 
       // Error
       '--mat-sys-error': hexFromArgb(scheme.error),
@@ -133,22 +167,31 @@ export class DynamicThemeService {
 
       // Surface
       '--mat-sys-surface': hexFromArgb(scheme.surface),
+      '--mat-sys-surface-dim': hexFromArgb(scheme.surfaceDim),
+      '--mat-sys-surface-bright': hexFromArgb(scheme.surfaceBright),
       '--mat-sys-on-surface': hexFromArgb(scheme.onSurface),
       '--mat-sys-surface-variant': hexFromArgb(scheme.surfaceVariant),
       '--mat-sys-on-surface-variant': hexFromArgb(scheme.onSurfaceVariant),
 
+      // Surface Containers
+      '--mat-sys-surface-container-lowest': hexFromArgb(scheme.surfaceContainerLowest),
+      '--mat-sys-surface-container-low': hexFromArgb(scheme.surfaceContainerLow),
+      '--mat-sys-surface-container': hexFromArgb(scheme.surfaceContainer),
+      '--mat-sys-surface-container-high': hexFromArgb(scheme.surfaceContainerHigh),
+      '--mat-sys-surface-container-highest': hexFromArgb(scheme.surfaceContainerHighest),
+
       // Inverse
       '--mat-sys-inverse-surface': hexFromArgb(scheme.inverseSurface),
       '--mat-sys-inverse-on-surface': hexFromArgb(scheme.inverseOnSurface),
-      '--mat-sys-inverse-primary': hexFromArgb(scheme.inversePrimary),
 
       // Outline
       '--mat-sys-outline': hexFromArgb(scheme.outline),
       '--mat-sys-outline-variant': hexFromArgb(scheme.outlineVariant),
 
-      // Shadow and Scrim
+      // Shadow, Scrim, and Tint
       '--mat-sys-shadow': hexFromArgb(scheme.shadow),
       '--mat-sys-scrim': hexFromArgb(scheme.scrim),
+      '--mat-sys-surface-tint': hexFromArgb(scheme.surfaceTint),
     };
   }
 }
