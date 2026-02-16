@@ -79,24 +79,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-icon class="mdi-24px" fontIcon="mdi-file-document-multiple-outline"></mat-icon>
     </button>
     }
-    @if (showAdminButton) {
-    <button aria-label="Show Administration Page" mat-icon-button [routerLink]="['/admin']"
-      [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}" style="outline: none;"
-      title="Administration">
-      <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
-    </button>
-    }
-</div>
-}
-@if (!selectedTeamId) {
-<div class="right-buttons">
-  @if (showAdminButton) {
-  <button aria-label="Show Administration Page" mat-icon-button [routerLink]="['/admin']"
-    [queryParams]="{evaluation: selectedEvaluationId, section: 'Evaluations'}" style="outline: none;"
-    title="Administration">
-    <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
-  </button>
-  }
 </div>
 }
 </div>

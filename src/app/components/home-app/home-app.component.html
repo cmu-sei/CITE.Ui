@@ -41,19 +41,18 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
     }
     @if (isAuthorizedUser && evaluationList.length > 0) {
-    <div class="content-under-topbar">
-      <div class="app-header-container">
-        <app-evaluation-info [showAdminButton]="canViewAdministration"
-          [showMoveArrows]="selectedSection === section.scoresheet" [teamList]="teamList$ | async"
-          [myTeamId]="myTeamId$ | async" [evaluationList]="evaluationList$ | async" [moveList]="moveList$ | async"
-          [scoresheetOnRight]="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
-          [noChanges]="noChanges$ | async" [selectedSection]="selectedSection"
-          (nextDisplayedMove)="nextDisplayedMove($event)" (previousDisplayedMove)="previousDisplayedMove($event)"
-          (nextEvaluationMove)="nextEvaluationMove($event)" (changeTeam)="changeTeam($event)"
-          (changeSection)="changeSection($event)"></app-evaluation-info>
+    @if (!selectedEvaluationId) {
+    <div class="top-row">
+        <div class="one-cell last-cell">
+          @if (canViewAdministration) {
+          <button aria-label="Show Administration Page" mat-icon-button [routerLink]="['/admin']"
+            [queryParams]="{section: 'Evaluations'}" style="outline: none;" title="Administration">
+            <mat-icon class="mdi-24px center-self" fontIcon="mdi-cog"></mat-icon>
+          </button>
+          }
+        </div>
       </div>
-      @if (!selectedEvaluationId) {
-      <div class="elevate evaluation-list-container">
+    <div class="elevate evaluation-list-container">
         <div class="icon-text-container">
           <mat-icon class="crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
           <span class="evaluation-title text">My Evaluations</span>
@@ -105,6 +104,19 @@ project root for license information or contact permission@sei.cmu.edu for full 
           No results found
         </div>
         }
+      </div>
+    }
+    <div class="content-under-topbar">
+      @if (selectedEvaluationId) {
+      <div class="app-header-container">
+        <app-evaluation-info [showAdminButton]="canViewAdministration"
+          [showMoveArrows]="selectedSection === section.scoresheet" [teamList]="teamList$ | async"
+          [myTeamId]="myTeamId$ | async" [evaluationList]="evaluationList$ | async" [moveList]="moveList$ | async"
+          [scoresheetOnRight]="(activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet'"
+          [noChanges]="noChanges$ | async" [selectedSection]="selectedSection"
+          (nextDisplayedMove)="nextDisplayedMove($event)" (previousDisplayedMove)="previousDisplayedMove($event)"
+          (nextEvaluationMove)="nextEvaluationMove($event)" (changeTeam)="changeTeam($event)"
+          (changeSection)="changeSection($event)"></app-evaluation-info>
       </div>
       }
       @if (selectedEvaluationId) {
