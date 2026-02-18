@@ -19,7 +19,8 @@
       "dom"
     ],
     "useDefineForClassFields": false,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true
   },
   "angularCompilerOptions": {
     "strictTemplates": true,

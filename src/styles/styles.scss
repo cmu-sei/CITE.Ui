@@ -25,21 +25,7 @@
 html {
   @include mat.theme((color: theme.$primary-palette,
       typography: '"Open Sans", sans-serif',
-    ),
-    $overrides: ((background: #f1f1f2,
-        surface: var(--mat-sys-background),
-        surface-variant: var(--mat-sys-background),
-        icon: var(--mat-sys-primary),
-      )));
-  @include mat.datepicker-overrides((calendar-container-background-color: var(--mat-sys-outline-variant),
-      calendar-date-selected-state-text-color: var(--mat-sys-primary),
-      calendar-container-text-color: var(--mat-sys-on-background),
     ));
-  @include mat.icon-button-overrides((icon-color: var(--mat-sys-primary)));
-  @include mat.form-field-overrides((filled-container-color: transparent));
-
-  // Override to use exact primary color
-  --mat-sys-primary: #E81717;
 }
 
 .darkMode {
@@ -47,21 +33,7 @@ html {
         typography: '"Open Sans", sans-serif',
         theme-type: dark,
       ),
-    ),
-    $overrides: ((background: #313131,
-        surface: var(--mat-sys-background),
-        surface-variant: var(--mat-sys-background),
-        icon: var(--mat-sys-primary),
-      )));
-  @include mat.datepicker-overrides((calendar-container-background-color: var(--mat-sys-outline-variant),
-      calendar-date-selected-state-text-color: var(--mat-sys-primary),
-      calendar-container-text-color: var(--mat-sys-on-background),
     ));
-  @include mat.icon-button-overrides((icon-color: var(--mat-sys-primary)));
-  @include mat.form-field-overrides((filled-container-color: transparent));
-
-  // Override to use exact primary color
-  --mat-sys-primary: #E81717;
 }
 
 body {
@@ -88,42 +60,6 @@ mat-paginator {
   --mat-form-field-outlined-hover-outline-color: transparent;
   --mat-form-field-outlined-focus-outline-color: transparent;
   min-width: 200px !important;
-}
-
-.mat-form-field {
-  color: var(--mat-sys-primary);
-}
-
-// Make filled form fields transparent
-.mat-mdc-text-field-wrapper.mdc-text-field--filled {
-  --mdc-filled-text-field-container-color: transparent !important;
-  --mat-form-field-container-color: transparent !important;
-  background-color: transparent !important;
-}
-
-.mdc-text-field--filled:not(.mdc-text-field--disabled) {
-  background-color: transparent !important;
-}
-
-// Ensure mat-select dropdown panels match the mat-select background color
-.mat-mdc-select-panel {
-  background-color: var(--mat-sys-outline-variant) !important;
-}
-
-// Ensure mat-option elements match the mat-select background color
-.mat-mdc-option {
-  --mat-option-label-text-color: var(--mat-sys-on-background);
-  --mat-option-hover-state-layer-color: var(--mat-sys-outline);
-  --mat-option-focus-state-layer-color: var(--mat-sys-outline);
-  --mat-option-selected-state-layer-color: var(--mat-sys-outline);
-}
-
-.mat-mdc-option:not(.mat-mdc-option-disabled) {
-  background-color: var(--mat-sys-background);
-}
-
-.mat-mdc-option:hover:not(.mat-mdc-option-disabled) {
-  background-color: var(--mat-sys-surface-variant);
 }
 
 .twelve-cell {
