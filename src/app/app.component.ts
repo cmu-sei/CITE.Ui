@@ -9,8 +9,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   ComnAuthQuery,
   ComnAuthService,
-  ComnDynamicThemeService,
-  ComnFaviconService,
   ComnSettingsService,
   Theme,
 } from '@cmusei/crucible-common';
@@ -82,9 +80,7 @@ export class AppComponent implements OnDestroy {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private authService: ComnAuthService,
-    private themeService: ComnDynamicThemeService,
     private settingsService: ComnSettingsService,
-    private faviconService: ComnFaviconService
   ) {
     this.registerIcons(iconRegistry, sanitizer);
     this.theme$.pipe(takeUntil(this.unsubscribe$)).subscribe((theme) => {
@@ -117,21 +113,25 @@ export class AppComponent implements OnDestroy {
   }
 
   setTheme(theme: Theme) {
-    const hexColor =
-      this.settingsService.settings.AppPrimaryThemeColor || '#E81717';
-
-    switch (theme) {
-      case Theme.LIGHT:
-        document.body.classList.toggle('darkMode', false);
-        this.themeService.applyLightTheme(hexColor);
-        this.faviconService.updateFavicon(hexColor);
-        break;
-      case Theme.DARK:
-        document.body.classList.toggle('darkMode', true);
-        this.themeService.applyDarkTheme(hexColor);
-        this.faviconService.updateFavicon(hexColor);
-        break;
+    document.body.classList.toggle('darkMode', theme === Theme.DARK);
+    const primaryColor = this.settingsService.settings?.AppPrimaryThemeColor || '#C41230';
+    if (primaryColor) {
+      document.documentElement.style.setProperty('--mat-sys-primary', primaryColor);
+      document.body.style.setProperty('--mat-sys-primary', primaryColor);
+      this.updateFavicon(primaryColor);
     }
+  }
+
+  private updateFavicon(color: string) {
+    const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (!link) return;
+    fetch(link.href)
+      .then(res => res.text())
+      .then(svg => {
+        const colored = svg.replace(/\.cls-2\{[^}]*\}/, `.cls-2{fill:${color};}`);
+        const blob = new Blob([colored], { type: 'image/svg+xml' });
+        link.href = URL.createObjectURL(blob);
+      });
   }
   ngOnDestroy(): void {
     this.unsubscribe$.next(null);

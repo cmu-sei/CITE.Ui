@@ -7,7 +7,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
   [style.color]="'var(--mat-sys-on-primary)'">
   <mat-toolbar-row>
     <span class="margin-auto">
-      <button mat-icon-button style="outline: none; background-color: var(--mat-sys-on-primary);" (click)="goToUrl('/')" title="Home">
+      <button mat-icon-button style="outline: none; background-color: var(--mat-sys-on-primary);" (click)="goToUrl('/')"
+        title="Home">
         <mat-icon svgIcon="crucible-icon-cite"></mat-icon>
       </button>
     </span>
@@ -35,7 +36,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="options-text">
       <button mat-button class="menu-trigger" [matMenuTriggerFor]="menu" style="outline: none;">
         <strong>{{ currentUser.name }}</strong>
-        <mat-icon aria-hidden="false" class="icon-color" fontIcon="mdi-chevron-down"></mat-icon>
+        <mat-icon aria-hidden="false" class="menu-trigger" fontIcon="mdi-chevron-down"></mat-icon>
       </button>
       <mat-menu #menu="matMenu" [overlapTrigger]="false">
         <button mat-menu-item (click)="logout()">Logout</button>
