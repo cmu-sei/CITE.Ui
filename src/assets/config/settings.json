@@ -17,5 +17,6 @@
   "AppTopBarImage": "/assets/img/account-group-white.png",
   "UseLocalAuthStorage": false,
   "useAccessTokenExpirationRedirect": true,
-  "AppPrimaryThemeColor": "#E81717"
+  "AppTopBarHexColor": "#E81717",
+  "AppTopBarHexTextColor": "#FFFFFF"
 }
