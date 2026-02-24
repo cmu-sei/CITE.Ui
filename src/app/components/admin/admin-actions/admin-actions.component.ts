@@ -148,7 +148,8 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
       action = { ...action };
     }
     const dialogRef = this.dialog.open(AdminActionEditDialogComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      width: 'auto',
       data: {
         action: action,
         teamList: this.teamList,

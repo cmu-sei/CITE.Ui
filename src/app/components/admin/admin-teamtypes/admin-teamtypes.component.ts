@@ -80,7 +80,8 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
       teamType = { ...teamType };
     }
     const dialogRef = this.dialog.open(AdminTeamTypeEditDialogComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      width: 'auto',
       data: {
         teamType: teamType,
         canEdit: this.canEdit

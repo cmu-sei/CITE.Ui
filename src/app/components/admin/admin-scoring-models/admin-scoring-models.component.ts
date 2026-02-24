@@ -137,7 +137,9 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
       hasPermission = this.permissionDataService.canEditScoringModel(scoringModel.id);
     }
     const dialogRef = this.dialog.open(AdminScoringModelEditDialogComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      width: 'auto',
+      minWidth: '900px',
       data: {
         scoringModel: scoringModel,
         itemStatuses: this.itemStatuses,

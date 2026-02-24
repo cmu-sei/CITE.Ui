@@ -289,7 +289,8 @@ export class ScoresheetComponent implements OnDestroy {
     this.currentComment = '';
     this.commentOptionDescription = scoringOption.description;
     const dialogRef = this.matDialog.open(templateRef, {
-      width: '70%',
+      maxWidth: '90vw',
+      width: 'auto',
     });
     dialogRef.disableClose = true;
     dialogRef.afterClosed().subscribe((result) => {
@@ -313,7 +314,8 @@ export class ScoresheetComponent implements OnDestroy {
     this.currentComment = submissionComment.comment;
     this.commentOptionDescription = scoringOption.description;
     const dialogRef = this.matDialog.open(templateRef, {
-      width: '70%',
+      maxWidth: '90vw',
+      width: 'auto',
     });
     dialogRef.disableClose = true;
     dialogRef.afterClosed().subscribe((result) => {

@@ -131,7 +131,9 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       evaluation = { ...evaluation };
     }
     const dialogRef = this.dialog.open(AdminEvaluationEditDialogComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      width: 'auto',
+      minWidth: '900px',
       data: {
         evaluation: evaluation,
         scoringModels: this.scoringModels,

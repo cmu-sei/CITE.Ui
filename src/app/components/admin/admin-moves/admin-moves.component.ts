@@ -70,7 +70,9 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
       move = {... move};
     }
     const dialogRef = this.dialog.open(AdminMoveEditDialogComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      width: 'auto',
+      minWidth: '900px',
       data: {
         move: move,
         canEdit: this.canEdit

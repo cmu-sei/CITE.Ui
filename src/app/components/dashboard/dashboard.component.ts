@@ -366,7 +366,8 @@ export class DashboardComponent implements OnDestroy {
       action = { ...action };
     }
     const dialogRef = this.matDialog.open(AdminActionEditDialogComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      width: 'auto',
       data: {
         action: action,
       },
@@ -448,7 +449,8 @@ export class DashboardComponent implements OnDestroy {
       duty = { ...duty };
     }
     const dialogRef = this.matDialog.open(AdminDutyEditDialogComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      width: 'auto',
       data: {
         duty: duty,
         canEdit: this.canManageTeam

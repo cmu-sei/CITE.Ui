@@ -116,7 +116,8 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
       duty = { ...duty };
     }
     const dialogRef = this.dialog.open(AdminDutyEditDialogComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      width: 'auto',
       data: {
         duty: duty,
         teamList: this.teamList,
