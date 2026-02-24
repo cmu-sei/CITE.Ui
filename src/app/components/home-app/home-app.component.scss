@@ -195,6 +195,24 @@ a:active {
   color: var(--mat-sys-on-background);
 }
 
+.top-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.one-cell {
+  flex: 1;
+}
+
+.last-cell {
+  text-align: right;
+}
+
+.center-self {
+  align-self: center;
+}
+
 @media print {
   .app-events-container {
     position: static !important;

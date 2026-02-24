@@ -117,6 +117,8 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
     data?: any
   ): Observable<boolean> {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      maxWidth: '90vw',
+      width: 'auto',
       data: data || {},
     });
     dialogRef.componentInstance.title = title;
@@ -127,6 +129,8 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
 
   nameDialog(title: string, message: string, data?: any): Observable<boolean> {
     const dialogRef = this.dialog.open(NameDialogComponent, {
+      maxWidth: '90vw',
+      width: 'auto',
       data: data || {},
     });
     dialogRef.componentInstance.title = title;

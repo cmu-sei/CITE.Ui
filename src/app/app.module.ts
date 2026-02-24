@@ -8,7 +8,7 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from '@angular/common/http';
-import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -128,9 +128,6 @@ import {
   NgxMatDatepickerToggle,
   NgxMatDatetimepicker,
 } from '@ngxmc/datetime-picker';
-import { DynamicThemeService } from './services/dynamic-theme.service';
-import { FaviconService } from './services/favicon.service';
-import { initializeTheme } from './services/theme-initializer.factory';
 
 
 const settings: ComnSettingsConfig = {
@@ -270,8 +267,6 @@ export function getBasePath(settingsSvc: ComnSettingsService)
     SystemMessageService,
     UserDataService,
     UIDataService,
-    DynamicThemeService,
-    FaviconService,
     {
       provide: BASE_PATH,
       useFactory: getBasePath,
@@ -280,12 +275,6 @@ export function getBasePath(settingsSvc: ComnSettingsService)
     {
       provide: ErrorHandler,
       useClass: ErrorService,
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeTheme,
-      deps: [ComnSettingsService, DynamicThemeService],
-      multi: true,
     },
     provideHttpClient(withInterceptorsFromDi()),
   ],

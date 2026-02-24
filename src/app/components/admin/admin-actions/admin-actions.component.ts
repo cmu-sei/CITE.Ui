@@ -34,10 +34,10 @@ import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admi
 const ALL_MOVES_VALUE: number = -999;
 
 @Component({
-    selector: 'app-admin-actions',
-    templateUrl: './admin-actions.component.html',
-    styleUrls: ['./admin-actions.component.scss'],
-    standalone: false
+  selector: 'app-admin-actions',
+  templateUrl: './admin-actions.component.html',
+  styleUrls: ['./admin-actions.component.scss'],
+  standalone: false
 })
 
 export class AdminActionsComponent implements OnDestroy, OnInit {
@@ -72,8 +72,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
     private dialog: MatDialog,
-    public dialogService: DialogService,
-    public matDialog: MatDialog
+    public dialogService: DialogService
   ) {
     this.evaluationQuery
       .selectAll()
@@ -149,7 +148,8 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
       action = { ...action };
     }
     const dialogRef = this.dialog.open(AdminActionEditDialogComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      width: 'auto',
       data: {
         action: action,
         teamList: this.teamList,

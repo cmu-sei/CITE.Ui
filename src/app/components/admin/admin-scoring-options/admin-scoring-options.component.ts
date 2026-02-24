@@ -70,7 +70,8 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
       scoringOption = {... scoringOption};
     }
     const dialogRef = this.dialog.open(AdminScoringOptionEditDialogComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      width: 'auto',
       data: {
         scoringOption: scoringOption
       },

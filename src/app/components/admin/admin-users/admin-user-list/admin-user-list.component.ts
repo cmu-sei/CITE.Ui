@@ -148,6 +148,8 @@ export class AdminUserListComponent implements OnInit, OnChanges {
     data?: any
   ): Observable<boolean> {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      maxWidth: '90vw',
+      width: 'auto',
       data: data || {},
     });
     dialogRef.componentInstance.title = title;

@@ -6,6 +6,20 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 [CITE Documentation](https://cmu-sei.github.io/crucible/cite/)
 
+## Color Theming
+
+Blueprint uses a monochrome gray Material 3 SCSS palette with runtime top-bar color overrides from `settings.json`.
+
+### Changing the top bar color
+
+| File | Field / Value | Purpose |
+|------|---------------|---------|
+| `src/assets/config/settings.json` | `"AppTopBarHexColor": "#E81717"` | Runtime config -- top bar background color |
+| `src/assets/config/settings.json` | `"AppTopBarHexTextColor": "#FFFFFF"` | Runtime config -- top bar text color |
+| `src/app/app.component.ts` | `'#C41230'` / `'#FFFFFF'` fallbacks in `setTheme()` | Runtime fallbacks when settings are not provided |
+
+To change the top bar color for a deployment, update `AppTopBarHexColor` and `AppTopBarHexTextColor` in `settings.json`.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4721/`. The app will automatically reload if you change any of the source files.
@@ -29,4 +43,3 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-

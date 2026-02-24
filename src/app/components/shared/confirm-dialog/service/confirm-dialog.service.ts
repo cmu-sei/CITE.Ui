@@ -18,6 +18,8 @@ export class ConfirmDialogService {
 
   confirmDialog(title: string, message: string, data?: any): Observable<any> {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      maxWidth: '90vw',
+      width: 'auto',
       data: data || {},
     });
     dialogRef.componentInstance.title = title;
