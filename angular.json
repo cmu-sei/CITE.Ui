@@ -22,7 +22,11 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/auth-callback-silent.html",
+              {
+                "glob": "auth-callback-silent.html",
+                "input": "node_modules/@cmusei/crucible-common/src/lib/comn-auth/assets/",
+                "output": "/"
+              },
               {
                 "glob": "**/*",
                 "input": "./node_modules/@kolkov/angular-editor/assets/icons",
