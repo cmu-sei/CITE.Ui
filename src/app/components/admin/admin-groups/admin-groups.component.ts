@@ -2,6 +2,13 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
@@ -29,14 +36,22 @@ const NAME_VALUE = 'nameValue';
   templateUrl: './admin-groups.component.html',
   styleUrls: ['./admin-groups.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
   standalone: false
 })
 export class AdminGroupsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
 
   filterString = '';
-  displayedColumns: string[] = ['name'];
+  displayedColumns: string[] = ['actions', 'name'];
   dataSource: MatTableDataSource<Group> = new MatTableDataSource();
+  expandedGroupId: string | null = null;
 
   constructor(
     private groupDataService: GroupDataService,
@@ -75,6 +90,10 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
 
   clearFilter() {
     this.applyFilter('');
+  }
+
+  toggleExpand(groupId: string) {
+    this.expandedGroupId = this.expandedGroupId === groupId ? null : groupId;
   }
 
   createGroup() {

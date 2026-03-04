@@ -60,6 +60,10 @@ export class PermissionDataService {
     return this._permissions.includes(permission);
   }
 
+  canViewAdministration() {
+    return this._permissions.some((y) => y.startsWith('View'));
+  }
+
   loadEvaluationPermissions(): Observable<EvaluationPermissionClaim[]> {
     return this.evaluationPermissionsService
       .getMyEvaluationPermissions()

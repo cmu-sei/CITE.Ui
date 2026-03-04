@@ -18,6 +18,7 @@ import { TopbarView } from './topbar.models';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { CurrentUserQuery } from 'src/app/data/user/user.query';
 import { CurrentUserState } from 'src/app/data/user/user.store';
+import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 
 @Component({
     selector: 'app-topbar',
@@ -43,14 +44,25 @@ export class TopbarComponent implements OnInit, OnDestroy {
   theme$: Observable<Theme>;
   unsubscribe$: Subject<null> = new Subject<null>();
   TopbarView = TopbarView;
+  canViewAdmin = false;
+
   constructor(
     private authService: ComnAuthService,
     private currentUserQuery: CurrentUserQuery,
     private authQuery: ComnAuthQuery,
-    private uiDataService: UIDataService
+    private uiDataService: UIDataService,
+    private permissionDataService: PermissionDataService
   ) {}
 
   ngOnInit() {
+    this.permissionDataService
+      .load()
+      .subscribe(
+        () =>
+          (this.canViewAdmin =
+            this.permissionDataService.canViewAdministration())
+      );
+
     this.currentUser$ = this.currentUserQuery.select().pipe(
       filter((user) => user !== null),
       takeUntil(this.unsubscribe$)
