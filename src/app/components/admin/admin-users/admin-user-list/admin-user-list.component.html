@@ -21,7 +21,7 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
   </div>
 </div>
 
-<div class="list-container">
+<div class="table-container">
   @if (addingNewUser) {
   <div class="new-user-row">
     <div class="new-user-cell">
@@ -72,7 +72,7 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
     <ng-container matColumnDef="role">
       <th mat-header-cell *matHeaderCellDef>Role</th>
       <td mat-cell *matCellDef="let element">
-        <mat-form-field>
+        <mat-form-field subscriptSizing="dynamic">
           <mat-select [disabled]="!canEdit" [value]="element.roleId == null ? '' : element.roleId"
             (selectionChange)="updateRole(element, $event)">
             <mat-option value="">None Locally</mat-option>
@@ -90,7 +90,7 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 

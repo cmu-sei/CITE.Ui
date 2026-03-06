@@ -93,6 +93,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
       team = {... team};
     }
     const dialogRef = this.dialog.open(AdminTeamEditDialogComponent, {
+      minWidth: '400px',
       maxWidth: '90vw',
       width: 'auto',
       data: {

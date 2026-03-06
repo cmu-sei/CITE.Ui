@@ -30,6 +30,10 @@
   bottom: 0;
   left: 0;
   right: 0;
+
+  ::ng-deep .mat-sidenav-content {
+    overflow: hidden;
+  }
 }
 
 .appbarmenu-container {

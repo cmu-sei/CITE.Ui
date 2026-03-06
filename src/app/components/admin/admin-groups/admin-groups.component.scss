@@ -3,12 +3,27 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
+:host {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 44px);
+}
+
+.cssLayoutColumnCenterStart {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+
 .move-container {
   display: flex;
   flex-direction: row;
   width: 100%;
   text-align: left;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .search-field {
@@ -16,35 +31,27 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
   margin-left: 10px;
 }
 
+.table-container {
+  flex: 1;
+  overflow: auto;
+  padding-bottom: 20px;
+}
+
 table {
   width: 100%;
 }
 
-.mat-mdc-header-row {
-  min-height: 56px;
-}
-
-.mat-mdc-row {
-  min-height: 48px;
-}
-
 .mat-mdc-cell,
 .mat-mdc-header-cell {
-  flex: 1;
   overflow: hidden;
   word-wrap: break-word;
   padding-right: 10px;
 }
 
 .mat-column-actions {
-  flex: 0 0 140px !important;
   width: 140px;
   max-width: 140px;
-}
-
-td.mat-column-actions {
-  display: flex;
-  align-items: center;
+  white-space: nowrap;
 }
 
 tr.detail-row {

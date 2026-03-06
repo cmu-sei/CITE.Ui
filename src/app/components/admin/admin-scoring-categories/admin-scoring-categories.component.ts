@@ -82,6 +82,7 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
       scoringCategory = {... scoringCategory};
     }
     const dialogRef = this.dialog.open(AdminScoringCategoryEditDialogComponent, {
+      minWidth: '400px',
       maxWidth: '90vw',
       width: 'auto',
       data: {
