@@ -4,12 +4,6 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="component-container mat-elevation-z8">
-  <div fxLayout="row" class="add-margin">
-    <div fxFlex>
-      <app-admin-user-list [users]="users$ | async" [isLoading]="isLoading$ | async"
-        [canEdit]="canEdit" (create)="create($event)" (delete)="deleteUser($event)">
-      </app-admin-user-list>
-      </div>
-  </div>
-</div>
+<app-admin-user-list [users]="users$ | async" [isLoading]="isLoading$ | async"
+  [canEdit]="canEdit" (create)="create($event)" (delete)="deleteUser($event)">
+</app-admin-user-list>

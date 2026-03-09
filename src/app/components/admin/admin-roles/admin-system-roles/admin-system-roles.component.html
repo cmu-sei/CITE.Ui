@@ -33,7 +33,7 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
           <ng-container *ngIf="canEdit">
             <button *ngIf="!role.immutable" mat-icon-button color="primary" (click)="renameRole(role)"
               title="Rename Role">
-              <mat-icon class="mdi-24px" fontIcon="mdi-pencil-outline"></mat-icon>
+              <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline"></mat-icon>
             </button>
             <button *ngIf="!role.immutable" mat-icon-button color="primary" (click)="deleteRole(role)"
               title="Delete Role">

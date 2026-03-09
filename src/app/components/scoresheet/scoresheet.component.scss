@@ -42,17 +42,13 @@
 }
 
 .mat-column-value {
-  flex: 0 0 10% !important;
   width: 10% !important;
   min-width: 80px !important;
-  justify-content: center;
+  text-align: center;
 }
 
 .mat-column-description {
-  flex: 0 0 90% !important;
   width: 90% !important;
-  flex-direction: column;
-  justify-content: center;
 }
 
 textarea.mat-input-element {

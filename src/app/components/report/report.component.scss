@@ -41,16 +41,12 @@
 }
 
 .mat-column-value {
-  flex: 0 0 5% !important;
   width: 5% !important;
-  justify-content: center;
+  text-align: center;
 }
 
 .mat-column-description {
-  flex: 0 0 95% !important;
   width: 95% !important;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .title-row {

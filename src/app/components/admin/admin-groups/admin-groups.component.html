@@ -18,49 +18,53 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
       }
     </mat-form-field>
   </div>
-  <mat-table [dataSource]="dataSource$ | async" matSort>
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
+  <div class="table-container">
+  <table mat-table [dataSource]="dataSource$ | async" matSort multiTemplateDataRows>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>
         <div class="button-cell">
           <button mat-icon-button matTooltip="Add New Group" (click)="createGroup()" [disabled]="!canEdit">
-            <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+            <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle"></mat-icon>
           </button>
-          <span class="primary-color">
-            <mat-icon class="mdi-24px" fontIcon="mdi-information"
+          <button mat-icon-button class="primary-color" disabled
               matTooltip="Users can be added to Groups here or, if enabled in your environment, can be matched to Group Names from the token of the Identity Provider in use."
-              matTooltipShowDelay="0"></mat-icon>
-          </span>
+              matTooltipShowDelay="0">
+            <mat-icon class="mdi-24px" fontIcon="mdi-information"></mat-icon>
+          </button>
         </div>
-        <div>
-          Group Name
-        </div>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <mat-expansion-panel class="xpanel">
-          <mat-expansion-panel-header>
-            <div class="row-button-cell">
-              <button mat-icon-button matTooltip="Delete {{ element.name }}"
-                (click)="$event.stopPropagation(); deleteGroup(element)">
-                <mat-icon class="mdi-18px" color="primary" fontIcon="mdi-trash-can-outline"></mat-icon>
-              </button>
-              <button mat-icon-button matTooltip="Rename">
-                <mat-icon class="mdi-18px" color="primary" fontIcon="mdi-square-edit-outline"
-                  (click)="$event.stopPropagation(); updateGroup(element)"></mat-icon>
-              </button>
-            </div>
-            <div class="name-cell">
-              {{ element.name }}
-            </div>
-          </mat-expansion-panel-header>
-          <ng-template matExpansionPanelContent>
-            <app-admin-groups-detail [groupId]="element.id" [canEdit]="canEdit"></app-admin-groups-detail>
-          </ng-template>
-        </mat-expansion-panel>
-      </mat-cell>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-icon-button matTooltip="Delete {{ element.name }}"
+          (click)="$event.stopPropagation(); deleteGroup(element)" [disabled]="!canEdit">
+          <mat-icon class="mdi-24px" color="primary" fontIcon="mdi-trash-can-outline"></mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Rename"
+          (click)="$event.stopPropagation(); updateGroup(element)" [disabled]="!canEdit">
+          <mat-icon class="mdi-24px" color="primary" fontIcon="mdi-square-edit-outline"></mat-icon>
+        </button>
+      </td>
     </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns"> </mat-row>
-  </mat-table>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Group Name</th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="expandedDetail">
+      <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+        <div [@detailExpand]="element.id === expandedGroupId ? 'expanded' : 'collapsed'"
+          (click)="$event.stopPropagation()">
+          @if (element.id === expandedGroupId) {
+            <app-admin-groups-detail [groupId]="element.id" [canEdit]="canEdit"></app-admin-groups-detail>
+          }
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" class="element-row"
+      (click)="toggleExpand(row.id)"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+  </table>
+  </div>
 </div>
