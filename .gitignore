@@ -51,3 +51,7 @@ ng-app/
 src/assets/config/settings.env.json
 docker/
 .vscode/**/*.json
+
+# Claude Code
+CLAUDE.md
+.claude/
