@@ -16,9 +16,11 @@ import { SignalRService } from 'src/app/services/signalr.service';
 import { HealthCheckService } from 'src/app/generated/cite.api';
 import { SystemPermission } from 'src/app/generated/cite.api';
 
-async function renderAdmin(overrides: {
-  permissions?: SystemPermission[];
-} = {}) {
+async function renderAdmin(
+  overrides: {
+    permissions?: SystemPermission[];
+  } = {},
+) {
   const { permissions = [] } = overrides;
 
   const mockPermissionDataService = {
@@ -147,5 +149,60 @@ describe('AdminContainerComponent', () => {
       permissions: [SystemPermission.ViewEvaluations],
     });
     expect(screen.getByText('Evaluations')).toBeInTheDocument();
+  });
+
+  it('should show Submissions nav when ViewEvaluations permission present', async () => {
+    await renderAdmin({
+      permissions: [SystemPermission.ViewEvaluations],
+    });
+    expect(screen.getByText('Submissions')).toBeInTheDocument();
+  });
+
+  it('should hide Submissions nav when no ViewEvaluations permission', async () => {
+    await renderAdmin({ permissions: [] });
+    expect(screen.queryByText('Submissions')).not.toBeInTheDocument();
+  });
+
+  it('should show Team Types nav when ViewTeamTypes permission present', async () => {
+    await renderAdmin({
+      permissions: [SystemPermission.ViewTeamTypes],
+    });
+    expect(screen.getByText('Team Types')).toBeInTheDocument();
+  });
+
+  it('should hide Team Types nav when no ViewTeamTypes permission', async () => {
+    await renderAdmin({ permissions: [] });
+    expect(screen.queryByText('Team Types')).not.toBeInTheDocument();
+  });
+
+  it('should show all nav items when all permissions present', async () => {
+    await renderAdmin({
+      permissions: [
+        SystemPermission.ViewEvaluations,
+        SystemPermission.ViewScoringModels,
+        SystemPermission.ViewUsers,
+        SystemPermission.ViewRoles,
+        SystemPermission.ViewGroups,
+        SystemPermission.ViewTeamTypes,
+      ],
+    });
+    expect(screen.getByText('Evaluations')).toBeInTheDocument();
+    expect(screen.getByText('Scoring Models')).toBeInTheDocument();
+    expect(screen.getByText('Submissions')).toBeInTheDocument();
+    expect(screen.getByText('Team Types')).toBeInTheDocument();
+    expect(screen.getByText('Users')).toBeInTheDocument();
+    expect(screen.getByText('Roles')).toBeInTheDocument();
+    expect(screen.getByText('Groups')).toBeInTheDocument();
+  });
+
+  it('should show no permission-gated nav items when no permissions', async () => {
+    await renderAdmin({ permissions: [] });
+    expect(screen.queryByText('Evaluations')).not.toBeInTheDocument();
+    expect(screen.queryByText('Scoring Models')).not.toBeInTheDocument();
+    expect(screen.queryByText('Submissions')).not.toBeInTheDocument();
+    expect(screen.queryByText('Team Types')).not.toBeInTheDocument();
+    expect(screen.queryByText('Users')).not.toBeInTheDocument();
+    expect(screen.queryByText('Roles')).not.toBeInTheDocument();
+    expect(screen.queryByText('Groups')).not.toBeInTheDocument();
   });
 });

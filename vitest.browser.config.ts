@@ -11,6 +11,12 @@ const useManualBrowser = process.env['VITEST_BROWSER_MANUAL'] === '1';
 
 export default defineConfig({
   plugins: [angular({ tsconfig: 'tsconfig.vitest.json' })],
+  define: {
+    // Polyfill require() for environment.ts — not available in ESM browser.
+    // Vite's define can't match function-call expressions, so we replace `require`
+    // itself with an inline factory that returns { version: '0.0.0-test' }.
+    require: '(function(p){ return { version: "0.0.0-test" }; })',
+  },
   resolve: {
     alias: {
       'src/': path.resolve(__dirname, 'src') + '/',
