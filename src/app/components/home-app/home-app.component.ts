@@ -335,6 +335,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     });
     // load the user's evaluations
     this.evaluationDataService.loadMine();
+    // load users for the evaluation list
+    this.userDataService.load().subscribe();
     // load team roles
     this.teamRoleDataService.loadRoles().subscribe();
     // join signalR
