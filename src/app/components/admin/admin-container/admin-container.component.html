@@ -6,8 +6,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
 @let showSection = showSection$ | async;
 <mat-sidenav-container class="appcontent-container" autosize>
   <mat-sidenav class="appbarmenu-container" #sidenav mode="side" [(opened)]="isSidebarOpen">
-    <mat-toolbar class="sidenav-header" title="Exit Administration" (click)="exitAdminPages()">
-      <a class="nolink" (click)="exitAdminPages()">
+    <mat-toolbar class="sidenav-header" title="Exit Administration" [routerLink]="['/']">
+      <a class="nolink" [routerLink]="['/']">
         <div class="cssLayoutRowStartCenter">
           <mat-icon class="icon-35px crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
           <h2 class="icon-text">Administration</h2>
