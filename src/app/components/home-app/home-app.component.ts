@@ -332,11 +332,16 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
         });
       this.setDataSources();
+      // load users for evaluation creators
+      const creatorIds = new Set(evaluations.map(e => e.createdBy).filter(id => id));
+      creatorIds.forEach(userId => {
+        if (!this.userQuery.getEntity(userId)) {
+          this.userDataService.loadById(userId).pipe(take(1)).subscribe();
+        }
+      });
     });
     // load the user's evaluations
     this.evaluationDataService.loadMine();
-    // load users for the evaluation list
-    this.userDataService.load().subscribe();
     // load team roles
     this.teamRoleDataService.loadRoles().subscribe();
     // join signalR
