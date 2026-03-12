@@ -7,10 +7,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
   [style.color]="'var(--mat-sys-on-primary)'">
   <mat-toolbar-row>
     <span class="margin-auto">
-      <button mat-icon-button style="outline: none; background-color: var(--mat-sys-on-primary);" (click)="goToUrl('/')"
+      <a mat-icon-button style="outline: none; background-color: var(--mat-sys-on-primary);" [routerLink]="['/']"
         title="Home">
         <mat-icon svgIcon="crucible-icon-cite"></mat-icon>
-      </button>
+      </a>
     </span>
     <span class="view-text">{{ title }}</span>
     @if (teams && team && teams.length > 0) {
