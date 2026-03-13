@@ -50,7 +50,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="header-cell move-cell" mat-sort-header="currentMoveNumber">Current Move</div>
     <div class="header-cell one-cell" mat-sort-header="status">Status</div>
     <div class="header-cell one-cell" mat-sort-header="createdBy">Created By</div>
-    <div class="header-cell date-cell" mat-sort-header="dateCreated">Date</div>
+    <div class="header-cell date-cell" mat-sort-header="dateCreated">Date Created</div>
   </section>
 
   @for (evaluation of displayedEvaluations; track evaluation.id) {
@@ -96,7 +96,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         {{ getUserName(evaluation.createdBy) }}
       </div>
       <div class="cell date-cell center-self">
-        {{ evaluation.dateCreated | date:"dd MMM yyyy HH:mm" }}
+        {{ evaluation.dateCreated | date:"yyyy-MM-dd HH:mm" }}
       </div>
     </mat-expansion-panel-header>
     }

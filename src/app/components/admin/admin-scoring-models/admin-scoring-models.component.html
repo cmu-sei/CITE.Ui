@@ -42,7 +42,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </span>
     <span class="header-cell description-cell" mat-sort-header="description">Scoring Model Description</span>
     <span class="header-cell one-cell" mat-sort-header="createdBy">Created By</span>
-    <span class="header-cell date-cell" mat-sort-header="dateCreated">Date</span>
+    <span class="header-cell date-cell" mat-sort-header="dateCreated">Date Created</span>
     <span class="header-cell one-cell" mat-sort-header="status">Status</span>
   </section>
 
@@ -82,7 +82,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         {{ getUserName(scoringModel.createdBy) }}
       </span>
       <span class="cell date-cell">
-        {{ scoringModel.dateCreated | date:"dd MMM yyyy HH:mm" }}
+        {{ scoringModel.dateCreated | date:"yyyy-MM-dd HH:mm" }}
       </span>
       <span class="cell one-cell">
         {{ scoringModel.status }}
