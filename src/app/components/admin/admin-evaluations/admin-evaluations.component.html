@@ -53,7 +53,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="header-cell date-cell" mat-sort-header="dateCreated">Date</div>
   </section>
 
-  @for (evaluation of displayedEvaluations; track evaluation) {
+  @for (evaluation of displayedEvaluations; track evaluation.id) {
   <mat-expansion-panel [expanded]="editEvaluation.id === evaluation.id">
     @if (!isLoading) {
     <mat-expansion-panel-header class="row" (click)="togglePanel(evaluation); $event.stopPropagation()">
@@ -96,7 +96,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         {{ getUserName(evaluation.createdBy) }}
       </div>
       <div class="cell date-cell center-self">
-        {{ evaluation.dateCreated | date:"MM/dd/yyyy HH:mm" }}
+        {{ evaluation.dateCreated | date:"dd MMM yyyy HH:mm" }}
       </div>
     </mat-expansion-panel-header>
     }

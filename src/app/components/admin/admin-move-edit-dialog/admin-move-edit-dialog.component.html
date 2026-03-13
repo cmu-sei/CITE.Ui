@@ -5,7 +5,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <div mat-dialog-title>
-  &nbsp;
+  @if (data.move.id) {
+  <span>Edit Move</span>
+  }
+  @if (!data.move.id) {
+  <span>Add Move</span>
+  }
   <button
     mat-icon-button
     (click)="handleEditComplete(false)"
@@ -36,18 +41,26 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
     <div class="add-margin">
       <div>
-        <mat-form-field>
-          <input
-            matInput
-            id = "[ngxMatDatetimePicker]='picker'"
-            placeholder="Situation Date / Time"
-            [formControl]="situationDateFormControl"
-            (inputChange)="saveMove('situationDate')"
-            (dateChange)="saveMove('situationDate')"
-            >
-          </mat-form-field>
-        </div>
+        <mat-form-field class="datetime-field">
+          <mat-label>Situation Date / Time</mat-label>
+          <input matInput [ngxMatDatetimePicker]="picker"
+            [formControl]="situationDateFormControl" (inputChange)="saveMove('situationDate')"
+            (dateChange)="saveMove('situationDate')" style="display: none;">
+          <span (click)="data.canEdit && picker.open()">
+            {{data.move.situationTime | date: 'dd MMM yyyy HH:mm'}} {{ getTimezoneAbbr() }}
+          </span>
+          <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)" [disabled]="!data.canEdit">
+          </mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #picker [showSpinners]=true [showSeconds]=false [stepHour]=1 [stepMinute]=5
+            [stepSecond]=1 [touchUi]=false [enableMeridian]=true [disableMinute]=false [hideTime]=false [color]="'warn'">
+            <ngx-mat-datepicker-actions>
+              <button mat-stroked-button ngxMatDatepickerApply>Save</button>
+              <button mat-stroked-button ngxMatDatepickerCancel>Cancel</button>
+            </ngx-mat-datepicker-actions>
+          </ngx-mat-datetime-picker>
+        </mat-form-field>
       </div>
+    </div>
       <div class="add-margin">
         <mat-label class="gray">Situation Description</mat-label>
         <angular-editor [placeholder]="'Enter situation description here...'" [(ngModel)]="data.move.situationDescription" [config]="editorConfig"></angular-editor>

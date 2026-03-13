@@ -109,11 +109,9 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
   saveEvaluation(changedField): void {
     switch (changedField) {
       case 'situationDate':
-        const newSituation = new Date(this.situationDateFormControl.value);
-        const oldSituation = new Date(this.data.evaluation.situationTime);
-        newSituation.setHours(oldSituation.getHours());
-        newSituation.setMinutes(oldSituation.getMinutes());
-        this.data.evaluation.situationTime = newSituation;
+        if (this.situationDateFormControl.value) {
+          this.data.evaluation.situationTime = new Date(this.situationDateFormControl.value);
+        }
         break;
       default:
         break;
@@ -130,6 +128,25 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
 
   decrementCurrentMoveNumber() {
     this.data.evaluation.currentMoveNumber--;
+  }
+
+  getUserTimezone(): string {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  }
+
+  getTimezoneAbbr(): string {
+    try {
+      const date = new Date();
+      const timeZone = this.getUserTimezone();
+      const formatted = date.toLocaleTimeString('en-US', {
+        timeZoneName: 'short',
+        timeZone
+      });
+      const parts = formatted.split(' ');
+      return parts[parts.length - 1] || 'UTC';
+    } catch (error) {
+      return 'UTC';
+    }
   }
 
   ngOnDestroy() {}

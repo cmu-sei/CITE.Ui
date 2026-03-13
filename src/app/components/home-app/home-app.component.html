@@ -78,7 +78,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <!-- Date Created Column -->
           <ng-container matColumnDef="dateCreated">
             <mat-header-cell *matHeaderCellDef>Date Created</mat-header-cell>
-            <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"MM/dd/yyyy HH:mm" }}</mat-cell>
+            <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"yyyy-MM-dd" }}</mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
