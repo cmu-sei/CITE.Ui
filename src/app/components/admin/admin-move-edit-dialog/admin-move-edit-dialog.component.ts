@@ -104,11 +104,9 @@ export class AdminMoveEditDialogComponent {
   saveMove(changedField): void {
     switch (changedField) {
       case 'situationDate':
-        const newSituation = new Date(this.situationDateFormControl.value);
-        const oldSituation = new Date(this.data.move.situationTime);
-        newSituation.setHours(oldSituation.getHours());
-        newSituation.setMinutes(oldSituation.getMinutes());
-        this.data.move.situationTime = newSituation;
+        if (this.situationDateFormControl.value) {
+          this.data.move.situationTime = new Date(this.situationDateFormControl.value);
+        }
         break;
       default:
         break;
@@ -125,6 +123,25 @@ export class AdminMoveEditDialogComponent {
 
   decrementCurrentMoveNumber() {
     this.data.move.currentMoveNumber --;
+  }
+
+  getUserTimezone(): string {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  }
+
+  getTimezoneAbbr(): string {
+    try {
+      const date = new Date();
+      const timeZone = this.getUserTimezone();
+      const formatted = date.toLocaleTimeString('en-US', {
+        timeZoneName: 'short',
+        timeZone
+      });
+      const parts = formatted.split(' ');
+      return parts[parts.length - 1] || 'UTC';
+    } catch (error) {
+      return 'UTC';
+    }
   }
 
 }

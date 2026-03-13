@@ -30,8 +30,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
     <div class="header-cell button-cell"><span style="margin-left: 40px;"></span></div>
     <div class="header-cell name-cell" mat-sort-header="name"><span>TeamType</span></div>
-    <div class="header-cell flag-cell" mat-sort-header="isOfficialScoreContributor">Is Official Score Contributor</div>
-    <div class="header-cell flag-cell" mat-sort-header="showTeamTypeAverage">Show TeamType Average</div>
+    <div class="header-cell flag-cell" mat-sort-header="isOfficialScoreContributor" title="When enabled, teams of this type will contribute to the official evaluation score">Is Official Score Contributor</div>
+    <div class="header-cell flag-cell" mat-sort-header="showTeamTypeAverage" title="When enabled, the average score for this team type will be displayed">Show TeamType Average</div>
   </section>
 
   @for (teamType of paginateTeamtypes(); track teamType.id) {
@@ -40,11 +40,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-expansion-panel-header class="row">
       <span class="cell button-cell">
         <button mat-icon-button (click)="addOrEditTeamType(teamType); $event.stopPropagation()" style="outline: none;"
-          title="Edit Evaluation" [disabled]="!canEdit">
+          title="Edit Team Type" [disabled]="!canEdit">
           <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
         </button>
         <button mat-icon-button (click)="deleteTeamTypeRequest(teamType); $event.stopPropagation()"
-          style="outline: none;" title="Delete Evaluation" [disabled]="!canEdit">
+          style="outline: none;" title="Delete Team Type" [disabled]="!canEdit">
           <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can-outline"></mat-icon>
         </button>
       </span>
