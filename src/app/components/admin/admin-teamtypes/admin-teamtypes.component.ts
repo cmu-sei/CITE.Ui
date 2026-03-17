@@ -30,6 +30,8 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   teamTypeList: TeamType[] = [];
   filteredTeamTypeList: TeamType[] = [];
   sortedTeamTypeList: TeamType[] = [];
+  displayedTeamTypes: TeamType[] = [];
+  displayedColumns = ['actions', 'name', 'isOfficialScoreContributor', 'showTeamTypeAverage'];
   filterControl = new UntypedFormControl();
   filterString = '';
   sort: Sort = { active: 'name', direction: 'asc' };
@@ -147,6 +149,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     this.sortedTeamTypeList = this.getSortedTeamTypes(
       this.getFilteredTeamTypes(this.teamTypeList)
     );
+    this.paginateTeamtypes();
   }
 
   getFilteredTeamTypes(teamTypes: TeamType[]): TeamType[] {
@@ -204,8 +207,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
 
   paginateTeamtypes() {
     const startIndex = this.pageIndex * this.pageSize;
-    const copy = this.sortedTeamTypeList.slice();
-    return copy.splice(startIndex, this.pageSize);
+    this.displayedTeamTypes = this.sortedTeamTypeList.slice(startIndex, startIndex + this.pageSize);
   }
 
   toggleIsOfficialScoreContributor(teamType: TeamType) {

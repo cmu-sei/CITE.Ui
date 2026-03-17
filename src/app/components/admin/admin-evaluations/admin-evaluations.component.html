@@ -34,112 +34,118 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   }
 </div>
-<mat-accordion displayMode="flat">
-  <section matSort (matSortChange)="sortList($event)" class="header-row">
-    <div class="header-cell first-cell">
-      <button mat-icon-button (click)="addOrEditEvaluation(null)" style="outline: none; margin-left: 20px;"
-        title="Add Evaluation" [disabled]="isBusy || !canCreateEvaluations">
-        <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
-      </button>
-      <button mat-icon-button (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
-        title="Upload Evaluation" [disabled]="isBusy || !canCreateEvaluations">
-        <mat-icon class="mdi-24px" fontIcon="mdi-upload" alt="Upload"></mat-icon>
-      </button>
-    </div>
-    <div class="header-cell description-cell" mat-sort-header="description">Description</div>
-    <div class="header-cell move-cell" mat-sort-header="currentMoveNumber">Current Move</div>
-    <div class="header-cell one-cell" mat-sort-header="status">Status</div>
-    <div class="header-cell one-cell" mat-sort-header="createdBy">Created By</div>
-    <div class="header-cell date-cell" mat-sort-header="dateCreated">Date Created</div>
-  </section>
+<div class="table-container">
+  <table mat-table [dataSource]="displayedEvaluations" matSort (matSortChange)="sortList($event)" multiTemplateDataRows>
 
-  @for (evaluation of displayedEvaluations; track evaluation.id) {
-  <mat-expansion-panel [expanded]="editEvaluation.id === evaluation.id">
-    @if (!isLoading) {
-    <mat-expansion-panel-header class="row" (click)="togglePanel(evaluation); $event.stopPropagation()">
-      <div class="cell first-cell">
-        <button mat-icon-button (click)="addOrEditEvaluation(evaluation); $event.stopPropagation()"
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>
+        <button mat-icon-button (click)="addOrEditEvaluation(null); $event.stopPropagation()"
+          title="Add Evaluation" [disabled]="isBusy || !canCreateEvaluations">
+          <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle"></mat-icon>
+        </button>
+        <button mat-icon-button (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
+          title="Upload Evaluation" [disabled]="isBusy || !canCreateEvaluations">
+          <mat-icon class="mdi-24px" fontIcon="mdi-upload"></mat-icon>
+        </button>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button (click)="addOrEditEvaluation(row); $event.stopPropagation()"
           title="Edit Evaluation" [disabled]="isBusy">
           <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline"></mat-icon>
         </button>
-        <button mat-icon-button (click)="copyEvaluation(evaluation.id); $event.stopPropagation();"
-          title="Copy {{ evaluation.description }}" [disabled]="isBusy || !canCreateEvaluations">
-          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" alt="Copy"></mat-icon>
+        <button mat-icon-button (click)="copyEvaluation(row.id); $event.stopPropagation();"
+          title="Copy {{ row.description }}" [disabled]="isBusy || !canCreateEvaluations">
+          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy"></mat-icon>
         </button>
-        <button mat-icon-button (click)="downloadEvaluation(evaluation); $event.stopPropagation();"
-          title="Download {{ evaluation.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-download" alt="Download"></mat-icon>
+        <button mat-icon-button (click)="downloadEvaluation(row); $event.stopPropagation();"
+          title="Download {{ row.description }}" [disabled]="isBusy">
+          <mat-icon class="mdi-18px" fontIcon="mdi-download"></mat-icon>
         </button>
-        <button mat-icon-button (click)="deleteEvaluationRequest(evaluation); $event.stopPropagation()"
-          title="Delete Evaluation" [disabled]="isBusy || !canManageEvaluation(evaluation.id)">
+        <button mat-icon-button (click)="deleteEvaluationRequest(row); $event.stopPropagation()"
+          title="Delete Evaluation" [disabled]="isBusy || !canManageEvaluation(row.id)">
           <mat-icon class="mdi-18px" fontIcon="mdi-trash-can-outline"></mat-icon>
         </button>
-      </div>
-      <div class="cell description-cell center-self">{{ evaluation.description }}</div>
-      <div class="cell move-cell center-self">
-        <button aria-label="Decrement Current Move" mat-icon-button
-          [disabled]="!canEdit(evaluation) || evaluation.currentMoveNumber <= getLowestMoveNumber(evaluation) || !canManageEvaluation(evaluation.id)"
-          (click)="decrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Decrement Move">
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
+      <td mat-cell *matCellDef="let row">{{ row.description }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="currentMoveNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Current Move</th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button
+          [disabled]="!canEdit(row) || row.currentMoveNumber <= getLowestMoveNumber(row) || !canManageEvaluation(row.id)"
+          (click)="decrementCurrentMoveNumber(row); $event.stopPropagation()" title="Decrement Move">
           <mat-icon fontIcon="mdi-chevron-left"></mat-icon>
         </button>
-        {{ evaluation.currentMoveNumber }}
-        <button aria-label="Increment Current Move" mat-icon-button
-          [disabled]="!canEdit(evaluation) || evaluation.currentMoveNumber >= getHighestMoveNumber(evaluation) || !canManageEvaluation(evaluation.id)"
-          (click)="incrementCurrentMoveNumber(evaluation); $event.stopPropagation()" title="Increment Move">
+        {{ row.currentMoveNumber }}
+        <button mat-icon-button
+          [disabled]="!canEdit(row) || row.currentMoveNumber >= getHighestMoveNumber(row) || !canManageEvaluation(row.id)"
+          (click)="incrementCurrentMoveNumber(row); $event.stopPropagation()" title="Increment Move">
           <mat-icon fontIcon="mdi-chevron-right"></mat-icon>
         </button>
-      </div>
-      <div class="cell one-cell center-self">
-        {{ evaluation.status }}
-      </div>
-      <div class="cell one-cell center-self">
-        {{ getUserName(evaluation.createdBy) }}
-      </div>
-      <div class="cell date-cell center-self">
-        {{ evaluation.dateCreated | date:"yyyy-MM-dd HH:mm" }}
-      </div>
-    </mat-expansion-panel-header>
-    }
-    @if (editEvaluation.id === evaluation.id) {
-    <div class="sub-panel">
-      <mat-expansion-panel class="bottom-space">
-        <mat-expansion-panel-header>
-          <h4>Moves</h4>
-        </mat-expansion-panel-header>
-        <app-admin-moves [evaluationId]="evaluation.id" [canEdit]="canEdit(evaluation)"></app-admin-moves>
-      </mat-expansion-panel>
-      <mat-expansion-panel class="bottom-space">
-        <mat-expansion-panel-header>
-          <h4>Teams</h4>
-        </mat-expansion-panel-header>
-        <app-admin-teams [evaluationId]="evaluation.id" [canEdit]="canEdit(evaluation)"></app-admin-teams>
-      </mat-expansion-panel>
-      <mat-expansion-panel class="bottom-space">
-        <mat-expansion-panel-header>
-          <h4>Actions</h4>
-        </mat-expansion-panel-header>
-        <app-admin-actions [selectedEvaluationId]="evaluation.id" [canEdit]="canEdit(evaluation)"></app-admin-actions>
-      </mat-expansion-panel>
-      <mat-expansion-panel class="bottom-space">
-        <mat-expansion-panel-header>
-          <h4>Duties</h4>
-        </mat-expansion-panel-header>
-        <app-admin-duties [selectedEvaluationId]="evaluation.id" [canEdit]="canEdit(evaluation)"></app-admin-duties>
-      </mat-expansion-panel>
-      @if (canManageEvaluation) {
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <h4>Memberships</h4>
-        </mat-expansion-panel-header>
-        <app-admin-evaluation-memberships [evaluationId]="evaluation.id"
-          [embedded]="false"></app-admin-evaluation-memberships>
-      </mat-expansion-panel>
-      }
-    </div>
-    }
-  </mat-expansion-panel>
-  }
-</mat-accordion>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+      <td mat-cell *matCellDef="let row">{{ row.status }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="createdBy">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Created By</th>
+      <td mat-cell *matCellDef="let row">{{ getUserName(row.createdBy) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateCreated">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date Created</th>
+      <td mat-cell *matCellDef="let row">{{ row.dateCreated | date:"yyyy-MM-dd HH:mm" }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="expandedDetail">
+      <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+        <div [@detailExpand]="element.id === editEvaluation.id ? 'expanded' : 'collapsed'"
+          (click)="$event.stopPropagation()">
+          @if (element.id === editEvaluation.id) {
+          <div class="sub-panel">
+            <mat-expansion-panel class="bottom-space">
+              <mat-expansion-panel-header><h4>Moves</h4></mat-expansion-panel-header>
+              <app-admin-moves [evaluationId]="element.id" [canEdit]="canEdit(element)"></app-admin-moves>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="bottom-space">
+              <mat-expansion-panel-header><h4>Teams</h4></mat-expansion-panel-header>
+              <app-admin-teams [evaluationId]="element.id" [canEdit]="canEdit(element)"></app-admin-teams>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="bottom-space">
+              <mat-expansion-panel-header><h4>Actions</h4></mat-expansion-panel-header>
+              <app-admin-actions [selectedEvaluationId]="element.id" [canEdit]="canEdit(element)"></app-admin-actions>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="bottom-space">
+              <mat-expansion-panel-header><h4>Duties</h4></mat-expansion-panel-header>
+              <app-admin-duties [selectedEvaluationId]="element.id" [canEdit]="canEdit(element)"></app-admin-duties>
+            </mat-expansion-panel>
+            @if (canManageEvaluation) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header><h4>Memberships</h4></mat-expansion-panel-header>
+              <app-admin-evaluation-memberships [evaluationId]="element.id"
+                [embedded]="false"></app-admin-evaluation-memberships>
+            </mat-expansion-panel>
+            }
+          </div>
+          }
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" class="element-row"
+      (click)="togglePanel(row)"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+  </table>
+</div>
 
 @if (isLoading) {
 <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">

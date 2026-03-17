@@ -2,119 +2,41 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-.table {
-  display: block;
+@use "@angular/material" as mat;
+
+.elevate {
+  @include mat.elevation(2);
 }
 
-.header-row {
+table {
+  width: 100%;
+}
+
+.table-container {
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+.mat-mdc-header-row {
   min-height: 56px;
 }
 
-.row {
-  min-height: 48px;
+.mat-column-actions {
+  width: 100px;
+  max-width: 120px;
+  white-space: nowrap;
 }
 
-.row,
-.header-row {
-  display: flex;
-  flex-direction: row;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  align-items: center;
-  padding: 0 24px;
-  font-weight: 400;
-  color: var(--mat-sys-on-background) !important;
-}
-
-.cell,
-.header-cell {
-  overflow: hidden;
-  word-wrap: break-word;
-  text-align: left;
-}
-
-.new-teamtype-cell {
-  flex: 1;
-}
-
-.edit-teamtype-name {
-  width: 300px;
-  margin-right: 16px;
-}
-
-.button-cell {
-  flex: 5;
-  min-width: 90px;
-}
-
-.name-cell {
-  flex: 30;
-  align-self: center;
-  min-width: 300px;
-}
-
-.flag-cell {
-  flex: 15;
-  justify-items: center;
-  align-items: center;
-  justify-content: center;
-  align-content: center;
-  min-width: 125px;
-}
-
-.checkbox-margin {
-  margin-left: 30%;
-}
-
-.permission-cell {
-  flex: 70;
-}
-
-.button-end {
-  margin-left: 10px;
-  min-width: 370px;
+.mat-column-isOfficialScoreContributor,
+.mat-column-showTeamTypeAverage {
+  min-width: 180px;
 }
 
 .sp-icon {
   margin-left: 10px;
 }
 
-.mat-accordion .header-row {
-  padding-left: 1.5rem;
-  padding-right: 2rem;
-  border-bottom: none;
-}
-
-.mat-expansion-panel-header.row {
-  border-bottom: none;
-}
-
-.mat-expansion-panel {
-  text-align: left;
-}
-
-.mat-mdc-select {
-  width: 100px;
-}
-
-.pad-top {
-  margin-top: 12px;
-}
-
-.permission-item {
-  margin-right: 10px;
-}
-
-.new-teamtype-spacing {
-  margin-left: 30px;
-  margin-right: 30px;
-}
-
-.checkbox-div {
-  margin-left: 50px;
-  align-self: center;
-}
-
-.center-self {
-  align-self: center;
+.button-end {
+  margin-left: 10px;
+  min-width: 370px;
 }

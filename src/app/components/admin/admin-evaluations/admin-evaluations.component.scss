@@ -5,13 +5,14 @@
 @use "@angular/material" as mat;
 
 :host {
-  @include mat.form-field-density(-5); // Adjust -3 for this specific form field
+  @include mat.form-field-density(-5);
 }
 
 .sub-panel {
   width: 90%;
   margin-left: 5%;
   min-width: 700px;
+  padding: 16px 0;
 }
 
 .bottom-space {
@@ -23,45 +24,57 @@
   margin-left: 10px;
 }
 
-.header-row {
-  min-height: 56px;
-}
-
-.row {
-  min-height: 48px;
-}
-
-.row,
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 24px;
-  font-weight: 400;
-}
-
-.cell,
-.header-cell {
-  overflow: hidden;
-  word-wrap: break-word;
-}
-
 .sp-icon {
   margin-left: 10px;
 }
 
-.mat-accordion .header-row {
-  padding-left: 1.5rem;
-  padding-right: 2rem;
-  border-bottom: none;
+table {
+  width: 100%;
 }
 
-.mat-expansion-panel {
-  text-align: left;
+.table-container {
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
 }
 
-.mat-mdc-select {
-  width: 100px;
+tr.detail-row {
+  height: 0;
+}
+
+.element-row td {
+  border-bottom-width: 0;
+  cursor: pointer;
+}
+
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
+.mat-column-actions {
+  width: 180px;
+  max-width: 180px;
+  white-space: nowrap;
+}
+
+.mat-column-description {
+  flex: 5;
+  min-width: 150px;
+}
+
+.mat-column-currentMoveNumber {
+  min-width: 140px;
+  text-align: center;
+}
+
+.mat-column-status,
+.mat-column-createdBy {
+  min-width: 70px;
+}
+
+.mat-column-dateCreated {
+  min-width: 75px;
 }
 
 .nator-div {
@@ -79,37 +92,6 @@
   width: 100%;
 }
 
-.first-cell {
-  flex: 2;
-  align-self: center;
-  min-width: 160px;
-  max-width: 180px;
-}
-
-.description-cell {
-  flex: 5;
-  min-width: 150px;
-}
-
-.date-cell {
-  flex: 2;
-  min-width: 75px;
-}
-
-.move-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  min-width: 120px;
-  text-align: center;
-}
-
-.one-cell {
-  flex: 1;
-  min-width: 70px;
-}
-
-.center-self {
-  align-self: center;
+.mat-mdc-select {
+  width: 100px;
 }
