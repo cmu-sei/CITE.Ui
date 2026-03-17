@@ -4,6 +4,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
 */
 
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -31,7 +32,7 @@ import {
   standalone: false
 })
 export class AdminScoringModelMembershipListComponent
-  implements OnInit, OnChanges
+  implements OnInit, OnChanges, AfterViewInit
 {
   @Input()
   users: User[];
@@ -55,13 +56,15 @@ export class AdminScoringModelMembershipListComponent
 
   constructor(public snackBar: MatSnackBar) {}
 
-  ngOnInit(): void {
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  ngOnInit(): void {}
+
+  ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   ngOnChanges() {
     this.dataSource.data = this.buildModel();

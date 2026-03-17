@@ -332,6 +332,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
         });
       this.setDataSources();
+      // load users for evaluation creators
+      const creatorIds = new Set(evaluations.map(e => e.createdBy).filter(id => id && id !== '00000000-0000-0000-0000-000000000000'));
+      creatorIds.forEach(userId => {
+        if (!this.userQuery.getEntity(userId)) {
+          this.userDataService.loadById(userId).pipe(take(1)).subscribe();
+        }
+      });
     });
     // load the user's evaluations
     this.evaluationDataService.loadMine();

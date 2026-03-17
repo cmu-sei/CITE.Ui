@@ -26,48 +26,56 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
 </div>
 
-<mat-accordion displayMode="flat" class="table">
-  <section matSort (matSortChange)="sortChanged($event)" class="mat-elevation-z2 header-row">
-    <div class="header-cell button-cell"><span style="margin-left: 40px;"></span></div>
-    <div class="header-cell name-cell" mat-sort-header="name"><span>TeamType</span></div>
-    <div class="header-cell flag-cell" mat-sort-header="isOfficialScoreContributor">Is Official Score Contributor</div>
-    <div class="header-cell flag-cell" mat-sort-header="showTeamTypeAverage">Show TeamType Average</div>
-  </section>
+<div class="table-container mat-elevation-z2">
+  <table mat-table [dataSource]="displayedTeamTypes" matSort (matSortChange)="sortChanged($event)">
 
-  @for (teamType of paginateTeamtypes(); track teamType.id) {
-  <mat-expansion-panel [disabled]="true">
-    @if (!isLoading) {
-    <mat-expansion-panel-header class="row">
-      <span class="cell button-cell">
-        <button mat-icon-button (click)="addOrEditTeamType(teamType); $event.stopPropagation()" style="outline: none;"
-          title="Edit Evaluation" [disabled]="!canEdit">
-          <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button (click)="addOrEditTeamType(row); $event.stopPropagation()"
+          title="Edit Team Type" [disabled]="!canEdit">
+          <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline"></mat-icon>
         </button>
-        <button mat-icon-button (click)="deleteTeamTypeRequest(teamType); $event.stopPropagation()"
-          style="outline: none;" title="Delete Evaluation" [disabled]="!canEdit">
-          <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can-outline"></mat-icon>
+        <button mat-icon-button (click)="deleteTeamTypeRequest(row); $event.stopPropagation()"
+          title="Delete Team Type" [disabled]="!canEdit">
+          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can-outline"></mat-icon>
         </button>
-      </span>
-      <span class="cell name-cell">
-        {{ teamType.name }}
-      </span>
-      <span class="cell flag-cell center-self">
-        <div class="cssLayoutRowStartCenter center-self">
-          <mat-checkbox class="checkbox-div" [checked]="teamType.isOfficialScoreContributor" [disabled]="!canEdit"
-            (change)="toggleIsOfficialScoreContributor(teamType)" style="margin-right: 20px;"></mat-checkbox>
-        </div>
-      </span>
-      <span class="cell flag-cell center-self">
-        <div class="cssLayoutRowStartCenter center-self">
-          <mat-checkbox class="checkbox-div" [checked]="teamType.showTeamTypeAverage" [disabled]="!canEdit"
-            (change)="toggleShowTeamTypeAverage(teamType)" style="margin-right: 20px;"></mat-checkbox>
-        </div>
-      </span>
-    </mat-expansion-panel-header>
-    }
-  </mat-expansion-panel>
-  }
-</mat-accordion>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>TeamType</th>
+      <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="isOfficialScoreContributor">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header
+        title="When enabled, teams of this type will contribute to the official evaluation score">
+        Is Official Score Contributor
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox [checked]="row.isOfficialScoreContributor" [disabled]="!canEdit"
+          (change)="toggleIsOfficialScoreContributor(row)" (click)="$event.stopPropagation()">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="showTeamTypeAverage">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header
+        title="When enabled, the average score for this team type will be displayed">
+        Show TeamType Average
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox [checked]="row.showTeamTypeAverage" [disabled]="!canEdit"
+          (change)="toggleShowTeamTypeAverage(row)" (click)="$event.stopPropagation()">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>
 
 @if (isLoading) {
 <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">

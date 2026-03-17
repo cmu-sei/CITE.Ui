@@ -5,7 +5,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <div mat-dialog-title>
-  &nbsp;
+  @if (data.evaluation.id) {
+  <span>Edit Evaluation</span>
+  }
+  @if (!data.evaluation.id) {
+  <span>Add Evaluation</span>
+  }
   <button mat-icon-button (click)="handleEditComplete(false)" title="Cancel" class="close-button" tabindex="-1">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
   </button>
@@ -67,16 +72,24 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
     <div class="add-margin">
       <div>
-        <mat-form-field>
-          <input matInput [ngxMatDatetimePicker]="picker" placeholder="Situation Date / Time"
+        <mat-form-field class="datetime-field">
+          <mat-label>Situation Date / Time</mat-label>
+          <input matInput [ngxMatDatetimePicker]="picker"
             [formControl]="situationDateFormControl" (inputChange)="saveEvaluation('situationDate')"
-            (dateChange)="saveEvaluation('situationDate')">
-            <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)">
-            </mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #picker [showSpinners]=true [showSeconds]=false [stepHour]=1 [stepMinute]=5
-              [stepSecond]=1 [touchUi]=false [enableMeridian]=true [disableMinute]=false [hideTime]=false [color]="'warn'">
-            </ngx-mat-datetime-picker>
-          </mat-form-field>
+            (dateChange)="saveEvaluation('situationDate')" style="display: none;">
+          <span (click)="data.canEdit && picker.open()">
+            {{data.evaluation.situationTime | date: 'dd MMM yyyy HH:mm'}} {{ getTimezoneAbbr() }}
+          </span>
+          <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)" [disabled]="!data.canEdit">
+          </mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #picker [showSpinners]=true [showSeconds]=false [stepHour]=1 [stepMinute]=5
+            [stepSecond]=1 [touchUi]=false [enableMeridian]=true [disableMinute]=false [hideTime]=false [color]="'warn'">
+            <ngx-mat-datepicker-actions>
+              <button mat-stroked-button ngxMatDatepickerApply>Save</button>
+              <button mat-stroked-button ngxMatDatepickerCancel>Cancel</button>
+            </ngx-mat-datepicker-actions>
+          </ngx-mat-datetime-picker>
+        </mat-form-field>
         </div>
       </div>
       <div class="add-margin">

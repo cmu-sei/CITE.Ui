@@ -30,6 +30,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admin-action-edit-dialog.component';
+import { UntypedFormControl } from '@angular/forms';
 
 const ALL_MOVES_VALUE: number = -999;
 
@@ -53,6 +54,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   evaluationList: Evaluation[] = [];
   filteredActionList: Action[] = [];
   filterString = '';
+  filterControl = new UntypedFormControl();
   selectedTeamId = '';
   displayedActions: Action[] = [];
   selectedMoveNumber = ALL_MOVES_VALUE;
@@ -106,6 +108,12 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
         this.actionList = actions;
         this.criteriaChanged();
       });
+    this.filterControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((term) => {
+        this.filterString = term ? term.toLowerCase() : '';
+        this.criteriaChanged();
+      });
   }
 
   ngOnInit() {
@@ -134,6 +142,10 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   selectTeam(teamId: string) {
     this.selectedTeamId = teamId;
     this.criteriaChanged();
+  }
+
+  clearFilter() {
+    this.filterControl.setValue('');
   }
 
   addOrEditAction(action: Action) {
@@ -201,7 +213,9 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
 
   criteriaChanged() {
     this.displayedActions = this.actionList.filter(
-      (r) => (!this.selectedTeamId || r.teamId === this.selectedTeamId) && (+this.selectedMoveNumber === ALL_MOVES_VALUE || +r.moveNumber === +this.selectedMoveNumber)
+      (r) => (!this.selectedTeamId || r.teamId === this.selectedTeamId) &&
+             (+this.selectedMoveNumber === ALL_MOVES_VALUE || +r.moveNumber === +this.selectedMoveNumber) &&
+             (!this.filterString || r.description.toLowerCase().includes(this.filterString))
     );
     this.dataSource.data = this.displayedActions;
   }
