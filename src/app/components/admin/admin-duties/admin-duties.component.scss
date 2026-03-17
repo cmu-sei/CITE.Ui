@@ -28,6 +28,15 @@ table {
   width: 300px !important;
 }
 
+.search-field {
+  width: 300px !important;
+}
+
 .mat-mdc-header-row {
   min-height: 56px;
+}
+
+.mat-mdc-header-cell {
+  font-size: 16px;
+  font-weight: 500;
 }
