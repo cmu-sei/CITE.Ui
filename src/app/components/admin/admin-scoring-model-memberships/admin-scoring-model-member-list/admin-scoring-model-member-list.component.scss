@@ -33,3 +33,16 @@ mat-paginator {
 .w-50 {
   width: 50%;
 }
+
+mat-select {
+  font-size: 14px;
+  width: 140px;
+}
+
+::ng-deep .mat-mdc-option {
+  font-size: 14px;
+}
+
+::ng-deep .mdc-list-item__primary-text {
+  white-space: nowrap;
+}

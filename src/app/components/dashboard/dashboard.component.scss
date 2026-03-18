@@ -168,3 +168,16 @@
 .center-self {
   align-self: center;
 }
+
+.checkboxes-cell mat-select {
+  font-size: 14px;
+  width: 140px;
+}
+
+::ng-deep .mat-mdc-option {
+  font-size: 14px;
+}
+
+::ng-deep .mdc-list-item__primary-text {
+  white-space: nowrap;
+}
