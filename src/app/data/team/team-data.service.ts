@@ -186,6 +186,8 @@ export class TeamDataService {
           this.teamStore.set(teams);
         },
         (error) => {
+          // Handle 403 silently - user may not have permission to view teams
+          this.teamStore.setLoading(false);
           this.teamStore.set([]);
         }
       );

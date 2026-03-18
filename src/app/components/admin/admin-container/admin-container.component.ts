@@ -119,8 +119,12 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
         this.displayedSection = section;
       });
     this.originalEvaluationId = this.evaluationQuery.getActiveId();
-    // load Evaluations
-    this.evaluationDataService.load();
+    // load Evaluations based on user permissions
+    if (this.permissionDataService.hasPermission(SystemPermission.ViewEvaluations)) {
+      this.evaluationDataService.load();
+    } else {
+      this.evaluationDataService.loadMine();
+    }
     // load and subscribe to TeamTypes
     this.teamTypeDataService.load();
     // Set the display settings from config file
@@ -134,17 +138,20 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
 
   ngOnInit() {
     this.userList = this.userQuery.selectAll();
-    this.userDataService.load().pipe(take(1)).subscribe();
     this.permissionDataService.load().subscribe((x) => {
       this.permissions = this.permissionDataService.permissions;
-      this.canViewScoringModels = this.canViewScoringModels || this.permissionDataService.hasPermission(SystemPermission.ViewScoringModels);
+      this.canViewScoringModels = this.permissionDataService.hasPermission(SystemPermission.ViewScoringModels);
       this.canCreateScoringModels = this.permissionDataService.hasPermission(SystemPermission.CreateScoringModels);
-      this.canViewEvaluations = this.canViewEvaluations || this.permissionDataService.hasPermission(SystemPermission.ViewEvaluations);
+      this.canViewEvaluations = this.permissionDataService.hasPermission(SystemPermission.ViewEvaluations);
       this.canCreateEvaluations = this.permissionDataService.hasPermission(SystemPermission.CreateEvaluations);
       this.canViewGroups = this.permissionDataService.hasPermission(SystemPermission.ViewGroups);
       this.canViewRoles = this.permissionDataService.hasPermission(SystemPermission.ViewRoles);
       this.canViewTeamTypes = this.permissionDataService.hasPermission(SystemPermission.ViewTeamTypes);
       this.canViewUsers = this.permissionDataService.hasPermission(SystemPermission.ViewUsers);
+      // Only load users if user has permission
+      if (this.canViewUsers) {
+        this.userDataService.load().pipe(take(1)).subscribe();
+      }
     });
     this.permissionDataService.loadScoringModelPermissions().subscribe();
     this.permissionDataService.loadEvaluationPermissions().subscribe();

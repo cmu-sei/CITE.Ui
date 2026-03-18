@@ -61,7 +61,27 @@ export class PermissionDataService {
   }
 
   canViewAdministration() {
-    return this._permissions.some((y) => y.startsWith('View'));
+    const adminPermissions: SystemPermission[] = [
+      SystemPermission.ViewEvaluations,
+      SystemPermission.EditEvaluations,
+      SystemPermission.ManageEvaluations,
+      SystemPermission.CreateEvaluations,
+      SystemPermission.ExecuteEvaluations,
+      SystemPermission.ViewScoringModels,
+      SystemPermission.EditScoringModels,
+      SystemPermission.ManageScoringModels,
+      SystemPermission.CreateScoringModels,
+      SystemPermission.ViewUsers,
+      SystemPermission.ManageUsers,
+      SystemPermission.ViewRoles,
+      SystemPermission.ManageRoles,
+      SystemPermission.ViewGroups,
+      SystemPermission.ManageGroups,
+      SystemPermission.ViewTeamTypes,
+      SystemPermission.ManageTeamTypes
+    ];
+
+    return this._permissions.some((perm) => adminPermissions.includes(perm));
   }
 
   loadEvaluationPermissions(): Observable<EvaluationPermissionClaim[]> {

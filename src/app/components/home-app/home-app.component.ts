@@ -174,7 +174,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       .subscribe(
         (x) => {
           this.permissions = this.permissionDataService.permissions;
-          this.canViewAdministration = this.permissions.some((y) => y.startsWith('View'));
+          this.canViewAdministration = this.permissionDataService.canViewAdministration();
         }
       );
     // load evaluation permissions
