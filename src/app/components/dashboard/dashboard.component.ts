@@ -91,6 +91,7 @@ export class DashboardComponent implements OnDestroy {
   loggedInUserId = '';
   showPermissions = false;
   showDuties = false;
+  showActions = true;
   canManageTeam = false;
   canSubmitTeamScore = false;
   canContributeToTeamScore = false;
@@ -370,6 +371,9 @@ export class DashboardComponent implements OnDestroy {
       width: 'auto',
       data: {
         action: action,
+        teamList: [],
+        moveList: [],
+        allMovesValue: -999
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -453,7 +457,7 @@ export class DashboardComponent implements OnDestroy {
       width: 'auto',
       data: {
         duty: duty,
-        canEdit: this.canManageTeam
+        canEdit: this.canSubmitTeamScore
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

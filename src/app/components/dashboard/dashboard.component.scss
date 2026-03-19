@@ -24,6 +24,11 @@
   flex-wrap: wrap;
   width: 100%;
   min-height: 40px;
+
+  .center-self {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
 }
 
 .first-row {
@@ -67,7 +72,7 @@
 }
 
 .mat-mdc-checkbox {
-  padding: 10px;
+  padding: 2px 10px 2px 2px;
 }
 
 .duty-container {
@@ -143,6 +148,7 @@
   flex-direction: row;
   flex: 5;
   align-self: center;
+  justify-content: flex-end;
 }
 
 .five-cell {
@@ -167,4 +173,50 @@
 
 .center-self {
   align-self: center;
+}
+
+.checkboxes-cell mat-form-field {
+  width: 150px !important;
+  max-width: 150px !important;
+}
+
+.checkboxes-cell mat-select {
+  font-size: 14px;
+  width: 150px;
+  text-align: right;
+}
+
+::ng-deep .mat-mdc-option {
+  font-size: 14px;
+  text-align: right;
+}
+
+::ng-deep .mdc-list-item__primary-text {
+  white-space: nowrap;
+  text-align: right;
+  width: 100%;
+}
+
+::ng-deep .checkboxes-cell .mat-mdc-select-value-text {
+  text-align: right;
+}
+
+::ng-deep .checkboxes-cell .mat-mdc-select-trigger {
+  text-align: right;
+}
+
+.section-container .row-container {
+  min-height: 26px;
+  margin-bottom: 2px;
+
+  button[mat-icon-button] {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+  }
+}
+
+.section-container > .row-container:first-of-type {
+  min-height: 36px;
+  margin-bottom: 2px;
 }

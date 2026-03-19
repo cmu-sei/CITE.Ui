@@ -68,3 +68,16 @@ table {
   display: flex;
   align-items: center;
 }
+
+mat-select {
+  font-size: 14px;
+  width: 150px;
+}
+
+::ng-deep .mat-mdc-option {
+  font-size: 14px;
+}
+
+::ng-deep .mdc-list-item__primary-text {
+  white-space: nowrap;
+}
