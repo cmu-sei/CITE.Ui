@@ -20,6 +20,7 @@ import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
 import { CurrentUserQuery } from 'src/app/data/user/user.query';
 import {
   ItemStatus,
@@ -53,6 +54,7 @@ export class ScoresheetComponent implements OnDestroy {
   userId = '';
   activeTeamId = '';
   teamMemberships: User[];
+  evaluationUsers: User[] = [];
   currentMoveNumber: number;
   displayedMoveNumber: number;
   selectedEvaluation: Evaluation = {};
@@ -86,6 +88,7 @@ export class ScoresheetComponent implements OnDestroy {
     private submissionQuery: SubmissionQuery,
     private evaluationQuery: EvaluationQuery,
     private userDataService: UserDataService,
+    private userQuery: UserQuery,
     private currentUserQuery: CurrentUserQuery,
     private teamQuery: TeamQuery,
     private teamMembershipDataService: TeamMembershipDataService,
@@ -165,6 +168,12 @@ export class ScoresheetComponent implements OnDestroy {
         this.loggedInUserId = cu.id;
       });
     this.userDataService.setCurrentUser();
+    // observe the evaluation users
+    this.userQuery.selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(users => {
+        this.evaluationUsers = users;
+      });
     // observe the submission list
     this.submissionQuery
       .selectAll()
@@ -435,7 +444,7 @@ export class ScoresheetComponent implements OnDestroy {
   }
 
   getUserName(id) {
-    const theUser = this.teamMemberships?.find((tu) => tu.id === id);
+    const theUser = this.evaluationUsers?.find((u) => u.id === id);
     return theUser ? theUser.name : '';
   }
 
