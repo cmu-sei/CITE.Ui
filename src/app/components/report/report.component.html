@@ -37,7 +37,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </button>
     </div>
   </div>
-  @for (submission of displayedSubmissionList; track submission) {
+  @for (submission of displayedSubmissionList; track submission.id) {
     <mat-table [dataSource]="getDisplayedScoringCategories(submission.moveNumber) | displayOrder" class="full-width"
       >
       <!-- Description Definition -->
@@ -90,7 +90,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                         scoringOption.id
                         )
                         ; track
-                        comment) {
+                        comment.id) {
                         <div>
                           {{ comment.comment }}
                           @if (displaying === 'Team') {
