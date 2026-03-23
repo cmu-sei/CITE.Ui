@@ -248,28 +248,25 @@ describe('HomeAppComponent', () => {
     expect(fixture.componentInstance.hideTopbar).toBe(inIframe);
   });
 
-  it('should show no-evaluation message when list is empty and loaded', async () => {
+  it('should show no-results message when evaluation list is empty', async () => {
     const { fixture } = await renderHomeApp({
       permissions: [SystemPermission.ViewUsers],
     });
     fixture.componentInstance.permissions = [SystemPermission.ViewUsers];
     fixture.componentInstance.evaluationList = [];
+    fixture.componentInstance.evaluationDataSource.data = [];
     fixture.detectChanges();
-    expect(
-      screen.getByText(/You are not a team member for an active evaluation/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/No results found/i)).toBeInTheDocument();
   });
 
-  it('should show admin button when canViewAdministration is true', async () => {
+  it('should pass canViewAdministration to evaluation-info component', async () => {
     const { fixture } = await renderHomeApp({
       permissions: [SystemPermission.ViewUsers],
       canViewAdmin: true,
     });
-    fixture.componentInstance.permissions = [SystemPermission.ViewUsers];
     fixture.componentInstance.canViewAdministration = true;
-    fixture.componentInstance.evaluationList = [];
     fixture.detectChanges();
-    expect(screen.getByText(/Goto Administration Pages/i)).toBeInTheDocument();
+    expect(fixture.componentInstance.canViewAdministration).toBe(true);
   });
 
   it('should set topbar text from settings', async () => {

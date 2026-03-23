@@ -38,6 +38,7 @@ async function renderAdmin(
         provide: EvaluationDataService,
         useValue: {
           load: () => {},
+          loadMine: () => {},
           setActive: () => {},
           EvaluationList: new BehaviorSubject([]),
         },
