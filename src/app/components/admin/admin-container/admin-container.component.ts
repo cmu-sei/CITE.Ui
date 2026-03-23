@@ -119,12 +119,6 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
         this.displayedSection = section;
       });
     this.originalEvaluationId = this.evaluationQuery.getActiveId();
-    // load Evaluations based on user permissions
-    if (this.permissionDataService.hasPermission(SystemPermission.ViewEvaluations)) {
-      this.evaluationDataService.load();
-    } else {
-      this.evaluationDataService.loadMine();
-    }
     // load and subscribe to TeamTypes
     this.teamTypeDataService.load();
     // Set the display settings from config file
@@ -148,6 +142,12 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
       this.canViewRoles = this.permissionDataService.hasPermission(SystemPermission.ViewRoles);
       this.canViewTeamTypes = this.permissionDataService.hasPermission(SystemPermission.ViewTeamTypes);
       this.canViewUsers = this.permissionDataService.hasPermission(SystemPermission.ViewUsers);
+      // Load evaluations based on user permissions (must be inside load callback so permissions are available)
+      if (this.canViewEvaluations) {
+        this.evaluationDataService.load();
+      } else {
+        this.evaluationDataService.loadMine();
+      }
       // Only load users if user has permission
       if (this.canViewUsers) {
         this.userDataService.load().pipe(take(1)).subscribe();
