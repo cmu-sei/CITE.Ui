@@ -14,7 +14,8 @@
     "docker:stack": "npm run docker:stack:identity && npm run docker:stack:api",
     "docker:stack:api": "docker stack deploy -c docker-compose.yml -c docker/compose/api.yml cite_stack",
     "docker:stack:identity": "docker stack deploy -c docker-compose.yml -c docker/compose/identity.yml identity_stack",
-    "docker:destroy": "docker stack rm cite_stack identity_stack"
+    "docker:destroy": "docker stack rm cite_stack identity_stack",
+    "lint:css": "stylelint \"src/**/*.{scss,css}\""
   },
   "private": true,
   "dependencies": {
@@ -76,6 +77,8 @@
     "eslint-plugin-import": "^2.32.0",
     "jasmine-core": "~3.7.1",
     "jasmine-spec-reporter": "~7.0.0",
+    "stylelint": "^17.5.0",
+    "stylelint-config-recommended-scss": "^17.0.0",
     "ts-node": "~10.0.0",
     "typescript": "~5.9.3"
   },
