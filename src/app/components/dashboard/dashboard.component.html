@@ -21,17 +21,36 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </div>
   }
   <!-- Actions section -->
+  @if (!showActions) {
   <div class="row-container">
     <div class="section-container four-cell">
       <div class="row-container">
+        <div class="two-cell center-self">
+          <button mat-icon-button (click)="showActions = true" title="Expand the actions">
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-menu-down"></mat-icon>
+          </button>
+          <b title="Participant Actions during an Exercise">Actions:</b>
+        </div>
+        <div class="checkboxes-cell">&nbsp;</div>
+      </div>
+    </div>
+  </div>
+  }
+  @if (showActions) {
+  <div class="row-container">
+    <div class="section-container mat-elevation-z8 four-cell">
+      <div class="row-container">
         <div class="five-cell center-self">
+          <button mat-icon-button (click)="showActions = false" title="Collapse the actions">
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-menu-up"></mat-icon>
+          </button>
           <b title="Participant Actions during an Exercise">Actions:</b>
         </div>
         @if (myTeamId === activeTeamId) {
         <div class="right-cell">
           @if (!isActionEditMode) {
           <button mat-icon-button (click)="isActionEditMode = true" title="Edit Actions"
-            [disabled]="noChanges || !canManageTeam">
+            [disabled]="noChanges || !canSubmitTeamScore">
             <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline">
             </mat-icon>
           </button>
@@ -76,6 +95,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       }
     </div>
   </div>
+  }
   <!-- Duties Section -->
   @if (!showDuties) {
   <div class="row-container">
@@ -105,7 +125,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="right-cell">
           @if (!isDutyEditMode) {
           <button mat-icon-button (click)="isDutyEditMode = true" title="Edit Duties"
-            [disabled]="noChanges || !canManageTeam">
+            [disabled]="noChanges || !canSubmitTeamScore">
             <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline">
             </mat-icon>
           </button>
@@ -140,7 +160,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <label>{{ duty.name }}</label>
         </div>
         <div class="five-cell center-self">
-          @if (!isDutyEditMode && canManageTeam) {
+          @if (!isDutyEditMode && canContributeToTeamScore) {
           <mat-select placeholder="Assign Users" [value]="duty.users" multiple (opened)="openDutyUsers(duty)"
             (selectionChange)="updateDutyUsers(duty.id, $event)" (closed)="closeDutyUsers(duty.id)"
             [disabled]="noChanges || myTeamId !== activeTeamId" title="Select a Team Member">
@@ -150,7 +170,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             }
           </mat-select>
           }
-          @if (isDutyEditMode || !canManageTeam) {
+          @if (isDutyEditMode || !canContributeToTeamScore) {
           <span>{{ getUserNames(duty.users) }}</span>
           }
         </div>

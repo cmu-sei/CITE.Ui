@@ -6,8 +6,10 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
 <div class="mat-elevation-z8">
   <mat-toolbar class="background">
     <mat-toolbar-row>
+      <mat-icon class="mdi-24px" fontIcon="mdi-account-group"></mat-icon>
       <p>Users/Groups</p>
-    </mat-toolbar-row><mat-toolbar-row>
+    </mat-toolbar-row>
+    <mat-toolbar-row>
       <mat-form-field class="w-50">
         <input matInput [(ngModel)]="filterString" (keyup)="applyFilter($event)" #input autocomplete="off"
           placeholder="Search" />
@@ -52,7 +54,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
 
     <tr class="mat-row" *matNoDataRow>
       <td class="mat-cell" colspan="4">
-        No data matching the filter "{{ input.value }}"
+        No results found
       </td>
     </tr>
   </table>

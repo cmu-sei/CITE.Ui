@@ -174,7 +174,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       .subscribe(
         (x) => {
           this.permissions = this.permissionDataService.permissions;
-          this.canViewAdministration = this.permissions.some((y) => y.startsWith('View'));
+          this.canViewAdministration = this.permissionDataService.canViewAdministration();
         }
       );
     // load evaluation permissions
@@ -332,6 +332,12 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
         });
       this.setDataSources();
+      // Load users for each evaluation (for displaying creator names)
+      evaluations.forEach(evaluation => {
+        if (evaluation.id) {
+          this.userDataService.loadByEvaluation(evaluation.id).pipe(take(1)).subscribe();
+        }
+      });
     });
     // load the user's evaluations
     this.evaluationDataService.loadMine();

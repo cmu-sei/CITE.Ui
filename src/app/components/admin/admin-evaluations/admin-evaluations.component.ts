@@ -2,6 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
@@ -30,7 +31,14 @@ import { PermissionDataService } from 'src/app/data/permission/permission-data.s
     selector: 'app-admin-evaluations',
     templateUrl: './admin-evaluations.component.html',
     styleUrls: ['./admin-evaluations.component.scss'],
-    standalone: false
+    standalone: false,
+    animations: [
+      trigger('detailExpand', [
+        state('collapsed', style({ height: '0px', minHeight: '0' })),
+        state('expanded', style({ height: '*' })),
+        transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+      ]),
+    ],
 })
 
 export class AdminEvaluationsComponent implements OnInit, OnDestroy {
@@ -45,6 +53,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   addingNewEvaluation = false;
   newEvaluationDescription = '';
   editEvaluation: Evaluation = {};
+  displayedColumns = ['actions', 'description', 'currentMoveNumber', 'status', 'createdBy', 'dateCreated'];
   scoringModels = [];
   selectedScoringModelId = '';
   filteredEvaluationList: Evaluation[] = [];

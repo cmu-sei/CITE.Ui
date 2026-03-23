@@ -5,7 +5,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <div mat-dialog-title>
-  &nbsp;
+  {{ data?.action?.id ? 'Edit Action' : 'Add Action' }}
   <button
     mat-icon-button
     (click)="handleEditComplete(false)"
@@ -18,7 +18,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 </div>
 @if (data && data.action) {
   <div mat-dialog-content>
-    <div>
+    <div class="add-margin">
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Action Description</mat-label>

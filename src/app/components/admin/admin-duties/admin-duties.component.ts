@@ -28,6 +28,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminDutyEditDialogComponent } from '../admin-duty-edit-dialog/admin-duty-edit-dialog.component';
+import { UntypedFormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-admin-duties',
@@ -46,6 +47,8 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   displayedDuties: Duty[] = [];
   dataSource = new MatTableDataSource<Duty>();
   selectedTeamId = '';
+  filterString = '';
+  filterControl = new UntypedFormControl();
   teamList: Team[] = [];
   userList$: User[] = [];
   displayedColumns: string[] = ['name', 'teamId', 'users'];
@@ -76,11 +79,19 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
         this.dutyList = duties;
         this.criteriaChanged();
       });
+    this.filterControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((term) => {
+        this.filterString = term ? term.toLowerCase() : '';
+        this.criteriaChanged();
+      });
     this.activatedRoute.queryParamMap
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((params) => {
-        this.selectedEvaluationId = params.get('evaluation');
-        this.selectedTeamId = params.get('team');
+        if (params.get('evaluation')) {
+          this.selectedEvaluationId = params.get('evaluation');
+        }
+        this.selectedTeamId = params.get('team') || '';
       });
   }
 
@@ -103,6 +114,10 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   selectTeam(teamId: string) {
     this.selectedTeamId = teamId;
     this.criteriaChanged();
+  }
+
+  clearFilter() {
+    this.filterControl.setValue('');
   }
 
   addOrEditDuty(duty: Duty) {
@@ -162,13 +177,10 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   }
 
   criteriaChanged() {
-    if (this.selectedTeamId && this.dutyList && this.dutyList.length > 0) {
-      this.displayedDuties = this.dutyList.filter(
-        (r) => r.teamId === this.selectedTeamId
-      );
-    } else {
-      this.displayedDuties = this.dutyList;
-    }
+    this.displayedDuties = this.dutyList.filter(
+      (r) => (!this.selectedTeamId || r.teamId === this.selectedTeamId) &&
+             (!this.filterString || r.name.toLowerCase().includes(this.filterString))
+    );
     this.dataSource.data = this.displayedDuties;
   }
 

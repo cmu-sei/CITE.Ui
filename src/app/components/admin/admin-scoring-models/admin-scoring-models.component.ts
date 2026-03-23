@@ -2,6 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
@@ -29,7 +30,14 @@ import { PermissionDataService } from 'src/app/data/permission/permission-data.s
     selector: 'app-admin-scoring-models',
     templateUrl: './admin-scoring-models.component.html',
     styleUrls: ['./admin-scoring-models.component.scss'],
-    standalone: false
+    standalone: false,
+    animations: [
+      trigger('detailExpand', [
+        state('collapsed', style({ height: '0px', minHeight: '0' })),
+        state('expanded', style({ height: '*' })),
+        transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+      ]),
+    ],
 })
 export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   @Input() evaluationList: Evaluation[];
@@ -48,6 +56,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   addingNewScoringModel = false;
   newScoringModelDescription = '';
   editScoringModel: ScoringModel = {};
+  displayedColumns = ['actions', 'description', 'createdBy', 'dateCreated', 'status'];
   previewScoringModelId = '';
   scoringCategoryId = '';
   itemStatuses = [

@@ -118,6 +118,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
           filteredMoves.push({... se});
         }
       });
+      // Filter by search string
       if (filteredMoves && filteredMoves.length > 0 && this.filterString) {
         const filterString = this.filterString.toLowerCase();
         filteredMoves = filteredMoves

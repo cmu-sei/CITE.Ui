@@ -5,92 +5,53 @@
 .sub-container {
   width: 90%;
   margin-left: 5%;
-}
-
-.header-row {
-  min-height: 56px;
-}
-
-.row {
-  min-height: 48px;
-}
-
-.row,
-.header-row {
-  display: flex;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  align-items: center;
-  padding: 0 24px;
-  font-weight: 400;
-}
-
-.cell,
-.header-cell {
-  flex: 1;
-  overflow: hidden;
-  word-wrap: break-word;
-}
-
-.button-margins {
-  margin-left: 20px;
-  margin-right: 20px;
+  padding: 16px 0;
 }
 
 .sp-icon {
   margin-left: 10px;
 }
 
-.mat-accordion .header-row {
-  padding-left: 1.5rem;
-  padding-right: 2rem;
-  border-bottom: none;
+table {
+  width: 100%;
 }
 
-.mat-expansion-panel-header.row {
-  border-bottom: none;
+.table-container {
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
 }
 
-.mat-expansion-panel {
-  text-align: left;
+tr.detail-row {
+  height: 0;
 }
 
-.mat-mdc-select {
-  width: 100px;
+.element-row td {
+  border-bottom-width: 0;
+  cursor: pointer;
 }
 
-.pad-top {
-  margin-top: 12px;
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  overflow: hidden;
+  word-wrap: break-word;
 }
 
-.first-cell {
-  flex: 2;
-  align-self: center;
-  min-width: 200px;
-  max-width: 220px;
+.mat-column-actions {
+  width: 240px;
+  max-width: 240px;
+  white-space: nowrap;
 }
 
-.description-cell {
+.mat-column-description {
   flex: 5;
-  align-self: center;
+  min-width: 150px;
 }
 
-.date-cell {
-  flex: 2;
-  align-self: center;
-  min-width: 80px;
-}
-
-.one-cell {
-  flex: 1;
-  align-self: center;
+.mat-column-createdBy,
+.mat-column-status {
   min-width: 70px;
 }
 
-.center-self {
-  align-self: center;
-}
-
-.center-text {
-  text-align: center;
+.mat-column-dateCreated {
+  min-width: 80px;
 }

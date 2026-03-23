@@ -7,6 +7,11 @@
   @include mat.elevation(2);
 }
 
+.table-container {
+  overflow-y: auto;
+  max-height: 400px;
+}
+
 table {
   width: 100%;
 }
@@ -29,8 +34,17 @@ table {
   width: 300px !important;
 }
 
+.search-field {
+  width: 300px !important;
+}
+
 .mat-mdc-header-row {
   min-height: 56px;
+}
+
+.mat-mdc-header-cell {
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .mat-mdc-cell {

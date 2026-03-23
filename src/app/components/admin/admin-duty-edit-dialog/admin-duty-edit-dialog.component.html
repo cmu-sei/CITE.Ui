@@ -5,7 +5,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <div mat-dialog-title>
-  &nbsp;
+  {{ data?.duty?.id ? 'Edit Duty' : 'Add Duty' }}
   <button
     mat-icon-button
     (click)="handleEditComplete(false)"

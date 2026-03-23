@@ -2,3 +2,16 @@
 Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
+
+::ng-deep mat-select {
+  font-size: 14px;
+  width: 150px;
+}
+
+::ng-deep .mat-mdc-option {
+  font-size: 14px;
+}
+
+::ng-deep .mdc-list-item__primary-text {
+  white-space: nowrap;
+}

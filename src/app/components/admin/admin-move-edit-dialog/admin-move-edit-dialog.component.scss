@@ -2,6 +2,16 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
+::ng-deep .mat-mdc-dialog-container {
+  height: auto !important;
+  max-height: 90vh !important;
+}
+
+.mat-mdc-dialog-content {
+  max-height: calc(90vh - 150px) !important;
+  overflow-y: auto !important;
+}
+
 .scenario-container {
   flex-direction: column;
   min-width: 1000px;
@@ -75,5 +85,16 @@
   margin-bottom: 0;
   margin-left: 10px;
   margin-right: 0;
+}
+
+.timezone-hint {
+  font-size: 11px;
+  font-style: italic;
+  opacity: 0.8;
+  margin-left: 8px;
+}
+
+.datetime-field {
+  width: 300px;
 }
 
