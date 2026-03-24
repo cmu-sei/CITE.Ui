@@ -29,7 +29,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Scoring Model</mat-label>
-          <mat-select placeholder="Select a Scoring Model" [(value)]="data.evaluation.scoringModelId"
+          <mat-select placeholder="Please select a scoring model" [(value)]="data.evaluation.scoringModelId"
             (click)="$event.stopPropagation()" [disabled]="data.isExisting || !data.canEdit">
             @for (scoringModel of data.scoringModels; track scoringModel) {
               <mat-option [value]="scoringModel.id">

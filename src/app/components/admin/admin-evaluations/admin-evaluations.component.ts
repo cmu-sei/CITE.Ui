@@ -92,8 +92,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       // observe the scoring models
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {
       this.scoringModels = scoringModels;
-      const scoringModel = scoringModels.find(sm => sm.status === ItemStatus.Active);
-      this.selectedScoringModelId = !scoringModel ? '' : scoringModel.id;
+      this.selectedScoringModelId = '';
     });
     this.scoringModelDataService.load();
     // oberve the users

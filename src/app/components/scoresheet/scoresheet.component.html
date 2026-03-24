@@ -157,7 +157,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <mat-cell *matCellDef="let scoringOption" [ngClass]="tableClass">
               <div [ngClass]="tableClass" style="width: 100%;">
                 @if (scoringCategory.scoringOptionSelection !== 'None') {
-                <div [ngClass]="tableClass">
+                <div [ngClass]="tableClass" class="option-row">
                   @if (!displayedSubmission.scoreIsAnAverage) {
                   <mat-checkbox [aria-label]="scoringOption.description"
                     [checked]="isSelected(scoringCategory.id, scoringOption.id)"
@@ -198,7 +198,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   )
                   ; track
                   comment.id) {
-                  <div>
+                  <div class="option-row">
                     {{ comment.comment }}
                     @if (displaying === 'team') {
                     <span> - {{ getUserName(comment.createdBy) }}</span>
