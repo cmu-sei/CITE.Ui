@@ -144,7 +144,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       minWidth: '900px',
       data: {
         evaluation: evaluation,
-        scoringModels: this.scoringModels.filter(sm => !sm.evaluationId),
+        scoringModels: this.scoringModels.filter(sm => !sm.evaluationId || sm.evaluationId === evaluation.id),
         itemStatuses: this.itemStatuses,
         isExisting: !!evaluation.dateCreated,
         canEdit: this.permissionDataService.canEditEvaluation(evaluation.id)
