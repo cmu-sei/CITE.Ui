@@ -21,6 +21,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="add-margin">
       <div>
         <mat-form-field class="full-width">
+          <mat-label>Name</mat-label>
           <input type="text" matInput [formControl]="teamNameFormControl" placeholder="Name (required)" (blur)="saveTeam('name')"
             value="{{data.team.name}}">
             @if (teamNameFormControl.hasError('minlength') && !teamNameFormControl.hasError('required')) {
@@ -39,6 +40,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="add-margin">
         <div>
           <mat-form-field class="full-width">
+            <mat-label>Short Name</mat-label>
             <input type="text" matInput [formControl]="teamShortNameFormControl" placeholder="Short Name (required)" (blur)="saveTeam('shortName')"
               value="{{data.team.shortName}}">
               @if (teamShortNameFormControl.hasError('minlength') && !teamShortNameFormControl.hasError('required')) {
@@ -57,6 +59,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="add-margin">
           <div>
             <mat-form-field class="full-width">
+              <mat-label>Team Type</mat-label>
               <mat-select placeholder="Team Type (required)" [formControl]="teamTypeIdFormControl" (selectionChange)="saveTeam('teamTypeId')">
                 @for (teamType of data.teamTypeList; track teamType.id) {
                   <mat-option [value]="teamType.id">

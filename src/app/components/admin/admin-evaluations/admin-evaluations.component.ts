@@ -92,8 +92,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       // observe the scoring models
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {
       this.scoringModels = scoringModels;
-      const scoringModel = scoringModels.find(sm => sm.status === ItemStatus.Active);
-      this.selectedScoringModelId = !scoringModel ? '' : scoringModel.id;
+      this.selectedScoringModelId = '';
     });
     this.scoringModelDataService.load();
     // oberve the users
@@ -145,7 +144,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       minWidth: '900px',
       data: {
         evaluation: evaluation,
-        scoringModels: this.scoringModels,
+        scoringModels: this.scoringModels.filter(sm => !sm.evaluationId || sm.evaluationId === evaluation.id),
         itemStatuses: this.itemStatuses,
         isExisting: !!evaluation.dateCreated,
         canEdit: this.permissionDataService.canEditEvaluation(evaluation.id)

@@ -153,7 +153,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
         scoringModel: scoringModel,
         itemStatuses: this.itemStatuses,
         rightSideDisplays: this.rightSideDisplays,
-        canEdit: (scoringModel?.id && !scoringModel.evaluationId) && hasPermission
+        canEdit: !scoringModel.evaluationId && hasPermission
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
