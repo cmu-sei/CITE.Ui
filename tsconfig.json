@@ -20,8 +20,14 @@
     ],
     "useDefineForClassFields": false,
     "resolveJsonModule": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@cmusei/crucible-common": ["../../libraries/Crucible.Common.Ui/dist/@crucible-common"]
+    }
   },
+  "exclude": [
+    "../../libraries/**/node_modules"
+  ],
   "angularCompilerOptions": {
     "strictTemplates": true,
     "strictInjectionParameters": true
