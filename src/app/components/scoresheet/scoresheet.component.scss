@@ -42,13 +42,15 @@
 }
 
 .mat-column-value {
-  width: 10% !important;
-  min-width: 80px !important;
+  flex: 0 0 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
   text-align: center;
 }
 
-.mat-column-description {
-  width: 90% !important;
+.mat-column-scoringOptionDescription {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
 }
 
 textarea.mat-input-element {
@@ -86,6 +88,12 @@ textarea.mat-input-element {
 .scoring-category-description {
   font-weight: bold;
   margin-top: 20px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 .small-icon {

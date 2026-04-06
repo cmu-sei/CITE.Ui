@@ -157,7 +157,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <mat-cell *matCellDef="let scoringOption" [ngClass]="tableClass">
               <div [ngClass]="tableClass" style="width: 100%;">
                 @if (scoringCategory.scoringOptionSelection !== 'None') {
-                <div [ngClass]="tableClass">
+                <div [ngClass]="tableClass" class="option-row">
                   @if (!displayedSubmission.scoreIsAnAverage) {
                   <mat-checkbox [aria-label]="scoringOption.description"
                     [checked]="isSelected(scoringCategory.id, scoringOption.id)"
@@ -197,8 +197,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   scoringOption.id
                   )
                   ; track
-                  comment) {
-                  <div>
+                  comment.id) {
+                  <div class="option-row">
                     {{ comment.comment }}
                     @if (displaying === 'team') {
                     <span> - {{ getUserName(comment.createdBy) }}</span>
@@ -272,10 +272,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
 </div>
 
 <ng-template #addCommenttemplate>
-  <h1>Add a comment ...</h1>
-  <mat-form-field class="full-width">
-    <textarea matInput placeholder="{{ commentOptionDescription }}" [(ngModel)]="currentComment"></textarea>
-  </mat-form-field>
+  <div mat-dialog-title>Add a comment ...</div>
+  <div mat-dialog-content>
+    <mat-form-field class="full-width">
+      <mat-label>{{ commentOptionDescription }}</mat-label>
+      <textarea matInput placeholder="" [(ngModel)]="currentComment"></textarea>
+    </mat-form-field>
+  </div>
 
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>Cancel</button>

@@ -9,6 +9,8 @@ import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
+import { UserDataService } from 'src/app/data/user/user-data.service';
+import { UserQuery } from 'src/app/data/user/user.query';
 import { CurrentUserQuery } from 'src/app/data/user/user.query';
 import { ItemStatus,
   Evaluation,
@@ -58,6 +60,8 @@ export class AggregateComponent implements OnInit, OnDestroy {
 
   constructor(
     private submissionService: SubmissionService,
+    private userDataService: UserDataService,
+    private userQuery: UserQuery,
     private currentUserQuery: CurrentUserQuery,
     private teamService: TeamService,
     private teamQuery: TeamQuery,
@@ -76,6 +80,13 @@ export class AggregateComponent implements OnInit, OnDestroy {
           this.userId = this.loggedInUserId;
         }
       });
+    this.userDataService.setCurrentUser();
+    // observe the evaluation users
+    this.userQuery.selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(users => {
+        this.userList = users;
+      });
   }
 
   ngOnInit() {
@@ -88,7 +99,6 @@ export class AggregateComponent implements OnInit, OnDestroy {
     combineLatest([this.teamList$, this.submissionList$])
       .pipe(takeUntil(this.unsubscribe$)).subscribe(([teams, submissions]) => {
         this.teamList = teams.length > 0 ? teams.sort((a, b) => a.shortName < b.shortName ? -1 : 1) : [];
-        this.userList = teams.length > 0 ? this.getUserListFromTeams(teams) : [];
         this.getPopulatedSubmissions(submissions);
       });
   }
