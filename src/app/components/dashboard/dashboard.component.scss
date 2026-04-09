@@ -54,7 +54,7 @@
 
 .angular-editor {
   width: 100%;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100% - 200px);
 }
 
 .item-container {
@@ -183,26 +183,26 @@
 .checkboxes-cell mat-select {
   font-size: 14px;
   width: 150px;
-  text-align: right;
+  text-align: left;
 }
 
 ::ng-deep .mat-mdc-option {
   font-size: 14px;
-  text-align: right;
+  text-align: left;
 }
 
 ::ng-deep .mdc-list-item__primary-text {
   white-space: nowrap;
-  text-align: right;
+  text-align: left;
   width: 100%;
 }
 
 ::ng-deep .checkboxes-cell .mat-mdc-select-value-text {
-  text-align: right;
+  text-align: left;
 }
 
 ::ng-deep .checkboxes-cell .mat-mdc-select-trigger {
-  text-align: right;
+  text-align: left;
 }
 
 .section-container .row-container {

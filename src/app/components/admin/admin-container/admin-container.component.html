@@ -6,6 +6,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 @let showSection = showSection$ | async;
 <mat-sidenav-container class="appcontent-container" autosize>
   <mat-sidenav class="appbarmenu-container" #sidenav mode="side" [(opened)]="isSidebarOpen">
+    <div class="sidenav-content-wrapper">
     <mat-toolbar class="sidenav-header" title="Exit Administration" [routerLink]="['/']">
       <a class="nolink" [routerLink]="['/']">
         <div class="cssLayoutRowStartCenter">
@@ -84,7 +85,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       }
     </mat-list>
     @if (!hideTopbar) {
-    <div class="app-versions" style="margin-bottom: 58px;">
+    <div class="app-versions">
       Versions: UI {{ uiVersion }}, API {{ apiVersion }}
     </div>
     }
@@ -100,6 +101,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           : 'assets/img/crucible-logo-dark.png'
       " />
     }
+    </div>
   </mat-sidenav>
   <mat-sidenav-content>
     @if (!hideTopbar) {

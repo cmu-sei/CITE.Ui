@@ -23,75 +23,75 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </span>
   }
   @if (permissions) {
-  <span>
+  <div class="main-area">
     @if (isAuthorizedUser) {
     @if (!selectedEvaluationId) {
     <div class="top-row">
-        <div class="one-cell last-cell">
-          @if (canViewAdministration) {
-          <button aria-label="Show Administration Page" mat-icon-button [routerLink]="['/admin']"
-            [queryParams]="{section: 'Evaluations'}" style="outline: none;" title="Administration">
-            <mat-icon class="mdi-24px center-self" fontIcon="mdi-cog"></mat-icon>
-          </button>
-          }
-        </div>
-      </div>
-    <div class="elevate evaluation-list-container">
-        <div class="icon-text-container">
-          <mat-icon class="crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
-          <span class="evaluation-title text">My Evaluations</span>
-          <div class="searchBox">
-            <!-- Search Bar -->
-            <mat-form-field style="width: 320px">
-              <input matInput [(ngModel)]="filterString" (keyup)="applyFilter($event.target.value)"
-                placeholder="Search" />
-              @if (filterString !== '') {
-              <button mat-icon-button matSuffix (click)="clearFilter()" title="Clear Search">
-                <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline"></mat-icon>
-              </button>
-              }
-            </mat-form-field>
-          </div>
-        </div>
-        <mat-table #table class="width-100 mat-table evaluation-table" [dataSource]="evaluationDataSource" matSort
-          (matSortChange)="sortData($event)">
-          <!-- Name Column -->
-          <ng-container matColumnDef="description">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="description">Name</mat-header-cell>
-            <mat-cell *matCellDef="let evaluation">
-              <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }"
-                (click)="selectingAnEvaluation(evaluation.id)">
-                {{ evaluation.description }}
-              </a>
-            </mat-cell>
-          </ng-container>
-          <!-- Status Column -->
-          <ng-container matColumnDef="status">
-            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
-            <mat-cell *matCellDef="let evaluation">{{ evaluation.status }}</mat-cell>
-          </ng-container>
-          <!-- Created By Column -->
-          <ng-container matColumnDef="createdBy">
-            <mat-header-cell *matHeaderCellDef>Created By</mat-header-cell>
-            <mat-cell *matCellDef="let evaluation">{{ getUsername(evaluation.createdBy)}}</mat-cell>
-          </ng-container>
-          <!-- Date Created Column -->
-          <ng-container matColumnDef="dateCreated">
-            <mat-header-cell *matHeaderCellDef>Date Created</mat-header-cell>
-            <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"yyyy-MM-dd" }}</mat-cell>
-          </ng-container>
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-        </mat-table>
-        @if (evaluationDataSource.filteredData.length === 0) {
-        <div class="text no-results">
-          No results found
-        </div>
+      <div class="one-cell last-cell">
+        @if (canViewAdministration) {
+        <button aria-label="Show Administration Page" mat-icon-button [routerLink]="['/admin']"
+          [queryParams]="{section: 'Evaluations'}" style="outline: none;" title="Administration">
+          <mat-icon class="mdi-24px center-self" fontIcon="mdi-cog"></mat-icon>
+        </button>
         }
       </div>
+    </div>
+    <div class="elevate evaluation-list-container">
+      <div class="icon-text-container">
+        <mat-icon class="crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
+        <span class="evaluation-title text">My Evaluations</span>
+        <div class="searchBox">
+          <!-- Search Bar -->
+          <mat-form-field style="width: 320px">
+            <input matInput [(ngModel)]="filterString" (keyup)="applyFilter($event.target.value)"
+              placeholder="Search" />
+            @if (filterString !== '') {
+            <button mat-icon-button matSuffix (click)="clearFilter()" title="Clear Search">
+              <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline"></mat-icon>
+            </button>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-table #table class="width-100 mat-table evaluation-table" [dataSource]="evaluationDataSource" matSort
+        (matSortChange)="sortData($event)">
+        <!-- Name Column -->
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="description">Name</mat-header-cell>
+          <mat-cell *matCellDef="let evaluation">
+            <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }"
+              (click)="selectingAnEvaluation(evaluation.id)">
+              {{ evaluation.description }}
+            </a>
+          </mat-cell>
+        </ng-container>
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+          <mat-cell *matCellDef="let evaluation">{{ evaluation.status }}</mat-cell>
+        </ng-container>
+        <!-- Created By Column -->
+        <ng-container matColumnDef="createdBy">
+          <mat-header-cell *matHeaderCellDef>Created By</mat-header-cell>
+          <mat-cell *matCellDef="let evaluation">{{ getUsername(evaluation.createdBy)}}</mat-cell>
+        </ng-container>
+        <!-- Date Created Column -->
+        <ng-container matColumnDef="dateCreated">
+          <mat-header-cell *matHeaderCellDef>Date Created</mat-header-cell>
+          <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"yyyy-MM-dd" }}</mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+      </mat-table>
+      @if (evaluationDataSource.filteredData.length === 0) {
+      <div class="text no-results">
+        No results found
+      </div>
+      }
+    </div>
     }
+    @if (selectedEvaluationId) {
     <div class="content-under-topbar">
-      @if (selectedEvaluationId) {
       <div class="app-header-container">
         <app-evaluation-info [showAdminButton]="canViewAdministration"
           [showMoveArrows]="selectedSection === section.scoresheet" [teamList]="teamList$ | async"
@@ -102,8 +102,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
           (nextEvaluationMove)="nextEvaluationMove($event)" (changeTeam)="changeTeam($event)"
           (changeSection)="changeSection($event)"></app-evaluation-info>
       </div>
-      }
-      @if (selectedEvaluationId) {
       <div class="app-content-container">
         @if (selectedSection !== section.scoresheet && !(selectedSection === section.report || selectedSection ===
         section.aggregate)) {
@@ -157,9 +155,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
         }
       </div>
-      }
     </div>
     }
-  </span>
+    }
+  </div>
   }
 </div>

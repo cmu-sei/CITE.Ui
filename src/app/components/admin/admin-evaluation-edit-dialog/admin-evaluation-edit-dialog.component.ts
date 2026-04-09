@@ -84,7 +84,9 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
   ngOnInit() {}
 
   errorFree() {
-    return this.data.evaluation.description.length > 0;
+    const hasDescription = this.data.evaluation.description.length > 0;
+    const hasScoringModel = this.data.isExisting || !!this.data.evaluation.scoringModelId;
+    return hasDescription && hasScoringModel;
   }
 
   /**
