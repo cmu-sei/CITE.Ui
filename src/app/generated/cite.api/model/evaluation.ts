@@ -34,6 +34,7 @@ export interface Evaluation {
     scoringModelId?: string;
     scoringModel?: ScoringModel;
     galleryExhibitId?: string | null;
+    showAdvanceButton?: boolean;
     teams?: Array<Team> | null;
     moves?: Array<Move> | null;
     submissions?: Array<Submission> | null;
