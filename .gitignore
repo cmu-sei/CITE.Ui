@@ -49,5 +49,6 @@ _config/
 ng-app/
 
 src/assets/config/settings.env.json
+src/assets/config/settings.shared.json
 docker/
 .vscode/**/*.json
