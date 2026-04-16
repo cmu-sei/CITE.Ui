@@ -76,6 +76,9 @@
                   "maximumWarning": "6kb"
                 }
               ]
+            },
+            "localNPM": {
+              "tsConfig": "tsconfig.local-npm.json"
             }
           },
           "defaultConfiguration": ""
@@ -89,6 +92,9 @@
           "configurations": {
             "production": {
               "buildTarget": "cite-ui:build:production"
+            },
+            "localNPM": {
+              "buildTarget": "cite-ui:build:development,localNPM"
             }
           }
         },
