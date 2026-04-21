@@ -96,7 +96,7 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
     if (!saveChanges) {
       this.editComplete.emit({ saveChanges: false, evaluation: null });
     } else {
-      if (this.errorFree) {
+      if (this.errorFree()) {
         this.editComplete.emit({
           saveChanges: saveChanges,
           evaluation: this.data.evaluation,
