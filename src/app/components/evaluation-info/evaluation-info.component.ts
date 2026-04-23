@@ -54,6 +54,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   isMinMoveNumber = true;
   isCurrentMoveNumber = true;
   showAdvanceMoveButton = false;
+  evaluationShowAdvanceButton = false;
 
   constructor(
     private evaluationQuery: EvaluationQuery,
@@ -72,6 +73,7 @@ export class EvaluationInfoComponent implements OnDestroy {
       if (e) {
         this.selectedEvaluationId = e.id;
         this.currentMoveNumber = e.currentMoveNumber;
+        this.evaluationShowAdvanceButton = !!e.showAdvanceButton;
       }
     });
     // observe the active move
@@ -79,7 +81,7 @@ export class EvaluationInfoComponent implements OnDestroy {
       this.displayedMoveNumber = m ? m.moveNumber : this.displayedMoveNumber;
       this.isMinMoveNumber = this.sortedMoveList().length === 0 ? true : +this.displayedMoveNumber === +this.sortedMoveList()[0].moveNumber;
       this.isCurrentMoveNumber = +this.displayedMoveNumber === +this.currentMoveNumber;
-      this.showAdvanceMoveButton = this.canAdvanceMove && this.selectedEvaluationId && +this.displayedMoveNumber === +this.currentMoveNumber && +this.displayedMoveNumber < +this.getMaxMoveNumber();
+      this.showAdvanceMoveButton = this.evaluationShowAdvanceButton && this.canAdvanceMove && this.selectedEvaluationId && +this.displayedMoveNumber === +this.currentMoveNumber && +this.displayedMoveNumber < +this.getMaxMoveNumber();
     });
     // observe the active team
     (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(t => {
