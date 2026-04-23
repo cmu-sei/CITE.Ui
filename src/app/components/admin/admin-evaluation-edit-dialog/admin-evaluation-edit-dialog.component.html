@@ -97,6 +97,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <angular-editor [placeholder]="'Enter situation description here...'"
         [(ngModel)]="data.evaluation.situationDescription" [config]="editorConfig"></angular-editor>
       </div>
+      <div class="add-margin">
+        <mat-checkbox [(ngModel)]="data.evaluation.showAdvanceButton" [disabled]="!data.canEdit">
+          Show Advance Button
+        </mat-checkbox>
+      </div>
       <div class="cssLayoutRowStartCenter bottom-button">
         <div class="delete-button">
           <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree() || !data.canEdit"
