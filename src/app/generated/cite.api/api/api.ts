@@ -60,4 +60,6 @@ export * from './teamType.service';
 import { TeamTypeService } from './teamType.service';
 export * from './user.service';
 import { UserService } from './user.service';
-export const APIS = [ActionService, DutyService, EvaluationService, EvaluationMembershipsService, EvaluationPermissionsService, EvaluationRolesService, GalleryService, GroupService, HealthCheckService, MoveService, ScoringCategoryService, ScoringModelService, ScoringModelMembershipsService, ScoringModelPermissionsService, ScoringModelRolesService, ScoringOptionService, SubmissionService, SubmissionCategoryService, SubmissionCommentService, SubmissionOptionService, SystemPermissionsService, SystemRolesService, TeamService, TeamMembershipsService, TeamPermissionsService, TeamRolesService, TeamTypeService, UserService];
+export * from './xApi.service';
+import { XApiService } from './xApi.service';
+export const APIS = [ActionService, DutyService, EvaluationService, EvaluationMembershipsService, EvaluationPermissionsService, EvaluationRolesService, GalleryService, GroupService, HealthCheckService, MoveService, ScoringCategoryService, ScoringModelService, ScoringModelMembershipsService, ScoringModelPermissionsService, ScoringModelRolesService, ScoringOptionService, SubmissionService, SubmissionCategoryService, SubmissionCommentService, SubmissionOptionService, SystemPermissionsService, SystemRolesService, TeamService, TeamMembershipsService, TeamPermissionsService, TeamRolesService, TeamTypeService, UserService, XApiService];

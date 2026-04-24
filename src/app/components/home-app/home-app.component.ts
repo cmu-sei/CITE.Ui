@@ -50,6 +50,7 @@ import {
 import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
+import { XApiService } from 'src/app/generated/cite.api';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
@@ -149,6 +150,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private moveQuery: MoveQuery,
     private unreadArticlesQuery: UnreadArticlesQuery,
     private uiDataService: UIDataService,
+    private xApiService: XApiService,
     titleService: Title
   ) {
     const appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
@@ -530,6 +532,19 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.selectedEvaluationId,
       teamId
     );
+    if (this.myTeamId && teamId && this.selectedEvaluationId && teamId !== this.myTeamId) {
+      if (this.selectedSection === Section.dashboard) {
+        this.xApiService
+          .observedEvaluationDashboard(this.selectedEvaluationId, teamId)
+          .pipe(take(1))
+          .subscribe();
+      } else if (this.selectedSection === Section.scoresheet) {
+        this.xApiService
+          .observedEvaluationScoresheet(this.selectedEvaluationId, teamId)
+          .pipe(take(1))
+          .subscribe();
+      }
+    }
   }
 
   changeSection(section: string) {
