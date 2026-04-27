@@ -1,15 +1,20 @@
-if (!(globalThis as any)['__vitest_zone_patch__']) {
+declare global {
+  // eslint-disable-next-line no-var
+  var __vitest_zone_patch__: boolean | undefined;
+  // eslint-disable-next-line no-var
+  var __vitest_angular_testbed_init__: boolean | undefined;
+}
+
+if (!globalThis.__vitest_zone_patch__) {
   await import('@analogjs/vitest-angular/setup-zone');
 }
 
-import '@angular/material/prebuilt-themes/azure-blue.css';
-
-import '@mdi/font/css/materialdesignicons.css';
-import '@fortawesome/fontawesome-free/css/all.css';
-
-import 'bootstrap/scss/bootstrap-utilities.scss';
-
+// Load the same global styles the production app loads (see angular.json "styles").
+// Omits @kolkov/angular-editor/themes/default.scss — its package exports block
+// raw .scss imports, and the theme only styles the angular-editor widget.
+// Tests that render <angular-editor> should import the editor module directly.
 import './styles/styles.scss';
+import 'bootstrap/scss/bootstrap-utilities.scss';
 
 import '@testing-library/jest-dom/vitest';
 
@@ -19,8 +24,8 @@ import {
   platformBrowserDynamicTesting,
 } from '@angular/platform-browser-dynamic/testing';
 
-if (!(globalThis as any)['__vitest_angular_testbed_init__']) {
-  (globalThis as any)['__vitest_angular_testbed_init__'] = true;
+if (!globalThis.__vitest_angular_testbed_init__) {
+  globalThis.__vitest_angular_testbed_init__ = true;
   getTestBed().initTestEnvironment(
     BrowserDynamicTestingModule,
     platformBrowserDynamicTesting(),
@@ -33,7 +38,9 @@ if (!(globalThis as any)['__vitest_angular_testbed_init__']) {
 beforeEach(() => {
   try {
     getTestBed().resetTestingModule();
-  } catch (e) {}
+  } catch {
+    // ignore: already reset
+  }
 
   document
     .querySelectorAll('.cdk-overlay-container')
