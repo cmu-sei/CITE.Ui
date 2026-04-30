@@ -210,6 +210,9 @@ export class EvaluationDataService {
       .subscribe((s) => {
         this.setAsDates(s);
         this.evaluationStore.add(s);
+      },
+      (error) => {
+        this.evaluationStore.setLoading(false);
       });
   }
 
