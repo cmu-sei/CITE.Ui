@@ -1,9 +1,3 @@
-/*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license. See LICENSE.md in the
- project root for license information.
-*/
-
 /**
  * Cite API
  *
@@ -105,7 +99,7 @@ export class ActionService extends BaseService {
 
     /**
      * Creates a new Action
-     * Creates a new Action with the attributes specified  &lt;para /&gt;  Accessible only to a SuperUser or an Administrator
+     * Creates a new Action with the attributes specified &lt;para /&gt; Accessible only to a SuperUser or an Administrator
      * @param action The data to create the Action with
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -174,7 +168,7 @@ export class ActionService extends BaseService {
 
     /**
      * Deletes an Action
-     * Deletes an Action with the specified id  &lt;para /&gt;  Accessible only to a SuperUser or a User on an Admin Team within the specified Action
+     * Deletes an Action with the specified id &lt;para /&gt; Accessible only to a SuperUser or a User on an Admin Team within the specified Action
      * @param id The id of the Action to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -232,7 +226,7 @@ export class ActionService extends BaseService {
 
     /**
      * Gets a specific Action by id
-     * Returns the Action with the id specified  &lt;para /&gt;  Accessible to a User that is a member of a Team within the specified Action
+     * Returns the Action with the id specified &lt;para /&gt; Accessible to a User that is a member of a Team within the specified Action
      * @param id The id of the Action
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -292,7 +286,7 @@ export class ActionService extends BaseService {
 
     /**
      * Gets Actions for the specified evaluation
-     * Returns a list of the Actions.  &lt;para /&gt;  Accessible to a User who can view the evaluation
+     * Returns a list of the Actions. &lt;para /&gt; Accessible to a User who can view the evaluation
      * @param evaluationId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -352,7 +346,7 @@ export class ActionService extends BaseService {
 
     /**
      * Gets Actions for the specified evaluation and move
-     * Returns a list of the Actions.  &lt;para /&gt;  Accessible to a Content Developer
+     * Returns a list of the Actions. &lt;para /&gt; Accessible to a Content Developer
      * @param evaluationId 
      * @param moveNumber 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -416,7 +410,7 @@ export class ActionService extends BaseService {
 
     /**
      * Gets Actions for the specified evaluation, move and team
-     * Returns a list of the Actions.  &lt;para /&gt;  Accessible to a User that is a member of the specified Team
+     * Returns a list of the Actions. &lt;para /&gt; Accessible to a User that is a member of the specified Team
      * @param evaluationId 
      * @param moveNumber 
      * @param teamId 
@@ -483,8 +477,8 @@ export class ActionService extends BaseService {
     }
 
     /**
-     * Gets Actions for the specified evaluation team  for the current move
-     * Returns a list of the Actions.  &lt;para /&gt;  Accessible to a User that is a member of the specified Team
+     * Gets Actions for the specified evaluation team for the current move
+     * Returns a list of the Actions. &lt;para /&gt; Accessible to a User that is a member of the specified Team
      * @param evaluationId 
      * @param teamId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -608,7 +602,7 @@ export class ActionService extends BaseService {
 
     /**
      * Updates an Action
-     * Updates an Action with the attributes specified  &lt;para /&gt;  Accessible only to a SuperUser or a User on an Admin Team within the specified Action
+     * Updates an Action with the attributes specified &lt;para /&gt; Accessible only to a SuperUser or a User on an Admin Team within the specified Action
      * @param id The Id of the Action to update
      * @param action The updated Action values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

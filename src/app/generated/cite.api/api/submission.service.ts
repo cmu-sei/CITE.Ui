@@ -1,9 +1,3 @@
-/*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license. See LICENSE.md in the
- project root for license information.
-*/
-
 /**
  * Cite API
  *
@@ -120,7 +114,7 @@ export class SubmissionService extends BaseService {
 
     /**
      * Updates a  SubmissionComment
-     * Updates a SubmissionComment with the attributes specified.  The ID from the route MUST MATCH the ID contained in the submissionComment parameter
+     * Updates a SubmissionComment with the attributes specified. The ID from the route MUST MATCH the ID contained in the submissionComment parameter
      * @param submissionId The Id of the SubmissionComment to update
      * @param submissionCommentId The Id of the SubmissionComment to update
      * @param submissionComment The updated SubmissionComment values
@@ -197,7 +191,7 @@ export class SubmissionService extends BaseService {
 
     /**
      * Clears Submission Selections
-     * Updates a Submission to no selections.  &lt;para /&gt;
+     * Updates a Submission to no selections. &lt;para /&gt;
      * @param id The Id of the Submission to update
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -257,7 +251,7 @@ export class SubmissionService extends BaseService {
 
     /**
      * Creates a new Submission
-     * Creates a new Submission with the attributes specified  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new Submission with the attributes specified &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param submission The data used to create the Submission
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -326,7 +320,7 @@ export class SubmissionService extends BaseService {
 
     /**
      * Deletes a  Submission
-     * Deletes a  Submission with the specified id  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Deletes a  Submission with the specified id &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The id of the Submission to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -699,7 +693,7 @@ export class SubmissionService extends BaseService {
 
     /**
      * Presets Submission Selections to previous move values
-     * Updates a Submission to previous move submission selections.  &lt;para /&gt;
+     * Updates a Submission to previous move submission selections. &lt;para /&gt;
      * @param id The Id of the Submission to update
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -823,7 +817,7 @@ export class SubmissionService extends BaseService {
 
     /**
      * Updates a  Submission
-     * Updates a Submission with the attributes specified.  The ID from the route MUST MATCH the ID contained in the submission parameter  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Updates a Submission with the attributes specified. The ID from the route MUST MATCH the ID contained in the submission parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the Submission to update
      * @param submission The updated Submission values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

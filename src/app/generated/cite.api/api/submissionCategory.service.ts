@@ -1,9 +1,3 @@
-/*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license. See LICENSE.md in the
- project root for license information.
-*/
-
 /**
  * Cite API
  *
@@ -45,7 +39,7 @@ export class SubmissionCategoryService extends BaseService {
 
     /**
      * Creates a new SubmissionCategory
-     * Creates a new SubmissionCategory with the attributes specified  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new SubmissionCategory with the attributes specified &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param submissionCategory The data used to create the SubmissionCategory
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -114,7 +108,7 @@ export class SubmissionCategoryService extends BaseService {
 
     /**
      * Deletes a  SubmissionCategory
-     * Deletes a  SubmissionCategory with the specified id  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Deletes a  SubmissionCategory with the specified id &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The id of the SubmissionCategory to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -292,7 +286,7 @@ export class SubmissionCategoryService extends BaseService {
 
     /**
      * Updates a  SubmissionCategory
-     * Updates a SubmissionCategory with the attributes specified.  The ID from the route MUST MATCH the ID contained in the submissionCategory parameter  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Updates a SubmissionCategory with the attributes specified. The ID from the route MUST MATCH the ID contained in the submissionCategory parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the SubmissionCategory to update
      * @param submissionCategory The updated SubmissionCategory values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

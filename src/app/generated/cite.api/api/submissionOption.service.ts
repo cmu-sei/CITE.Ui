@@ -1,9 +1,3 @@
-/*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license. See LICENSE.md in the
- project root for license information.
-*/
-
 /**
  * Cite API
  *
@@ -47,7 +41,7 @@ export class SubmissionOptionService extends BaseService {
 
     /**
      * Creates a new SubmissionOption
-     * Creates a new SubmissionOption with the attributes specified  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new SubmissionOption with the attributes specified &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param submissionOption The data used to create the SubmissionOption
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -116,7 +110,7 @@ export class SubmissionOptionService extends BaseService {
 
     /**
      * Deletes a  SubmissionOption
-     * Deletes a  SubmissionOption with the specified id  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Deletes a  SubmissionOption with the specified id &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The id of the SubmissionOption to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -414,7 +408,7 @@ export class SubmissionOptionService extends BaseService {
 
     /**
      * Updates a  SubmissionOption
-     * Updates a SubmissionOption with the attributes specified.  The ID from the route MUST MATCH the ID contained in the submissionOption parameter  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Updates a SubmissionOption with the attributes specified. The ID from the route MUST MATCH the ID contained in the submissionOption parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the SubmissionOption to update
      * @param submissionOption The updated SubmissionOption values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

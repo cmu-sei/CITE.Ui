@@ -1,9 +1,3 @@
-/*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license. See LICENSE.md in the
- project root for license information.
-*/
-
 /**
  * Cite API
  *
@@ -45,7 +39,7 @@ export class TeamService extends BaseService {
 
     /**
      * Creates a new Team
-     * Creates a new Team with the attributes specified  &lt;para /&gt;  Accessible only to a SuperUser or an Administrator
+     * Creates a new Team with the attributes specified &lt;para /&gt; Accessible only to a SuperUser or an Administrator
      * @param team The data to create the Team with
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -114,7 +108,7 @@ export class TeamService extends BaseService {
 
     /**
      * Deletes a Team
-     * Deletes a Team with the specified id  &lt;para /&gt;  Accessible only to a SuperUser or a User on an Admin Team within the specified Team
+     * Deletes a Team with the specified id &lt;para /&gt; Accessible only to a SuperUser or a User on an Admin Team within the specified Team
      * @param id The id of the Team to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -172,7 +166,7 @@ export class TeamService extends BaseService {
 
     /**
      * Gets Teams for the specified evaluation
-     * Returns a list of the specified evaluation\&#39;s Teams.  &lt;para /&gt;  Only accessible to an evaluation user
+     * Returns a list of the specified evaluation\&#39;s Teams. &lt;para /&gt; Only accessible to an evaluation user
      * @param evaluationId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -292,7 +286,7 @@ export class TeamService extends BaseService {
 
     /**
      * Gets a specific Team by id
-     * Returns the Team with the id specified  &lt;para /&gt;  Accessible to a SuperUser or a User that is a member of a Team within the specified Team
+     * Returns the Team with the id specified &lt;para /&gt; Accessible to a SuperUser or a User that is a member of a Team within the specified Team
      * @param id The id of the Team
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -352,7 +346,7 @@ export class TeamService extends BaseService {
 
     /**
      * Updates a Team
-     * Updates a Team with the attributes specified  &lt;para /&gt;  Accessible only to a SuperUser or a User on an Admin Team within the specified Team
+     * Updates a Team with the attributes specified &lt;para /&gt; Accessible only to a SuperUser or a User on an Admin Team within the specified Team
      * @param id The Id of the Exericse to update
      * @param team The updated Team values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

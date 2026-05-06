@@ -1,9 +1,3 @@
-/*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license. See LICENSE.md in the
- project root for license information.
-*/
-
 /**
  * Cite API
  *
@@ -45,7 +39,7 @@ export class MoveService extends BaseService {
 
     /**
      * Creates a new Move
-     * Creates a new Move with the attributes specified  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new Move with the attributes specified &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param move The data used to create the Move
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -114,7 +108,7 @@ export class MoveService extends BaseService {
 
     /**
      * Deletes a  Move
-     * Deletes a  Move with the specified id  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Deletes a  Move with the specified id &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The id of the Move to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -292,7 +286,7 @@ export class MoveService extends BaseService {
 
     /**
      * Updates a  Move
-     * Updates a Move with the attributes specified.  The ID from the route MUST MATCH the ID contained in the move parameter  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Updates a Move with the attributes specified. The ID from the route MUST MATCH the ID contained in the move parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the Move to update
      * @param move The updated Move values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

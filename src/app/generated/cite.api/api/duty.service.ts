@@ -1,9 +1,3 @@
-/*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license. See LICENSE.md in the
- project root for license information.
-*/
-
 /**
  * Cite API
  *
@@ -109,7 +103,7 @@ export class DutyService extends BaseService {
 
     /**
      * Creates a new Duty
-     * Creates a new Duty with the attributes specified  &lt;para /&gt;  Accessible only to a SuperUser or an Administrator
+     * Creates a new Duty with the attributes specified &lt;para /&gt; Accessible only to a SuperUser or an Administrator
      * @param duty The data to create the Duty with
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -178,7 +172,7 @@ export class DutyService extends BaseService {
 
     /**
      * Deletes a Duty
-     * Deletes a Duty with the specified id  &lt;para /&gt;  Accessible only to a SuperUser or a User on an Admin Team within the specified Duty
+     * Deletes a Duty with the specified id &lt;para /&gt; Accessible only to a SuperUser or a User on an Admin Team within the specified Duty
      * @param id The id of the Duty to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -236,7 +230,7 @@ export class DutyService extends BaseService {
 
     /**
      * Gets Duties for the specified evaluation
-     * Returns a list of the Duties.  &lt;para /&gt;  Accessible to a User that is a member of the specified Evaluation
+     * Returns a list of the Duties. &lt;para /&gt; Accessible to a User that is a member of the specified Evaluation
      * @param evaluationId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -296,7 +290,7 @@ export class DutyService extends BaseService {
 
     /**
      * Gets Duties for the specified evaluation team
-     * Returns a list of the Duties.  &lt;para /&gt;  Accessible to a User that is a member of the specified Team
+     * Returns a list of the Duties. &lt;para /&gt; Accessible to a User that is a member of the specified Team
      * @param evaluationId 
      * @param teamId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -360,7 +354,7 @@ export class DutyService extends BaseService {
 
     /**
      * Gets a specific Duty by id
-     * Returns the Duty with the id specified  &lt;para /&gt;  Accessible to a User that is a member of a Team within the specified Duty
+     * Returns the Duty with the id specified &lt;para /&gt; Accessible to a User that is a member of a Team within the specified Duty
      * @param id The id of the Duty
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -484,7 +478,7 @@ export class DutyService extends BaseService {
 
     /**
      * Updates a Duty
-     * Updates a Duty with the attributes specified  &lt;para /&gt;  Accessible only to a SuperUser or a User on an Admin Team within the specified Duty
+     * Updates a Duty with the attributes specified &lt;para /&gt; Accessible only to a SuperUser or a User on an Admin Team within the specified Duty
      * @param id The Id of the Duty to update
      * @param duty The updated Duty values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

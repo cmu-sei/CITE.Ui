@@ -1,9 +1,3 @@
-/*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license. See LICENSE.md in the
- project root for license information.
-*/
-
 /**
  * Cite API
  *
@@ -47,7 +41,7 @@ export class UserService extends BaseService {
 
     /**
      * Creates a new User
-     * Creates a new User with the attributes specified  &lt;para /&gt;  Accessible only to a SuperUser
+     * Creates a new User with the attributes specified &lt;para /&gt; Accessible only to a SuperUser
      * @param user The data to create the User with
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -116,7 +110,7 @@ export class UserService extends BaseService {
 
     /**
      * Deletes a User
-     * Deletes a User with the specified id  &lt;para /&gt;  Accessible only to a SuperUser
+     * Deletes a User with the specified id &lt;para /&gt; Accessible only to a SuperUser
      * @param id The id of the User to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -234,7 +228,7 @@ export class UserService extends BaseService {
 
     /**
      * Gets a specific User by id
-     * Returns the User with the id specified  &lt;para /&gt;  Only accessible to a SuperUser
+     * Returns the User with the id specified &lt;para /&gt; Only accessible to a SuperUser
      * @param id The id of the User
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -294,7 +288,7 @@ export class UserService extends BaseService {
 
     /**
      * Gets all Users in the system
-     * Returns a list of all of the Users in the system.  &lt;para /&gt;  Only accessible to a SuperUser
+     * Returns a list of all of the Users in the system. &lt;para /&gt; Only accessible to a SuperUser
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -350,7 +344,7 @@ export class UserService extends BaseService {
 
     /**
      * Updates a  User
-     * Updates a User with the attributes specified.  The ID from the route MUST MATCH the ID contained in the user parameter  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Updates a User with the attributes specified. The ID from the route MUST MATCH the ID contained in the user parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the User to update
      * @param user The updated User values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
