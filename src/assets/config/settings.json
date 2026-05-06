@@ -18,6 +18,7 @@
   "AppTopBarImage": "/assets/img/account-group-white.png",
   "UseLocalAuthStorage": false,
   "useAccessTokenExpirationRedirect": true,
+  "XApiEnabled": false,
   "AppTopBarHexColor": "#E81717",
   "AppTopBarHexTextColor": "#FFFFFF",
   "HeaderBarSettings": {
