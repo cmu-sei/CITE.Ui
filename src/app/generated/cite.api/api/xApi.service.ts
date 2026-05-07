@@ -41,6 +41,60 @@ export class XApiService extends BaseService {
         super(basePath, configuration);
     }
 
+    public viewedEvaluationDashboard(evaluationId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
+    public viewedEvaluationDashboard(evaluationId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
+    public viewedEvaluationDashboard(evaluationId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
+    public viewedEvaluationDashboard(evaluationId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
+        if (evaluationId === null || evaluationId === undefined) {
+            throw new Error('Required parameter evaluationId was null or undefined when calling viewedEvaluationDashboard.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        localVarHeaders = this.configuration.addCredentialToHeaders('oauth2', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        let localVarPath = `/api/xapi/viewed/evaluation/${this.configuration.encodeParam({name: "evaluationId", value: evaluationId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: "uuid"})}/dashboard`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                withCredentials,
+                headers: localVarHeaders,
+                observe,
+                reportProgress
+            }
+        );
+    }
+
+    public viewedEvaluationScoresheet(evaluationId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
+    public viewedEvaluationScoresheet(evaluationId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
+    public viewedEvaluationScoresheet(evaluationId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
+    public viewedEvaluationScoresheet(evaluationId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
+        if (evaluationId === null || evaluationId === undefined) {
+            throw new Error('Required parameter evaluationId was null or undefined when calling viewedEvaluationScoresheet.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        localVarHeaders = this.configuration.addCredentialToHeaders('oauth2', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        let localVarPath = `/api/xapi/viewed/evaluation/${this.configuration.encodeParam({name: "evaluationId", value: evaluationId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: "uuid"})}/scoresheet`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                withCredentials,
+                headers: localVarHeaders,
+                observe,
+                reportProgress
+            }
+        );
+    }
+
     /**
      * Logs xAPI observed statement for Dashboard by Evaluation id and Team id
      * Returns status

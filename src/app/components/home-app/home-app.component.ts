@@ -313,6 +313,24 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
           break;
       }
+      // xAPI for team members (not observers)
+      if (evaluationId && this.myTeamId) {
+        const activeTeamId = this.teamQuery.getActiveId();
+        if (activeTeamId === this.myTeamId) {
+          // viewed
+          if (this.selectedSection === Section.dashboard) {
+            this.xApiService
+              .viewedEvaluationDashboard(evaluationId)
+              .pipe(take(1))
+              .subscribe();
+          } else if (this.selectedSection === Section.scoresheet) {
+            this.xApiService
+              .viewedEvaluationScoresheet(evaluationId)
+              .pipe(take(1))
+              .subscribe();
+          }
+        }
+      }
     });
     // observe the submissions
     this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {

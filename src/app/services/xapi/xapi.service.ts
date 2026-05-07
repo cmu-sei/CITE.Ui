@@ -21,6 +21,36 @@ export class XApiService {
   }
 
   /**
+   * Logs xAPI viewed statement when user views their own dashboard
+   */
+  viewedEvaluationDashboard(evaluationId: string): Observable<any> {
+    if (!this.enabled) {
+      return of(null);
+    }
+    return this.generatedXApiService.viewedEvaluationDashboard(evaluationId).pipe(
+      catchError((error) => {
+        console.error('xAPI tracking error:', error);
+        return of(null);
+      })
+    );
+  }
+
+  /**
+   * Logs xAPI viewed statement when user views their own scoresheet
+   */
+  viewedEvaluationScoresheet(evaluationId: string): Observable<any> {
+    if (!this.enabled) {
+      return of(null);
+    }
+    return this.generatedXApiService.viewedEvaluationScoresheet(evaluationId).pipe(
+      catchError((error) => {
+        console.error('xAPI tracking error:', error);
+        return of(null);
+      })
+    );
+  }
+
+  /**
    * Logs xAPI observed statement when user observes the dashboard
    */
   observedEvaluationDashboard(evaluationId: string, teamId: string): Observable<any> {
