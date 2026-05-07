@@ -524,7 +524,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   changeTeam(teamId: string) {
     let oldTeamId = this.teamQuery.getActiveId();
-    if (oldTeamId !== teamId) {
+    const teamChanged = oldTeamId !== teamId;
+    if (teamChanged) {
       // make sure to send a Guid for old team ID
       oldTeamId = oldTeamId ? oldTeamId : teamId;
       // signalR hub: leave the old team and join the new team
@@ -550,7 +551,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.selectedEvaluationId,
       teamId
     );
-    if (this.myTeamId && teamId && this.selectedEvaluationId && teamId !== this.myTeamId) {
+    // Only log xAPI observed statement when team actually changes
+    if (teamChanged && this.myTeamId && teamId && this.selectedEvaluationId && teamId !== this.myTeamId) {
       if (this.selectedSection === Section.dashboard) {
         this.xApiService
           .observedEvaluationDashboard(this.selectedEvaluationId, teamId)
