@@ -23,11 +23,11 @@ export class XApiService {
   /**
    * Logs xAPI observed statement when user observes the dashboard
    */
-  observedDashboard(evaluationId: string, teamId: string): Observable<any> {
+  observedEvaluationDashboard(evaluationId: string, teamId: string): Observable<any> {
     if (!this.enabled) {
       return of(null);
     }
-    return this.generatedXApiService.observedDashboard(evaluationId, teamId).pipe(
+    return this.generatedXApiService.observedEvaluationDashboard(evaluationId, teamId).pipe(
       catchError((error) => {
         console.error('xAPI tracking error:', error);
         return of(null);
@@ -38,11 +38,11 @@ export class XApiService {
   /**
    * Logs xAPI observed statement when user observes the scoresheet
    */
-  observedScoresheet(evaluationId: string, teamId: string): Observable<any> {
+  observedEvaluationScoresheet(evaluationId: string, teamId: string): Observable<any> {
     if (!this.enabled) {
       return of(null);
     }
-    return this.generatedXApiService.observedScoresheet(evaluationId, teamId).pipe(
+    return this.generatedXApiService.observedEvaluationScoresheet(evaluationId, teamId).pipe(
       catchError((error) => {
         console.error('xAPI tracking error:', error);
         return of(null);
