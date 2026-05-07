@@ -1,5 +1,5 @@
 /*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
+ Copyright 2026 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the
  project root for license information.
 */
@@ -47,7 +47,7 @@ export class EvaluationService extends BaseService {
 
     /**
      * Creates a new Evaluation by copying an existing Evaluation
-     * Creates a new Evaluation from the specified existing Evaluation  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new Evaluation from the specified existing Evaluation &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The ID of the Evaluation to be copied
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -107,7 +107,7 @@ export class EvaluationService extends BaseService {
 
     /**
      * Creates a new Evaluation
-     * Creates a new Evaluation with the attributes specified  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new Evaluation with the attributes specified &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param evaluation The data used to create the Evaluation
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -176,7 +176,7 @@ export class EvaluationService extends BaseService {
 
     /**
      * Deletes an Evaluation
-     * Deletes an Evaluation with the specified id  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Deletes an Evaluation with the specified id &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The id of the Evaluation to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -530,7 +530,7 @@ export class EvaluationService extends BaseService {
 
     /**
      * Updates an Evaluation
-     * Updates an Evaluation with the attributes specified.  The ID from the route MUST MATCH the ID contained in the evaluation parameter  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Updates an Evaluation with the attributes specified. The ID from the route MUST MATCH the ID contained in the evaluation parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the Evaluation to update
      * @param evaluation The updated Evaluation values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -603,7 +603,7 @@ export class EvaluationService extends BaseService {
 
     /**
      * Updates an Evaluation situation details
-     * Updates an Evaluation with the attributes specified.  The ID from the route MUST MATCH the ID contained in the evaluation parameter
+     * Updates an Evaluation with the attributes specified. The ID from the route MUST MATCH the ID contained in the evaluation parameter
      * @param id The Id of the Evaluation to update
      * @param evaluationSituation The updated Evaluation values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

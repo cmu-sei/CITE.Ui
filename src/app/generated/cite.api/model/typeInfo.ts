@@ -1,5 +1,5 @@
 /*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
+ Copyright 2026 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the
  project root for license information.
 */
@@ -36,13 +36,13 @@ export interface TypeInfo {
     readonly customAttributes?: Array<CustomAttributeData> | null;
     readonly isCollectible?: boolean;
     readonly metadataToken?: number;
-    readonly isInterface?: boolean;
     memberType?: MemberTypes;
     readonly namespace?: string | null;
     readonly assemblyQualifiedName?: string | null;
     readonly fullName?: string | null;
     assembly?: Assembly;
     module?: Module;
+    readonly isInterface?: boolean;
     readonly isNested?: boolean;
     declaringType?: Type;
     declaringMethod?: MethodBase;

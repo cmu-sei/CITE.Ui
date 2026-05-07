@@ -1,5 +1,5 @@
 /*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
+ Copyright 2026 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the
  project root for license information.
 */
@@ -45,7 +45,7 @@ export class ScoringCategoryService extends BaseService {
 
     /**
      * Creates a new ScoringCategory
-     * Creates a new ScoringCategory with the attributes specified  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new ScoringCategory with the attributes specified &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param scoringCategory The data used to create the ScoringCategory
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -114,7 +114,7 @@ export class ScoringCategoryService extends BaseService {
 
     /**
      * Deletes a  ScoringCategory
-     * Deletes a  ScoringCategory with the specified id  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Deletes a  ScoringCategory with the specified id &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The id of the ScoringCategory to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -354,7 +354,7 @@ export class ScoringCategoryService extends BaseService {
 
     /**
      * Updates a  ScoringCategory
-     * Updates a ScoringCategory with the attributes specified.  The ID from the route MUST MATCH the ID contained in the scoringCategory parameter  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Updates a ScoringCategory with the attributes specified. The ID from the route MUST MATCH the ID contained in the scoringCategory parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the ScoringCategory to update
      * @param scoringCategory The updated ScoringCategory values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

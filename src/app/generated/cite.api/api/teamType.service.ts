@@ -1,5 +1,5 @@
 /*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
+ Copyright 2026 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the
  project root for license information.
 */
@@ -45,7 +45,7 @@ export class TeamTypeService extends BaseService {
 
     /**
      * Creates a new TeamType
-     * Creates a new TeamType with the attributes specified  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new TeamType with the attributes specified &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param teamType The data used to create the TeamType
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -114,7 +114,7 @@ export class TeamTypeService extends BaseService {
 
     /**
      * Deletes a  TeamType
-     * Deletes a  TeamType with the specified id  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Deletes a  TeamType with the specified id &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The id of the TeamType to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -288,7 +288,7 @@ export class TeamTypeService extends BaseService {
 
     /**
      * Updates a  TeamType
-     * Updates a TeamType with the attributes specified.  The ID from the route MUST MATCH the ID contained in the teamType parameter  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Updates a TeamType with the attributes specified. The ID from the route MUST MATCH the ID contained in the teamType parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the TeamType to update
      * @param teamType The updated TeamType values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

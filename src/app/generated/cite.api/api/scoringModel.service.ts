@@ -1,5 +1,5 @@
 /*
- Copyright 2025 Carnegie Mellon University. All Rights Reserved.
+ Copyright 2026 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the
  project root for license information.
 */
@@ -45,7 +45,7 @@ export class ScoringModelService extends BaseService {
 
     /**
      * Creates a new ScoringModel by copying an existing ScoringModel
-     * Creates a new ScoringModel from the specified existing ScoringModel  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new ScoringModel from the specified existing ScoringModel &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The ID of the ScoringModel to be copied
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -105,7 +105,7 @@ export class ScoringModelService extends BaseService {
 
     /**
      * Creates a new ScoringModel
-     * Creates a new ScoringModel with the attributes specified  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new ScoringModel with the attributes specified &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param scoringModel The data used to create the ScoringModel
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -174,7 +174,7 @@ export class ScoringModelService extends BaseService {
 
     /**
      * Deletes a  ScoringModel
-     * Deletes a  ScoringModel with the specified id  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Deletes a  ScoringModel with the specified id &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The id of the ScoringModel to delete
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -408,7 +408,7 @@ export class ScoringModelService extends BaseService {
 
     /**
      * Updates a  ScoringModel
-     * Updates a ScoringModel with the attributes specified.  The ID from the route MUST MATCH the ID contained in the scoringModel parameter  &lt;para /&gt;  Accessible only to a ContentDeveloper or an Administrator
+     * Updates a ScoringModel with the attributes specified. The ID from the route MUST MATCH the ID contained in the scoringModel parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the ScoringModel to update
      * @param scoringModel The updated ScoringModel values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

@@ -50,6 +50,7 @@ import {
 import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
+import { XApiService } from 'src/app/services/xapi/xapi.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
@@ -149,6 +150,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     private moveQuery: MoveQuery,
     private unreadArticlesQuery: UnreadArticlesQuery,
     private uiDataService: UIDataService,
+    private xApiService: XApiService,
     titleService: Title
   ) {
     const appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
@@ -310,6 +312,24 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             this.selectedSection = Section.dashboard;
           }
           break;
+      }
+      // xAPI for team members (not observers)
+      if (evaluationId && this.myTeamId) {
+        const activeTeamId = this.teamQuery.getActiveId();
+        if (activeTeamId === this.myTeamId) {
+          // viewed
+          if (this.selectedSection === Section.dashboard) {
+            this.xApiService
+              .viewedEvaluationDashboard(evaluationId)
+              .pipe(take(1))
+              .subscribe();
+          } else if (this.selectedSection === Section.scoresheet) {
+            this.xApiService
+              .viewedEvaluationScoresheet(evaluationId)
+              .pipe(take(1))
+              .subscribe();
+          }
+        }
       }
     });
     // observe the submissions
@@ -504,7 +524,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   changeTeam(teamId: string) {
     let oldTeamId = this.teamQuery.getActiveId();
-    if (oldTeamId !== teamId) {
+    const teamChanged = oldTeamId !== teamId;
+    if (teamChanged) {
       // make sure to send a Guid for old team ID
       oldTeamId = oldTeamId ? oldTeamId : teamId;
       // signalR hub: leave the old team and join the new team
@@ -530,11 +551,57 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.selectedEvaluationId,
       teamId
     );
+    // Only log xAPI observed statement when team actually changes
+    if (teamChanged && this.myTeamId && teamId && this.selectedEvaluationId && teamId !== this.myTeamId) {
+      if (this.selectedSection === Section.dashboard) {
+        this.xApiService
+          .observedEvaluationDashboard(this.selectedEvaluationId, teamId)
+          .pipe(take(1))
+          .subscribe();
+      } else if (this.selectedSection === Section.scoresheet) {
+        this.xApiService
+          .observedEvaluationScoresheet(this.selectedEvaluationId, teamId)
+          .pipe(take(1))
+          .subscribe();
+      }
+    }
   }
 
   changeSection(section: string) {
     this.selectedSection = section as Section;
     this.uiDataService.setSection(this.selectedEvaluationId, section);
+
+    // Log xAPI when changing sections
+    const activeTeamId = this.teamQuery.getActiveId();
+    if (this.selectedEvaluationId && activeTeamId && this.myTeamId) {
+      if (activeTeamId === this.myTeamId) {
+        // Viewing own team
+        if (section === Section.dashboard) {
+          this.xApiService
+            .viewedEvaluationDashboard(this.selectedEvaluationId)
+            .pipe(take(1))
+            .subscribe();
+        } else if (section === Section.scoresheet) {
+          this.xApiService
+            .viewedEvaluationScoresheet(this.selectedEvaluationId)
+            .pipe(take(1))
+            .subscribe();
+        }
+      } else {
+        // Observing another team
+        if (section === Section.dashboard) {
+          this.xApiService
+            .observedEvaluationDashboard(this.selectedEvaluationId, activeTeamId)
+            .pipe(take(1))
+            .subscribe();
+        } else if (section === Section.scoresheet) {
+          this.xApiService
+            .observedEvaluationScoresheet(this.selectedEvaluationId, activeTeamId)
+            .pipe(take(1))
+            .subscribe();
+        }
+      }
+    }
   }
 
   processSubmissions(submissions) {
