@@ -570,6 +570,38 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   changeSection(section: string) {
     this.selectedSection = section as Section;
     this.uiDataService.setSection(this.selectedEvaluationId, section);
+
+    // Log xAPI when changing sections
+    const activeTeamId = this.teamQuery.getActiveId();
+    if (this.selectedEvaluationId && activeTeamId && this.myTeamId) {
+      if (activeTeamId === this.myTeamId) {
+        // Viewing own team
+        if (section === Section.dashboard) {
+          this.xApiService
+            .viewedEvaluationDashboard(this.selectedEvaluationId)
+            .pipe(take(1))
+            .subscribe();
+        } else if (section === Section.scoresheet) {
+          this.xApiService
+            .viewedEvaluationScoresheet(this.selectedEvaluationId)
+            .pipe(take(1))
+            .subscribe();
+        }
+      } else {
+        // Observing another team
+        if (section === Section.dashboard) {
+          this.xApiService
+            .observedEvaluationDashboard(this.selectedEvaluationId, activeTeamId)
+            .pipe(take(1))
+            .subscribe();
+        } else if (section === Section.scoresheet) {
+          this.xApiService
+            .observedEvaluationScoresheet(this.selectedEvaluationId, activeTeamId)
+            .pipe(take(1))
+            .subscribe();
+        }
+      }
+    }
   }
 
   processSubmissions(submissions) {
