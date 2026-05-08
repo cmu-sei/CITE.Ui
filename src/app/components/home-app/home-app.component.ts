@@ -277,6 +277,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       if (evaluationId) {
         this.evaluationDataService.setActive(evaluationId);
         this.uiDataService.setEvaluation(evaluationId);
+      } else {
+        this.evaluationDataService.setActive('');
+        this.selectedEvaluationId = '';
       }
       // get the requested section or set the saved section
       const section = params.get('section');
