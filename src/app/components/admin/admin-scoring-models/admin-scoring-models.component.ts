@@ -66,6 +66,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     ItemStatus.Complete,
     ItemStatus.Archived
   ];
+  selectedStatuses = [ ItemStatus.Pending, ItemStatus.Active ];
   rightSideDisplays = [
     RightSideDisplay.ScoreSummary,
     RightSideDisplay.HtmlBlock,
@@ -200,7 +201,8 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     this.filteredScoringModelList = this.scoringModelList.filter(model =>
         (!this.filterString ||
         model.description.toLowerCase().includes(this.filterString)) &&
-        ((this.showAll) || (!model.evaluationId && !this.showAll))
+        ((this.showAll) || (!model.evaluationId && !this.showAll)) &&
+        this.selectedStatuses.some(status => status === model.status)
     );
     this.sortChanged(this.sort);
   }

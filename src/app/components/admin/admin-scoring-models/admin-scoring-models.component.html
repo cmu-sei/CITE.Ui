@@ -17,6 +17,17 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </button>
     }
   </mat-form-field>
+  @if (!addingNewScoringModel) {
+  <mat-form-field class="status-ff">
+    <mat-label>Statuses</mat-label>
+    <mat-select class="status-dd" placeholder="Statuses" [(ngModel)]="selectedStatuses" multiple
+      (selectionChange)="applyFilter()">
+      @for (status of itemStatuses; track status) {
+      <mat-option [value]="status">{{ status }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  }
   <div style="width: 150px; margin-left: 20px;">
     <mat-checkbox [(ngModel)]="showAll" (change)="applyFilter()">Show All</mat-checkbox>
   </div>
