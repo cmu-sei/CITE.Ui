@@ -56,6 +56,16 @@
   float: right;
 }
 
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-button {
+  flex-shrink: 0;
+}
+
 .taskTitle {
   margin-right: 50;
   font-weight: bold;
