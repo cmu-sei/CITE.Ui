@@ -110,8 +110,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     }
     @if ((canViewScoringModels || canCreateScoringModels) && (showSection === scoringModelsText)) {
     <span>
-      <app-admin-scoring-models [evaluationList]="evaluationList | async">
-      </app-admin-scoring-models>
+      <app-admin-scoring-models></app-admin-scoring-models>
     </span>
     }
     @if ((canViewEvaluations || canCreateEvaluations) && (showSection === evaluationsText)) {
