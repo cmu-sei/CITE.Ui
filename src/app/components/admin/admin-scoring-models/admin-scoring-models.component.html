@@ -40,7 +40,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
 </div>
 
 <div class="table-container">
-  <table mat-table [dataSource]="displayedScoringModels" matSort (matSortChange)="sortChanged($event)" multiTemplateDataRows>
+  <table mat-table [dataSource]="displayedScoringModels" matSort (matSortChange)="sortChanged($event)"
+    [trackBy]="trackById" multiTemplateDataRows>
 
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>

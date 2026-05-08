@@ -320,6 +320,8 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     this.displayedScoringModels = this.filteredScoringModelList.slice(startIndex, startIndex + this.pageSize);
   }
 
+  trackById = (_: number, row: ScoringModel) => row.id;
+
   ngOnDestroy() {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
