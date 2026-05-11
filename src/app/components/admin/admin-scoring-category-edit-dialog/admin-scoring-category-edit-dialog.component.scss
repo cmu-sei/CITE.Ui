@@ -56,6 +56,22 @@
   float: right;
 }
 
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.field-row mat-form-field:has(input.mat-mdc-input-element),
+.field-row mat-form-field:has(textarea.mat-mdc-input-element) {
+  flex: 1;
+  width: auto;
+}
+
+.info-button {
+  flex-shrink: 0;
+}
+
 .taskTitle {
   margin-right: 50;
   font-weight: bold;

@@ -3,12 +3,11 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import {
-  Evaluation,
   ScoringModel,
   ItemStatus,
   RightSideDisplay,
@@ -40,7 +39,6 @@ import { PermissionDataService } from 'src/app/data/permission/permission-data.s
     ],
 })
 export class AdminScoringModelsComponent implements OnInit, OnDestroy {
-  @Input() evaluationList: Evaluation[];
   scoringModelList: ScoringModel[] = [];
   sortedScoringModelList: ScoringModel[] = [];
   userList: User[] = [];
@@ -66,6 +64,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     ItemStatus.Complete,
     ItemStatus.Archived
   ];
+  selectedStatuses = [ ItemStatus.Pending, ItemStatus.Active ];
   rightSideDisplays = [
     RightSideDisplay.ScoreSummary,
     RightSideDisplay.HtmlBlock,
@@ -200,7 +199,8 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     this.filteredScoringModelList = this.scoringModelList.filter(model =>
         (!this.filterString ||
         model.description.toLowerCase().includes(this.filterString)) &&
-        ((this.showAll) || (!model.evaluationId && !this.showAll))
+        ((this.showAll) || (!model.evaluationId && !this.showAll)) &&
+        this.selectedStatuses.some(status => status === model.status)
     );
     this.sortChanged(this.sort);
   }
@@ -244,13 +244,6 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   getUserName(id: string) {
     const user = this.userList.find(u => u.id === id);
     return user ? user.name : '?';
-  }
-
-  scoringModelEvaluation(evaluationId: string): string {
-    const evaluation = this.evaluationList?.find(m => m.id === evaluationId);
-    const name = evaluation ? " - on " + evaluation.description : '';
-
-    return name;
   }
 
   copyScoringModel(id: string): void {
@@ -317,6 +310,8 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     const startIndex = this.pageIndex * this.pageSize;
     this.displayedScoringModels = this.filteredScoringModelList.slice(startIndex, startIndex + this.pageSize);
   }
+
+  trackById = (_: number, row: ScoringModel) => row.id;
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);
