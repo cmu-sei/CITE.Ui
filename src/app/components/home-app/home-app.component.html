@@ -53,41 +53,43 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </mat-form-field>
         </div>
       </div>
-      <mat-table #table class="width-100 mat-table evaluation-table" [dataSource]="evaluationDataSource" matSort
-        (matSortChange)="sortData($event)">
-        <!-- Name Column -->
-        <ng-container matColumnDef="description">
-          <mat-header-cell *matHeaderCellDef mat-sort-header="description">Name</mat-header-cell>
-          <mat-cell *matCellDef="let evaluation">
-            <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }"
-              (click)="selectingAnEvaluation(evaluation.id)">
-              {{ evaluation.description }}
-            </a>
-          </mat-cell>
-        </ng-container>
-        <!-- Status Column -->
-        <ng-container matColumnDef="status">
-          <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
-          <mat-cell *matCellDef="let evaluation">{{ evaluation.status }}</mat-cell>
-        </ng-container>
-        <!-- Created By Column -->
-        <ng-container matColumnDef="createdBy">
-          <mat-header-cell *matHeaderCellDef>Created By</mat-header-cell>
-          <mat-cell *matCellDef="let evaluation">{{ getUsername(evaluation.createdBy)}}</mat-cell>
-        </ng-container>
-        <!-- Date Created Column -->
-        <ng-container matColumnDef="dateCreated">
-          <mat-header-cell *matHeaderCellDef>Date Created</mat-header-cell>
-          <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"yyyy-MM-dd" }}</mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-      </mat-table>
-      @if (evaluationDataSource.filteredData.length === 0) {
-      <div class="text no-results">
-        No results found
+      <div class="background text" autosize>
+        <mat-table #table class="width-100 mat-table evaluation-table" [dataSource]="evaluationDataSource" matSort
+          (matSortChange)="sortData($event)">
+          <!-- Name Column -->
+          <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="description">Name</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">
+              <a [routerLink]="['/']" [queryParams]="{ evaluation: evaluation.id }"
+                (click)="selectingAnEvaluation(evaluation.id)">
+                {{ evaluation.description }}
+              </a>
+            </mat-cell>
+          </ng-container>
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ evaluation.status }}</mat-cell>
+          </ng-container>
+          <!-- Created By Column -->
+          <ng-container matColumnDef="createdBy">
+            <mat-header-cell *matHeaderCellDef>Created By</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ getUsername(evaluation.createdBy)}}</mat-cell>
+          </ng-container>
+          <!-- Date Created Column -->
+          <ng-container matColumnDef="dateCreated">
+            <mat-header-cell *matHeaderCellDef>Created</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"yyyy-MM-dd" }}</mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+        </mat-table>
+        @if (evaluationDataSource.filteredData.length === 0) {
+        <div class="text no-results">
+          No results found
+        </div>
+        }
       </div>
-      }
     </div>
     }
     @if (selectedEvaluationId) {
