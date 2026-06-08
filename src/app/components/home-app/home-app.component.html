@@ -68,18 +68,18 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </ng-container>
           <!-- Status Column -->
           <ng-container matColumnDef="status">
-            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
             <mat-cell *matCellDef="let evaluation">{{ evaluation.status }}</mat-cell>
           </ng-container>
           <!-- Created By Column -->
           <ng-container matColumnDef="createdBy">
-            <mat-header-cell *matHeaderCellDef>Created By</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Created By</mat-header-cell>
             <mat-cell *matCellDef="let evaluation">{{ getUsername(evaluation.createdBy)}}</mat-cell>
           </ng-container>
           <!-- Date Created Column -->
           <ng-container matColumnDef="dateCreated">
-            <mat-header-cell *matHeaderCellDef>Created</mat-header-cell>
-            <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"yyyy-MM-dd" }}</mat-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Created</mat-header-cell>
+            <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"yyyy-MM-dd HH:mm" }}</mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
