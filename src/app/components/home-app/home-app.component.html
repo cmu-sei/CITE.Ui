@@ -71,11 +71,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
             <mat-cell *matCellDef="let evaluation">{{ evaluation.status }}</mat-cell>
           </ng-container>
-          <!-- Created By Column -->
-          <ng-container matColumnDef="createdBy">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Created By</mat-header-cell>
-            <mat-cell *matCellDef="let evaluation">{{ getUsername(evaluation.createdBy)}}</mat-cell>
-          </ng-container>
           <!-- Date Created Column -->
           <ng-container matColumnDef="dateCreated">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Created</mat-header-cell>
@@ -89,6 +84,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
           No results found
         </div>
         }
+        <mat-paginator
+          [pageSizeOptions]="[10, 25, 50, 100]"
+          showFirstLastButtons
+          aria-label="Select page of evaluations">
+        </mat-paginator>
       </div>
     </div>
     }

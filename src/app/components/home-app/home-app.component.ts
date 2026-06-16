@@ -54,6 +54,7 @@ import { XApiService } from 'src/app/services/xapi/xapi.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
 
 export enum Section {
   dashboard = 'dashboard',
@@ -71,6 +72,11 @@ export enum Section {
 export class HomeAppComponent implements OnDestroy, OnInit {
   @ViewChild('sidenav') sidenav: MatSidenav;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
+    if (paginator) {
+      this.evaluationDataSource.paginator = paginator;
+    }
+  }
   apiMessage = 'The API web service is not responding.';
   topbarTextBase = 'Set AppTopBarText in Settings';
   topbarText = 'blank';
@@ -114,7 +120,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   userList: User[] = [];
   Evaluation: Evaluation[] = [];
   evaluationDataSource = new MatTableDataSource<Evaluation>(new Array<Evaluation>());
-  public displayedColumns: string[] = ['description', 'status', 'createdBy', 'dateCreated'];
+  public displayedColumns: string[] = ['description', 'status', 'dateCreated'];
   private isSubmissionDataServiceLoading: boolean;
   waitingForCurrentMoveNumber = 0;
   noChanges$ = new BehaviorSubject<boolean>(false);
