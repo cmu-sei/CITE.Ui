@@ -142,7 +142,9 @@ export class DashboardComponent implements OnDestroy {
         if (active.id === activeId) {
           this.selectedEvaluation = active;
           this.currentMoveNumber = active.currentMoveNumber;
-          this.unreadArticlesDataService.loadById(activeId);
+          if (activeId) {
+            this.unreadArticlesDataService.loadById(activeId);
+          }
           this.galleryUrl =
             this.settingsService.settings.GalleryUiUrl +
             '?exhibit=' +
