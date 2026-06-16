@@ -183,6 +183,14 @@
   height: 60px !important;
 }
 
+.background {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .mat-mdc-table {
   flex: 1;
   overflow-y: auto;
