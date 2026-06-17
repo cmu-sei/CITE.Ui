@@ -2,12 +2,6 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-@use "@angular/material" as mat;
-
-:host {
-  @include mat.form-field-density(-5);
-}
-
 .sub-panel {
   width: 90%;
   margin-left: 5%;
