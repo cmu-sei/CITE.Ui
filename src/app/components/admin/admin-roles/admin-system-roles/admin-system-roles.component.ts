@@ -12,7 +12,6 @@ import {
 } from 'src/app/generated/cite.api';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
-import { ConfirmDialogService } from 'src/app/components/shared/confirm-dialog/service/confirm-dialog.service';
 import { SystemRolesModel } from './admin-system-roles.models';
 import { map, take } from 'rxjs/operators';
 import { MatCheckboxChange } from '@angular/material/checkbox';
@@ -20,6 +19,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NameDialogComponent } from 'src/app/components/shared/name-dialog/name-dialog.component';
 import { SignalRService } from 'src/app/services/signalr.service';
+import { CrucibleDialogService } from '@cmusei/crucible-common';
 
 const NAME_VALUE = 'nameValue';
 
@@ -32,7 +32,7 @@ const NAME_VALUE = 'nameValue';
 export class AdminSystemRolesComponent implements OnInit, OnDestroy {
   private roleService = inject(RoleDataService);
   private dialog = inject(MatDialog);
-  private confirmService = inject(ConfirmDialogService);
+  private confirmService = inject(CrucibleDialogService);
   private permissionDataService = inject(PermissionDataService);
   private signalRService = inject(SignalRService);
   private changeDetectorRef = inject(ChangeDetectorRef);
@@ -118,7 +118,7 @@ export class AdminSystemRolesComponent implements OnInit, OnDestroy {
     this.nameDialog('Create New Role?', '', { nameValue: '' })
       .pipe(take(1))
       .subscribe((result) => {
-        if (!result[this.confirmService.WAS_CANCELLED]) {
+        if (result) {
           this.roleService.createRole({ name: result[NAME_VALUE] }).subscribe();
         }
       });
@@ -128,7 +128,7 @@ export class AdminSystemRolesComponent implements OnInit, OnDestroy {
     this.nameDialog('Rename Role?', '', { nameValue: role.name })
       .pipe(take(1))
       .subscribe((result) => {
-        if (!result[this.confirmService.WAS_CANCELLED]) {
+        if (result) {
           role.name = result[NAME_VALUE];
           this.roleService.editRole(role).subscribe();
         }
@@ -137,22 +137,21 @@ export class AdminSystemRolesComponent implements OnInit, OnDestroy {
 
   deleteRole(role: SystemRole) {
     this.confirmService
-      .confirmDialog(
-        'Delete Role?',
-        `Are you sure you want to delete ${role.name}?`,
-        {
-          buttonTrueText: 'Delete',
-          buttonFalseText: 'Cancel',
-        }
-      )
-      .subscribe((result) => {
-        if (!result[this.confirmService.WAS_CANCELLED]) {
+      .confirm({
+        title: 'Delete Role?',
+        message: `Are you sure you want to delete ${role.name}?`,
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
           this.roleService.deleteRole(role.id).subscribe();
         }
       });
   }
 
-  nameDialog(title: string, message: string, data?: any): Observable<boolean> {
+  nameDialog(title: string, message: string, data?: any): Observable<any> {
     const dialogRef = this.dialog.open(NameDialogComponent, {
       minWidth: '400px',
       maxWidth: '90vw',

@@ -6,10 +6,9 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { SystemPermission, TeamType } from 'src/app/generated/cite.api/model/models';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminTeamTypeEditDialogComponent } from '../admin-teamtype-edit-dialog/admin-teamtype-edit-dialog.component';
 import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
@@ -43,7 +42,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
-    private dialogService: DialogService,
+    private dialogService: CrucibleDialogService,
     private teamTypeDataService: TeamTypeDataService,
     private teamTypeQuery: TeamTypeQuery,
     private settingsService: ComnSettingsService,
@@ -82,9 +81,8 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
       teamType = { ...teamType };
     }
     const dialogRef = this.dialog.open(AdminTeamTypeEditDialogComponent, {
-      minWidth: '400px',
+      width: '400px',
       maxWidth: '90vw',
-      width: 'auto',
       data: {
         teamType: teamType,
         canEdit: this.canEdit
@@ -112,12 +110,13 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
 
   deleteTeamTypeRequest(teamType: TeamType) {
     this.dialogService
-      .confirm(
-        'Delete TeamType',
-        'Are you sure that you want to delete ' + teamType.name + '?'
-      )
-      .subscribe((result) => {
-        if (result['confirm']) {
+      .confirm({
+        title: 'Delete TeamType',
+        message: 'Are you sure that you want to delete ' + teamType.name + '?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
           this.teamTypeDataService.delete(teamType.id);
         }
       });

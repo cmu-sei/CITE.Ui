@@ -6,11 +6,10 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Move } from 'src/app/generated/cite.api/model/models';
 import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Sort } from '@angular/material/sort';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminMoveEditDialogComponent } from '../admin-move-edit-dialog/admin-move-edit-dialog.component';
 import { UntypedFormControl } from '@angular/forms';
@@ -38,7 +37,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
     private settingsService: ComnSettingsService,
     private moveDataService: MoveDataService,
     private moveQuery: MoveQuery,
-    private dialogService: DialogService,
+    private dialogService: CrucibleDialogService,
     private dialog: MatDialog
   ) {
     this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
@@ -91,14 +90,17 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   }
 
   deleteMoveRequest(move: Move) {
-    this.dialogService.confirm(
-      'Delete this move?',
-      'Are you sure that you want to delete ' + move.description + '?'
-    ).subscribe((result) => {
-      if (result['confirm']) {
-        this.moveDataService.delete(move.id);
-      }
-    });
+    this.dialogService
+      .confirm({
+        title: 'Delete this move?',
+        message: 'Are you sure that you want to delete ' + move.description + '?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.moveDataService.delete(move.id);
+        }
+      });
   }
 
   applyFilter(filterValue: string) {

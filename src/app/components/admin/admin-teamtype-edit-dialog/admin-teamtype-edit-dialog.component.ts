@@ -4,13 +4,15 @@
 
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import {
+  FormBuilder,
+  FormGroup,
   UntypedFormControl,
   FormGroupDirective,
   NgForm,
+  Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class UserErrorStateMatcher implements ErrorStateMatcher {
@@ -32,17 +34,28 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 
 export class AdminTeamTypeEditDialogComponent {
   @Output() editComplete = new EventEmitter<any>();
+  public form: FormGroup;
 
   constructor(
-    public dialogService: DialogService,
-    dialogRef: MatDialogRef<AdminTeamTypeEditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private formBuilder: FormBuilder
   ) {
-    dialogRef.disableClose = true;
+    this.form = this.formBuilder.group({
+      name: [
+        { value: data.teamType.name, disabled: !data.canEdit },
+        Validators.required,
+      ],
+      isOfficialScoreContributor: [
+        { value: data.teamType.isOfficialScoreContributor, disabled: !data.canEdit },
+      ],
+      showTeamTypeAverage: [
+        { value: data.teamType.showTeamTypeAverage, disabled: !data.canEdit },
+      ],
+    });
   }
 
   errorFree() {
-    return this.data.teamType.name.length > 0;
+    return this.form.valid;
   }
 
   /**
@@ -52,7 +65,8 @@ export class AdminTeamTypeEditDialogComponent {
     if (!saveChanges) {
       this.editComplete.emit({ saveChanges: false, teamType: null });
     } else {
-      if (this.errorFree) {
+      if (this.errorFree()) {
+        Object.assign(this.data.teamType, this.form.getRawValue());
         this.editComplete.emit({
           saveChanges: saveChanges,
           teamType: this.data.teamType,

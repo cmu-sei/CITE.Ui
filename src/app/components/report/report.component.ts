@@ -3,7 +3,6 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, Input, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -24,7 +23,6 @@ import {
   ScoringCategory,
 } from 'src/app/generated/cite.api/model/models';
 import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 
@@ -73,8 +71,6 @@ export class ReportComponent implements OnDestroy {
     private userQuery: UserQuery,
     private currentUserQuery: CurrentUserQuery,
     private teamQuery: TeamQuery,
-    private dialogService: DialogService,
-    public matDialog: MatDialog,
     private titleService: Title,
     private uiDataService: UIDataService
   ) {

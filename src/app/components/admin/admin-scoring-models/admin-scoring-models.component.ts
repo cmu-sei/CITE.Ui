@@ -15,11 +15,10 @@ import {
 } from 'src/app/generated/cite.api/model/models';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminScoringModelEditDialogComponent } from '../admin-scoring-model-edit-dialog/admin-scoring-model-edit-dialog.component';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -86,7 +85,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     private scoringModelQuery: ScoringModelQuery,
     private userQuery: UserQuery,
     private dialog: MatDialog,
-    public dialogService: DialogService,
+    public dialogService: CrucibleDialogService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private permissionDataService: PermissionDataService
@@ -185,14 +184,17 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   }
 
   deleteScoringModelRequest(scoringModel: ScoringModel) {
-    this.dialogService.confirm(
-      'Delete this scoringModel?',
-      'Are you sure that you want to delete ' + scoringModel.description + '?'
-    ).subscribe((result) => {
-      if (result['confirm']) {
-        this.scoringModelDataService.delete(scoringModel.id);
-      }
-    });
+    this.dialogService
+      .confirm({
+        title: 'Delete this scoringModel?',
+        message: 'Are you sure that you want to delete ' + scoringModel.description + '?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.scoringModelDataService.delete(scoringModel.id);
+        }
+      });
   }
 
   applyFilter() {

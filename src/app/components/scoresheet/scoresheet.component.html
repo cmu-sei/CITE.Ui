@@ -272,17 +272,21 @@ project root for license information or contact permission@sei.cmu.edu for full 
 </div>
 
 <ng-template #addCommenttemplate>
-  <div mat-dialog-title>Add a comment ...</div>
-  <div mat-dialog-content>
-    <mat-form-field class="full-width">
-      <mat-label>{{ commentOptionDescription }}</mat-label>
-      <textarea matInput placeholder="" [(ngModel)]="currentComment"></textarea>
-    </mat-form-field>
-  </div>
+  <crucible-dialog
+    dialogTitle="Add a comment ..."
+    [hideDefaultActions]="true"
+    [guardUnsavedWork]="true"
+  >
+    <div crucibleDialogContent>
+      <mat-form-field class="full-width">
+        <mat-label>{{ commentOptionDescription }}</mat-label>
+        <textarea matInput placeholder="" [(ngModel)]="currentComment"></textarea>
+      </mat-form-field>
+    </div>
 
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cancel</button>
-    <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
-    <button mat-button [mat-dialog-close]="true" [disabled]="noChanges">Save</button>
-  </mat-dialog-actions>
+    <div crucibleDialogActions>
+      <button matButton="outlined" mat-dialog-close>Cancel</button>
+      <button matButton="filled" [mat-dialog-close]="true" [disabled]="noChanges">Save</button>
+    </div>
+  </crucible-dialog>
 </ng-template>

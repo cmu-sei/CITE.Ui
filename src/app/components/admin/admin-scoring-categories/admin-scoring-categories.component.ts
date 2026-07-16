@@ -6,11 +6,10 @@ import { Component, EventEmitter, Input, Output, OnDestroy, OnInit } from '@angu
 import { ScoringCategory, ItemStatus, ScoringOptionSelection, ScoringModel} from 'src/app/generated/cite.api/model/models';
 import { ScoringCategoryDataService } from 'src/app/data/scoring-category/scoring-category-data.service';
 import { ScoringCategoryQuery } from 'src/app/data/scoring-category/scoring-category.query';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import {
   AdminScoringCategoryEditDialogComponent
 } from '../admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
@@ -53,7 +52,7 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
     private scoringCategoryDataService: ScoringCategoryDataService,
     private scoringCategoryQuery: ScoringCategoryQuery,
     private dialog: MatDialog,
-    public dialogService: DialogService
+    public dialogService: CrucibleDialogService
   ) {
     this.scoringCategoryQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringCategories => {
       this.scoringCategoryList = [];
@@ -115,14 +114,17 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   }
 
   deleteScoringCategoryRequest(scoringCategory: ScoringCategory) {
-    this.dialogService.confirm(
-      'Delete this scoringCategory?',
-      'Are you sure that you want to delete ' + scoringCategory.description + '?'
-    ).subscribe((result) => {
-      if (result['confirm']) {
-        this.scoringCategoryDataService.delete(scoringCategory.id);
-      }
-    });
+    this.dialogService
+      .confirm({
+        title: 'Delete this scoringCategory?',
+        message: 'Are you sure that you want to delete ' + scoringCategory.description + '?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.scoringCategoryDataService.delete(scoringCategory.id);
+        }
+      });
   }
 
   ngOnDestroy() {

@@ -4,13 +4,15 @@
 
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import {
+  FormBuilder,
+  FormGroup,
   UntypedFormControl,
   FormGroupDirective,
   NgForm,
+  Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class UserErrorStateMatcher implements ErrorStateMatcher {
@@ -32,17 +34,28 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 
 export class AdminScoringCategoryEditDialogComponent {
   @Output() editComplete = new EventEmitter<any>();
+  public form: FormGroup;
 
   constructor(
-    public dialogService: DialogService,
-    dialogRef: MatDialogRef<AdminScoringCategoryEditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private formBuilder: FormBuilder
   ) {
-    dialogRef.disableClose = true;
+    const category = data.scoringCategory;
+    const disabled = !data.canEdit;
+    this.form = this.formBuilder.group({
+      description: [{ value: category.description, disabled }, Validators.required],
+      displayOrder: [{ value: category.displayOrder, disabled }],
+      moveNumberFirstDisplay: [{ value: category.moveNumberFirstDisplay, disabled }],
+      moveNumberLastDisplay: [{ value: category.moveNumberLastDisplay, disabled }],
+      calculationEquation: [{ value: category.calculationEquation, disabled }],
+      scoringWeight: [{ value: category.scoringWeight, disabled }],
+      scoringOptionSelection: [{ value: category.scoringOptionSelection, disabled }],
+      isModifierRequired: [{ value: category.isModifierRequired, disabled }],
+    });
   }
 
   errorFree() {
-    return (this.data.scoringCategory.description.length > 0);
+    return this.form.valid;
   }
 
   /**
@@ -52,7 +65,8 @@ export class AdminScoringCategoryEditDialogComponent {
     if (!saveChanges) {
       this.editComplete.emit({ saveChanges: false, scoringCategory: null });
     } else {
-      if (this.errorFree) {
+      if (this.errorFree()) {
+        Object.assign(this.data.scoringCategory, this.form.getRawValue());
         this.editComplete.emit({
           saveChanges: saveChanges,
           scoringCategory: this.data.scoringCategory,

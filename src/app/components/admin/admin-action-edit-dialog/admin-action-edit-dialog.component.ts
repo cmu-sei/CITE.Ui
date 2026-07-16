@@ -4,16 +4,17 @@
 
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import {
+  FormBuilder,
+  FormGroup,
   UntypedFormControl,
   FormGroupDirective,
   NgForm,
+  Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import {
-  MatDialogRef,
   MAT_DIALOG_DATA as MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class UserErrorStateMatcher implements ErrorStateMatcher {
@@ -35,21 +36,23 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 
 export class AdminActionEditDialogComponent {
   @Output() editComplete = new EventEmitter<any>();
+  public form: FormGroup;
 
   constructor(
-    public dialogService: DialogService,
-    dialogRef: MatDialogRef<AdminActionEditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private formBuilder: FormBuilder
   ) {
-    dialogRef.disableClose = true;
-  }
-
-  selectMove(moveNumber: string) {
-    this.data.action.moveNumber = moveNumber;
+    this.form = this.formBuilder.group({
+      description: [data.action.description, Validators.required],
+      moveNumber: [
+        data.action.moveNumber == null ? '' : data.action.moveNumber.toString(),
+      ],
+      teamId: [data.action.teamId],
+    });
   }
 
   errorFree() {
-    return this.data.action.description.length > 0;
+    return this.form.valid;
   }
 
   /**
@@ -59,7 +62,8 @@ export class AdminActionEditDialogComponent {
     if (!saveChanges) {
       this.editComplete.emit({ saveChanges: false, action: null });
     } else {
-      if (this.errorFree) {
+      if (this.errorFree()) {
+        Object.assign(this.data.action, this.form.getRawValue());
         this.editComplete.emit({
           saveChanges: saveChanges,
           action: this.data.action,

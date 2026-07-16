@@ -4,30 +4,22 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div mat-dialog-title>
-  @if (data.scoringOption.id) {
-  <span>Edit Scoring Option</span>
-  }
-  @if (!data.scoringOption.id) {
-  <span>Add Scoring Option</span>
-  }
-  <button
-    mat-icon-button
-    (click)="handleEditComplete(false)"
-    title="Cancel"
-    class="close-button"
-    tabindex="-1"
-    >
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
-  </button>
-</div>
+<crucible-dialog
+  [dialogTitle]="data.scoringOption.id ? 'Edit Scoring Option' : 'Add Scoring Option'"
+  [form]="form"
+  submitLabel="Save"
+  [submitDisabled]="!form.valid || !form.dirty"
+  [guardUnsavedWork]="true"
+  (cancel)="handleEditComplete(false)"
+  (submit)="handleEditComplete(true)"
+>
 @if (data && data.scoringOption) {
-  <div mat-dialog-content>
+  <div crucibleDialogContent [formGroup]="form">
     <div class="add-margin">
       <div class="field-row">
         <mat-form-field class="description-field full-width">
           <mat-label>Scoring Option Description</mat-label>
-          <textarea matInput [(ngModel)]="data.scoringOption.description"></textarea>
+          <textarea matInput formControlName="description"></textarea>
         </mat-form-field>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="A name or description of this scoring option as it appears to participants on the scoresheet."
@@ -40,7 +32,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="field-row">
         <mat-form-field class="description-field">
           <mat-label>Display Order</mat-label>
-          <input matInput [(ngModel)]="data.scoringOption.displayOrder" />
+          <input matInput formControlName="displayOrder" />
         </mat-form-field>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="Numeric order in which this option appears within its category. Lower numbers appear first."
@@ -53,7 +45,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="field-row">
         <mat-form-field class="description-field">
           <mat-label>Value</mat-label>
-          <input matInput [(ngModel)]="data.scoringOption.value" />
+          <input matInput formControlName="value" />
         </mat-form-field>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="Numeric score awarded when this option is selected. Used by the category's calculation equation."
@@ -64,7 +56,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
     <div class="add-margin">
       <div class="field-row">
-        <mat-checkbox [(ngModel)]="data.scoringOption.isModifier">Is a Modifier</mat-checkbox>
+        <mat-checkbox formControlName="isModifier">Is a Modifier</mat-checkbox>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="Marks this option as a modifier rather than a primary scoring option. Modifiers are selected separately and can adjust the category's score via the calculation equation."
           #modTip="matTooltip" (click)="modTip.toggle()">
@@ -72,13 +64,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </button>
       </div>
     </div>
-    <div class="cssLayoutRowStartCenter bottom-button">
-      <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>
-      </div>
-      <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
-      </div>
-    </div>
   </div>
 }
+</crucible-dialog>

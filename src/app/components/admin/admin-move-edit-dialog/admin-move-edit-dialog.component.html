@@ -4,30 +4,22 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div mat-dialog-title>
-  @if (data.move.id) {
-  <span>Edit Move</span>
-  }
-  @if (!data.move.id) {
-  <span>Add Move</span>
-  }
-  <button
-    mat-icon-button
-    (click)="handleEditComplete(false)"
-    title="Cancel"
-    class="close-button"
-    tabindex="-1"
-    >
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
-  </button>
-</div>
+<crucible-dialog
+  [dialogTitle]="data.move.id ? 'Edit Move' : 'Add Move'"
+  [form]="form"
+  submitLabel="Save"
+  [submitDisabled]="!data.canEdit || !form.valid || !form.dirty"
+  [guardUnsavedWork]="true"
+  (cancel)="handleEditComplete(false)"
+  (submit)="handleEditComplete(true)"
+>
 @if (data && data.move) {
-  <div mat-dialog-content>
+  <div crucibleDialogContent [formGroup]="form">
     <div class="add-margin">
       <div>
         <mat-form-field class="description-field">
           <mat-label>Move Number</mat-label>
-          <input matInput [(ngModel)]="data.move.moveNumber" />
+          <input matInput formControlName="moveNumber" />
         </mat-form-field>
       </div>
     </div>
@@ -35,7 +27,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Move Description</mat-label>
-          <input matInput [(ngModel)]="data.move.description" />
+          <input matInput formControlName="description" />
         </mat-form-field>
       </div>
     </div>
@@ -47,7 +39,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             [formControl]="situationDateFormControl" (inputChange)="saveMove('situationDate')"
             (dateChange)="saveMove('situationDate')" style="display: none;">
           <span (click)="data.canEdit && picker.open()">
-            {{data.move.situationTime | date: 'dd MMM yyyy HH:mm'}} {{ getTimezoneAbbr() }}
+            {{situationDateFormControl.value | date: 'dd MMM yyyy HH:mm'}} {{ getTimezoneAbbr() }}
           </span>
           <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)" [disabled]="!data.canEdit">
           </mat-datepicker-toggle>
@@ -63,15 +55,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
       <div class="add-margin">
         <mat-label class="gray">Situation Description</mat-label>
-        <angular-editor [placeholder]="'Enter situation description here...'" [(ngModel)]="data.move.situationDescription" [config]="editorConfig"></angular-editor>
-      </div>
-      <div class="cssLayoutRowStartCenter bottom-button">
-        <div class="delete-button">
-          <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!data.canEdit || !errorFree()" style="margin-left: 40px;">Save</button>
-        </div>
-        <div class="delete-button">
-          <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
-        </div>
+        <angular-editor [placeholder]="'Enter situation description here...'" formControlName="situationDescription" [config]="editorConfig"></angular-editor>
       </div>
     </div>
   }
+</crucible-dialog>

@@ -3,7 +3,6 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { Evaluation, ItemStatus, Move, Team } from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -17,6 +16,7 @@ import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { CurrentUserQuery } from 'src/app/data/user/user.query';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { CrucibleDialogService } from '@cmusei/crucible-common';
 
 @Component({
     selector: 'app-evaluation-info',
@@ -63,7 +63,7 @@ export class EvaluationInfoComponent implements OnDestroy {
     private teamMembershipDataService: TeamMembershipDataService,
     private uiDataService: UIDataService,
     private evaluationDataService: EvaluationDataService,
-    public dialogService: DialogService,
+    public dialogService: CrucibleDialogService,
     private userDataService: UserDataService,
     private currentUserQuery: CurrentUserQuery,
     private permissionDataService: PermissionDataService
@@ -148,14 +148,17 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   advanceCurrentMove() {
-    this.dialogService.confirm(
-      'Advance to the next Move?',
-      'Are you sure that you want to advance to the next move?'
-    ).subscribe((result) => {
-      if (result['confirm']) {
-        this.nextEvaluationMove.emit(+this.displayedMoveNumber + 1);
-      }
-    });
+    this.dialogService
+      .confirm({
+        title: 'Advance to the next Move?',
+        message: 'Are you sure that you want to advance to the next move?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.nextEvaluationMove.emit(+this.displayedMoveNumber + 1);
+        }
+      });
   }
 
   setSection(section: Section) {

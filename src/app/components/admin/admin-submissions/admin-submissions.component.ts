@@ -18,7 +18,7 @@ import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
@@ -27,7 +27,6 @@ import {
   SubmissionType,
 } from 'src/app/data/submission/submission.models';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 
 @Component({
@@ -76,7 +75,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
     private submissionDataService: SubmissionDataService,
     private submissionQuery: SubmissionQuery,
     private teamDataService: TeamDataService,
-    private dialogService: DialogService,
+    private dialogService: CrucibleDialogService,
     public matDialog: MatDialog,
     private permissionDataService: PermissionDataService
   ) {
@@ -128,12 +127,13 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
 
   deleteSubmissionRequest(submission: Submission) {
     this.dialogService
-      .confirm(
-        'Delete this submission?',
-        'Are you sure that you want to delete this submission?'
-      )
-      .subscribe((result) => {
-        if (result['confirm']) {
+      .confirm({
+        title: 'Delete this submission?',
+        message: 'Are you sure that you want to delete this submission?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
           this.submissionDataService.delete(submission.id);
         }
       });

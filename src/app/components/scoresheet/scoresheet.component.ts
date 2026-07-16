@@ -35,9 +35,9 @@ import {
   ScoringOptionSelection,
   TeamPermission,
 } from 'src/app/generated/cite.api/model/models';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
+import { CrucibleDialogService } from '@cmusei/crucible-common';
 
 @Component({
   selector: 'app-scoresheet',
@@ -92,7 +92,7 @@ export class ScoresheetComponent implements OnDestroy {
     private currentUserQuery: CurrentUserQuery,
     private teamQuery: TeamQuery,
     private teamMembershipDataService: TeamMembershipDataService,
-    private dialogService: DialogService,
+    private dialogService: CrucibleDialogService,
     public matDialog: MatDialog,
     private titleService: Title,
     private uiDataService: UIDataService
@@ -301,7 +301,6 @@ export class ScoresheetComponent implements OnDestroy {
       maxWidth: '90vw',
       width: '600px',
     });
-    dialogRef.disableClose = true;
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.submissionDataService.addSubmissionComment(
@@ -326,7 +325,6 @@ export class ScoresheetComponent implements OnDestroy {
       maxWidth: '90vw',
       width: '600px',
     });
-    dialogRef.disableClose = true;
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         const newComment = { ...submissionComment };
@@ -381,9 +379,13 @@ export class ScoresheetComponent implements OnDestroy {
 
   deleteComment(submissionComment: SubmissionComment) {
     this.dialogService
-      .confirm('Delete this comment?', submissionComment.comment)
-      .subscribe((result) => {
-        if (result['confirm']) {
+      .confirm({
+        title: 'Delete this comment?',
+        message: submissionComment.comment,
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
           this.submissionDataService.removeSubmissionComment(
             this.displayedSubmission.id,
             submissionComment.id
@@ -458,14 +460,15 @@ export class ScoresheetComponent implements OnDestroy {
     // if not the curret move, score cannot be reopened, so ask for confirmation
     if (+this.displayedMoveNumber < +this.currentMoveNumber) {
       this.dialogService
-        .confirm(
-          'WARNING:  You will not be able to reopen this response!',
-          'Move ' +
+        .confirm({
+          title: 'WARNING:  You will not be able to reopen this response!',
+          message: 'Move ' +
             this.displayedMoveNumber +
-            ' has ended. You will not be able to reopen this response. Are you sure that you wish to submit?'
-        )
-        .subscribe((result) => {
-          if (result['confirm']) {
+            ' has ended. You will not be able to reopen this response. Are you sure that you wish to submit?',
+        })
+        .afterClosed()
+        .subscribe((confirmed) => {
+          if (confirmed) {
             this.verifyAndSubmit();
           }
         });
@@ -483,13 +486,15 @@ export class ScoresheetComponent implements OnDestroy {
     } else {
       // there were missing values, so confirm submission
       this.dialogService
-        .confirm(
-          'Submit this response?',
-          errorMessage +
-            '    Are you sure that you want to submit this response?'
-        )
-        .subscribe((result) => {
-          if (result['confirm']) {
+        .confirm({
+          title: 'Submit this response?',
+          message:
+            errorMessage +
+            '    Are you sure that you want to submit this response?',
+        })
+        .afterClosed()
+        .subscribe((confirmed) => {
+          if (confirmed) {
             this.submit();
           }
         });

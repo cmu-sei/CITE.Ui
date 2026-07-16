@@ -2,6 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
+import { A11yModule } from '@angular/cdk/a11y';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
 import {
@@ -48,6 +49,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   ComnAuthModule,
+  CRUCIBLE_DIALOG_IMPORTS,
   ComnHeaderBarModule,
   ComnSettingsConfig,
   ComnSettingsModule,
@@ -105,14 +107,12 @@ import { AdminEvaluationMemberListComponent } from './components/admin/admin-eva
 import { AdminEvaluationMembershipListComponent } from './components/admin/admin-evaluation-memberships/admin-evaluation-membership-list/admin-evaluation-membership-list.component';
 import { AdminSystemRolesComponent } from './components/admin/admin-roles/admin-system-roles/admin-system-roles.component';
 import { AdminUserListComponent } from './components/admin/admin-users/admin-user-list/admin-user-list.component';
-import { CwdDialogsModule } from './components/shared/confirm-dialog/cwd-dialogs.module';
 import { NameDialogComponent } from './components/shared/name-dialog/name-dialog.component';
 import { RightSideHtmlComponent } from './components/right-side-html/right-side-html.component';
 import { RightSideIframeComponent } from './components/right-side-iframe/right-side-iframe.component';
 import { SystemMessageComponent } from './components/shared/system-message/system-message.component';
 import { TopbarComponent } from './components/shared/top-bar/topbar.component';
 import { UserDataService } from './data/user/user-data.service';
-import { DialogService } from './services/dialog/dialog.service';
 import { ErrorService } from './services/error/error.service';
 import { SystemMessageService } from './services/system-message/system-message.service';
 import { BASE_PATH } from './generated/cite.api';
@@ -208,8 +208,8 @@ export function getBasePath(settingsSvc: ComnSettingsService)
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    A11yModule,
     ClipboardModule,
-    CwdDialogsModule,
     SwaggerCodegenApiModule,
     FormsModule,
     ReactiveFormsModule,
@@ -261,9 +261,9 @@ export function getBasePath(settingsSvc: ComnSettingsService)
     ComnSettingsModule.forRoot(),
     AngularEditorModule,
     ComnHeaderBarModule,
+    ...CRUCIBLE_DIALOG_IMPORTS,
   ],
   providers: [
-    DialogService,
     SystemMessageService,
     UserDataService,
     UIDataService,

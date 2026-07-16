@@ -6,11 +6,10 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ScoringOption, ItemStatus } from 'src/app/generated/cite.api/model/models';
 import { ScoringOptionDataService } from 'src/app/data/scoring-option/scoring-option-data.service';
 import { ScoringOptionQuery } from 'src/app/data/scoring-option/scoring-option.query';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminScoringOptionEditDialogComponent } from '../admin-scoring-option-edit-dialog/admin-scoring-option-edit-dialog.component';
 
 @Component({
@@ -43,7 +42,7 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
     private scoringOptionDataService: ScoringOptionDataService,
     private scoringOptionQuery: ScoringOptionQuery,
     private dialog: MatDialog,
-    public dialogService: DialogService
+    public dialogService: CrucibleDialogService
   ) {
     this.scoringOptionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringOptions => {
       this.scoringOptionList = [];
@@ -94,14 +93,17 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
   }
 
   deleteScoringOptionRequest(scoringOption: ScoringOption) {
-    this.dialogService.confirm(
-      'Delete this scoringOption?',
-      'Are you sure that you want to delete ' + scoringOption.description + '?'
-    ).subscribe((result) => {
-      if (result['confirm']) {
-        this.scoringOptionDataService.delete(scoringOption.id);
-      }
-    });
+    this.dialogService
+      .confirm({
+        title: 'Delete this scoringOption?',
+        message: 'Are you sure that you want to delete ' + scoringOption.description + '?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.scoringOptionDataService.delete(scoringOption.id);
+        }
+      });
   }
 
   ngOnDestroy() {
