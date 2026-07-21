@@ -4,13 +4,15 @@
 
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import {
+  FormBuilder,
+  FormGroup,
   UntypedFormControl,
   FormGroupDirective,
   NgForm,
+  Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class UserErrorStateMatcher implements ErrorStateMatcher {
@@ -32,17 +34,20 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 
 export class AdminDutyEditDialogComponent {
   @Output() editComplete = new EventEmitter<any>();
+  public form: FormGroup;
 
   constructor(
-    public dialogService: DialogService,
-    dialogRef: MatDialogRef<AdminDutyEditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private formBuilder: FormBuilder
   ) {
-    dialogRef.disableClose = true;
+    this.form = this.formBuilder.group({
+      name: [{ value: data.duty.name, disabled: !data.canEdit }, Validators.required],
+      teamId: [{ value: data.duty.teamId, disabled: !data.canEdit }],
+    });
   }
 
   errorFree() {
-    return this.data.duty.name.length > 0;
+    return this.form.valid;
   }
 
   /**
@@ -52,7 +57,8 @@ export class AdminDutyEditDialogComponent {
     if (!saveChanges) {
       this.editComplete.emit({ saveChanges: false, duty: null });
     } else {
-      if (this.errorFree) {
+      if (this.errorFree()) {
+        Object.assign(this.data.duty, this.form.getRawValue());
         this.editComplete.emit({
           saveChanges: saveChanges,
           duty: this.data.duty,

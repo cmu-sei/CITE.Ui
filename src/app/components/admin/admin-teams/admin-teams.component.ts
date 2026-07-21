@@ -10,12 +10,11 @@ import { Team, TeamType, User } from 'src/app/generated/cite.api/model/models';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { UserQuery } from 'src/app/data/user/user.query';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminTeamEditDialogComponent } from 'src/app/components/admin/admin-team-edit-dialog/admin-team-edit-dialog.component';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 
 @Component({
@@ -49,7 +48,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   constructor(
     private settingsService: ComnSettingsService,
     private dialog: MatDialog,
-    public dialogService: DialogService,
+    public dialogService: CrucibleDialogService,
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
     private teamTypeQuery: TeamTypeQuery,
@@ -131,12 +130,13 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
 
   deleteTeam(team: Team): void {
     this.dialogService
-      .confirm(
-        'Delete Team',
-        'Are you sure that you want to delete ' + team.name + '?'
-      )
-      .subscribe((result) => {
-        if (result['confirm']) {
+      .confirm({
+        title: 'Delete Team',
+        message: 'Are you sure that you want to delete ' + team.name + '?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
           this.teamDataService.delete(team.id);
         }
       });

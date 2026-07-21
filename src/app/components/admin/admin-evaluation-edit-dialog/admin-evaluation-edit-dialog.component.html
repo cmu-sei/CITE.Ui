@@ -4,24 +4,22 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div mat-dialog-title>
-  @if (data.evaluation.id) {
-  <span>Edit Evaluation</span>
-  }
-  @if (!data.evaluation.id) {
-  <span>Add Evaluation</span>
-  }
-  <button mat-icon-button (click)="handleEditComplete(false)" title="Cancel" class="close-button" tabindex="-1">
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
-  </button>
-</div>
+<crucible-dialog
+  [dialogTitle]="data.evaluation.id ? 'Edit Evaluation' : 'Add Evaluation'"
+  [form]="form"
+  submitLabel="Save"
+  [submitDisabled]="!form.valid || !form.dirty || !data.canEdit"
+  [guardUnsavedWork]="true"
+  (cancel)="handleEditComplete(false)"
+  (submit)="handleEditComplete(true)"
+>
 @if (data && data.evaluation) {
-  <div mat-dialog-content>
+  <div crucibleDialogContent [formGroup]="form">
     <div class="add-margin">
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Evaluation Description</mat-label>
-          <input matInput [(ngModel)]="data.evaluation.description" [disabled]="!data.canEdit" />
+          <input matInput formControlName="description" />
         </mat-form-field>
       </div>
     </div>
@@ -29,8 +27,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Scoring Model</mat-label>
-          <mat-select placeholder="Please select a scoring model" [(value)]="data.evaluation.scoringModelId"
-            (click)="$event.stopPropagation()" [disabled]="data.isExisting || !data.canEdit">
+          <mat-select placeholder="Please select a scoring model" formControlName="scoringModelId"
+            (click)="$event.stopPropagation()">
             @for (scoringModel of data.scoringModels; track scoringModel) {
               <mat-option [value]="scoringModel.id">
                 {{ scoringModel.description }}
@@ -44,7 +42,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Evaluation Status</mat-label>
-          <mat-select placeholder="Select a Status" [(value)]="data.evaluation.status" (click)="$event.stopPropagation()" [disabled]="!data.canEdit">
+          <mat-select placeholder="Select a Status" formControlName="status" (click)="$event.stopPropagation()">
             @for (status of data.itemStatuses; track status) {
               <mat-option [value]="status">
                 {{ status }}
@@ -58,7 +56,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Gallery Exhibit ID</mat-label>
-          <input matInput [(ngModel)]="data.evaluation.galleryExhibitId" [disabled]="!data.canEdit" />
+          <input matInput formControlName="galleryExhibitId" />
         </mat-form-field>
       </div>
     </div>
@@ -66,7 +64,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div>
         <mat-form-field class="description-field">
           <mat-label>Current Move</mat-label>
-          <input matInput [(ngModel)]="data.evaluation.currentMoveNumber" [disabled]="!data.canEdit" />
+          <input matInput formControlName="currentMoveNumber" />
         </mat-form-field>
       </div>
     </div>
@@ -78,7 +76,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             [formControl]="situationDateFormControl" (inputChange)="saveEvaluation('situationDate')"
             (dateChange)="saveEvaluation('situationDate')" style="display: none;">
           <span (click)="data.canEdit && picker.open()">
-            {{data.evaluation.situationTime | date: 'dd MMM yyyy HH:mm'}} {{ getTimezoneAbbr() }}
+            {{situationDateFormControl.value | date: 'dd MMM yyyy HH:mm'}} {{ getTimezoneAbbr() }}
           </span>
           <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)" [disabled]="!data.canEdit">
           </mat-datepicker-toggle>
@@ -95,21 +93,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="add-margin">
         <mat-label class="gray">Situation Description</mat-label>
         <angular-editor [placeholder]="'Enter situation description here...'"
-        [(ngModel)]="data.evaluation.situationDescription" [config]="editorConfig"></angular-editor>
+        formControlName="situationDescription" [config]="editorConfig"></angular-editor>
       </div>
       <div class="add-margin">
-        <mat-checkbox [(ngModel)]="data.evaluation.showAdvanceButton" [disabled]="!data.canEdit">
+        <mat-checkbox formControlName="showAdvanceButton">
           Show Advance Button
         </mat-checkbox>
       </div>
-      <div class="cssLayoutRowStartCenter bottom-button">
-        <div class="delete-button">
-          <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree() || !data.canEdit"
-          style="margin-left: 40px;">Save</button>
-        </div>
-        <div class="delete-button">
-          <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
-        </div>
-      </div>
     </div>
   }
+</crucible-dialog>

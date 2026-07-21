@@ -4,16 +4,17 @@
 
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import {
+  FormBuilder,
+  FormGroup,
   UntypedFormControl,
   FormGroupDirective,
   NgForm,
+  Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import {
-  MatDialogRef,
   MAT_DIALOG_DATA as MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 
 /** Error when invalid control is dirty, touched, or submitted. */
@@ -36,10 +37,7 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 
 export class AdminMoveEditDialogComponent {
   @Output() editComplete = new EventEmitter<any>();
-  situationDateFormControl = new UntypedFormControl(
-    this.data.move.situationTime ? this.data.move.situationTime : '',
-    []
-  );
+  public form: FormGroup;
   editorConfig: AngularEditorConfig = {
     editable: true,
     spellcheck: true,
@@ -71,15 +69,23 @@ export class AdminMoveEditDialogComponent {
   };
 
   constructor(
-    public dialogService: DialogService,
-    dialogRef: MatDialogRef<AdminMoveEditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private formBuilder: FormBuilder
   ) {
-    dialogRef.disableClose = true;
+    this.form = this.formBuilder.group({
+      moveNumber: [data.move.moveNumber],
+      description: [data.move.description, Validators.required],
+      situationTime: [data.move.situationTime || ''],
+      situationDescription: [data.move.situationDescription],
+    });
+  }
+
+  get situationDateFormControl(): UntypedFormControl {
+    return this.form.controls['situationTime'] as UntypedFormControl;
   }
 
   errorFree() {
-    return this.data.move.description.length > 0;
+    return this.form.valid;
   }
 
   /**
@@ -89,7 +95,11 @@ export class AdminMoveEditDialogComponent {
     if (!saveChanges) {
       this.editComplete.emit({ saveChanges: false, move: null });
     } else {
-      if (this.errorFree) {
+      if (this.errorFree()) {
+        Object.assign(this.data.move, this.form.getRawValue());
+        if (this.data.move.situationTime) {
+          this.data.move.situationTime = new Date(this.data.move.situationTime);
+        }
         this.editComplete.emit({
           saveChanges: saveChanges,
           move: this.data.move,
@@ -105,7 +115,10 @@ export class AdminMoveEditDialogComponent {
     switch (changedField) {
       case 'situationDate':
         if (this.situationDateFormControl.value) {
-          this.data.move.situationTime = new Date(this.situationDateFormControl.value);
+          this.situationDateFormControl.setValue(
+            new Date(this.situationDateFormControl.value),
+            { emitEvent: false }
+          );
         }
         break;
       default:

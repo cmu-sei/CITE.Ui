@@ -23,12 +23,10 @@ import { map } from 'rxjs/operators';
 import { Group, SystemPermission } from 'src/app/generated/cite.api';
 import { GroupDataService } from 'src/app/data/group/group-data.service';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
-import { ConfirmDialogComponent } from 'src/app/components/shared/confirm-dialog/components/confirm-dialog.component';
 import { NameDialogComponent } from 'src/app/components/shared/name-dialog/name-dialog.component';
 import { UserDataService } from 'src/app/data/user/user-data.service';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 
-const WAS_CANCELLED = 'wasCancelled';
 const NAME_VALUE = 'nameValue';
 
 @Component({
@@ -57,6 +55,7 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
     private groupDataService: GroupDataService,
     private userDataService: UserDataService,
     private dialog: MatDialog,
+    private confirmService: CrucibleDialogService,
     private permissionDataService: PermissionDataService,
     private settingsService: ComnSettingsService
   ) { }
@@ -99,7 +98,7 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
   createGroup() {
     this.nameDialog('Create New Group?', '', { nameValue: '' }).subscribe(
       (result) => {
-        if (!result[WAS_CANCELLED]) {
+        if (result) {
           this.groupDataService
             .create({ name: result[NAME_VALUE] })
             .subscribe();
@@ -112,7 +111,7 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
     this.nameDialog('Rename ' + group.name, '', {
       nameValue: group.name,
     }).subscribe((result) => {
-      if (!result[WAS_CANCELLED]) {
+      if (result) {
         this.groupDataService
           .edit({ id: group.id, name: result[NAME_VALUE] })
           .subscribe();
@@ -121,32 +120,21 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
   }
 
   deleteGroup(group: Group) {
-    this.confirmDialog('Delete Group?', 'Delete Group ' + group.name + '?', {
-      buttonTrueText: 'Delete',
-    }).subscribe((result) => {
-      if (!result[WAS_CANCELLED]) {
-        this.groupDataService.delete(group.id).subscribe();
-      }
-    });
+    this.confirmService
+      .confirm({
+        title: 'Delete Group?',
+        message: 'Delete Group ' + group.name + '?',
+        confirmText: 'Delete',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.groupDataService.delete(group.id).subscribe();
+        }
+      });
   }
 
-  confirmDialog(
-    title: string,
-    message: string,
-    data?: any
-  ): Observable<boolean> {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      maxWidth: '90vw',
-      width: 'auto',
-      data: data || {},
-    });
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.message = message;
-
-    return dialogRef.afterClosed();
-  }
-
-  nameDialog(title: string, message: string, data?: any): Observable<boolean> {
+  nameDialog(title: string, message: string, data?: any): Observable<any> {
     const dialogRef = this.dialog.open(NameDialogComponent, {
       minWidth: '400px',
       maxWidth: '90vw',

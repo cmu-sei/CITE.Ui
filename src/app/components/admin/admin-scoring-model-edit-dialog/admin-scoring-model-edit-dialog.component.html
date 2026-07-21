@@ -4,30 +4,22 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div mat-dialog-title>
-  @if (data.scoringModel.id) {
-  <span>Edit Scoring Model</span>
-  }
-  @if (!data.scoringModel.id) {
-  <span>Add Scoring Model</span>
-  }
-  <button
-    mat-icon-button
-    (click)="handleEditComplete(false)"
-    title="Cancel"
-    class="close-button"
-    tabindex="-1"
-    >
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
-  </button>
-</div>
+<crucible-dialog
+  [dialogTitle]="data.scoringModel.id ? 'Edit Scoring Model' : 'Add Scoring Model'"
+  [form]="form"
+  submitLabel="Save"
+  [submitDisabled]="!data.canEdit || !form.valid || !form.dirty"
+  [guardUnsavedWork]="true"
+  (cancel)="handleEditComplete(false)"
+  (submit)="handleEditComplete(true)"
+>
 @if (data && data.scoringModel) {
-  <div mat-dialog-content>
+  <div crucibleDialogContent [formGroup]="form">
     <div class="add-margin">
       <div class="field-row">
         <mat-form-field class="description-field full-width">
           <mat-label>Scoring Model Description</mat-label>
-          <input matInput [(ngModel)]="data.scoringModel.description" [disabled]="!data.canEdit" />
+          <input matInput formControlName="description" />
         </mat-form-field>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="A name or description for this scoring model. Shown in the admin scoring-model list and when selecting a model for an evaluation."
@@ -40,7 +32,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="field-row">
         <mat-form-field class="description-field full-width">
           <mat-label>Scoring Model Status</mat-label>
-          <mat-select placeholder="Select a Status" [(ngModel)]="data.scoringModel.status" [disabled]="!data.canEdit">
+          <mat-select placeholder="Select a Status" formControlName="status">
             @for (status of data.itemStatuses; track status) {
               <mat-option [value]="status">
                 {{ status }}
@@ -59,7 +51,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="field-row">
         <mat-form-field class="description-field full-width">
           <mat-label>Calculation Equation</mat-label>
-          <input matInput [(ngModel)]="data.scoringModel.calculationEquation" [disabled]="!data.canEdit" />
+          <input matInput formControlName="calculationEquation" />
         </mat-form-field>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="Formula that computes the overall score from the weighted category scores. Supports the following placeholders: {count} (number of scoring categories), {minPossible} (weighted minimum possible score), {maxPossible} (weighted maximum possible score), {sum} (weighted actual score), and {average} (average of weighted category scores). May optionally be prefixed with a clamp range in the form 'MAX > equation' or 'MAX > equation > MIN' to cap the result."
@@ -72,7 +64,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <b>Scoring Options</b>
       <div class="scoring-option">
         <div class="field-row">
-          <mat-checkbox [(ngModel)]="data.scoringModel.useUserScore" [disabled]="!data.canEdit">Use Individual User Scoring</mat-checkbox>
+          <mat-checkbox formControlName="useUserScore">Use Individual User Scoring</mat-checkbox>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, each participant can submit their own individual score for the evaluation."
             #useUserTip="matTooltip" (click)="useUserTip.toggle()">
@@ -82,7 +74,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="scoring-option">
         <div class="field-row">
-          <mat-checkbox [(ngModel)]="data.scoringModel.useTeamScore" [disabled]="!data.canEdit">Use Team Scoring</mat-checkbox>
+          <mat-checkbox formControlName="useTeamScore">Use Team Scoring</mat-checkbox>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, a team can submit a single team-wide score for the evaluation."
             #useTeamTip="matTooltip" (click)="useTeamTip.toggle()">
@@ -92,7 +84,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="scoring-option">
         <div class="field-row">
-          <mat-checkbox [(ngModel)]="data.scoringModel.useOfficialScore" [disabled]="!data.canEdit">Use Official Scoring</mat-checkbox>
+          <mat-checkbox formControlName="useOfficialScore">Use Official Scoring</mat-checkbox>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, an official score can be submitted for the evaluation by authorized teams or users."
             #useOfficialTip="matTooltip" (click)="useOfficialTip.toggle()">
@@ -102,7 +94,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="scoring-option">
         <div class="field-row">
-          <mat-checkbox [(ngModel)]="data.scoringModel.useTeamAverageScore" [disabled]="!data.scoringModel.useUserScore || !data.canEdit">Use Team Average Scoring</mat-checkbox>
+          <mat-checkbox formControlName="useTeamAverageScore">Use Team Average Scoring</mat-checkbox>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, a team's score is computed as the average of its members' individual user scores. Requires Use Individual User Scoring."
             #useTeamAvgTip="matTooltip" (click)="useTeamAvgTip.toggle()">
@@ -112,7 +104,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="scoring-option">
         <div class="field-row">
-          <mat-checkbox [(ngModel)]="data.scoringModel.useTypeAverageScore" [disabled]="!data.scoringModel.useTeamScore || !data.canEdit">Use Type Average Scoring</mat-checkbox>
+          <mat-checkbox formControlName="useTypeAverageScore">Use Type Average Scoring</mat-checkbox>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, a score is computed as the average across all teams of the same team type. Requires Use Team Scoring."
             #useTypeAvgTip="matTooltip" (click)="useTypeAvgTip.toggle()">
@@ -125,7 +117,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <b>Display Options</b>
       <div class="scoring-option">
         <div class="field-row">
-          <mat-checkbox [(ngModel)]="data.scoringModel.useSubmit" [disabled]="!data.canEdit">Use Submit Button for Submissions</mat-checkbox>
+          <mat-checkbox formControlName="useSubmit">Use Submit Button for Submissions</mat-checkbox>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, participants must click Submit to finalize their response for each move. When disabled, selections are saved automatically."
             #useSubmitTip="matTooltip" (click)="useSubmitTip.toggle()">
@@ -135,7 +127,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="scoring-option">
         <div class="field-row">
-          <mat-checkbox [(ngModel)]="data.scoringModel.hideScoresOnScoreSheet" [disabled]="!data.canEdit">Hide Option Values On Scoresheet</mat-checkbox>
+          <mat-checkbox formControlName="hideScoresOnScoreSheet">Hide Option Values On Scoresheet</mat-checkbox>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, the numeric value of each scoring option is hidden from participants on the scoresheet. The computed scores are still displayed."
             #hideScoresTip="matTooltip" (click)="hideScoresTip.toggle()">
@@ -145,7 +137,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="scoring-option">
         <div class="field-row">
-          <mat-checkbox [(ngModel)]="data.scoringModel.displayCommentTextBoxes" [disabled]="!data.canEdit">Display Comments as Textboxes</mat-checkbox>
+          <mat-checkbox formControlName="displayCommentTextBoxes">Display Comments as Textboxes</mat-checkbox>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, comments on scoring options are shown as always-visible textboxes instead of collapsible indicators."
             #commentsTip="matTooltip" (click)="commentsTip.toggle()">
@@ -155,7 +147,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="scoring-option">
         <div class="field-row">
-          <mat-checkbox [(ngModel)]="data.scoringModel.displayScoringModelByMoveNumber" [disabled]="!data.canEdit">Use Different Scoring Categories by Move Number</mat-checkbox>
+          <mat-checkbox formControlName="displayScoringModelByMoveNumber">Use Different Scoring Categories by Move Number</mat-checkbox>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, each scoring category can be restricted to a specific range of moves using its First Move to Display and Last Move to Display fields."
             #byMoveTip="matTooltip" (click)="byMoveTip.toggle()">
@@ -165,7 +157,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
       <div class="scoring-option">
         <div class="field-row">
-          <mat-checkbox [(ngModel)]="data.scoringModel.showPastSituationDescriptions" [disabled]="!data.canEdit">Show Past Situation Descriptions on Dashboard</mat-checkbox>
+          <mat-checkbox formControlName="showPastSituationDescriptions">Show Past Situation Descriptions on Dashboard</mat-checkbox>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, the dashboard displays situation descriptions from previous moves in addition to the current one."
             #pastSitTip="matTooltip" (click)="pastSitTip.toggle()">
@@ -178,7 +170,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="field-row">
           <mat-form-field class="description-field full-width">
             <mat-label>Right Side Display</mat-label>
-            <mat-select placeholder="Select a Right Side Display Option" [(ngModel)]="data.scoringModel.rightSideDisplay" [disabled]="!data.canEdit">
+            <mat-select placeholder="Select a Right Side Display Option" formControlName="rightSideDisplay">
               @for (item of data.rightSideDisplays; track item) {
                 <mat-option [value]="item">
                   {{ item }}
@@ -193,7 +185,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           </button>
         </div>
       </div>
-      @if (data.scoringModel.rightSideDisplay === 'HtmlBlock') {
+      @if (form.controls['rightSideDisplay'].value === 'HtmlBlock') {
         <div class="scoring-option">
           <div class="field-row">
             <mat-label class="gray">Right Side HTML Block</mat-label>
@@ -203,15 +195,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
               <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
             </button>
           </div>
-          <angular-editor [placeholder]="'Enter content here...'" [(ngModel)]="data.scoringModel.rightSideHtmlBlock" [config]="editorConfig" [disabled]="!data.canEdit"></angular-editor>
+          <angular-editor [placeholder]="'Enter content here...'" formControlName="rightSideHtmlBlock" [config]="editorConfig"></angular-editor>
         </div>
       }
-      @if (data.scoringModel.rightSideDisplay === 'EmbeddedUrl') {
+      @if (form.controls['rightSideDisplay'].value === 'EmbeddedUrl') {
         <div class="scoring-option">
           <div class="field-row">
             <mat-form-field class="description-field full-width">
               <mat-label>Right Side URL</mat-label>
-              <input matInput [(ngModel)]="data.scoringModel.rightSideEmbeddedUrl" [disabled]="!data.canEdit" />
+              <input matInput formControlName="rightSideEmbeddedUrl" />
             </mat-form-field>
             <button mat-icon-button type="button" class="info-button" tabindex="-1"
               matTooltip="URL to embed in the right-hand pane when Right Side Display is set to EmbeddedUrl. The URL must allow being framed."
@@ -222,13 +214,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
       }
     </div>
-    <div class="cssLayoutRowStartCenter bottom-button">
-      <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!data.canEdit || !errorFree()" style="margin-left: 40px;">Save</button>
-      </div>
-      <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
-      </div>
-    </div>
   </div>
 }
+</crucible-dialog>

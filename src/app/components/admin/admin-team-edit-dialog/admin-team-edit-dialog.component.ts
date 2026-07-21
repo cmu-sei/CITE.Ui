@@ -4,14 +4,15 @@
 
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import {
+  FormBuilder,
+  FormGroup,
   UntypedFormControl,
   FormGroupDirective,
   NgForm,
   Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class UserErrorStateMatcher implements ErrorStateMatcher {
@@ -35,46 +36,42 @@ const MIN_NAME_LENGTH = 3;
 
 export class AdminTeamEditDialogComponent {
   @Output() editComplete = new EventEmitter<any>();
-
-  public teamNameFormControl = new UntypedFormControl(
-    this.data.team.name,
-    [
-      Validators.required,
-      Validators.minLength(MIN_NAME_LENGTH),
-    ]
-  );
-  public teamShortNameFormControl = new UntypedFormControl(
-    this.data.team.shortName,
-    [
-      Validators.required,
-      Validators.minLength(MIN_NAME_LENGTH),
-    ]
-  );
-  public teamTypeIdFormControl = new UntypedFormControl(
-    this.data.team.teamTypeId ,
-    [
-      Validators.required
-    ]
-  );
+  public form: FormGroup;
 
   readonly MIN_NAME_LENGTH = MIN_NAME_LENGTH;
 
   constructor(
-    public dialogService: DialogService,
-    dialogRef: MatDialogRef<AdminTeamEditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private formBuilder: FormBuilder
   ) {
-    dialogRef.disableClose = true;
+    this.form = this.formBuilder.group({
+      name: [
+        data.team.name,
+        [Validators.required, Validators.minLength(MIN_NAME_LENGTH)],
+      ],
+      shortName: [
+        data.team.shortName,
+        [Validators.required, Validators.minLength(MIN_NAME_LENGTH)],
+      ],
+      teamTypeId: [data.team.teamTypeId, Validators.required],
+      hideScoresheet: [data.team.hideScoresheet],
+    });
+  }
+
+  get teamNameFormControl(): UntypedFormControl {
+    return this.form.controls['name'] as UntypedFormControl;
+  }
+
+  get teamShortNameFormControl(): UntypedFormControl {
+    return this.form.controls['shortName'] as UntypedFormControl;
+  }
+
+  get teamTypeIdFormControl(): UntypedFormControl {
+    return this.form.controls['teamTypeId'] as UntypedFormControl;
   }
 
   errorFree() {
-    return !(
-      this.teamNameFormControl.hasError('required') ||
-      this.teamNameFormControl.hasError('minlength') ||
-      this.teamShortNameFormControl.hasError('required') ||
-      this.teamShortNameFormControl.hasError('minlength') ||
-      this.teamTypeIdFormControl.hasError('required')
-    );
+    return this.form.valid;
   }
 
   /**
@@ -84,40 +81,18 @@ export class AdminTeamEditDialogComponent {
     if (!saveChanges) {
       this.editComplete.emit({ saveChanges: false, team: null });
     } else {
-      this.data.team.name = this.teamNameFormControl.value
-        .toString()
-        .trim();
-      this.data.team.shortName = this.teamShortNameFormControl.value
-        .toString()
-        .trim();
-      this.data.team.teamTypeId = this.teamTypeIdFormControl.value
-        .toString()
-        .trim();
-      if (this.errorFree) {
+      if (this.errorFree()) {
+        const values = this.form.getRawValue();
+        Object.assign(this.data.team, values, {
+          name: values.name.toString().trim(),
+          shortName: values.shortName.toString().trim(),
+          teamTypeId: values.teamTypeId.toString().trim(),
+        });
         this.editComplete.emit({
           saveChanges: saveChanges,
           team: this.data.team,
         });
       }
-    }
-  }
-
-  /**
-   * Saves the current team
-   */
-  saveTeam(changedField): void {
-    switch (changedField) {
-      case 'name':
-        this.data.team.name = this.teamNameFormControl.value.toString();
-        break;
-      case 'shortName':
-        this.data.team.shortName = this.teamShortNameFormControl.value.toString();
-        break;
-      case 'teamTypeId':
-        this.data.team.teamTypeId = this.teamTypeIdFormControl.value.toString();
-        break;
-      default:
-        break;
     }
   }
 

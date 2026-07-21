@@ -10,13 +10,18 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { UntypedFormControl, FormGroupDirective, NgForm } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormGroupDirective,
+  NgForm,
+  UntypedFormControl,
+  Validators,
+} from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import {
-  MatDialogRef,
   MAT_DIALOG_DATA as MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 
 /** Error when invalid control is dirty, touched, or submitted. */
@@ -38,6 +43,7 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 })
 export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
   @Output() editComplete = new EventEmitter<any>();
+  public form: FormGroup;
 
   editorConfig: AngularEditorConfig = {
     editable: true,
@@ -66,27 +72,35 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
     toolbarPosition: 'top',
     toolbarHiddenButtons: [['backgroundColor']],
   };
-  public situationDateFormControl = new UntypedFormControl(
-    this.data.evaluation.situationTime
-      ? this.data.evaluation.situationTime
-      : '',
-    []
-  );
-
   constructor(
-    public dialogService: DialogService,
-    dialogRef: MatDialogRef<AdminEvaluationEditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private formBuilder: FormBuilder
   ) {
-    dialogRef.disableClose = true;
+    const evaluation = data.evaluation;
+    const disabled = !data.canEdit;
+    this.form = this.formBuilder.group({
+      description: [{ value: evaluation.description, disabled }, Validators.required],
+      scoringModelId: [
+        { value: evaluation.scoringModelId, disabled: data.isExisting || disabled },
+        data.isExisting ? [] : Validators.required,
+      ],
+      status: [{ value: evaluation.status, disabled }],
+      galleryExhibitId: [{ value: evaluation.galleryExhibitId, disabled }],
+      currentMoveNumber: [{ value: evaluation.currentMoveNumber, disabled }],
+      situationTime: [{ value: evaluation.situationTime || '', disabled }],
+      situationDescription: [{ value: evaluation.situationDescription, disabled }],
+      showAdvanceButton: [{ value: evaluation.showAdvanceButton, disabled }],
+    });
+  }
+
+  get situationDateFormControl(): UntypedFormControl {
+    return this.form.controls['situationTime'] as UntypedFormControl;
   }
 
   ngOnInit() {}
 
   errorFree() {
-    const hasDescription = this.data.evaluation.description.length > 0;
-    const hasScoringModel = this.data.isExisting || !!this.data.evaluation.scoringModelId;
-    return hasDescription && hasScoringModel;
+    return this.form.valid;
   }
 
   /**
@@ -97,6 +111,12 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
       this.editComplete.emit({ saveChanges: false, evaluation: null });
     } else {
       if (this.errorFree()) {
+        Object.assign(this.data.evaluation, this.form.getRawValue());
+        if (this.data.evaluation.situationTime) {
+          this.data.evaluation.situationTime = new Date(
+            this.data.evaluation.situationTime
+          );
+        }
         this.editComplete.emit({
           saveChanges: saveChanges,
           evaluation: this.data.evaluation,
@@ -112,7 +132,10 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
     switch (changedField) {
       case 'situationDate':
         if (this.situationDateFormControl.value) {
-          this.data.evaluation.situationTime = new Date(this.situationDateFormControl.value);
+          this.situationDateFormControl.setValue(
+            new Date(this.situationDateFormControl.value),
+            { emitEvent: false }
+          );
         }
         break;
       default:

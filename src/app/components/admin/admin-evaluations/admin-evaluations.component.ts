@@ -17,11 +17,10 @@ import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.s
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dialog/admin-evaluation-edit-dialog.component';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
@@ -87,7 +86,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     private teamMembershipDataService: TeamMembershipDataService,
     private userQuery: UserQuery,
     private dialog: MatDialog,
-    public dialogService: DialogService
+    public dialogService: CrucibleDialogService
   ) {
       // observe the scoring models
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {
@@ -235,14 +234,17 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   deleteEvaluationRequest(evaluation: Evaluation) {
-    this.dialogService.confirm(
-      'Delete this evaluation?',
-      'Are you sure that you want to delete ' + evaluation.description + '?'
-    ).subscribe((result) => {
-      if (result['confirm']) {
-        this.evaluationDataService.delete(evaluation.id);
-      }
-    });
+    this.dialogService
+      .confirm({
+        title: 'Delete this evaluation?',
+        message: 'Are you sure that you want to delete ' + evaluation.description + '?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.evaluationDataService.delete(evaluation.id);
+        }
+      });
   }
 
   applyFilter() {

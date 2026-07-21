@@ -4,25 +4,22 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div mat-dialog-title>
-  {{ data?.action?.id ? 'Edit Action' : 'Add Action' }}
-  <button
-    mat-icon-button
-    (click)="handleEditComplete(false)"
-    title="Cancel"
-    class="close-button"
-    tabindex="-1"
-    >
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
-  </button>
-</div>
+<crucible-dialog
+  [dialogTitle]="data?.action?.id ? 'Edit Action' : 'Add Action'"
+  [form]="form"
+  submitLabel="Save"
+  [submitDisabled]="!form.valid || !form.dirty"
+  [guardUnsavedWork]="true"
+  (cancel)="handleEditComplete(false)"
+  (submit)="handleEditComplete(true)"
+>
 @if (data && data.action) {
-  <div mat-dialog-content>
+  <div crucibleDialogContent [formGroup]="form">
     <div class="add-margin">
       <div>
         <mat-form-field class="description-field full-width">
           <mat-label>Action Description</mat-label>
-          <input matInput [(ngModel)]="data.action.description" />
+          <input matInput formControlName="description" />
         </mat-form-field>
       </div>
     </div>
@@ -30,8 +27,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="add-margin">
         <div>
           <mat-form-field class="button-margins full-width">
-            <mat-label>Move {{ data.action.moveNumber }}</mat-label>
-            <mat-select placeholder="Move" [value]="data.action.moveNumber.toString()" (selectionChange)="selectMove($event.value)">
+            <mat-label>Move {{ form.controls['moveNumber'].value }}</mat-label>
+            <mat-select placeholder="Move" formControlName="moveNumber">
               @if (!data.action.id && data.moveList.length > 1) {
                 <mat-option value="{{ data.allMovesValue }}">All Moves</mat-option>
               }
@@ -50,7 +47,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div>
           <mat-form-field class="button-margins full-width">
             <mat-label>Team</mat-label>
-            <mat-select placeholder="Team" [(ngModel)]="data.action.teamId">
+            <mat-select placeholder="Team" formControlName="teamId">
               @if (!data.action.id && data.teamList.length > 1) {
                 <mat-option value="">All Teams</mat-option>
               }
@@ -64,13 +61,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
       </div>
     }
-    <div class="cssLayoutRowStartCenter bottom-button">
-      <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>
-      </div>
-      <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
-      </div>
-    </div>
   </div>
 }
+</crucible-dialog>

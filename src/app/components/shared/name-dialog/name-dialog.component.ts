@@ -14,17 +14,14 @@ import { NameValidatorModel } from './name-dialog.models';
 export class NameDialogComponent {
   public title: string;
   public message: string;
-  public removeArtifacts = true;
   public form: FormGroup;
-  public validators: Array<NameValidatorModel>;
+  public validators: Array<NameValidatorModel> = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<NameDialogComponent>,
     private formBuilder: FormBuilder
   ) {
-    this.dialogRef.disableClose = true;
-
     this.form = this.formBuilder.group({
       name: [data.nameValue, [Validators.required]],
     });
@@ -45,19 +42,7 @@ export class NameDialogComponent {
   }
 
   onClick(): void {
-    this.data.artifacts && this.data.artifacts.length > 0
-      ? (this.data.removeArtifacts = this.removeArtifacts)
-      : (this.data.removeArtifacts = false);
     this.data.nameValue = this.form?.get('name').value;
-    this.data.wasCancelled = false;
-    this.dialogRef.close(this.data);
-  }
-
-  onCancel(): void {
-    this.data.artifacts && this.data.artifacts.length > 0
-      ? (this.data.removeArtifacts = this.removeArtifacts)
-      : (this.data.removeArtifacts = false);
-    this.data.wasCancelled = true;
     this.dialogRef.close(this.data);
   }
 }

@@ -31,11 +31,10 @@ import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-a
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialog/admin-action-edit-dialog.component';
 import { AdminDutyEditDialogComponent } from '../admin/admin-duty-edit-dialog/admin-duty-edit-dialog.component';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { DateTimeFormatOptions } from 'luxon';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { UserQuery } from 'src/app/data/user/user.query';
@@ -109,7 +108,7 @@ export class DashboardComponent implements OnDestroy {
     private teamMembershipDataService: TeamMembershipDataService,
     private teamRoleDataService: TeamRoleDataService,
     private unreadArticlesDataService: UnreadArticlesDataService,
-    public dialogService: DialogService,
+    public dialogService: CrucibleDialogService,
     public matDialog: MatDialog,
     private titleService: Title,
     private userDataService: UserDataService,
@@ -396,12 +395,13 @@ export class DashboardComponent implements OnDestroy {
 
   deleteActionRequest(action: Action) {
     this.dialogService
-      .confirm(
-        'Delete this action?',
-        'Are you sure that you want to delete this action?'
-      )
-      .subscribe((result) => {
-        if (result['confirm']) {
+      .confirm({
+        title: 'Delete this action?',
+        message: 'Are you sure that you want to delete this action?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
           this.actionDataService.delete(action.id);
         }
       });
@@ -480,12 +480,13 @@ export class DashboardComponent implements OnDestroy {
 
   deleteDutyRequest(duty: Duty) {
     this.dialogService
-      .confirm(
-        'Delete this duty?',
-        'Are you sure that you want to delete this duty?'
-      )
-      .subscribe((result) => {
-        if (result['confirm']) {
+      .confirm({
+        title: 'Delete this duty?',
+        message: 'Are you sure that you want to delete this duty?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
           this.dutyDataService.delete(duty.id);
         }
       });

@@ -23,12 +23,11 @@ import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admin-action-edit-dialog.component';
 import { UntypedFormControl } from '@angular/forms';
 
@@ -74,7 +73,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
     private dialog: MatDialog,
-    public dialogService: DialogService
+    public dialogService: CrucibleDialogService
   ) {
     this.evaluationQuery
       .selectAll()
@@ -200,12 +199,13 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
 
   deleteActionRequest(action: Action) {
     this.dialogService
-      .confirm(
-        'Delete this action?',
-        'Are you sure that you want to delete this action?'
-      )
-      .subscribe((result) => {
-        if (result['confirm']) {
+      .confirm({
+        title: 'Delete this action?',
+        message: 'Are you sure that you want to delete this action?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
           this.actionDataService.delete(action.id);
         }
       });

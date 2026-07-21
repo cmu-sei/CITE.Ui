@@ -20,13 +20,12 @@ import { DutyDataService } from 'src/app/data/duty/duty-data.service';
 import { DutyQuery } from 'src/app/data/duty/duty.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { ComnSettingsService } from '@cmusei/crucible-common';
+import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
-import { DialogService } from 'src/app/services/dialog/dialog.service';
 import { AdminDutyEditDialogComponent } from '../admin-duty-edit-dialog/admin-duty-edit-dialog.component';
 import { UntypedFormControl } from '@angular/forms';
 
@@ -62,7 +61,7 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
     private teamDataService: TeamDataService,
     private teamQuery: TeamQuery,
     private dialog: MatDialog,
-    public dialogService: DialogService,
+    public dialogService: CrucibleDialogService,
     public matDialog: MatDialog,
     private activatedRoute: ActivatedRoute
   ) {
@@ -165,12 +164,13 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
 
   deleteDutyRequest(duty: Duty) {
     this.dialogService
-      .confirm(
-        'Delete this duty?',
-        'Are you sure that you want to delete this duty?'
-      )
-      .subscribe((result) => {
-        if (result['confirm']) {
+      .confirm({
+        title: 'Delete this duty?',
+        message: 'Are you sure that you want to delete this duty?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
           this.dutyDataService.delete(duty.id);
         }
       });

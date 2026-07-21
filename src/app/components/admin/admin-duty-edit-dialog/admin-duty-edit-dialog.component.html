@@ -4,25 +4,22 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div mat-dialog-title>
-  {{ data?.duty?.id ? 'Edit Duty' : 'Add Duty' }}
-  <button
-    mat-icon-button
-    (click)="handleEditComplete(false)"
-    title="Cancel"
-    class="close-button"
-    tabindex="-1"
-    >
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
-  </button>
-</div>
+<crucible-dialog
+  [dialogTitle]="data?.duty?.id ? 'Edit Duty' : 'Add Duty'"
+  [form]="form"
+  submitLabel="Save"
+  [submitDisabled]="!form.valid || !form.dirty || !data.canEdit"
+  [guardUnsavedWork]="true"
+  (cancel)="handleEditComplete(false)"
+  (submit)="handleEditComplete(true)"
+>
 @if (data && data.duty) {
-  <div mat-dialog-content>
+  <div crucibleDialogContent [formGroup]="form">
     <div class="add-margin">
       <div>
         <mat-form-field class="name-field full-width">
           <mat-label>Duty Name</mat-label>
-          <input matInput [(ngModel)]="data.duty.name" [disabled]="!data.canEdit" />
+          <input matInput formControlName="name" />
         </mat-form-field>
       </div>
     </div>
@@ -31,7 +28,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div>
           <mat-form-field class="button-margins full-width">
             <mat-label>Team</mat-label>
-            <mat-select placeholder="Team" [(ngModel)]="data.duty.teamId" [disabled]="!data.canEdit">
+            <mat-select placeholder="Team" formControlName="teamId">
               @if (!data.duty.id && data.teamList.length > 1) {
                 <mat-option value="">All Teams</mat-option>
               }
@@ -45,13 +42,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
       </div>
     }
-    <div class="cssLayoutRowStartCenter bottom-button">
-      <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree() || !data.canEdit" style="margin-left: 40px;">Save</button>
-      </div>
-      <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
-      </div>
-    </div>
   </div>
 }
+</crucible-dialog>

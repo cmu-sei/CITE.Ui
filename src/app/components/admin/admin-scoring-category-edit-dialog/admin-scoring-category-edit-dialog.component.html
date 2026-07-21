@@ -4,30 +4,22 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div mat-dialog-title>
-  @if (data.scoringCategory.id) {
-  <span>Edit Scoring Category</span>
-  }
-  @if (!data.scoringCategory.id) {
-  <span>Add Scoring Category</span>
-  }
-  <button
-    mat-icon-button
-    (click)="handleEditComplete(false)"
-    title="Cancel"
-    class="close-button"
-    tabindex="-1"
-    >
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
-  </button>
-</div>
+<crucible-dialog
+  [dialogTitle]="data.scoringCategory.id ? 'Edit Scoring Category' : 'Add Scoring Category'"
+  [form]="form"
+  submitLabel="Save"
+  [submitDisabled]="!form.valid || !form.dirty || !data.canEdit"
+  [guardUnsavedWork]="true"
+  (cancel)="handleEditComplete(false)"
+  (submit)="handleEditComplete(true)"
+>
 @if (data && data.scoringCategory) {
-  <div mat-dialog-content>
+  <div crucibleDialogContent [formGroup]="form">
     <div class="add-margin">
       <div class="field-row">
         <mat-form-field class="description-field full-width">
           <mat-label>Scoring Category Description</mat-label>
-          <textarea matInput [(ngModel)]="data.scoringCategory.description" [disabled]="!data.canEdit"></textarea>
+          <textarea matInput formControlName="description"></textarea>
         </mat-form-field>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="A name or description for this scoring category as it appears on the scoresheet."
@@ -40,7 +32,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="field-row">
         <mat-form-field class="description-field">
           <mat-label>Display Order</mat-label>
-          <input matInput [(ngModel)]="data.scoringCategory.displayOrder" [disabled]="!data.canEdit" />
+          <input matInput formControlName="displayOrder" />
         </mat-form-field>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="Numeric order in which this category appears on the scoresheet. Lower numbers appear first."
@@ -54,7 +46,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="field-row">
           <mat-form-field class="description-field">
             <mat-label>First Move to Display</mat-label>
-            <input matInput [(ngModel)]="data.scoringCategory.moveNumberFirstDisplay" [disabled]="!data.canEdit" />
+            <input matInput formControlName="moveNumberFirstDisplay" />
           </mat-form-field>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="The earliest evaluation move in which this category is visible to participants."
@@ -69,7 +61,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="field-row">
           <mat-form-field class="description-field">
             <mat-label>Last Move to Display</mat-label>
-            <input matInput [(ngModel)]="data.scoringCategory.moveNumberLastDisplay" [disabled]="!data.canEdit" />
+            <input matInput formControlName="moveNumberLastDisplay" />
           </mat-form-field>
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="The latest evaluation move in which this category is visible to participants."
@@ -83,7 +75,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="field-row">
         <mat-form-field class="description-field full-width">
           <mat-label>Calculation Equation</mat-label>
-          <textarea matInput [(ngModel)]="data.scoringCategory.calculationEquation" [disabled]="!data.canEdit"></textarea>
+          <textarea matInput formControlName="calculationEquation"></textarea>
         </mat-form-field>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="Formula that computes this category's score from the selected options. Supports the following placeholders: {count} (number of selected options), {min} (smallest selected value), {max} (largest selected value), {sum} (total of selected values), and {modifier} (value of the selected modifier option, or 1.0 if no modifier is selected and none is required, or 0.0 if a modifier is required but none is selected)."
@@ -96,7 +88,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="field-row">
         <mat-form-field class="description-field">
           <mat-label>Calculation Weight</mat-label>
-          <input matInput [(ngModel)]="data.scoringCategory.scoringWeight" [disabled]="!data.canEdit" />
+          <input matInput formControlName="scoringWeight" />
         </mat-form-field>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="Multiplier applied to this category's score when calculating the scoring model's overall score. 1.0 is neutral; higher values make this category count more."
@@ -109,7 +101,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="field-row">
         <mat-form-field class="description-field full-width">
           <mat-label>Scoring Option Selection Type</mat-label>
-          <mat-select placeholder="Select a Scoring Option Selection Type" [(ngModel)]="data.scoringCategory.scoringOptionSelection" [disabled]="!data.canEdit">
+          <mat-select placeholder="Select a Scoring Option Selection Type" formControlName="scoringOptionSelection">
             @for (item of data.scoringOptionSelections; track item) {
               <mat-option [value]="item">
                 {{ item }}
@@ -126,7 +118,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
     <div class="add-margin">
       <div class="field-row">
-        <mat-checkbox [(ngModel)]="data.scoringCategory.isModifierRequired" [disabled]="!data.canEdit">Modifier Selection Required</mat-checkbox>
+        <mat-checkbox formControlName="isModifierRequired">Modifier Selection Required</mat-checkbox>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="When enabled, participants must select one of the modifier options in this category before their response is considered complete. Modifiers are selected separately and can adjust the category's score via the calculation equation."
           #modReqTip="matTooltip" (click)="modReqTip.toggle()">
@@ -134,13 +126,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </button>
       </div>
     </div>
-    <div class="cssLayoutRowStartCenter bottom-button">
-      <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree() || !data.canEdit" style="margin-left: 40px;">Save</button>
-      </div>
-      <div class="delete-button">
-        <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
-      </div>
-    </div>
   </div>
 }
+</crucible-dialog>

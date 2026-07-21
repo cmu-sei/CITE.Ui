@@ -4,26 +4,22 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div mat-dialog-title>
-  &nbsp;
-  <button
-    mat-icon-button
-    (click)="handleEditComplete(false)"
-    title="Cancel"
-    class="close-button"
-    tabindex="-1"
-    >
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-close-circle-outline"></mat-icon>
-  </button>
-</div>
+<crucible-dialog
+  [dialogTitle]="data?.team?.id ? 'Edit Team' : 'Add Team'"
+  [form]="form"
+  submitLabel="Save"
+  [submitDisabled]="!form.valid || !form.dirty"
+  [guardUnsavedWork]="true"
+  (cancel)="handleEditComplete(false)"
+  (submit)="handleEditComplete(true)"
+>
 @if (!!data && data.team !== undefined && data.team !== null) {
-  <div mat-dialog-content>
+  <div crucibleDialogContent [formGroup]="form">
     <div class="add-margin">
       <div>
         <mat-form-field class="full-width">
           <mat-label>Name</mat-label>
-          <input type="text" matInput [formControl]="teamNameFormControl" placeholder="Name (required)" (blur)="saveTeam('name')"
-            value="{{data.team.name}}">
+          <input type="text" matInput formControlName="name" placeholder="Name (required)">
             @if (teamNameFormControl.hasError('minlength') && !teamNameFormControl.hasError('required')) {
               <mat-error>
                 Must contain {{ MIN_NAME_LENGTH }} or more characters
@@ -41,8 +37,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div>
           <mat-form-field class="full-width">
             <mat-label>Short Name</mat-label>
-            <input type="text" matInput [formControl]="teamShortNameFormControl" placeholder="Short Name (required)" (blur)="saveTeam('shortName')"
-              value="{{data.team.shortName}}">
+            <input type="text" matInput formControlName="shortName" placeholder="Short Name (required)">
               @if (teamShortNameFormControl.hasError('minlength') && !teamShortNameFormControl.hasError('required')) {
                 <mat-error>
                   Must contain {{ MIN_NAME_LENGTH }} or more characters
@@ -60,7 +55,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <div>
             <mat-form-field class="full-width">
               <mat-label>Team Type</mat-label>
-              <mat-select placeholder="Team Type (required)" [formControl]="teamTypeIdFormControl" (selectionChange)="saveTeam('teamTypeId')">
+              <mat-select placeholder="Team Type (required)" formControlName="teamTypeId">
                 @for (teamType of data.teamTypeList; track teamType.id) {
                   <mat-option [value]="teamType.id">
                     {{ teamType.name }}
@@ -72,16 +67,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
         <div class="add-margin">
           <div>
-            <mat-checkbox [(ngModel)]="data.team.hideScoresheet">Hide Scoresheet</mat-checkbox>
-          </div>
-        </div>
-        <div class="cssLayoutRowStartCenter bottom-button">
-          <div class="delete-button">
-            <button mat-stroked-button (click)="handleEditComplete(true)" [disabled]="!errorFree()" style="margin-left: 40px;">Save</button>
-          </div>
-          <div class="delete-button">
-            <button mat-stroked-button (click)="handleEditComplete(false)">Cancel</button>
+            <mat-checkbox formControlName="hideScoresheet">Hide Scoresheet</mat-checkbox>
           </div>
         </div>
       </div>
     }
+</crucible-dialog>
