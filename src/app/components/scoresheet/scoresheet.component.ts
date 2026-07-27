@@ -105,6 +105,10 @@ export class ScoresheetComponent implements OnDestroy {
         if (active) {
           this.selectedEvaluation = active;
           this.currentMoveNumber = +active.currentMoveNumber;
+          if (!Number.isFinite(this.displayedMoveNumber)) {
+            this.displayedMoveNumber = this.currentMoveNumber;
+          }
+          this.updateDisplayedSubmissionFlags();
           this.setFormatting();
         }
       });
@@ -115,6 +119,7 @@ export class ScoresheetComponent implements OnDestroy {
         if (active) {
           this.displayedSubmission = active;
           this.displayedMoveNumber = +active.moveNumber;
+          this.updateDisplayedSubmissionFlags();
           if (+active.score < 35) {
             this.displayedScoreClass = 'white';
             this.displayedScoreHover = 'Level 0 - Baseline';
@@ -180,21 +185,7 @@ export class ScoresheetComponent implements OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((submissions) => {
         this.submissionList = submissions;
-        this.showGroupAvgScore = this.submissionList.some(
-          (s) =>
-            +s.moveNumber === +this.displayedMoveNumber &&
-            !s.userId &&
-            !s.teamId &&
-            s.groupId &&
-            s.scoreIsAnAverage
-        );
-        this.showOfficialScore = this.submissionList.some(
-          (s) =>
-            +s.moveNumber === +this.displayedMoveNumber &&
-            !s.userId &&
-            !s.teamId &&
-            !s.groupId
-        );
+        this.updateDisplayedSubmissionFlags();
         this.setFormatting();
       });
     // observe the team users to get permissions
@@ -603,14 +594,53 @@ export class ScoresheetComponent implements OnDestroy {
     this.buttonClass = 'mat-' + this.displaying;
   }
 
+  private getResolvedDisplayedMoveNumber(): number | null {
+    if (Number.isFinite(this.displayedMoveNumber)) {
+      return this.displayedMoveNumber;
+    }
+    if (Number.isFinite(this.currentMoveNumber)) {
+      return this.currentMoveNumber;
+    }
+    return null;
+  }
+
+  private updateDisplayedSubmissionFlags() {
+    const displayedMoveNumber = this.getResolvedDisplayedMoveNumber();
+    if (displayedMoveNumber === null) {
+      this.showGroupAvgScore = false;
+      this.showOfficialScore = false;
+      return;
+    }
+
+    this.showGroupAvgScore = this.submissionList.some(
+      (s) =>
+        +s.moveNumber === displayedMoveNumber &&
+        !s.userId &&
+        !s.teamId &&
+        s.groupId &&
+        s.scoreIsAnAverage
+    );
+    this.showOfficialScore = this.submissionList.some(
+      (s) =>
+        +s.moveNumber === displayedMoveNumber &&
+        !s.userId &&
+        !s.teamId &&
+        !s.groupId
+    );
+  }
+
   getDisplayedScoringCategories(): ScoringCategory[] {
     const displayedScoringCategories: ScoringCategory[] = [];
+    const displayedMoveNumber = this.getResolvedDisplayedMoveNumber();
     this.selectedScoringModel.scoringCategories.forEach((scoringCategory) => {
       let hideIt = false;
-      if (this.selectedScoringModel.displayScoringModelByMoveNumber) {
+      if (
+        this.selectedScoringModel.displayScoringModelByMoveNumber &&
+        displayedMoveNumber !== null
+      ) {
         if (
-          +this.displayedMoveNumber < +scoringCategory.moveNumberFirstDisplay ||
-          +this.displayedMoveNumber > +scoringCategory.moveNumberLastDisplay
+          displayedMoveNumber < +scoringCategory.moveNumberFirstDisplay ||
+          displayedMoveNumber > +scoringCategory.moveNumberLastDisplay
         ) {
           hideIt = true;
         }

@@ -33,14 +33,14 @@
 .main-area {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 44px - 20px);
+  height: calc(100% - 44px);
   min-height: 0;
   overflow: hidden;
   padding-bottom: 8px;
 }
 
 .content-under-topbar {
-  height: calc(100% - 40px);
+  height: calc(100%);
 }
 
 .app-header-container {
