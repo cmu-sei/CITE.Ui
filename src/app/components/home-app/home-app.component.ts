@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { DOCUMENT } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -173,7 +173,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.isSubmissionDataServiceLoading = isLoading;
     });
     // Set the display settings from config file
-   }
+  }
 
   ngOnInit() {
     // load system permissions
@@ -224,7 +224,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           );
           this.displayedMoveNumber =
             this.displayedMoveNumber >= 0 &&
-            this.displayedMoveNumber <= evaluation.currentMoveNumber
+              this.displayedMoveNumber <= evaluation.currentMoveNumber
               ? this.displayedMoveNumber
               : evaluation.currentMoveNumber;
           this.uiDataService.setMoveNumber(
@@ -312,11 +312,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           // get the saved section
           const savedSection = this.uiDataService.getSection(evaluationId);
           if (savedSection === 'scoresheet') {
-            this.selectedSection =  Section.scoresheet;
+            this.selectedSection = Section.scoresheet;
           } else if (savedSection === 'report') {
-            this.selectedSection =  Section.report;
+            this.selectedSection = Section.report;
           } else if (savedSection === 'aggregate') {
-            this.selectedSection =  Section.aggregate;
+            this.selectedSection = Section.aggregate;
           } else {
             this.selectedSection = Section.dashboard;
           }
@@ -544,9 +544,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (teamId && this.myTeamId && teamId !== this.myTeamId) {
       if (
         this.uiDataService.getSubmissionType(this.selectedEvaluationId) ===
-          'user' ||
+        'user' ||
         this.uiDataService.getSubmissionType(this.selectedEvaluationId) ===
-          'team-avg'
+        'team-avg'
       ) {
         this.uiDataService.setSubmissionType(this.selectedEvaluationId, 'team');
       }
@@ -733,7 +733,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   getAppContentClass() {
     if (this.inIframe()) {
-      return 'app-model-container-no-topbar elevate app-score-container-no-topbar ';
+      return 'app-model-container elevate app-score-container';
     } else {
       return 'app-model-container elevate app-score-container';
     }
