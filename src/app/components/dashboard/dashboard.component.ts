@@ -33,7 +33,7 @@ import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialog/admin-action-edit-dialog.component';
 import { AdminDutyEditDialogComponent } from '../admin/admin-duty-edit-dialog/admin-duty-edit-dialog.component';
-import { AngularEditorConfig } from '@kolkov/angular-editor';
+import { VIEW_CONFIG_CAPPED_HEIGHT } from 'src/app/utilities/editor-config';
 import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { DateTimeFormatOptions } from 'luxon';
 import { UserDataService } from 'src/app/data/user/user-data.service';
@@ -67,22 +67,7 @@ export class DashboardComponent implements OnDestroy {
   isActionEditMode = false;
   isDutyEditMode = false;
   private unsubscribe$ = new Subject();
-  editorConfig: AngularEditorConfig = {
-    editable: false,
-    height: 'auto',
-    minHeight: '0',
-    maxHeight: '400px',
-    width: '100%',
-    minWidth: '0',
-    translate: 'yes',
-    enableToolbar: false,
-    showToolbar: false,
-    placeholder: '',
-    defaultParagraphSeparator: '',
-    defaultFontName: '',
-    defaultFontSize: '',
-    sanitize: true,
-  };
+  editorConfig = VIEW_CONFIG_CAPPED_HEIGHT;
   galleryUrl = '';
   originalDuty: Duty = {};
   modifiedDuty: Duty = {};

@@ -6,7 +6,7 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { ScoringModel } from 'src/app/generated/cite.api';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { Subject, Observable } from 'rxjs';
-import { AngularEditorConfig } from '@kolkov/angular-editor';
+import { VIEW_CONFIG } from 'src/app/utilities/editor-config';
 
 @Component({
     selector: 'app-right-side-html',
@@ -18,21 +18,7 @@ export class RightSideHtmlComponent implements OnDestroy {
   isLoading = false;
   @Input() scoringModel$: Observable<ScoringModel>;
   @Input() hideTopbar: boolean;
-  editorConfig: AngularEditorConfig = {
-    editable: false,
-    height: 'auto',
-    minHeight: '1200px',
-    width: '100%',
-    minWidth: '0',
-    translate: 'yes',
-    enableToolbar: false,
-    showToolbar: false,
-    placeholder: '',
-    defaultParagraphSeparator: '',
-    defaultFontName: '',
-    defaultFontSize: '',
-    sanitize: true,
-  };
+  editorConfig = VIEW_CONFIG;
   private unsubscribe$ = new Subject();
 
 
