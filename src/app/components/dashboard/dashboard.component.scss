@@ -49,12 +49,31 @@
   padding-left: 20px;
   padding-right: 20px;
   width: 100%;
+  // flex items default to min-width:auto, which refuses to shrink below the
+  // content's min-content width. Without this, a wide image in the situation
+  // description forces this section (and everything above it) wider than the
+  // available space instead of letting the editor scroll.
+  min-width: 0;
   @include mat.elevation(2);
 }
 
 .angular-editor {
   width: 100%;
   max-height: calc(100% - 200px);
+  min-width: 0;
+}
+
+// The situation description is assigned as raw HTML, so its elements carry no
+// view-encapsulation attributes and have to be reached with ::ng-deep. Keep
+// images within the container width so they scale down with the panel rather
+// than setting a floor on it.
+::ng-deep .angular-editor-textarea {
+  overflow-wrap: break-word;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 .item-container {

@@ -84,9 +84,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           No results found
         </div>
         }
-        <mat-paginator
-          [pageSizeOptions]="[10, 25, 50, 100]"
-          showFirstLastButtons
+        <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons
           aria-label="Select page of evaluations">
         </mat-paginator>
       </div>
@@ -107,7 +105,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="app-content-container">
         @if (selectedSection !== section.scoresheet && !(selectedSection === section.report || selectedSection ===
         section.aggregate)) {
-        <div [ngClass]="getAppContentClass()" autosize>
+        <div class="app-model-container elevate app-score-container">
           @if (unreadArticles$ && moveList$) {
           <app-dashboard [unreadArticles]="unreadArticles$ | async" [myTeamId]="myTeamId$ | async"
             [noChanges]="noChanges$ | async"></app-dashboard>
@@ -115,19 +113,19 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
         }
         @if (selectedSection === section.scoresheet) {
-        <div [ngClass]="getAppContentClass()" autosize>
+        <div class="app-model-container elevate app-score-container" autosize>
           <app-scoresheet [myTeamId]="myTeamId$ | async" (selectDisplayedSubmission)="selectDisplayedSubmission($event)"
             [noChanges]="noChanges$ | async"></app-scoresheet>
         </div>
         }
         @if (selectedSection === section.report) {
-        <div [ngClass]="getAppContentClass()" autosize>
+        <div class="app-model-container elevate app-score-container" autosize>
           <app-report [selectedEvaluation]="activeEvaluation$ | async"
             [selectedScoringModel]="activeScoringModel$ | async" [moveList]="moveList$ | async"></app-report>
         </div>
         }
         @if (selectedSection === section.aggregate) {
-        <div [ngClass]="getAppContentClass()" autosize>
+        <div class="app-model-container elevate app-score-container" autosize>
           <app-aggregate [selectedEvaluation]="activeEvaluation$ | async"
             [selectedScoringModel]="activeScoringModel$ | async" [moveList]="moveList$ | async"></app-aggregate>
         </div>
@@ -143,7 +141,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
         @if ((activeScoringModel$ | async)?.rightSideDisplay !== 'ScoreSummary' && (activeScoringModel$ |
         async)?.rightSideDisplay !== 'None' && !(selectedSection === section.report || selectedSection ===
         section.aggregate)) {
-        <div [ngClass]="getAppContentClass()" class="app-score-container flex-50 elevate" autosize>
+        <div class="app-model-container elevate app-score-container" class="app-score-container flex-50 elevate"
+          autosize>
           @if ((activeScoringModel$ | async)?.rightSideDisplay === 'HtmlBlock') {
           <app-right-side-html [scoringModel$]="activeScoringModel$" [hideTopbar]="hideTopbar"></app-right-side-html>
           }
