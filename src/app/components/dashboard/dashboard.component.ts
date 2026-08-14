@@ -239,10 +239,11 @@ export class DashboardComponent implements OnDestroy {
     let pastMovesBannerAdded = false;
     const isDisplayedMoveCurrent = +this.displayedMoveNumber === +this.currentMoveNumber;
 
-    if (isDisplayedMoveCurrent) {
-      const displayedMove = this.moveList.find(
-        (m) => +m.moveNumber === +this.displayedMoveNumber
-      );
+    const displayedMove = this.moveList?.find(
+      (m) => +m.moveNumber === +this.displayedMoveNumber
+    );
+
+    if (isDisplayedMoveCurrent && displayedMove) {
       description =
         '<div style="display: flex; align-items: center; font-size: 25px;">' +
         '<b>' +
@@ -258,13 +259,10 @@ export class DashboardComponent implements OnDestroy {
         '<br /></h4>' +
         this.selectedEvaluation.situationDescription;
     } else if (
-      this.moveList &&
-      this.moveList.length > 0 &&
-      this.displayedMoveNumber
+      displayedMove &&
+      this.displayedMoveNumber !== null &&
+      this.displayedMoveNumber !== undefined
     ) {
-      const displayedMove = this.moveList.find(
-        (m) => +m.moveNumber === +this.displayedMoveNumber
-      );
       description =
         '<div style="display: flex; align-items: center; font-size: 25px;">' +
         'Previous Move: ' +
