@@ -86,7 +86,8 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
         name: '',
         shortName: '',
         teamTypeId: '',
-        evaluationId: this.evaluationId
+        evaluationId: this.evaluationId,
+        hideScoresheet: false
       };
     } else {
       team = {... team};
