@@ -11,13 +11,13 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular/build:application",
           "options": {
             "outputPath": {
               "base": "dist"
             },
             "index": "src/index.html",
-            "polyfills": ["src/polyfills.ts"],
+            "polyfills": ["zone.js"],
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
@@ -93,7 +93,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "options": {
             "port": 4721,
             "buildTarget": "cite-ui:build"
@@ -112,32 +112,35 @@
           }
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "cite-ui:build"
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
-            "styles": [
-              "src/styles.scss",
-              "node_modules/@kolkov/angular-editor/themes/default.scss"
+            "runnerConfig": "vitest.config.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "setupFiles": ["src/test-setup.ts"],
+            "coverageInclude": ["src/app/**/*.ts"],
+            "coverageExclude": [
+              "**/generated/**",
+              "**/*.spec.ts",
+              "src/app/test-utils/**"
             ],
-            "scripts": [],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "**/*",
-                "input": "./node_modules/@kolkov/angular-editor/assets/icons/",
-                "output": "./assets/fonts/"
-              }
-            ]
+            "coverageReporters": ["text", "json", "html"],
+            "coverageThresholds": {
+              "statements": 40,
+              "branches": 36,
+              "functions": 45,
+              "lines": 38
+            }
+          },
+          "configurations": {
+            "coverage": {
+              "coverage": true
+            }
           }
         }
       }
