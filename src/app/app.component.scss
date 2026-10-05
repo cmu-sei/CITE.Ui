@@ -4,8 +4,8 @@
 @use "@angular/material" as mat;
 
 mat-toolbar {
-  @include mat.toolbar-overrides((container-background-color: var(--mat-sys-primary),
-      container-text-color: var(--mat-sys-on-primary),
+  @include mat.toolbar-overrides((container-background-color: var(--crucible-topbar-background),
+      container-text-color: var(--crucible-topbar-text),
     ));
 }
 

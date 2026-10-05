@@ -54,6 +54,7 @@ import {
   ComnSettingsConfig,
   ComnSettingsModule,
   ComnSettingsService,
+  provideCrucibleTheme,
 } from '@cmusei/crucible-common';
 import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
@@ -278,6 +279,10 @@ export function getBasePath(settingsSvc: ComnSettingsService)
       useClass: ErrorService,
     },
     provideHttpClient(withInterceptorsFromDi()),
+    provideCrucibleTheme({
+      brand: { color: '#E81717', text: '#FFFFFF' },
+      faviconFillClass: 'cls-2',
+    }),
   ],
 })
 export class AppModule {}
