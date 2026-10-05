@@ -28,5 +28,9 @@
 }
 
 .menu-trigger {
-  color: var(--mat-sys-on-primary) !important;
+  color: var(--crucible-topbar-text) !important;
+}
+
+.margin-auto a mat-icon {
+  color: var(--crucible-topbar-background);
 }

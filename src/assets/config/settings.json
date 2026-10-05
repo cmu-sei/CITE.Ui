@@ -21,6 +21,10 @@
   "XApiEnabled": false,
   "AppTopBarHexColor": "#E81717",
   "AppTopBarHexTextColor": "#FFFFFF",
+  "AppLightModePrimaryHexColor": "#E81717",
+  "AppLightModePrimaryHexTextColor": "#FFFFFF",
+  "AppDarkModePrimaryHexColor": "#EF5A5A",
+  "AppDarkModePrimaryHexTextColor": "#000000",
   "HeaderBarSettings": {
     "banner_background_color": "#007a33ff",
     "classification_text": "UNCLASSIFIED",
