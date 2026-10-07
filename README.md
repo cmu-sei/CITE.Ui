@@ -1,6 +1,6 @@
 # CiteUi
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) and uses Angular 21 (`@angular/core` / `@angular/cli` ^21.2.10 in `package.json`). Node.js `^20.19.0 || ^22.12.0 || >=24.0.0` is required.
 
 ## Documentation
 
@@ -8,7 +8,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Color Theming
 
-Blueprint uses a monochrome gray Material 3 SCSS palette with runtime top-bar color overrides from `settings.json`.
+CITE uses a monochrome gray Material 3 SCSS palette (`src/styles/_theme-colors.scss`) with runtime top-bar color overrides from `settings.json`.
 
 ### Changing the top bar color
 
@@ -22,7 +22,7 @@ To change the top bar color for a deployment, update `AppTopBarHexColor` and `Ap
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4721/`. The app will automatically reload if you change any of the source files.
+Run `npm start` (`ng serve`; `ng` is a local devDependency, no global install needed) for a dev server. Navigate to `http://localhost:4721/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
@@ -30,7 +30,7 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `npm run build` (`ng build`) to build the project. The build artifacts will be stored in the `dist/browser` directory. Use `npx ng build --configuration production` for a production build; the `--prod` flag no longer exists.
 
 ## Running unit tests
 
@@ -48,7 +48,7 @@ Shared helpers live in [`src/app/test-utils/`](src/app/test-utils/): `renderComp
 
 ## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+`npm run e2e` runs `ng e2e` (Protractor). Note: `protractor` is not in `devDependencies` and the target uses `@angular-devkit/build-angular:protractor`, which is not a dependency either, so this does not currently run.
 
 ## Further help
 
