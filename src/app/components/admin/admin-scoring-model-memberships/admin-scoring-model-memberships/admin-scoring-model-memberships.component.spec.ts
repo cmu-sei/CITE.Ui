@@ -207,6 +207,20 @@ describe('AdminScoringModelMembershipsComponent', () => {
     });
 
     /**
+     * Verifies: system ManageScoringModels, with no claim on the model, enables both lists.
+     * Interacts with: real PermissionDataService (canManageScoringModel and canEditScoringModel system path), both list stubs' canEdit input.
+     * Data: system [ManageScoringModels], no scoring model claims.
+     */
+    it('allows editing with system ManageScoringModels', async () => {
+      const { members, nonMembers } = await renderMemberships({
+        system: [SystemPermission.ManageScoringModels],
+      });
+
+      expect(nonMembers()?.canEdit).toBe(true);
+      expect(members()?.canEdit).toBe(true);
+    });
+
+    /**
      * Verifies: EditScoringModel on the model also enables both lists once the model emits (current behavior).
      * Interacts with: real PermissionDataService.canEditScoringModel via the scoringModel$ tap, both list stubs.
      * Data: scoring model claim EditScoringModel on sm1.

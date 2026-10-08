@@ -215,6 +215,27 @@ describe('AdminScoringModelsComponent', () => {
     });
 
     /**
+     * Verifies: system ManageScoringModels enables Delete on every template model, and a confirmed Delete calls the API and removes the row.
+     * Interacts with: real PermissionDataService.canManageScoringModel (system path), CrucibleDialogService.confirm stub.
+     * Data: system [ManageScoringModels], no scoring model claims.
+     */
+    it('enables Delete on every template model with system ManageScoringModels', async () => {
+      const { button, confirm, scoringModelApi, user } =
+        await renderScoringModels({
+          system: [SystemPermission.ManageScoringModels],
+        });
+
+      expect(button('Delete NCISS')).toBeEnabled();
+      expect(button('Delete Custom')).toBeEnabled();
+      await user.click(button('Delete Custom'));
+      expect(confirm).toHaveBeenCalledOnce();
+      expect(scoringModelApi.deleteScoringModel).toHaveBeenCalledWith('sm2');
+      expect(
+        screen.queryByText('Custom', { selector: 'td' }),
+      ).not.toBeInTheDocument();
+    });
+
+    /**
      * Verifies: EditScoringModel on the model (a near miss) leaves Delete disabled.
      * Interacts with: real PermissionDataService.canManageScoringModel.
      * Data: scoring model claim EditScoringModel on sm1.
@@ -225,6 +246,20 @@ describe('AdminScoringModelsComponent', () => {
       );
 
       expect(button('Delete NCISS')).toBeDisabled();
+    });
+
+    /**
+     * Verifies: system EditScoringModels (a near miss for system ManageScoringModels) leaves Delete disabled on every model.
+     * Interacts with: real PermissionDataService.canManageScoringModel (system path).
+     * Data: system [EditScoringModels], no scoring model claims.
+     */
+    it('disables Delete with system EditScoringModels only', async () => {
+      const { button } = await renderScoringModels({
+        system: [SystemPermission.EditScoringModels],
+      });
+
+      expect(button('Delete NCISS')).toBeDisabled();
+      expect(button('Delete Custom')).toBeDisabled();
     });
   });
 
@@ -244,6 +279,24 @@ describe('AdminScoringModelsComponent', () => {
       expect(categories.canEdit).toBe(true);
 
       await user.click(button('Edit NCISS'));
+      expect(editDialog.config()?.data.canEdit).toBe(true);
+    });
+
+    /**
+     * Verifies: system ManageScoringModels gives a model's categories canEdit true and opens its edit dialog editable.
+     * Interacts with: real PermissionDataService.canEditScoringModel (system ManageScoringModels path), the categories child stub, matDialogStub.
+     * Data: system [ManageScoringModels], no scoring model claims.
+     */
+    it('lets categories and the dialog edit with system ManageScoringModels', async () => {
+      const { button, editDialog, expand, user } = await renderScoringModels({
+        system: [SystemPermission.ManageScoringModels],
+      });
+
+      const categories = await expand('Custom');
+      expect(categories.scoringModelId).toBe('sm2');
+      expect(categories.canEdit).toBe(true);
+
+      await user.click(button('Edit Custom'));
       expect(editDialog.config()?.data.canEdit).toBe(true);
     });
 
