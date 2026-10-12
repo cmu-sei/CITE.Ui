@@ -174,6 +174,11 @@ export class EvaluationInfoComponent implements OnDestroy {
     return myTeam ? myTeam.shortName : '';
   }
 
+  getSelectedTeamShortName() {
+    const selectedTeam = this.teamList.find(t => t.id === this.selectedTeamId);
+    return selectedTeam ? selectedTeam.shortName : '';
+  }
+
   setActiveTeam(teamId: string) {
     this.selectedTeamId = teamId;
     this.changeTeam.emit(teamId);

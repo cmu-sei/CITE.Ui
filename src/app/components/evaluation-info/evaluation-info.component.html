@@ -5,59 +5,49 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <div class="evaluation-info-container">
-  @if (!selectedEvaluationId) {
-  <h2>&nbsp;</h2>
-  } <!-- Adds spacing to the selection box before a selection is made -->
-  @if (selectedEvaluationId && displayedMoveNumber > -1) {
-  <div class="move-div">
-    <h1 class="nowrap">Move:&nbsp;</h1>
+  <div class="toolbar-group move-group">
+    @if (selectedEvaluationId && displayedMoveNumber > -1) {
     <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="isMinMoveNumber"
-      (click)="decrementDisplayedMove()" title="Decrement Move">
+      (click)="decrementDisplayedMove()" title="Previous Move">
       <mat-icon class="icon-color" fontIcon="mdi-chevron-left"></mat-icon>
     </button>
-    <h1 class="nowrap" [ngStyle]='getMoveStyle()'>{{ displayedMoveNumber }}</h1>
+    <span class="move-label">Move <span [ngStyle]="getMoveStyle()">{{ displayedMoveNumber }}</span> of {{
+      getMaxMoveNumber() }}</span>
     <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isCurrentMoveNumber"
-      (click)="incrementDisplayedMove()" title="Increment Move">
+      (click)="incrementDisplayedMove()" title="Next Move">
       <mat-icon class="icon-color" fontIcon="mdi-chevron-right"></mat-icon>
     </button>
-    <h1>&nbsp;of&nbsp;&nbsp;&nbsp;{{ getMaxMoveNumber() }}</h1>
     @if (showAdvanceMoveButton) {
-    <div class="move-div">
-      <button aria-label="Advance Move" mat-flat-button (click)="advanceCurrentMove()" class="advance-button"
-        title="Advance the evaluation to the next move for all participants" [disabled]="noChanges">
-        Advance Move
-      </button>
-    </div>
+    <button aria-label="Advance Move" mat-flat-button (click)="advanceCurrentMove()" class="advance-button"
+      title="Advance the evaluation to the next move for all participants" [disabled]="noChanges">
+      Advance Move
+    </button>
     }
-    <span class="description-span">
-      <h1>&nbsp;{{ getEvaluationDescriptionById(selectedEvaluationId) }}</h1>
-    </span>
+    }
+  </div>
+  @if (selectedEvaluationId) {
+  <div class="evaluation-name" [title]="getEvaluationDescriptionById(selectedEvaluationId)">
+    {{ getEvaluationDescriptionById(selectedEvaluationId) }}
   </div>
   }
-  @if (!selectedEvaluationId || displayedMoveNumber < 0) { <div class="move-div">
-    &nbsp;
-</div>
-}
-@if (selectedEvaluationId && selectedTeamId) {
-<div class="right-buttons">
-  @if (selectedTeamId === myTeamId) {
-  <span class="center-self bold-label-text">Team:&nbsp;&nbsp;</span>
-  }
-  @if (selectedTeamId !== myTeamId) {
-  <span class="mat-select center-self bold-label-text">Observing:&nbsp;&nbsp;</span>
-  }
-  @if (teamList && teamList.length <= 1) { <span class="mat-select center-self">{{
-    getTeamShortName() }}</span>
+  @if (selectedEvaluationId && selectedTeamId) {
+  <div class="toolbar-group right-buttons">
+    <span class="team-label">{{ selectedTeamId === myTeamId ? 'Team:' : 'Observing:' }}</span>
+    @if (teamList && teamList.length <= 1) {
+    <b>{{ getTeamShortName() }}</b>
     }
     @if (teamList && teamList.length > 1) {
-    <mat-select class="center-self team-selector" placeholder="Team" [value]="selectedTeamId"
-      (selectionChange)="setActiveTeam($event.value)">
+    <button mat-button class="team-button" [matMenuTriggerFor]="teamMenu" title="Select a team">
+      <b>{{ getSelectedTeamShortName() }}</b>
+      <mat-icon iconPositionEnd fontIcon="mdi-chevron-down"></mat-icon>
+    </button>
+    <mat-menu #teamMenu="matMenu" [overlapTrigger]="false">
       @for (team of teamList; track team.id) {
-      <mat-option [value]="team.id">
+      <button mat-menu-item (click)="setActiveTeam(team.id)">
         {{ team.shortName }}
-      </mat-option>
+      </button>
       }
-    </mat-select>
+    </mat-menu>
     }
     @if (selectedSection !== dashboardSection) {
     <button mat-icon-button style="outline: none;" title="Dashboard" (click)="setSection(dashboardSection)">
@@ -85,6 +75,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-icon class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
     </button>
     }
-</div>
-}
+  </div>
+  }
 </div>
