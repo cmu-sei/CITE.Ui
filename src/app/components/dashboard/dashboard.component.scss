@@ -8,201 +8,118 @@
 .top-level-container {
   display: flex;
   flex-flow: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  gap: 12px;
   text-align: left;
   width: 100%;
-  height: 100%;
+  padding: 0 10px 15px;
+  box-sizing: border-box;
 }
 
-.row-container {
-  display: flex;
-  flex-flow: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  flex-wrap: wrap;
-  width: 100%;
-  min-height: 40px;
-
-  .center-self {
-    padding-top: 2px;
-    padding-bottom: 2px;
-  }
-}
-
-.first-row {
-  border-top: 1px solid var(--mat-sys-outline-variant);
-}
-
-.section-container {
-  display: flex;
-  flex-flow: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-bottom: 15px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 20px;
-  padding-right: 20px;
-  width: 100%;
+.dashboard-card {
+  padding: 12px 20px;
   // flex items default to min-width:auto, which refuses to shrink below the
   // content's min-content width. Without this, a wide image in the situation
-  // description forces this section (and everything above it) wider than the
-  // available space instead of letting the editor scroll.
-  min-width: 0;
-  @include mat.elevation(2);
-}
-
-.angular-editor {
-  width: 100%;
-  max-height: calc(100% - 200px);
+  // description forces the card wider than the column.
   min-width: 0;
 }
 
-// The situation description is assigned as raw HTML, so its elements carry no
+.situation-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.situation-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+h4.situation-title {
+  font-size: 16px;
+}
+
+.situation-time {
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.past-moves-heading {
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.past-move {
+  margin-top: 12px;
+}
+
+// The situation description is authored HTML, so its elements carry no
 // view-encapsulation attributes and have to be reached with ::ng-deep. Keep
-// images within the container width so they scale down with the panel rather
+// images within the card width so they scale down with the column rather
 // than setting a floor on it.
-::ng-deep .angular-editor-textarea {
+.situation-description {
+  margin-top: 8px;
   overflow-wrap: break-word;
 
-  img {
+  ::ng-deep img {
     max-width: 100%;
     height: auto;
   }
 }
 
-.item-container {
-  display: flex;
-  flex-flow: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
+.situation-card {
+  // keep the Gallery prompt and the panels in view under a long situation
+  flex: 0 0 auto;
+  max-height: 55vh;
+  overflow-y: auto;
 }
 
-.end-item {
+.gallery-card {
   display: flex;
-  flex-flow: row;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.quiet-text {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.panel-toolbar {
+  display: flex;
   justify-content: flex-end;
+  margin-top: -8px;
 }
 
-.mat-mdc-checkbox {
-  padding: 2px 10px 2px 2px;
-}
-
-.duty-container {
+.panel-row {
   display: flex;
-  flex-flow: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  width: 100%;
-  margin-top: 10px;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-height: 36px;
+
+  button[mat-icon-button] {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+  }
 }
 
-.duty-cell {
-  flex: 1;
-  align-self: center;
-  min-width: 80px;
+.row-label {
+  flex: 1 1 120px;
+  overflow-wrap: anywhere;
 }
 
-.right-cell {
-  display: flex;
-  flex: 1;
-  justify-content: flex-end;
-  min-width: 100px;
-}
-
-.dashboard-category-description {
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-.small-icon {
-  transform: scale(0.5);
-  display: inline;
-}
-
-.small-button {
-  width: 16px !important;
-  height: 16px !important;
-  line-height: unset;
-}
-
-.title-font {
-  font-size: 30px;
-  font-weight: bold;
-}
-
-.navigation-font {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.nowrap {
-  white-space: nowrap;
-}
-
-.move-button {
-  transform: scale(0.8);
-  min-width: 50px;
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.checkboxes-cell {
-  display: flex;
-  flex-direction: row;
-  flex: 5;
-  align-self: center;
-  justify-content: flex-end;
-}
-
-.five-cell {
-  flex: 5;
-}
-
-.four-cell {
-  flex: 4;
-}
-
-.three-cell {
-  flex: 3;
-}
-
-.two-cell {
-  flex: 2;
-}
-
-.one-cell {
-  flex: 1;
-}
-
-.center-self {
-  align-self: center;
-}
-
-.checkboxes-cell mat-form-field {
-  width: 150px !important;
-  max-width: 150px !important;
-}
-
-.checkboxes-cell mat-select {
+.row-value {
+  flex: 1 1 150px;
+  min-width: 0;
   font-size: 14px;
-  width: 150px;
-  text-align: left;
 }
 
 ::ng-deep .mat-mdc-option {
@@ -214,28 +131,4 @@
   white-space: nowrap;
   text-align: left;
   width: 100%;
-}
-
-::ng-deep .checkboxes-cell .mat-mdc-select-value-text {
-  text-align: left;
-}
-
-::ng-deep .checkboxes-cell .mat-mdc-select-trigger {
-  text-align: left;
-}
-
-.section-container .row-container {
-  min-height: 26px;
-  margin-bottom: 2px;
-
-  button[mat-icon-button] {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-  }
-}
-
-.section-container > .row-container:first-of-type {
-  min-height: 36px;
-  margin-bottom: 2px;
 }
