@@ -378,8 +378,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       .then(() => {
         this.signalRService.join();
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // the service reports the failure to the user
       });
     if (this.settingsService.settings.GalleryApiUrl) {
       this.gallerySignalRService
@@ -387,8 +387,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         .then(() => {
           this.gallerySignalRService.join();
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          // the service reports the failure to the user
         });
     }
     const thisScope = this;
