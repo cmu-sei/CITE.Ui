@@ -72,8 +72,68 @@ textarea.mat-input-element {
 }
 
 .comment {
-  width: calc(100% - 32px);
+  width: 100%;
+  box-sizing: border-box;
   resize: vertical;
+  padding: 6px 8px;
+  font: inherit;
+  color: var(--mat-sys-on-surface);
+  background-color: var(--mat-sys-surface-container-lowest);
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 4px;
+}
+
+.save-state {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.save-failed {
+  color: var(--mat-sys-error);
+}
+
+.question-number {
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+.scoresheet-toolbar {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 8px 16px !important;
+}
+
+.view-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.answered-count {
+  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.empty-move {
+  h2 {
+    margin-bottom: 4px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
 }
 
 .indent-div {
@@ -113,11 +173,6 @@ textarea.mat-input-element {
   font-weight: bold;
 }
 
-.navigation-font {
-  font-size: 20px;
-  font-weight: bold;
-}
-
 .status-font {
   font-size: 14px;
   font-weight: bold;
@@ -125,13 +180,6 @@ textarea.mat-input-element {
 
 .nowrap {
   white-space: nowrap;
-}
-
-.move-button {
-  transform: scale(0.8);
-  min-width: 50px;
-  margin-left: 10px;
-  margin-right: 10px;
 }
 
 .text-center {
@@ -178,8 +226,4 @@ textarea.mat-input-element {
 
 .mat-column-description {
   font-size: 100px;
-}
-
-.no-display {
-  display: none;
 }
