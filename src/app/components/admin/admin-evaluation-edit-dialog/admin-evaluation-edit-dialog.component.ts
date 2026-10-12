@@ -133,9 +133,10 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
   }
 
-  getTimezoneAbbr(): string {
+  // label the zone from the date shown, so a date across a DST change gets its own abbreviation
+  getTimezoneAbbr(value?: Date | string): string {
     try {
-      const date = new Date();
+      const date = value ? new Date(value) : new Date();
       const timeZone = this.getUserTimezone();
       const formatted = date.toLocaleTimeString('en-US', {
         timeZoneName: 'short',
