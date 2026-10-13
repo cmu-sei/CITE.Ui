@@ -160,8 +160,8 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
       .then(() => {
         this.signalRService.join();
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // the service reports the failure to the user
       });
     this.currentUserQuery
       .select()

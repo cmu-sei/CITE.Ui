@@ -7,6 +7,7 @@ import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
 import * as signalR from '@microsoft/signalr';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
 import { UnreadArticlesDataService } from 'src/app/data/unread-articles/unread-articles-data.service';
+import { SystemMessageService } from 'src/app/services/system-message/system-message.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -18,10 +19,12 @@ export class GallerySignalRService implements OnDestroy {
   private connectionPromise: Promise<void>;
   private isJoined = false;
   private token = '';
+  private unreachableReported = false;
   private unsubscribe$ = new Subject();
 
   constructor(
     private authService: ComnAuthService,
+    private systemMessageService: SystemMessageService,
     private settingsService: ComnSettingsService,
     private unreadArticlesDataService: UnreadArticlesDataService
   ) {
@@ -43,12 +46,14 @@ export class GallerySignalRService implements OnDestroy {
       .build();
 
     this.hubConnection.onreconnected(() => {
-      this.join();
+      this.onConnected();
     });
 
     this.addHandlers();
     this.connectionPromise = this.hubConnection.start();
-    this.connectionPromise.then((x) => this.join());
+    this.connectionPromise
+      .then(() => this.onConnected())
+      .catch((err) => this.onStartFailed(err));
 
     return this.connectionPromise;
   }
@@ -71,11 +76,29 @@ export class GallerySignalRService implements OnDestroy {
           if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
             setTimeout(() => this.reconnect(), 500);
           } else {
-            this.join();
+            this.onConnected();
           }
-        });
+        }).catch((err) => this.onStartFailed(err));
       });
     }
+  }
+
+  private onConnected() {
+    this.unreachableReported = false;
+    this.join();
+  }
+
+  // report once per outage, not on every retry
+  private onStartFailed(err: any) {
+    if (this.unreachableReported) {
+      return;
+    }
+    this.unreachableReported = true;
+    console.warn('Gallery hub unreachable: ' + (err?.message ?? err));
+    this.systemMessageService.displayMessage(
+      'Gallery Unavailable',
+      'CITE could not connect to Gallery. The unread Gallery item count will not update until the connection is restored. Refresh the page to try again.'
+    );
   }
 
   public join() {
