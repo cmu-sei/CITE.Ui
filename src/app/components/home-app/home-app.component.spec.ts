@@ -16,7 +16,7 @@ import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { screen } from '@testing-library/angular';
 import { of } from 'rxjs';
-import { ComnAuthService } from '@cmusei/crucible-common';
+import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
 import { User } from 'oidc-client-ts';
 import {
   Evaluation,
@@ -40,6 +40,7 @@ import {
   permissionDataProviders,
 } from '../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../test-utils/render-component';
+import { captureUnhandledRejections } from '../../test-utils/unhandled-rx-errors';
 import { HomeAppComponent } from './home-app.component';
 
 @Component({ selector: 'app-topbar', template: '' })
@@ -84,7 +85,17 @@ const EVALUATION: Evaluation = {
 
 async function renderHome(
   grants: PermissionGrants,
-  { evaluation }: { evaluation?: string } = {},
+  {
+    evaluation,
+    galleryApiUrl = '',
+    hubStart = () => Promise.resolve(),
+    galleryHubStart = () => Promise.resolve(),
+  }: {
+    evaluation?: string;
+    galleryApiUrl?: string;
+    hubStart?: () => Promise<void>;
+    galleryHubStart?: () => Promise<void>;
+  } = {},
 ) {
   const evaluationApi = {
     getMyEvaluations: vi.fn(() => of([structuredClone(EVALUATION)])),
@@ -109,14 +120,31 @@ async function renderHome(
     getMyEvaluationTeams: vi.fn(() => of([])),
   } satisfies ApiStub<TeamService>;
   const signalR: Pick<SignalRService, 'startConnection' | 'join' | 'leave'> = {
-    startConnection: vi.fn(() => Promise.resolve()),
+    startConnection: vi.fn(hubStart),
     join: vi.fn(),
     leave: vi.fn(),
   };
-  // GalleryApiUrl is empty in the default settings, so the page never starts
-  // the Gallery hub; it only leaves it on destroy.
-  const gallerySignalR: Pick<GallerySignalRService, 'leave'> = {
+  // The page starts the Gallery hub only when GalleryApiUrl is set (empty in
+  // the default settings).
+  const gallerySignalR: Pick<
+    GallerySignalRService,
+    'startConnection' | 'join' | 'leave'
+  > = {
+    startConnection: vi.fn(galleryHubStart),
+    join: vi.fn(),
     leave: vi.fn(),
+  };
+  const settings: Pick<ComnSettingsService, 'settings'> = {
+    settings: {
+      ApiUrl: '',
+      GalleryApiUrl: galleryApiUrl,
+      GalleryUiUrl: '',
+      AppTitle: 'CITE',
+      AppTopBarText: 'CITE',
+      AppTopBarHexColor: '#C41230',
+      AppTopBarHexTextColor: '#FFFFFF',
+      XApiEnabled: false,
+    },
   };
   // The component reads only user$ (UserDataService.setCurrentUser).
   const auth: Pick<ComnAuthService, 'user$'> = {
@@ -163,6 +191,7 @@ async function renderHome(
       { provide: TeamService, useValue: teamApi },
       { provide: SignalRService, useValue: signalR },
       { provide: GallerySignalRService, useValue: gallerySignalR },
+      { provide: ComnSettingsService, useValue: settings },
       { provide: ComnAuthService, useValue: auth },
       { provide: ActivatedRoute, useValue: route },
     ],
@@ -173,7 +202,7 @@ async function renderHome(
     rendered.fixture.debugElement.query(
       By.directive(EvaluationInfoStubComponent),
     )?.componentInstance as EvaluationInfoStubComponent | undefined;
-  return { ...rendered, evaluationApi, signalR, evaluationInfo };
+  return { ...rendered, evaluationApi, signalR, gallerySignalR, evaluationInfo };
 }
 
 const adminButton = () =>
@@ -217,6 +246,58 @@ describe('HomeAppComponent', () => {
     ).toBeInTheDocument();
     expect(signalR.startConnection).toHaveBeenCalledOnce();
     expect(signalR.join).toHaveBeenCalledOnce();
+  });
+
+  describe('hubs', () => {
+    /**
+     * Verifies: the Gallery hub is started and joined only when GalleryApiUrl is set.
+     * Interacts with: GallerySignalRService stub, ComnSettingsService.settings.GalleryApiUrl.
+     * Data: per row, GalleryApiUrl empty or https://gallery.test, and whether the page starts and joins the hub.
+     */
+    it.each([
+      { url: '', started: 0 },
+      { url: 'https://gallery.test', started: 1 },
+    ])(
+      "starts the Gallery hub $started time(s) with GalleryApiUrl '$url'",
+      async ({ url, started }) => {
+        const { gallerySignalR } = await renderHome(
+          {},
+          { galleryApiUrl: url },
+        );
+
+        expect(gallerySignalR.startConnection).toHaveBeenCalledTimes(started);
+        expect(gallerySignalR.join).toHaveBeenCalledTimes(started);
+      },
+    );
+
+    /**
+     * Verifies: when both hubs fail to start the page joins neither, logs nothing and leaves no unhandled rejection; the list still renders.
+     * Interacts with: SignalRService and GallerySignalRService stubs (startConnection rejects), console.log spy, captureUnhandledRejections.
+     * Data: GalleryApiUrl https://gallery.test; both starts reject.
+     */
+    it('leaves a failed hub start to the hub services', async () => {
+      const rejections = captureUnhandledRejections();
+      const log = vi.spyOn(console, 'log');
+      const { signalR, gallerySignalR, fixture } = await renderHome(
+        {},
+        {
+          galleryApiUrl: 'https://gallery.test',
+          hubStart: () => Promise.reject(new Error('hub down')),
+          galleryHubStart: () => Promise.reject(new Error('gallery down')),
+        },
+      );
+      await fixture.whenStable();
+
+      expect(signalR.startConnection).toHaveBeenCalledOnce();
+      expect(gallerySignalR.startConnection).toHaveBeenCalledOnce();
+      expect(signalR.join).not.toHaveBeenCalled();
+      expect(gallerySignalR.join).not.toHaveBeenCalled();
+      expect(log).not.toHaveBeenCalled();
+      expect(rejections).toEqual([]);
+      expect(
+        screen.getByRole('link', { name: 'Ransomware exercise' }),
+      ).toBeInTheDocument();
+    });
   });
 
   describe('canViewAdministration gate', () => {

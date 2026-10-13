@@ -23,6 +23,7 @@ import { TeamMembershipDataService } from '../data/team/team-membership-data.ser
 import { TeamQuery } from '../data/team/team.query';
 import { UserDataService } from '../data/user/user-data.service';
 import { UserQuery } from '../data/user/user.query';
+import { SystemMessageService } from './system-message/system-message.service';
 import { getDefaultProviders } from '../test-utils/default-test-providers';
 import {
   mockHubConnectionBuilder,
@@ -34,12 +35,23 @@ import {
 } from '../test-utils/unhandled-rx-errors';
 
 const API_URL = 'https://cite.test';
+const UNAVAILABLE: [string, string] = [
+  'Live Updates Unavailable',
+  'CITE could not connect to the CITE API for live updates. Changes made by others will not appear until the connection is restored. Refresh the page to try again.',
+];
 
 let builder: ReturnType<typeof mockHubConnectionBuilder>;
+
+interface RecoverContext {
+  hub: ReturnType<typeof mockHubConnectionBuilder>['connections'][number];
+  authUser$: Subject<unknown>;
+}
 
 // Real data services and Akita stores sit behind the hub, so each handler is
 // checked by what the queries show afterwards. Their generated API services
 // stay as unstubbed placeholders: hub events must not trigger HTTP calls.
+// SystemMessageService is the edge to the bottom sheet (its own spec renders
+// it); the hub-failure tests read what the service asks it to show.
 function setup(overrides: { token?: () => string } = {}) {
   const token = overrides.token ?? (() => 'tok');
   const authUser$ = new Subject<unknown>();
@@ -47,9 +59,14 @@ function setup(overrides: { token?: () => string } = {}) {
     user$: authUser$ as unknown as ComnAuthService['user$'],
     getAuthorizationToken: () => token(),
   };
+  const displayMessage = vi.fn();
+  const messages: Pick<SystemMessageService, 'displayMessage'> = {
+    displayMessage,
+  };
   TestBed.configureTestingModule({
     providers: getDefaultProviders([
       { provide: ComnAuthService, useValue: auth },
+      { provide: SystemMessageService, useValue: messages },
       {
         provide: ComnSettingsService,
         useValue: {
@@ -68,7 +85,16 @@ function setup(overrides: { token?: () => string } = {}) {
       SignalRService,
     ]),
   });
-  return { service: TestBed.inject(SignalRService), authUser$ };
+  return { service: TestBed.inject(SignalRService), authUser$, displayMessage };
+}
+
+// The console.warn lines the service writes for a hub it cannot reach.
+function recordWarnings() {
+  const warnings: unknown[][] = [];
+  vi.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+    warnings.push(args);
+  });
+  return warnings;
 }
 
 async function connect(area: ApplicationArea = ApplicationArea.home) {
@@ -146,7 +172,7 @@ describe('SignalRService', () => {
 
     /**
      * Verifies: after a failed start() the cached rejected promise is returned for that area and no new connection is built.
-     * Interacts with: mockHubConnectionBuilder onBuild (start rejects), captureUnhandledRejections.
+     * Interacts with: mockHubConnectionBuilder onBuild (start rejects), captureUnhandledRejections, SystemMessageService stub.
      * Data: start() rejects with 'hub down'; startConnection(home) called twice.
      */
     it('never retries a failed start', async () => {
@@ -155,7 +181,8 @@ describe('SignalRService', () => {
         onBuild: (c) => c.start.mockRejectedValue(failure),
       });
       const rejections = captureUnhandledRejections();
-      const { service } = setup();
+      const warnings = recordWarnings();
+      const { service, displayMessage } = setup();
       const started = service.startConnection(ApplicationArea.home);
       await expect(started).rejects.toBe(failure);
       await flush();
@@ -164,9 +191,10 @@ describe('SignalRService', () => {
       expect(builder.connections).toHaveLength(1);
       expect(builder.connections[0].start).toHaveBeenCalledTimes(1);
       expect(builder.connections[0].invoke).not.toHaveBeenCalled();
-      // The unhandled join-chain rejection is covered in 'hub promises without
-      // a catch' below.
-      expect(rejections).toEqual([failure]);
+      // The one failure is reported once, and nothing goes unhandled.
+      expect(displayMessage.mock.calls).toEqual([UNAVAILABLE]);
+      expect(warnings).toEqual([['CITE hub unreachable: hub down']]);
+      expect(rejections).toEqual([]);
     });
 
     /**
@@ -283,38 +311,17 @@ describe('SignalRService', () => {
     const failure = new Error('hub call failed');
 
     /**
-     * Verifies: when a hub promise the service chains on or drops rejects, the rejection goes unhandled.
-     * Interacts with: FakeHubConnection start/stop/invoke (rejecting), rejectInvokes, captureUnhandledRejections.
+     * Verifies: when a hub promise the service drops, or chains on with no catch, rejects, the rejection goes unhandled.
+     * Interacts with: FakeHubConnection stop/invoke (rejecting), rejectInvokes, captureUnhandledRejections.
      * Data: per row, the method under test and the hub call made to reject with 'hub call failed'.
      */
     it.each<{ method: string; act: () => Promise<void> }>([
-      {
-        method: 'startConnection',
-        act: async () => {
-          builder = mockHubConnectionBuilder({
-            onBuild: (c) => c.start.mockRejectedValue(failure),
-          });
-          const { service } = setup();
-          // The caller's own copy of the promise is handled here; the
-          // .then(join) chain the service builds on it is not.
-          await service.startConnection(ApplicationArea.home).catch(() => {});
-        },
-      },
       {
         method: 'reconnect (stop rejects)',
         act: async () => {
           const { hub, authUser$ } = await connect();
           await flush();
           hub.stop.mockImplementation(() => Promise.reject(failure));
-          authUser$.next({});
-        },
-      },
-      {
-        method: 'reconnect (restart rejects)',
-        act: async () => {
-          const { hub, authUser$ } = await connect();
-          await flush();
-          hub.start.mockImplementation(() => Promise.reject(failure));
           authUser$.next({});
         },
       },
@@ -353,6 +360,138 @@ describe('SignalRService', () => {
       await flush();
       expect(rejections).toEqual([failure]);
     });
+  });
+
+  describe('hub failures', () => {
+    /**
+     * Verifies: a hub that cannot start is reported to the user once, with one console line naming the reason, and nothing goes unhandled.
+     * Interacts with: mockHubConnectionBuilder onBuild (start rejects), SystemMessageService stub, console.warn spy, captureUnhandledRejections.
+     * Data: per row, the start() rejection (an Error, or a reason that is not an Error) and the reason the console line shows.
+     */
+    it.each<{ kind: string; reason: unknown; shown: string }>([
+      { kind: 'an Error', reason: new Error('hub down'), shown: 'hub down' },
+      {
+        kind: 'a plain reason',
+        reason: 'negotiation failed',
+        shown: 'negotiation failed',
+      },
+    ])(
+      'tells the user live updates are unavailable when the hub start fails with $kind',
+      async ({ reason, shown }) => {
+        builder = mockHubConnectionBuilder({
+          onBuild: (c) => c.start.mockImplementation(() => Promise.reject(reason)),
+        });
+        const rejections = captureUnhandledRejections();
+        const warnings = recordWarnings();
+        const { service, displayMessage } = setup();
+        await service.startConnection(ApplicationArea.home).catch(() => {});
+        await flush();
+        expect(displayMessage.mock.calls).toEqual([UNAVAILABLE]);
+        expect(warnings).toEqual([[`CITE hub unreachable: ${shown}`]]);
+        expect(builder.connections[0].invoke).not.toHaveBeenCalled();
+        expect(rejections).toEqual([]);
+      },
+    );
+
+    /**
+     * Verifies: a restart that fails after a user change is reported to the user, does not rejoin, and is not left unhandled.
+     * Interacts with: ComnAuthService.user$ (Subject), FakeHubConnection.start (rejects on the restart), SystemMessageService stub, console.warn spy.
+     * Data: a connected, joined home hub; the restart rejects with 'hub down'.
+     */
+    it('tells the user live updates are unavailable when a restart fails', async () => {
+      const rejections = captureUnhandledRejections();
+      const warnings = recordWarnings();
+      const { hub, authUser$, displayMessage } = await connect();
+      await flush();
+      hub.invoke.mockClear();
+      hub.start.mockImplementation(() => Promise.reject(new Error('hub down')));
+      authUser$.next({});
+      await flush();
+      expect(hub.start).toHaveBeenCalledTimes(2);
+      expect(displayMessage.mock.calls).toEqual([UNAVAILABLE]);
+      expect(warnings).toEqual([['CITE hub unreachable: hub down']]);
+      expect(hub.invoke).not.toHaveBeenCalled();
+      expect(rejections).toEqual([]);
+    });
+
+    /**
+     * Verifies: further failed starts during the same outage show no second message and write no second console line.
+     * Interacts with: ComnAuthService.user$ (Subject), FakeHubConnection.start (always rejects), SystemMessageService stub, console.warn spy.
+     * Data: the first start and two restarts after user changes all reject with 'hub down'.
+     */
+    it('reports one outage once across failed restarts', async () => {
+      builder = mockHubConnectionBuilder({
+        onBuild: (c) =>
+          c.start.mockImplementation(() => Promise.reject(new Error('hub down'))),
+      });
+      const rejections = captureUnhandledRejections();
+      const warnings = recordWarnings();
+      const { service, authUser$, displayMessage } = setup();
+      await service.startConnection(ApplicationArea.home).catch(() => {});
+      await flush();
+      authUser$.next({});
+      await flush();
+      authUser$.next({});
+      await flush();
+      expect(builder.connections[0].start).toHaveBeenCalledTimes(3);
+      expect(displayMessage.mock.calls).toEqual([UNAVAILABLE]);
+      expect(warnings).toEqual([['CITE hub unreachable: hub down']]);
+      expect(rejections).toEqual([]);
+    });
+
+    /**
+     * Verifies: a successful connection after an outage re-arms the report, so the next outage is reported again.
+     * Interacts with: FakeHubConnection.start (rejects, then resolves, then rejects), reconnect() (automatic reconnect) or user$ (restart), SystemMessageService stub, console.warn spy.
+     * Data: per row, how the hub comes back: an automatic reconnect, or a restart after a user change; then a restart that fails.
+     */
+    it.each<{ how: string; recover: (ctx: RecoverContext) => Promise<void> }>([
+      {
+        how: 'an automatic reconnect',
+        recover: async ({ hub }) => {
+          hub.reconnect();
+        },
+      },
+      {
+        how: 'a restart after a user change',
+        recover: async ({ hub, authUser$ }) => {
+          hub.start.mockImplementation(() => {
+            hub.state = signalR.HubConnectionState.Connected;
+            return Promise.resolve();
+          });
+          authUser$.next({});
+          await flush();
+        },
+      },
+    ])(
+      'reports the next outage again after $how',
+      async ({ recover }) => {
+        builder = mockHubConnectionBuilder({
+          onBuild: (c) =>
+            c.start.mockImplementation(() =>
+              Promise.reject(new Error('hub down')),
+            ),
+        });
+        const rejections = captureUnhandledRejections();
+        const warnings = recordWarnings();
+        const { service, authUser$, displayMessage } = setup();
+        await service.startConnection(ApplicationArea.home).catch(() => {});
+        await flush();
+        const [hub] = builder.connections;
+        await recover({ hub, authUser$ });
+        expect(hub.invoke).toHaveBeenCalledWith('Join');
+        hub.start.mockImplementation(() =>
+          Promise.reject(new Error('hub down again')),
+        );
+        authUser$.next({});
+        await flush();
+        expect(displayMessage.mock.calls).toEqual([UNAVAILABLE, UNAVAILABLE]);
+        expect(warnings).toEqual([
+          ['CITE hub unreachable: hub down'],
+          ['CITE hub unreachable: hub down again'],
+        ]);
+        expect(rejections).toEqual([]);
+      },
+    );
   });
 
   describe('entity events', () => {

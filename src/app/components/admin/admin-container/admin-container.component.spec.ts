@@ -34,6 +34,7 @@ import { ApiStub, BodyOverload } from '../../../test-utils/api-stub';
 import { activatedRouteStub } from '../../../test-utils/activated-route';
 import { permissionDataProviders } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
+import { captureUnhandledRejections } from '../../../test-utils/unhandled-rx-errors';
 
 @Component({ selector: 'app-topbar', template: '' })
 class TopbarStubComponent {
@@ -68,6 +69,7 @@ async function renderAdminContainer(
     apiVersion?: () => ReturnType<
       BodyOverload<HealthCheckService['getVersion']>
     >;
+    hubStart?: () => Promise<void>;
   } = {},
 ) {
   const evaluationApi = {
@@ -88,7 +90,7 @@ async function renderAdminContainer(
     getVersion: vi.fn(overrides.apiVersion ?? (() => of('1.4.2+a1b2c3'))),
   } satisfies ApiStub<HealthCheckService>;
   const signalR: Pick<SignalRService, 'startConnection' | 'join' | 'leave'> = {
-    startConnection: vi.fn(() => Promise.resolve()),
+    startConnection: vi.fn(overrides.hubStart ?? (() => Promise.resolve())),
     join: vi.fn(),
     leave: vi.fn(),
   };
@@ -484,5 +486,24 @@ describe('AdminContainerComponent', () => {
     expect(signalR.join).toHaveBeenCalled();
     fixture.destroy();
     expect(signalR.leave).toHaveBeenCalled();
+  });
+
+  /**
+   * Verifies: when the admin hub fails to start the container does not join, logs nothing and leaves no unhandled rejection; the page still renders.
+   * Interacts with: SignalRService stub (startConnection rejects), console.log spy, captureUnhandledRejections.
+   * Data: startConnection rejects with 'hub down'.
+   */
+  it('leaves a failed hub start to the hub service', async () => {
+    const rejections = captureUnhandledRejections();
+    const log = vi.spyOn(console, 'log');
+    const { signalR, fixture } = await renderAdminContainer({
+      hubStart: () => Promise.reject(new Error('hub down')),
+    });
+    await fixture.whenStable();
+    expect(signalR.startConnection).toHaveBeenCalledWith('Admin');
+    expect(signalR.join).not.toHaveBeenCalled();
+    expect(log).not.toHaveBeenCalled();
+    expect(rejections).toEqual([]);
+    expect(screen.getByText(/API 1\.4\.2$/)).toBeInTheDocument();
   });
 });
