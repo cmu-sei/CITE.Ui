@@ -179,6 +179,27 @@ async function renderHome(
 const adminButton = () =>
   screen.queryByRole('button', { name: 'Show Administration Page' });
 
+// Every system permission PermissionDataService.canViewAdministration() accepts.
+const ADMIN_PERMISSIONS: SystemPermission[] = [
+  SystemPermission.ViewEvaluations,
+  SystemPermission.EditEvaluations,
+  SystemPermission.ManageEvaluations,
+  SystemPermission.CreateEvaluations,
+  SystemPermission.ExecuteEvaluations,
+  SystemPermission.ViewScoringModels,
+  SystemPermission.EditScoringModels,
+  SystemPermission.ManageScoringModels,
+  SystemPermission.CreateScoringModels,
+  SystemPermission.ViewUsers,
+  SystemPermission.ManageUsers,
+  SystemPermission.ViewRoles,
+  SystemPermission.ManageRoles,
+  SystemPermission.ViewGroups,
+  SystemPermission.ManageGroups,
+  SystemPermission.ViewTeamTypes,
+  SystemPermission.ManageTeamTypes,
+];
+
 describe('HomeAppComponent', () => {
   beforeEach(() => localStorage.clear());
 
@@ -209,6 +230,20 @@ describe('HomeAppComponent', () => {
 
       expect(adminButton()).toBeInTheDocument();
     });
+
+    /**
+     * Verifies: each system permission the administration gate accepts, held alone, shows the Administration button.
+     * Interacts with: real PermissionDataService.canViewAdministration, the evaluation list page.
+     * Data: per row, system [<that permission>]; no evaluation in the route.
+     */
+    it.each(ADMIN_PERMISSIONS)(
+      'shows Administration with only system %s',
+      async (permission) => {
+        await renderHome({ system: [permission] });
+
+        expect(adminButton()).toBeInTheDocument();
+      },
+    );
 
     /**
      * Verifies: ObserveEvaluations and resource-level Manage claims (near misses) hide the Administration button.

@@ -3,6 +3,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Provider } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { Router, UrlTree } from '@angular/router';
 import { screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +20,7 @@ import {
 import { EvaluationInfoComponent } from './evaluation-info.component';
 import { EvaluationStore } from '../../data/evaluation/evaluation.store';
 import { MoveStore } from '../../data/move/move.store';
+import { TeamStore } from '../../data/team/team.store';
 import { TeamMembershipDataService } from '../../data/team/team-membership-data.service';
 import { UserDataService } from '../../data/user/user-data.service';
 import { Section } from '../home-app/home-app.component';
@@ -39,6 +42,9 @@ async function renderEvaluationInfo(
     claims?: PermissionGrants;
     evaluation?: Partial<Evaluation>;
     confirm?: boolean;
+    showAdminButton?: boolean;
+    selectedSection?: Section;
+    activeTeam?: boolean;
   } = {},
 ) {
   const evaluation: Evaluation = {
@@ -62,6 +68,7 @@ async function renderEvaluationInfo(
     },
   };
   const nextEvaluationMove = vi.fn();
+  const changeSection = vi.fn();
 
   const rendered = await renderComponent(EvaluationInfoComponent, {
     declarations: [EvaluationInfoComponent],
@@ -71,10 +78,13 @@ async function renderEvaluationInfo(
       moveList: [...MOVES],
       teamList: [],
       myTeamId: 't1',
-      selectedSection: Section.dashboard,
+      selectedSection: overrides.selectedSection ?? Section.dashboard,
       noChanges: false,
+      ...(overrides.showAdminButton === undefined
+        ? {}
+        : { showAdminButton: overrides.showAdminButton }),
     },
-    on: { nextEvaluationMove },
+    on: { nextEvaluationMove, changeSection },
     providers: [
       ...permissionDataProviders(overrides.claims ?? {}),
       evaluationStore,
@@ -90,14 +100,31 @@ async function renderEvaluationInfo(
   const moveStore = rendered.fixture.debugElement.injector.get(MoveStore);
   moveStore.set(MOVES);
   moveStore.setActive(`m${evaluation.currentMoveNumber}`);
+  if (overrides.activeTeam) {
+    // The team buttons render once a team is selected; the home page
+    // activates the user's team after this component exists.
+    const teamStore = rendered.fixture.debugElement.injector.get(TeamStore);
+    teamStore.set([{ id: 't1', shortName: 'BLUE' }]);
+    teamStore.setActive('t1');
+  }
   rendered.fixture.detectChanges();
   await rendered.fixture.whenStable();
 
-  return { ...rendered, confirm, nextEvaluationMove, user: userEvent.setup() };
+  return {
+    ...rendered,
+    confirm,
+    nextEvaluationMove,
+    changeSection,
+    user: userEvent.setup(),
+  };
 }
 
 const advanceButton = () =>
   screen.queryByRole('button', { name: 'Advance Move' });
+const administrationButton = () =>
+  screen.queryByRole('button', { name: 'Show Administration Page' });
+const aggregateReportButton = () =>
+  screen.queryByRole('button', { name: 'Aggregate Report' });
 
 describe('EvaluationInfoComponent', () => {
   beforeEach(() => {
@@ -293,6 +320,83 @@ describe('EvaluationInfoComponent', () => {
       });
       await user.click(advanceButton()!);
       expect(nextEvaluationMove).not.toHaveBeenCalled();
+    });
+  });
+  describe('showAdminButton input', () => {
+    /**
+     * Verifies: with showAdminButton true the Administration and Aggregate Report buttons show, and Administration opens the admin page on its Evaluations section.
+     * Interacts with: real Router (navigateByUrl spied), routerLink, real TeamStore activating t1.
+     * Data: showAdminButton true; team t1 active; dashboard section.
+     */
+    it('shows Administration and Aggregate Report when showAdminButton is true', async () => {
+      const { user } = await renderEvaluationInfo({
+        showAdminButton: true,
+        activeTeam: true,
+      });
+      const router = TestBed.inject(Router);
+      const navigate = vi
+        .spyOn(router, 'navigateByUrl')
+        .mockResolvedValue(true);
+
+      expect(aggregateReportButton()).toBeInTheDocument();
+      await user.click(administrationButton()!);
+
+      expect(navigate).toHaveBeenCalledOnce();
+      expect(router.serializeUrl(navigate.mock.calls[0][0] as UrlTree)).toBe(
+        '/admin?section=Evaluations',
+      );
+    });
+
+    /**
+     * Verifies: the Aggregate Report button switches the header to the aggregate section.
+     * Interacts with: changeSection output, setSection().
+     * Data: showAdminButton true; team t1 active; dashboard section.
+     */
+    it('opens the aggregate section from Aggregate Report', async () => {
+      const { user, changeSection } = await renderEvaluationInfo({
+        showAdminButton: true,
+        activeTeam: true,
+      });
+
+      await user.click(aggregateReportButton()!);
+
+      expect(changeSection).toHaveBeenCalledWith(Section.aggregate);
+      expect(aggregateReportButton()).not.toBeInTheDocument();
+      expect(administrationButton()).toBeInTheDocument();
+    });
+
+    /**
+     * Verifies: on the aggregate section only Administration is offered; Aggregate Report is left out.
+     * Interacts with: selectedSection input.
+     * Data: showAdminButton true; team t1 active; aggregate section.
+     */
+    it('leaves Aggregate Report out while the aggregate section is shown', async () => {
+      await renderEvaluationInfo({
+        showAdminButton: true,
+        activeTeam: true,
+        selectedSection: Section.aggregate,
+      });
+
+      expect(administrationButton()).toBeInTheDocument();
+      expect(aggregateReportButton()).not.toBeInTheDocument();
+    });
+
+    /**
+     * Verifies: with showAdminButton false (the parent's canViewAdministration denied) neither Administration nor Aggregate Report shows, while the other section buttons do.
+     * Interacts with: showAdminButton input, real TeamStore activating t1.
+     * Data: showAdminButton false; team t1 active; dashboard section.
+     */
+    it('hides Administration and Aggregate Report when showAdminButton is false', async () => {
+      await renderEvaluationInfo({
+        showAdminButton: false,
+        activeTeam: true,
+      });
+
+      expect(
+        screen.getByRole('button', { name: 'SubmissionReview' }),
+      ).toBeInTheDocument();
+      expect(administrationButton()).not.toBeInTheDocument();
+      expect(aggregateReportButton()).not.toBeInTheDocument();
     });
   });
 });

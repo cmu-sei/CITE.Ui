@@ -63,6 +63,27 @@ async function openUserMenu(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole('button', { name: /Alice/ }));
 }
 
+// Every system permission PermissionDataService.canViewAdministration() accepts.
+const ADMIN_PERMISSIONS: SystemPermission[] = [
+  SystemPermission.ViewEvaluations,
+  SystemPermission.EditEvaluations,
+  SystemPermission.ManageEvaluations,
+  SystemPermission.CreateEvaluations,
+  SystemPermission.ExecuteEvaluations,
+  SystemPermission.ViewScoringModels,
+  SystemPermission.EditScoringModels,
+  SystemPermission.ManageScoringModels,
+  SystemPermission.CreateScoringModels,
+  SystemPermission.ViewUsers,
+  SystemPermission.ManageUsers,
+  SystemPermission.ViewRoles,
+  SystemPermission.ManageRoles,
+  SystemPermission.ViewGroups,
+  SystemPermission.ManageGroups,
+  SystemPermission.ViewTeamTypes,
+  SystemPermission.ManageTeamTypes,
+];
+
 describe('TopbarComponent', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -93,6 +114,22 @@ describe('TopbarComponent', () => {
       screen.getByRole('menuitem', { name: 'Administration' }),
     ).toBeInTheDocument();
   });
+
+  /**
+   * Verifies: each system permission the administration gate accepts, held alone, puts Administration in the user menu.
+   * Interacts with: real PermissionDataService.canViewAdministration, mat-menu opened with user-event.
+   * Data: per row, system [<that permission>], home view.
+   */
+  it.each(ADMIN_PERMISSIONS)(
+    'offers Administration with only system %s',
+    async (permission) => {
+      const { user } = await renderTopbar({ system: [permission] });
+      await openUserMenu(user);
+      expect(
+        screen.getByRole('menuitem', { name: 'Administration' }),
+      ).toBeInTheDocument();
+    },
+  );
 
   /**
    * Verifies: without an admin permission the user menu has no Administration entry.
