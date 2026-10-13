@@ -13,43 +13,41 @@ export class ErrorService implements ErrorHandler {
   constructor(private injector: Injector) {}
 
   handleError(err: any) {
-    const messageService = this.injector.get(SystemMessageService);
     // Http failure response for (unknown url): 0 Unknown Error
     if (err instanceof HttpErrorResponse) {
       if (
         err.message.startsWith('Http failure response for') &&
         err.message.endsWith('0 Unknown Error')
       ) {
-        messageService.displayMessage(
-          'API Error',
-          'The API could not be reached.'
-        );
-        console.log('API Error', 'The API could not be reached.');
+        this.report('API Error', 'The API could not be reached.');
       } else if (err.error && err.error.title) {
-        messageService.displayMessage(err.statusText, err.error.title);
-        console.log(err.statusText + ' ==> ' + err.error.title);
+        this.report(err.statusText, err.error.title);
       } else {
-        messageService.displayMessage(err.statusText, err.message);
-        console.log(err.statusText + ' ==> ' + err.message);
+        this.report(err.statusText, err.message);
       }
-    } else if (err.message.startsWith('Uncaught (in promise)')) {
-      if (err.rejection.statusCode === 401) {
+    } else if (err?.message?.startsWith('Uncaught (in promise)')) {
+      const rejection = err.rejection;
+      if (rejection?.statusCode === 401) {
         // nothing to do here, the signalR reconnect handles the situation.
-      } else if (err.rejection.message === 'Network Error') {
-        messageService.displayMessage(
+      } else if (rejection?.message === 'Network Error') {
+        this.report(
           'Identity Server Error',
           'The Identity Server could not be reached for user authentication.'
         );
-        console.log(
-          'Identity Server Error',
-          'The Identity Server could not be reached for user authentication.'
-        );
-      } else if (err.rejection.message.endsWith('Failed to fetch')) {
-        console.log('SignalR error reaching the Gallery API:  ' + err.rejection.message);
+      } else if (rejection?.message?.endsWith('Failed to fetch')) {
+        // a SignalR hub start that its service didn't catch; it reports its own failures.
+        console.warn(rejection.message);
       } else {
-        messageService.displayMessage('Error', err.rejection.message);
-        console.log(err.rejection.message);
+        this.report('Error', rejection?.message ?? String(rejection));
       }
+    } else {
+      // not an error we know how to explain to the user; keep the stack for debugging
+      console.error(err);
     }
+  }
+
+  private report(title: string, message: string) {
+    console.warn(title + ': ' + message);
+    this.injector.get(SystemMessageService).displayMessage(title, message);
   }
 }
