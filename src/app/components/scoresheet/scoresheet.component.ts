@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
+import { MoveQuery } from 'src/app/data/move/move.query';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
@@ -77,8 +78,9 @@ export class ScoresheetComponent implements OnDestroy {
   commentOptionDescription = 'this is the description';
   currentComment = 'current comment';
   tableClass = '';
-  buttonClass = 'mat-user';
   showHeader = false;
+  // save state of each answer box, keyed by scoring option id
+  commentSaveStates: { [scoringOptionId: string]: 'saving' | 'saved' | 'failed' } = {};
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -87,6 +89,7 @@ export class ScoresheetComponent implements OnDestroy {
     private submissionDataService: SubmissionDataService,
     private submissionQuery: SubmissionQuery,
     private evaluationQuery: EvaluationQuery,
+    private moveQuery: MoveQuery,
     private userDataService: UserDataService,
     private userQuery: UserQuery,
     private currentUserQuery: CurrentUserQuery,
@@ -117,6 +120,9 @@ export class ScoresheetComponent implements OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((active) => {
         if (active) {
+          if (active.id !== this.displayedSubmission.id) {
+            this.commentSaveStates = {};
+          }
           this.displayedSubmission = active;
           this.displayedMoveNumber = +active.moveNumber;
           this.updateDisplayedSubmissionFlags();
@@ -271,9 +277,20 @@ export class ScoresheetComponent implements OnDestroy {
   }
 
   clearSelections() {
-    if (this.displayedSubmission.status === ItemStatus.Active) {
-      this.submissionDataService.clearSubmission(this.displayedSubmission.id);
+    if (this.displayedSubmission.status !== ItemStatus.Active) {
+      return;
     }
+    this.dialogService
+      .confirm({
+        title: 'Clear all selections?',
+        message: 'This removes every selection on this scoresheet. Are you sure?',
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.submissionDataService.clearSubmission(this.displayedSubmission.id);
+        }
+      });
   }
 
   presetSelections() {
@@ -338,15 +355,15 @@ export class ScoresheetComponent implements OnDestroy {
       if (commentText) {
         const newComment = { ...comment } as SubmissionComment;
         newComment.comment = event.target.value;
-        this.submissionDataService.changeSubmissionComment(
+        this.trackCommentSave(scoringOptionId, this.submissionDataService.changeSubmissionComment(
           this.displayedSubmission.id,
           newComment
-        );
+        ));
       } else {
-        this.submissionDataService.removeSubmissionComment(
+        this.trackCommentSave(scoringOptionId, this.submissionDataService.removeSubmissionComment(
           this.displayedSubmission.id,
           comment.id
-        );
+        ));
       }
     } else {
       const submissionCategory =
@@ -358,14 +375,66 @@ export class ScoresheetComponent implements OnDestroy {
           (so) => so.scoringOptionId === scoringOptionId
         );
         if (submissionOption) {
-          this.submissionDataService.addSubmissionComment(
+          this.trackCommentSave(scoringOptionId, this.submissionDataService.addSubmissionComment(
             this.displayedSubmission.id,
             submissionOption.id,
             commentText
-          );
+          ));
         }
       }
     }
+  }
+
+  private trackCommentSave(scoringOptionId: string, request$: Observable<Submission>) {
+    this.commentSaveStates[scoringOptionId] = 'saving';
+    request$.subscribe({
+      next: () => (this.commentSaveStates[scoringOptionId] = 'saved'),
+      error: () => (this.commentSaveStates[scoringOptionId] = 'failed'),
+    });
+  }
+
+  // with answer boxes each box is a question answered by its text, otherwise each category that needs
+  // a selection counts once
+  getAnsweredCounts(): { answered: number; total: number } {
+    const counts = { answered: 0, total: 0 };
+    this.getDisplayedScoringCategories().forEach((scoringCategory) => {
+      const scoringOptions = (scoringCategory.scoringOptions || []).filter((so) => !so.isModifier);
+      if (this.selectedScoringModel.displayCommentTextBoxes) {
+        scoringOptions.forEach((scoringOption) => {
+          counts.total++;
+          if (this.optionComments(scoringCategory.id, scoringOption.id).some((c) => c.comment)) {
+            counts.answered++;
+          }
+        });
+      } else if (scoringCategory.scoringOptionSelection !== ScoringOptionSelection.None) {
+        counts.total++;
+        if (scoringOptions.some((so) => this.isSelected(scoringCategory.id, so.id))) {
+          counts.answered++;
+        }
+      }
+    });
+    return counts;
+  }
+
+  // the first later move that has questions, for the empty move message
+  getNextQuestionMove(): string {
+    const displayedMoveNumber = this.getResolvedDisplayedMoveNumber();
+    if (
+      displayedMoveNumber === null ||
+      !this.selectedScoringModel.displayScoringModelByMoveNumber ||
+      !this.selectedScoringModel.scoringCategories
+    ) {
+      return '';
+    }
+    const nextMoveNumbers = this.selectedScoringModel.scoringCategories
+      .map((sc) => +sc.moveNumberFirstDisplay)
+      .filter((moveNumber) => moveNumber > displayedMoveNumber);
+    if (nextMoveNumbers.length === 0) {
+      return '';
+    }
+    const nextMoveNumber = Math.min(...nextMoveNumbers);
+    const nextMove = this.moveQuery.getAll().find((m) => +m.moveNumber === nextMoveNumber);
+    return nextMove?.description || 'Move ' + nextMoveNumber;
   }
 
   deleteComment(submissionComment: SubmissionComment) {
@@ -564,9 +633,10 @@ export class ScoresheetComponent implements OnDestroy {
   }
 
   setFormatting() {
-    this.displaying = this.uiDataService.getSubmissionType(
-      this.selectedEvaluation.id
-    );
+    // nothing is saved until the user picks a view, so fall back to what is shown
+    this.displaying =
+      this.uiDataService.getSubmissionType(this.selectedEvaluation.id) ||
+      (this.displayedSubmission?.userId ? 'user' : 'team');
     // set proper permissions for this selection
     const canModify =
       this.displaying === 'user' ||
@@ -591,7 +661,6 @@ export class ScoresheetComponent implements OnDestroy {
       !this.displayedSubmission.scoreIsAnAverage &&
       this.displayedSubmission.status === ItemStatus.Active;
     // this.tableClass = this.displaying + '-background';
-    this.buttonClass = 'mat-' + this.displaying;
   }
 
   private getResolvedDisplayedMoveNumber(): number | null {
@@ -632,7 +701,7 @@ export class ScoresheetComponent implements OnDestroy {
   getDisplayedScoringCategories(): ScoringCategory[] {
     const displayedScoringCategories: ScoringCategory[] = [];
     const displayedMoveNumber = this.getResolvedDisplayedMoveNumber();
-    this.selectedScoringModel.scoringCategories.forEach((scoringCategory) => {
+    (this.selectedScoringModel.scoringCategories || []).forEach((scoringCategory) => {
       let hideIt = false;
       if (
         this.selectedScoringModel.displayScoringModelByMoveNumber &&
@@ -651,14 +720,6 @@ export class ScoresheetComponent implements OnDestroy {
     });
     this.haveSomeScoringCategories = displayedScoringCategories.length > 0;
     return displayedScoringCategories;
-  }
-
-  matHeaderClass() {
-    if (this.showHeader) {
-      return 'cssLayoutRowSpaceBetween';
-    } else {
-      return 'no-display';
-    }
   }
 
   ngOnDestroy() {

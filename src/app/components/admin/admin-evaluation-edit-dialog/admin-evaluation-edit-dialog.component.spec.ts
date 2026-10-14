@@ -1,7 +1,7 @@
 // Copyright 2026 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -34,14 +34,21 @@ import { AdminEvaluationEditDialogComponent } from './admin-evaluation-edit-dial
 // enabled, visible controls here, so the check is skipped.
 const FAST_POINTER = { pointerEventsCheck: PointerEventsCheckLevel.Never };
 
-async function renderEvaluationDialog(canEdit: boolean, isExisting = true) {
+// The API sends ISO strings at runtime; the generated model types them as Date.
+const iso = (s: string) => s as unknown as Date;
+
+async function renderEvaluationDialog(
+  canEdit: boolean,
+  isExisting = true,
+  situationTime: Date = new Date('2026-01-05T14:30:00Z'),
+) {
   const evaluation: Evaluation = {
     id: isExisting ? 'e1' : undefined,
     description: 'Ransomware exercise',
     scoringModelId: 'sm1',
     status: ItemStatus.Active,
     currentMoveNumber: 1,
-    situationTime: new Date('2026-01-05T14:30:00Z'),
+    situationTime,
     situationDescription: '<p>Day one</p>',
     showAdvanceButton: false,
   };
@@ -152,5 +159,45 @@ describe('AdminEvaluationEditDialogComponent', () => {
     expect(screen.getByLabelText('Show Advance Button')).toBeDisabled();
     expect(screen.getByLabelText('Open calendar')).toBeDisabled();
     expect(save()).toBeDisabled();
+  });
+
+  describe('situation time zone label', () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    /**
+     * Verifies: the zone label comes from the date shown, so one dialog labels an October date EDT and, once the date changes, a November date EST.
+     * Interacts with: the situation time form control, getTimezoneAbbr, the date pipe.
+     * Data: TZ America/New_York; canEdit true; situation time 12 Oct 2026 16:00 UTC, then set to 12 Nov 2026 16:00 UTC on the same instance.
+     */
+    it('labels a date by its own side of a DST change', async () => {
+      vi.stubEnv('TZ', 'America/New_York');
+      const { fixture } = await renderEvaluationDialog(
+        true,
+        true,
+        new Date('2026-10-12T16:00:00Z'),
+      );
+      expect(screen.getByText('12 Oct 2026 12:00 EDT')).toBeInTheDocument();
+
+      fixture.componentInstance.situationDateFormControl.setValue(
+        new Date('2026-11-12T16:00:00Z'),
+      );
+      fixture.detectChanges();
+
+      expect(screen.getByText('12 Nov 2026 11:00 EST')).toBeInTheDocument();
+    });
+
+    /**
+     * Verifies: a situation time held as the ISO string the API sends is labelled with the zone of that date.
+     * Interacts with: the situation time form control, getTimezoneAbbr, the date pipe.
+     * Data: TZ America/New_York; canEdit true; situation time '2026-11-12T16:00:00Z' as a string.
+     */
+    it('labels the ISO string a form control can hold', async () => {
+      vi.stubEnv('TZ', 'America/New_York');
+      await renderEvaluationDialog(true, true, iso('2026-11-12T16:00:00Z'));
+
+      expect(screen.getByText('12 Nov 2026 11:00 EST')).toBeInTheDocument();
+    });
   });
 });

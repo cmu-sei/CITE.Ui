@@ -16,8 +16,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   Evaluation,
   ItemStatus,
+  Move,
   ScoringCategory,
   ScoringModel,
+  ScoringOptionSelection,
   Submission,
   SubmissionService,
   TeamPermission,
@@ -26,6 +28,7 @@ import {
 import { ScoresheetComponent } from './scoresheet.component';
 import { DisplayOrderPipe } from '../../utilities/sort-by-pipe';
 import { EvaluationStore } from '../../data/evaluation/evaluation.store';
+import { MoveStore } from '../../data/move/move.store';
 import { ScoringModelStore } from '../../data/scoring-model/scoring-model.store';
 import { SubmissionStore } from '../../data/submission/submission.store';
 import { TeamStore } from '../../data/team/team.store';
@@ -97,6 +100,7 @@ async function renderScoresheet(
     displaying?: 'user' | 'team';
     myTeamId?: string;
     activeTeam?: boolean;
+    moves?: Move[];
   } = {},
 ) {
   const evaluation: Evaluation = {
@@ -147,6 +151,7 @@ async function renderScoresheet(
         s.set([{ ...MODEL, ...overrides.model }]);
         s.setActive('sm1');
       }),
+      seededStore(MoveStore, (s) => s.set(overrides.moves ?? [])),
       seededStore(TeamStore, (s) => {
         s.set([{ id: 't1', name: 'Red', memberships: [] }]);
         if (overrides.activeTeam !== false) s.setActive('t1');
@@ -424,5 +429,113 @@ describe('ScoresheetComponent', () => {
         'You have not been given appropriate access to this application.',
       ),
     ).toBeInTheDocument();
+  });
+
+  describe('answered count', () => {
+    /**
+     * Verifies: with comment boxes on, each non-modifier option is a question, answered by a comment with text.
+     * Interacts with: getAnsweredCounts() through the toolbar's Answered count, real ScoringModel/Submission stores.
+     * Data: displayCommentTextBoxes; one category with options opt-1, opt-2 and modifier mod-1; a comment on opt-1 only.
+     */
+    it('counts each comment box as a question when comment boxes are on', async () => {
+      await renderScoresheet({
+        model: {
+          displayCommentTextBoxes: true,
+          scoringCategories: [
+            {
+              ...category('cat-1', 0, 9, 1),
+              scoringOptions: [
+                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'What happened?' },
+                { id: 'opt-2', scoringCategoryId: 'cat-1', description: 'Who is affected?' },
+                { id: 'mod-1', scoringCategoryId: 'cat-1', description: 'Modifier', isModifier: true },
+              ],
+            },
+          ],
+        },
+        activeSubmission: {
+          submissionCategories: [
+            {
+              scoringCategoryId: 'cat-1',
+              submissionOptions: [
+                {
+                  id: 'so-1',
+                  scoringOptionId: 'opt-1',
+                  submissionComments: [{ id: 'c1', comment: 'an answer' }],
+                },
+                { id: 'so-2', scoringOptionId: 'opt-2', submissionComments: [] },
+              ],
+            },
+          ],
+        },
+      });
+
+      expect(screen.getByText('Answered 1 of 2')).toBeVisible();
+    });
+
+    /**
+     * Verifies: without comment boxes, each category that takes a selection is one question, answered by a selected option; a None category is not counted.
+     * Interacts with: getAnsweredCounts() through the toolbar's Answered count, isSelected().
+     * Data: categories cat-1 and cat-2 (Single) and cat-3 (None), one option each; opt-1 selected, opt-2 not.
+     */
+    it('counts each selectable category as a question without comment boxes', async () => {
+      const single = (id: string, option: string, order: number) => ({
+        ...category(id, 0, 9, order),
+        scoringOptionSelection: ScoringOptionSelection.Single,
+        scoringOptions: [{ id: option, scoringCategoryId: id, description: `Option ${option}` }],
+      });
+      await renderScoresheet({
+        model: {
+          scoringCategories: [
+            single('cat-1', 'opt-1', 1),
+            single('cat-2', 'opt-2', 2),
+            {
+              ...single('cat-3', 'opt-3', 3),
+              scoringOptionSelection: ScoringOptionSelection.None,
+            },
+          ],
+        },
+        activeSubmission: {
+          submissionCategories: [
+            {
+              scoringCategoryId: 'cat-1',
+              submissionOptions: [
+                { id: 'so-1', scoringOptionId: 'opt-1', isSelected: true, submissionComments: [] },
+              ],
+            },
+            {
+              scoringCategoryId: 'cat-2',
+              submissionOptions: [
+                { id: 'so-2', scoringOptionId: 'opt-2', isSelected: false, submissionComments: [] },
+              ],
+            },
+          ],
+        },
+      });
+
+      expect(screen.getByText('Answered 1 of 2')).toBeVisible();
+    });
+  });
+
+  /**
+   * Verifies: a move with no questions lists no categories and names the next move that has questions, by its description.
+   * Interacts with: getDisplayedScoringCategories(), getNextQuestionMove(), real MoveStore.
+   * Data: categories on moves 0, 3 and 5; submission on move 1; move 3 described 'Move 3: Escalation'.
+   */
+  it('names the next move with questions on an empty move', async () => {
+    await renderScoresheet({
+      model: {
+        scoringCategories: [
+          category('cat-1', 0, 0, 1),
+          category('cat-2', 3, 3, 2),
+          category('cat-3', 5, 5, 3),
+        ],
+      },
+      activeSubmission: { moveNumber: 1 },
+      moves: [{ id: 'mv3', moveNumber: 3, description: 'Move 3: Escalation' }],
+    });
+
+    expect(shownCategories()).toEqual([]);
+    expect(screen.getByText('No responses required for this move.')).toBeVisible();
+    expect(screen.getByText('Questions open in Move 3: Escalation.')).toBeVisible();
   });
 });

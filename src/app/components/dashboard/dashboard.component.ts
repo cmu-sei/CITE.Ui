@@ -33,12 +33,22 @@ import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialog/admin-action-edit-dialog.component';
 import { AdminDutyEditDialogComponent } from '../admin/admin-duty-edit-dialog/admin-duty-edit-dialog.component';
-import { VIEW_CONFIG_CAPPED_HEIGHT } from 'src/app/utilities/editor-config';
 import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
-import { DateTimeFormatOptions } from 'luxon';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+
+interface SituationMove {
+  moveNumber?: number;
+  title: string;
+  time: string;
+  description: string;
+}
+
+interface Situation extends SituationMove {
+  isCurrent: boolean;
+  pastMoves: SituationMove[];
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -67,15 +77,14 @@ export class DashboardComponent implements OnDestroy {
   isActionEditMode = false;
   isDutyEditMode = false;
   private unsubscribe$ = new Subject();
-  editorConfig = VIEW_CONFIG_CAPPED_HEIGHT;
   galleryUrl = '';
   originalDuty: Duty = {};
   modifiedDuty: Duty = {};
-  completeSituationDescription = '';
+  situation: Situation = null;
   loggedInUserId = '';
   showPermissions = false;
   showDuties = false;
-  showActions = true;
+  showActions = false;
   canManageTeam = false;
   canSubmitTeamScore = false;
   canContributeToTeamScore = false;
@@ -225,91 +234,53 @@ export class DashboardComponent implements OnDestroy {
     if (!this.selectedEvaluation) {
       return;
     }
-    const dateTimeFormatOptions = {
+    const isDisplayedMoveCurrent = +this.displayedMoveNumber === +this.currentMoveNumber;
+    const displayedMove = this.moveList?.find(
+      (m) => +m.moveNumber === +this.displayedMoveNumber
+    );
+    if (!displayedMove) {
+      this.situation = null;
+      return;
+    }
+    // the current move's situation lives on the evaluation, past moves carry their own
+    const situation: Situation = {
+      isCurrent: isDisplayedMoveCurrent,
+      title: displayedMove.description,
+      time: this.formatSituationTime(
+        isDisplayedMoveCurrent ? this.selectedEvaluation.situationTime : displayedMove.situationTime
+      ),
+      description: isDisplayedMoveCurrent
+        ? this.selectedEvaluation.situationDescription
+        : displayedMove.situationDescription,
+      pastMoves: [],
+    };
+    if (this.scoringModel && this.scoringModel.showPastSituationDescriptions) {
+      situation.pastMoves = this.moveList
+        .filter((m) => +m.moveNumber < +this.displayedMoveNumber)
+        .map((m) => ({
+          moveNumber: m.moveNumber,
+          title: m.description,
+          time: this.formatSituationTime(m.situationTime),
+          description: m.situationDescription,
+        }));
+    }
+    this.situation = situation;
+  }
+
+  // the viewer's own time zone, labeled, like Blueprint
+  formatSituationTime(situationTime: Date | string): string {
+    if (!situationTime) {
+      return '';
+    }
+    return new Date(situationTime).toLocaleString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-      timeZoneName: 'short',
       hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-    } as DateTimeFormatOptions;
-    let description = '';
-    let pastMovesBannerAdded = false;
-    const isDisplayedMoveCurrent = +this.displayedMoveNumber === +this.currentMoveNumber;
-
-    const displayedMove = this.moveList?.find(
-      (m) => +m.moveNumber === +this.displayedMoveNumber
-    );
-
-    if (isDisplayedMoveCurrent && displayedMove) {
-      description =
-        '<div style="display: flex; align-items: center; font-size: 25px;">' +
-        '<b>' +
-        'Current Move: ' +
-        displayedMove.description +
-        '</b></div>' +
-        '</div>' +
-        '<h4>' +
-        this.selectedEvaluation.situationTime?.toLocaleString(
-          'en-US',
-          dateTimeFormatOptions
-        ) +
-        '<br /></h4>' +
-        this.selectedEvaluation.situationDescription;
-    } else if (
-      displayedMove &&
-      this.displayedMoveNumber !== null &&
-      this.displayedMoveNumber !== undefined
-    ) {
-      description =
-        '<div style="display: flex; align-items: center; font-size: 25px;">' +
-        'Previous Move: ' +
-        displayedMove.description +
-        '</div>' +
-        '<h4>' +
-        displayedMove.situationTime?.toLocaleString(
-          'en-US',
-          dateTimeFormatOptions
-        ) +
-        '<br /></h4>' +
-        displayedMove.situationDescription;
-      pastMovesBannerAdded = true;
-    }
-
-    if (this.scoringModel && this.scoringModel.showPastSituationDescriptions) {
-      this.moveList?.forEach((m) => {
-        if (+m.moveNumber < +this.displayedMoveNumber) {
-          // Add the "Previous Moves" banner only for the first past move number
-          if (!pastMovesBannerAdded) {
-            description =
-              description +
-              '<br /><div style="display: flex; align-items: center; font-size: 25px;">' +
-              '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
-              'Previous Moves' +
-              '<div style="flex: 1; border-bottom: 3px solid grey; margin: 0 10px;"></div>' +
-              '</div>';
-            pastMovesBannerAdded = true;
-          } else {
-            // Add a line separator for past moves without the banner
-            description =
-              description +
-              '<br><div style="border-bottom: 3px solid grey; margin: 5px;"></div>';
-          }
-
-          // Add the past move details
-          description =
-            description +
-            '<h4>' +
-            m.situationTime.toLocaleString('en-US', dateTimeFormatOptions) +
-            '</h4>' +
-            m.situationDescription +
-            '</div>';
-        }
-      });
-    }
-    this.completeSituationDescription = description;
+      minute: '2-digit',
+      timeZoneName: 'short',
+    });
   }
 
   loadTeamData() {
