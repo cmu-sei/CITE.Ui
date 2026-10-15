@@ -3,7 +3,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Provider } from '@angular/core';
-import { of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Observable, Subject, of } from 'rxjs';
 import { screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CrucibleDialogService } from '@cmusei/crucible-common';
 import {
   Evaluation,
   ItemStatus,
@@ -21,6 +23,7 @@ import {
   ScoringModel,
   ScoringOptionSelection,
   Submission,
+  SubmissionComment,
   SubmissionService,
   TeamPermission,
   TeamPermissionClaim,
@@ -37,8 +40,13 @@ import { SubmissionDataService } from '../../data/submission/submission-data.ser
 import { TeamMembershipDataService } from '../../data/team/team-membership-data.service';
 import { UserDataService } from '../../data/user/user-data.service';
 import { ApiStub } from '../../test-utils/api-stub';
+import { dialogRefStub } from '../../test-utils/dialog-refs';
 import { permissionDataProviders } from '../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../test-utils/render-component';
+import {
+  captureUnhandledRxErrors,
+  flush,
+} from '../../test-utils/unhandled-rx-errors';
 
 // A real Akita store, already holding data when the component is built, as it
 // is once the home page has loaded the evaluation.
@@ -97,10 +105,25 @@ async function renderScoresheet(
     evaluation?: Partial<Evaluation>;
     activeSubmission?: Partial<Submission> | null;
     teamClaims?: TeamPermissionClaim[];
-    displaying?: 'user' | 'team';
+    // null: no view saved yet (the user never picked User or Team).
+    displaying?: 'user' | 'team' | null;
     myTeamId?: string;
     activeTeam?: boolean;
     moves?: Move[];
+    confirm?: boolean;
+    addSubmissionComment?: (
+      id: string,
+      comment?: SubmissionComment,
+    ) => Observable<Submission>;
+    changeSubmissionComment?: (
+      id: string,
+      commentId: string,
+      comment?: SubmissionComment,
+    ) => Observable<Submission>;
+    removeSubmissionComment?: (
+      id: string,
+      commentId: string,
+    ) => Observable<Submission>;
   } = {},
 ) {
   const evaluation: Evaluation = {
@@ -121,13 +144,32 @@ async function renderScoresheet(
           ...overrides.activeSubmission,
         };
   // UIDataService reads the submission type from localStorage when built.
-  new UIDataService().setSubmissionType('e1', overrides.displaying ?? 'team');
+  if (overrides.displaying !== null) {
+    new UIDataService().setSubmissionType('e1', overrides.displaying ?? 'team');
+  }
 
   const submissionApi = {
     clearSubmission: vi.fn((id: string) => of({ ...submission, id })),
     presetSubmission: vi.fn((id: string) => of({ ...submission, id })),
     updateSubmission: vi.fn((id: string, s?: Submission) => of({ ...s, id })),
+    addSubmissionComment: vi.fn(
+      overrides.addSubmissionComment ??
+        ((id: string) => of({ ...submission, id })),
+    ),
+    changeSubmissionComment: vi.fn(
+      overrides.changeSubmissionComment ??
+        ((id: string) => of({ ...submission, id })),
+    ),
+    removeSubmissionComment: vi.fn(
+      overrides.removeSubmissionComment ??
+        ((id: string) => of({ ...submission, id })),
+    ),
   } satisfies ApiStub<SubmissionService>;
+  const confirm = vi.fn(
+    () => dialogRefStub<unknown, boolean>(overrides.confirm ?? true).dialogRef,
+  );
+  const dialogService: Pick<CrucibleDialogService, 'confirm'> = { confirm };
+  const selectDisplayedSubmission = vi.fn();
 
   const rendered = await renderComponent(ScoresheetComponent, {
     declarations: [ScoresheetComponent, DisplayOrderPipe],
@@ -141,6 +183,7 @@ async function renderScoresheet(
       MatTooltipModule,
     ],
     componentInputs: { myTeamId: overrides.myTeamId ?? 't1', noChanges: false },
+    on: { selectDisplayedSubmission },
     providers: [
       ...permissionDataProviders({ team: overrides.teamClaims ?? [] }),
       seededStore(EvaluationStore, (s) => {
@@ -164,23 +207,32 @@ async function renderScoresheet(
       TeamMembershipDataService,
       UserDataService,
       { provide: SubmissionService, useValue: submissionApi },
+      { provide: CrucibleDialogService, useValue: dialogService },
     ],
   });
-  return { ...rendered, submissionApi, user: userEvent.setup() };
+  return {
+    ...rendered,
+    submissionApi,
+    confirm,
+    selectDisplayedSubmission,
+    user: userEvent.setup(),
+  };
 }
 
-// Buttons are looked up by label inside the header's button bar (Submit,
-// Reopen, Clear, Preset). A role query, even scoped to the bar, computes
-// styles up the nested mat-tables and took up to 3.2 s per test under
-// test:coverage (5 s timeout); visibility is asserted on the one element
-// found.
-const buttonBar = () => document.querySelector<HTMLElement>('.move-buttons');
-const button = (name: string): HTMLButtonElement | null => {
-  const bar = buttonBar();
-  return bar
-    ? (within(bar).queryByText(name)?.closest('button') ?? null)
-    : null;
-};
+// The toolbar is the table's header cell, rendered whenever a category
+// applies to the move. Its buttons (the User/Team view buttons and Submit,
+// Reopen, Clear and Preset) are found by role inside it and picked by their
+// text, which is their accessible name; an absence check therefore fails as
+// soon as the control renders. The name is matched on the text rather than
+// with the query's `name` option: computing accessible names over the nested
+// mat-tables took about 2 s per test without coverage (README, "Role queries
+// are slow on big templates").
+const toolbar = () =>
+  document.querySelector<HTMLElement>('.scoresheet-toolbar') as HTMLElement;
+const toolbarButton = (name: string): HTMLButtonElement | null =>
+  (within(toolbar())
+    .queryAllByRole('button')
+    .find((b) => b.textContent?.trim() === name) as HTMLButtonElement) ?? null;
 
 const shownCategories = () =>
   screen.queryAllByText(/^\d+\. Category /).map((el) => el.textContent?.trim());
@@ -237,16 +289,17 @@ describe('ScoresheetComponent', () => {
     /**
      * Verifies: when no category applies to the displayed move the sheet says no responses are required.
      * Interacts with: haveSomeScoringCategories, mat-table header.
-     * Data: categories for moves 5-6 only; submission on move 2.
+     * Data: categories for moves 5-6 only; submission on move 2; user view, where Submit would show if the toolbar rendered.
      */
     it('says no responses are needed when no category applies', async () => {
       await renderScoresheet({
+        displaying: 'user',
         model: { scoringCategories: [category('late', 5, 6, 1)] },
       });
       expect(
         screen.getByText('No responses required for this move.'),
       ).toBeInTheDocument();
-      expect(button('Submit')).not.toBeInTheDocument();
+      expect(toolbarButton('Submit')).not.toBeInTheDocument();
     });
   });
 
@@ -262,9 +315,10 @@ describe('ScoresheetComponent', () => {
           { teamId: 't1', permissions: [TeamPermission.SubmitTeamScore] },
         ],
       });
-      expect(button('Submit')).toBeVisible();
-      expect(button('Submit')).toBeEnabled();
-      expect(button('Clear')).not.toBeInTheDocument();
+      expect(toolbarButton('Submit')).toBeVisible();
+      expect(toolbarButton('Submit')).toBeEnabled();
+      expect(toolbarButton('Clear')).not.toBeInTheDocument();
+      expect(toolbarButton('Preset')).not.toBeInTheDocument();
     });
 
     /**
@@ -278,14 +332,14 @@ describe('ScoresheetComponent', () => {
           { teamId: 't1', permissions: [TeamPermission.EditTeamScore] },
         ],
       });
-      expect(button('Clear')).toBeVisible();
-      expect(button('Preset')).toBeVisible();
-      expect(button('Submit')).not.toBeInTheDocument();
+      expect(toolbarButton('Clear')).toBeVisible();
+      expect(toolbarButton('Preset')).toBeVisible();
+      expect(toolbarButton('Submit')).not.toBeInTheDocument();
     });
 
     /**
-     * Verifies: without team claims (or with claims on another team) the team score is read-only.
-     * Interacts with: real PermissionDataService.hasTeamPermission.
+     * Verifies: with Submit and Edit claims on another team the team score is read-only, while the toolbar still renders its view buttons.
+     * Interacts with: real PermissionDataService.hasTeamPermission, the toolbar's buttons by role and name.
      * Data: displaying 'team'; Submit and Edit claims on t2 only.
      */
     it('hides team score controls without a claim on the active team', async () => {
@@ -300,8 +354,9 @@ describe('ScoresheetComponent', () => {
           },
         ],
       });
+      expect(toolbarButton('Team')).toBeVisible();
       for (const name of ['Submit', 'Clear', 'Preset']) {
-        expect(button(name)).not.toBeInTheDocument();
+        expect(toolbarButton(name)).not.toBeInTheDocument();
       }
     });
 
@@ -313,7 +368,7 @@ describe('ScoresheetComponent', () => {
     it("always allows editing the user's own score", async () => {
       await renderScoresheet({ displaying: 'user' });
       for (const name of ['Submit', 'Clear', 'Preset']) {
-        expect(button(name)).toBeVisible();
+        expect(toolbarButton(name)).toBeVisible();
       }
     });
 
@@ -325,7 +380,9 @@ describe('ScoresheetComponent', () => {
     it('shows only the status when observing another team', async () => {
       await renderScoresheet({ displaying: 'user', myTeamId: 't9' });
       expect(screen.getByText('Unsubmitted')).toBeVisible();
-      expect(button('Submit')).not.toBeInTheDocument();
+      for (const name of ['Submit', 'Clear', 'Preset']) {
+        expect(toolbarButton(name)).not.toBeInTheDocument();
+      }
     });
 
     /**
@@ -356,9 +413,10 @@ describe('ScoresheetComponent', () => {
         teamClaims: [claim],
       });
       if (shown) {
-        expect(button('Reopen')).toBeVisible();
+        expect(toolbarButton('Reopen')).toBeVisible();
+        expect(within(toolbar()).getByText('Submitted')).toBeVisible();
       } else {
-        expect(button('Reopen')).not.toBeInTheDocument();
+        expect(toolbarButton('Reopen')).not.toBeInTheDocument();
       }
     });
 
@@ -374,7 +432,7 @@ describe('ScoresheetComponent', () => {
           { teamId: 't1', permissions: [TeamPermission.SubmitTeamScore] },
         ],
       });
-      await user.click(button('Reopen')!);
+      await user.click(toolbarButton('Reopen')!);
       expect(submissionApi.updateSubmission).toHaveBeenCalledWith(
         's1',
         expect.objectContaining({ id: 's1', status: ItemStatus.Active }),
@@ -382,39 +440,458 @@ describe('ScoresheetComponent', () => {
     });
 
     /**
-     * Verifies: Clear and Preset each call their submission endpoint for the displayed submission.
-     * Interacts with: user-event click, real SubmissionDataService, SubmissionService stub.
+     * Verifies: Clear and Preset each call their submission endpoint for the displayed submission; Clear only after the user confirms, Preset without asking.
+     * Interacts with: user-event click, CrucibleDialogService.confirm stub (accepted), real SubmissionDataService, SubmissionService stub.
      * Data: user scoring on active submission s1; one button per row.
      */
     it.each([
-      { name: 'Clear', endpoint: 'clearSubmission' },
-      { name: 'Preset', endpoint: 'presetSubmission' },
+      { name: 'Clear', endpoint: 'clearSubmission', asks: true },
+      { name: 'Preset', endpoint: 'presetSubmission', asks: false },
     ] as const)(
       '$name calls $endpoint for the displayed submission',
-      async ({ name, endpoint }) => {
-        const { user, submissionApi } = await renderScoresheet({
+      async ({ name, endpoint, asks }) => {
+        const { user, submissionApi, confirm } = await renderScoresheet({
           displaying: 'user',
         });
-        await user.click(button(name)!);
+        await user.click(toolbarButton(name)!);
         expect(submissionApi[endpoint]).toHaveBeenCalledWith('s1');
+        expect(confirm).toHaveBeenCalledTimes(asks ? 1 : 0);
+      },
+    );
+
+    /**
+     * Verifies: Clear asks before it removes every selection, and keeps them when the user declines.
+     * Interacts with: user-event click, CrucibleDialogService.confirm stub (declined), SubmissionService.clearSubmission stub.
+     * Data: user scoring on active submission s1; the confirmation is cancelled.
+     */
+    it('keeps the selections when Clear is declined', async () => {
+      const { user, submissionApi, confirm } = await renderScoresheet({
+        displaying: 'user',
+        confirm: false,
+      });
+      await user.click(toolbarButton('Clear')!);
+
+      expect(confirm).toHaveBeenCalledWith({
+        title: 'Clear all selections?',
+        message: 'This removes every selection on this scoresheet. Are you sure?',
+      });
+      expect(submissionApi.clearSubmission).not.toHaveBeenCalled();
+    });
+
+    /**
+     * Verifies: until the user picks a view, the scoresheet treats the shown submission's kind as the view: a user submission gets every control, a team submission follows the team claims; EditTeamScore on another team is the near miss.
+     * Interacts with: setFormatting() fallback when UIDataService has no saved type, real PermissionDataService.hasTeamPermission.
+     * Data: no saved submission type; per row, a user submission (userId u1) or a team submission, and the team claims.
+     */
+    it.each<{
+      label: string;
+      userId?: string;
+      claims: TeamPermissionClaim[];
+      shown: string[];
+      hidden: string[];
+    }>([
+      {
+        label: 'a user submission, no team claims',
+        userId: 'u1',
+        claims: [],
+        shown: ['Submit', 'Clear', 'Preset'],
+        hidden: [],
+      },
+      {
+        label: 'a team submission, EditTeamScore t1',
+        claims: [{ teamId: 't1', permissions: [TeamPermission.EditTeamScore] }],
+        shown: ['Clear', 'Preset'],
+        hidden: ['Submit'],
+      },
+      {
+        label: 'a team submission, SubmitTeamScore t1',
+        claims: [{ teamId: 't1', permissions: [TeamPermission.SubmitTeamScore] }],
+        shown: ['Submit'],
+        hidden: ['Clear', 'Preset'],
+      },
+      {
+        label: 'a team submission, EditTeamScore t2',
+        claims: [{ teamId: 't2', permissions: [TeamPermission.EditTeamScore] }],
+        shown: [],
+        hidden: ['Submit', 'Clear', 'Preset'],
+      },
+    ])(
+      'with no saved view, $label shows $shown',
+      async ({ userId, claims, shown, hidden }) => {
+        await renderScoresheet({
+          displaying: null,
+          activeSubmission: { userId },
+          teamClaims: claims,
+        });
+        for (const name of shown) {
+          expect(toolbarButton(name)).toBeVisible();
+        }
+        for (const name of hidden) {
+          expect(toolbarButton(name)).not.toBeInTheDocument();
+        }
       },
     );
   });
 
+  describe('view buttons', () => {
+    /**
+     * Verifies: the saved view's button is filled and the others outlined; with no saved view the shown submission's kind is filled.
+     * Interacts with: the toolbar's User and Team buttons (matButton appearance), UIDataService saved type.
+     * Data: per row, the saved type (or none) and the shown submission (team, or user u1).
+     */
+    it.each<{
+      label: string;
+      displaying: 'user' | 'team' | null;
+      userId?: string;
+      filled: string;
+      outlined: string;
+    }>([
+      { label: 'saved Team', displaying: 'team', userId: 'u1', filled: 'Team', outlined: 'User' },
+      { label: 'saved User', displaying: 'user', filled: 'User', outlined: 'Team' },
+      { label: 'no saved view and a team submission', displaying: null, filled: 'Team', outlined: 'User' },
+      { label: 'no saved view and a user submission', displaying: null, userId: 'u1', filled: 'User', outlined: 'Team' },
+    ])(
+      'fills $filled for $label',
+      async ({ displaying, userId, filled, outlined }) => {
+        await renderScoresheet({ displaying, activeSubmission: { userId } });
+
+        expect(toolbarButton(filled)).toHaveClass('mat-mdc-unelevated-button');
+        expect(toolbarButton(outlined)).toHaveClass('mat-mdc-outlined-button');
+      },
+    );
+
+    /**
+     * Verifies: clicking a view button asks the parent for that submission.
+     * Interacts with: user-event click, the selectDisplayedSubmission output.
+     * Data: displaying 'team'; the user clicks User, then Team Avg.
+     */
+    it('emits the picked view', async () => {
+      const { user, selectDisplayedSubmission } = await renderScoresheet();
+      await user.click(toolbarButton('User')!);
+      await user.click(toolbarButton('Team Avg')!);
+
+      expect(selectDisplayedSubmission.mock.calls).toEqual([
+        ['user'],
+        ['team-avg'],
+      ]);
+    });
+
+    /**
+     * Verifies: observing another team disables the User and Team Avg buttons but keeps Team.
+     * Interacts with: myTeamId input vs the active team.
+     * Data: myTeamId t9 while t1 is active.
+     */
+    it('disables the personal views when observing another team', async () => {
+      await renderScoresheet({ myTeamId: 't9' });
+
+      expect(toolbarButton('User')).toBeDisabled();
+      expect(toolbarButton('Team Avg')).toBeDisabled();
+      expect(toolbarButton('Team')).toBeEnabled();
+    });
+  });
+
+  describe('option controls', () => {
+    /**
+     * Verifies: the option checkboxes and the Add, Edit and Delete Comment buttons follow EditTeamScore on the active team (showModifyControls); SubmitTeamScore alone is the near miss that leaves the checkboxes disabled and the comment buttons out.
+     * Interacts with: setFormatting() showModifyControls, real PermissionDataService.hasTeamPermission, the option rows (checkbox and comment buttons by label).
+     * Data: displaying 'team'; one Single category with options 'Isolate the host' (comment c1) and 'Reset passwords'; per row, one claim on t1.
+     */
+    it.each<{ label: string; permission: TeamPermission; editable: boolean }>([
+      { label: 'EditTeamScore', permission: TeamPermission.EditTeamScore, editable: true },
+      { label: 'SubmitTeamScore', permission: TeamPermission.SubmitTeamScore, editable: false },
+    ])(
+      'option controls editable=$editable with $label on t1',
+      async ({ permission, editable }) => {
+        await renderScoresheet({
+          model: {
+            scoringCategories: [
+              {
+                ...category('cat-1', 0, 9, 1),
+                scoringOptionSelection: ScoringOptionSelection.Single,
+                scoringOptions: [
+                  { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+                  { id: 'opt-2', scoringCategoryId: 'cat-1', description: 'Reset passwords', displayOrder: 2 },
+                ],
+              },
+            ],
+          },
+          activeSubmission: {
+            submissionCategories: [
+              {
+                scoringCategoryId: 'cat-1',
+                submissionOptions: [
+                  {
+                    id: 'so-1',
+                    scoringOptionId: 'opt-1',
+                    isSelected: false,
+                    submissionComments: [{ id: 'c1', comment: 'Done at noon' }],
+                  },
+                  { id: 'so-2', scoringOptionId: 'opt-2', isSelected: false, submissionComments: [] },
+                ],
+              },
+            ],
+          },
+          teamClaims: [{ teamId: 't1', permissions: [permission] }],
+        });
+
+        expect(screen.getByText('Done at noon')).toBeVisible();
+        // The checkbox's own input, since mat-checkbox carries the state.
+        const checkbox = screen.getByLabelText('Isolate the host') as HTMLInputElement;
+        expect(checkbox.disabled).toBe(!editable);
+        const commentButtons = ['Add Comment', 'Edit Comment', 'Delete Comment'];
+        for (const name of commentButtons) {
+          if (editable) {
+            expect(screen.getAllByLabelText(name)[0]).toBeVisible();
+          } else {
+            expect(screen.queryAllByLabelText(name)).toEqual([]);
+          }
+        }
+      },
+    );
+  });
+
+  describe('comment boxes', () => {
+    const COMMENT_MODEL: Partial<ScoringModel> = {
+      displayCommentTextBoxes: true,
+      scoringCategories: [
+        {
+          ...category('cat-1', 0, 9, 1),
+          scoringOptionSelection: ScoringOptionSelection.None,
+          scoringOptions: [
+            { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'What happened?', displayOrder: 1 },
+            { id: 'opt-2', scoringCategoryId: 'cat-1', description: 'Who is affected?', displayOrder: 2 },
+          ],
+        },
+      ],
+    };
+    const COMMENT_SUBMISSION: Partial<Submission> = {
+      submissionCategories: [
+        {
+          scoringCategoryId: 'cat-1',
+          submissionOptions: [
+            { id: 'so-1', scoringOptionId: 'opt-1', submissionComments: [] },
+            { id: 'so-2', scoringOptionId: 'opt-2', submissionComments: [] },
+          ],
+        },
+      ],
+    };
+
+    /**
+     * Verifies: each comment box is a numbered question named by its option, editable while the team score can be submitted; EditTeamScore alone (a near miss) leaves it disabled.
+     * Interacts with: the comment textareas by label, showSubmitButton, real PermissionDataService.hasTeamPermission.
+     * Data: displayCommentTextBoxes with useSubmit; displaying 'team'; per row, one claim on t1.
+     */
+    it.each<{ label: string; permission: TeamPermission; editable: boolean }>([
+      { label: 'SubmitTeamScore', permission: TeamPermission.SubmitTeamScore, editable: true },
+      { label: 'EditTeamScore', permission: TeamPermission.EditTeamScore, editable: false },
+    ])(
+      'comment boxes editable=$editable with $label',
+      async ({ permission, editable }) => {
+        const { fixture } = await renderScoresheet({
+          model: COMMENT_MODEL,
+          activeSubmission: COMMENT_SUBMISSION,
+          teamClaims: [{ teamId: 't1', permissions: [permission] }],
+        });
+        // NgModel applies its disabled state a microtask later.
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(screen.getByText('1.')).toBeVisible();
+        expect(screen.getByText('2.')).toBeVisible();
+        const box = screen.getByLabelText('What happened?');
+        if (editable) {
+          expect(box).toBeEnabled();
+        } else {
+          expect(box).toBeDisabled();
+        }
+      },
+    );
+
+    /**
+     * Verifies: an answer typed into a comment box shows Saving… while its request is open and Saved once it returns.
+     * Interacts with: user-event typing and tab (change event), real SubmissionDataService.addSubmissionComment, SubmissionService stub held open by a Subject.
+     * Data: user scoring; the first box answered 'Yes'.
+     */
+    it('shows the save state of an answer', async () => {
+      const response = new Subject<Submission>();
+      const { fixture, user, submissionApi } = await renderScoresheet({
+        displaying: 'user',
+        model: COMMENT_MODEL,
+        activeSubmission: COMMENT_SUBMISSION,
+        addSubmissionComment: () => response,
+      });
+      const box = screen.getByLabelText('What happened?');
+      box.focus();
+      await user.type(box, 'Yes', { skipClick: true });
+      await user.tab();
+
+      expect(submissionApi.addSubmissionComment).toHaveBeenCalledWith('s1', {
+        submissionOptionId: 'so-1',
+        comment: 'Yes',
+      });
+      expect(screen.getByText('Saving…')).toBeVisible();
+
+      response.next({ id: 's1', evaluationId: 'e1', moveNumber: 2 });
+      response.complete();
+      fixture.detectChanges();
+
+      expect(screen.getByText('Saved')).toBeVisible();
+      expect(screen.queryByText('Saving…')).not.toBeInTheDocument();
+    });
+
+    /**
+     * Verifies: editing a saved answer sends the change, and emptying it removes the comment; either way the box shows Saving… while the request is open and Saved once it returns.
+     * Interacts with: user-event clear, typing and tab (change event), real SubmissionDataService change/removeSubmissionComment, SubmissionService stubs held open by a Subject.
+     * Data: user scoring; the first box holds comment c1 'Phishing'; per row, the text the user leaves and the endpoint it calls.
+     */
+    it.each<{
+      label: string;
+      text: string;
+      endpoint: 'changeSubmissionComment' | 'removeSubmissionComment';
+      args: unknown[];
+    }>([
+      {
+        label: 'edited',
+        text: 'No',
+        endpoint: 'changeSubmissionComment',
+        args: ['s1', 'c1', { id: 'c1', comment: 'No' }],
+      },
+      {
+        label: 'emptied',
+        text: '',
+        endpoint: 'removeSubmissionComment',
+        args: ['s1', 'c1'],
+      },
+    ])(
+      'shows the save state of an answer $label',
+      async ({ text, endpoint, args }) => {
+        const response = new Subject<Submission>();
+        const { fixture, user, submissionApi } = await renderScoresheet({
+          displaying: 'user',
+          model: COMMENT_MODEL,
+          activeSubmission: {
+            submissionCategories: [
+              {
+                scoringCategoryId: 'cat-1',
+                submissionOptions: [
+                  {
+                    id: 'so-1',
+                    scoringOptionId: 'opt-1',
+                    submissionComments: [{ id: 'c1', comment: 'Phishing' }],
+                  },
+                  { id: 'so-2', scoringOptionId: 'opt-2', submissionComments: [] },
+                ],
+              },
+            ],
+          },
+          changeSubmissionComment: () => response,
+          removeSubmissionComment: () => response,
+        });
+        await fixture.whenStable();
+        fixture.detectChanges();
+        const box = screen.getByLabelText('What happened?');
+        expect(box).toHaveValue('Phishing');
+
+        box.focus();
+        await user.clear(box);
+        if (text) {
+          await user.type(box, text, { skipClick: true });
+        }
+        await user.tab();
+
+        expect(submissionApi[endpoint]).toHaveBeenCalledWith(...args);
+        expect(screen.getByText('Saving…')).toBeVisible();
+
+        response.next({ id: 's1', evaluationId: 'e1', moveNumber: 2 });
+        response.complete();
+        fixture.detectChanges();
+
+        expect(screen.getByText('Saved')).toBeVisible();
+        expect(screen.queryByText('Saving…')).not.toBeInTheDocument();
+      },
+    );
+
+    /**
+     * Verifies: switching to another submission clears the save states shown for the previous one.
+     * Interacts with: real SubmissionStore (the parent activating another submission), commentSaveStates reset on a new active submission.
+     * Data: user scoring; the first box of s1 saved; then s2, with the same questions, is made active.
+     */
+    it('clears the save state when another submission is shown', async () => {
+      const { fixture, user } = await renderScoresheet({
+        displaying: 'user',
+        model: COMMENT_MODEL,
+        activeSubmission: COMMENT_SUBMISSION,
+      });
+      const box = screen.getByLabelText('What happened?');
+      box.focus();
+      await user.type(box, 'Yes', { skipClick: true });
+      await user.tab();
+      fixture.detectChanges();
+      expect(screen.getByText('Saved')).toBeVisible();
+
+      // The parent activates another submission when the user changes view.
+      const store = fixture.debugElement.injector.get(SubmissionStore);
+      store.upsert('s2', {
+        id: 's2',
+        evaluationId: 'e1',
+        teamId: 't1',
+        moveNumber: 2,
+        status: ItemStatus.Active,
+        ...structuredClone(COMMENT_SUBMISSION),
+      });
+      store.setActive('s2');
+      fixture.detectChanges();
+
+      expect(screen.getByLabelText('What happened?')).toBeVisible();
+      expect(screen.queryByText('Saved')).not.toBeInTheDocument();
+    });
+
+    /**
+     * Verifies: a failed save shows Not saved by the box, and the error also escapes the data service's own subscription to the app's ErrorHandler (current behavior).
+     * Interacts with: user-event typing and tab, real SubmissionDataService.addSubmissionComment (shared request), captureUnhandledRxErrors.
+     * Data: user scoring; the request for the first box fails with a 500.
+     */
+    it('shows Not saved when an answer fails to save', async () => {
+      const errors = captureUnhandledRxErrors();
+      const failure = new HttpErrorResponse({ status: 500 });
+      const response = new Subject<Submission>();
+      const { fixture, user } = await renderScoresheet({
+        displaying: 'user',
+        model: COMMENT_MODEL,
+        activeSubmission: COMMENT_SUBMISSION,
+        addSubmissionComment: () => response,
+      });
+      const box = screen.getByLabelText('What happened?');
+      box.focus();
+      await user.type(box, 'Yes', { skipClick: true });
+      await user.tab();
+
+      response.error(failure);
+      await flush();
+      fixture.detectChanges();
+
+      expect(screen.getByText('Not saved')).toBeVisible();
+      // The data service subscribes without an error callback; ErrorService,
+      // the app's ErrorHandler, shows the error.
+      expect(errors).toEqual([failure]);
+    });
+  });
+
   /**
-   * Verifies: with a single score type and useSubmit, the Submit button is rendered but hidden.
-   * Interacts with: showHeader/matHeaderClass(), the component's .no-display style (display: none).
+   * Verifies: with a single score type and useSubmit, Submit is shown while the view buttons are left out.
+   * Interacts with: showHeader (view buttons only), the toolbar's buttons by role and name.
    * Data: model with only useTeamScore and useSubmit; SubmitTeamScore on t1.
    */
-  it('hides the Submit control when the model uses one score type', async () => {
+  it('shows the Submit control when the model uses one score type', async () => {
     await renderScoresheet({
       model: { useUserScore: false, useTeamScore: true },
       teamClaims: [
         { teamId: 't1', permissions: [TeamPermission.SubmitTeamScore] },
       ],
     });
-    expect(button('Submit')).toBeInTheDocument();
-    expect(button('Submit')).not.toBeVisible();
+    expect(toolbarButton('Submit')).toBeVisible();
+    expect(toolbarButton('Team')).not.toBeInTheDocument();
+    expect(toolbarButton('User')).not.toBeInTheDocument();
   });
 
   /**
@@ -537,5 +1014,29 @@ describe('ScoresheetComponent', () => {
     expect(shownCategories()).toEqual([]);
     expect(screen.getByText('No responses required for this move.')).toBeVisible();
     expect(screen.getByText('Questions open in Move 3: Escalation.')).toBeVisible();
+  });
+
+  /**
+   * Verifies: the empty-move note names the next move by number when it has no description, and names none when no later move has questions.
+   * Interacts with: getNextQuestionMove(), real MoveStore.
+   * Data: submission on move 1; per row, the categories' moves and the stored moves.
+   */
+  it.each<{ label: string; first: number; moves: Move[]; note: string | null }>([
+    { label: 'a later move without a description', first: 3, moves: [{ id: 'mv3', moveNumber: 3 }], note: 'Questions open in Move 3.' },
+    { label: 'a later move not loaded', first: 4, moves: [], note: 'Questions open in Move 4.' },
+    { label: 'no later move', first: 0, moves: [], note: null },
+  ])('names the next move for $label', async ({ first, moves, note }) => {
+    await renderScoresheet({
+      model: { scoringCategories: [category('cat-1', first, first, 1)] },
+      activeSubmission: { moveNumber: 1 },
+      moves,
+    });
+
+    expect(screen.getByText('No responses required for this move.')).toBeVisible();
+    if (note) {
+      expect(screen.getByText(note)).toBeVisible();
+    } else {
+      expect(screen.queryByText(/^Questions open in/)).not.toBeInTheDocument();
+    }
   });
 });

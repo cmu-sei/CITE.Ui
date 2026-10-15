@@ -5,7 +5,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { firstValueFrom, of, throwError } from 'rxjs';
+import { Observable, Subject, defer, firstValueFrom, of, throwError } from 'rxjs';
 import {
   Submission,
   SubmissionOptionService,
@@ -14,7 +14,7 @@ import {
 import { SubmissionDataService } from './submission-data.service';
 import { SubmissionQuery } from './submission.query';
 import { SubmissionStore } from './submission.store';
-import { ApiStub, BodyOverload } from '../../test-utils/api-stub';
+import { ApiStub, BodyOverload, endpointStub } from '../../test-utils/api-stub';
 import { activatedRouteStub } from '../../test-utils/activated-route';
 import { getDefaultProviders } from '../../test-utils/default-test-providers';
 import {
@@ -301,6 +301,97 @@ describe('SubmissionDataService', () => {
         run(service);
         expect(endpoint(api)).toHaveBeenCalledWith(...args);
         expect(query.getEntity('s1')?.score).toBe(score);
+      },
+    );
+
+    type CommentEndpoint = keyof Pick<
+      SubmissionService,
+      | 'addSubmissionComment'
+      | 'changeSubmissionComment'
+      | 'removeSubmissionComment'
+    >;
+    const commentRows: Array<{
+      method: CommentEndpoint;
+      run: (service: SubmissionDataService) => Observable<Submission>;
+    }> = [
+      {
+        method: 'addSubmissionComment',
+        run: (service) =>
+          service.addSubmissionComment('s1', 'so1', 'Looks right'),
+      },
+      {
+        method: 'changeSubmissionComment',
+        run: (service) =>
+          service.changeSubmissionComment('s1', { id: 'c1', comment: 'Edited' }),
+      },
+      {
+        method: 'removeSubmissionComment',
+        run: (service) => service.removeSubmissionComment('s1', 'c1'),
+      },
+    ];
+
+    // The endpoint answers later, as HTTP does, and counts how often its
+    // request is subscribed (each subscription would be a request).
+    function pendingEndpoint(method: CommentEndpoint) {
+      const response = new Subject<Submission>();
+      let requests = 0;
+      const request = defer(() => {
+        requests++;
+        return response;
+      });
+      return {
+        response,
+        requests: () => requests,
+        api: endpointStub(SubmissionService, method, vi.fn(() => request)),
+      };
+    }
+
+    /**
+     * Verifies: each comment method returns its request, so the caller gets the returned submission, while the endpoint is requested once and the store is updated.
+     * Interacts with: SubmissionService comment endpoint (answering later), SubmissionQuery, a caller subscribing to the returned observable.
+     * Data: s1 at score 0; per row, one comment method; the endpoint answers with s1 at score 9.
+     */
+    it.each(commentRows)(
+      '$method returns its request and sends it once',
+      ({ method, run }) => {
+        const endpoint = pendingEndpoint(method);
+        const { service, query, store } = setup({ api: endpoint.api });
+        store.set([makeSubmission()]);
+        const seen: Submission[] = [];
+
+        run(service).subscribe((s) => seen.push(s));
+        endpoint.response.next(makeSubmission({ score: 9 }));
+        endpoint.response.complete();
+
+        expect(endpoint.requests()).toBe(1);
+        expect(seen).toEqual([expect.objectContaining({ id: 's1', score: 9 })]);
+        expect(query.getEntity('s1')?.score).toBe(9);
+      },
+    );
+
+    /**
+     * Verifies: a failed comment request reaches the caller's error callback, and also escapes the service's own subscription, which has no error callback (current behavior).
+     * Interacts with: SubmissionService comment endpoint (failing later), captureUnhandledRxErrors, a caller with an error callback.
+     * Data: s1 at score 0; per row, one comment method; the endpoint fails with a 500.
+     */
+    it.each(commentRows)(
+      '$method passes a failure to the caller and lets it escape',
+      async ({ method, run }) => {
+        const errors = captureUnhandledRxErrors();
+        const failure = new HttpErrorResponse({ status: 500 });
+        const endpoint = pendingEndpoint(method);
+        const { service, query, store } = setup({ api: endpoint.api });
+        store.set([makeSubmission()]);
+        const callerErrors: unknown[] = [];
+
+        run(service).subscribe({ error: (e) => callerErrors.push(e) });
+        endpoint.response.error(failure);
+        await flush();
+
+        expect(callerErrors).toEqual([failure]);
+        // ErrorService, the app's ErrorHandler, shows the escaped error.
+        expect(errors).toEqual([failure]);
+        expect(query.getEntity('s1')?.score).toBe(0);
       },
     );
 

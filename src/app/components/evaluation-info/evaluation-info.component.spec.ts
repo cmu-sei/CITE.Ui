@@ -9,6 +9,7 @@ import { screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { CrucibleDialogService } from '@cmusei/crucible-common';
 import {
@@ -16,6 +17,7 @@ import {
   EvaluationPermission,
   Move,
   SystemPermission,
+  Team,
 } from '../../generated/cite.api';
 import { EvaluationInfoComponent } from './evaluation-info.component';
 import { EvaluationStore } from '../../data/evaluation/evaluation.store';
@@ -45,6 +47,7 @@ async function renderEvaluationInfo(
     showAdminButton?: boolean;
     selectedSection?: Section;
     activeTeam?: boolean;
+    teams?: Team[];
   } = {},
 ) {
   const evaluation: Evaluation = {
@@ -69,14 +72,15 @@ async function renderEvaluationInfo(
   };
   const nextEvaluationMove = vi.fn();
   const changeSection = vi.fn();
+  const changeTeam = vi.fn();
 
   const rendered = await renderComponent(EvaluationInfoComponent, {
     declarations: [EvaluationInfoComponent],
-    imports: [MatButtonModule, MatIconModule, MatSelectModule],
+    imports: [MatButtonModule, MatIconModule, MatMenuModule, MatSelectModule],
     componentInputs: {
       evaluationList: [evaluation],
       moveList: [...MOVES],
-      teamList: [],
+      teamList: overrides.teams ?? [],
       myTeamId: 't1',
       selectedSection: overrides.selectedSection ?? Section.dashboard,
       noChanges: false,
@@ -84,7 +88,7 @@ async function renderEvaluationInfo(
         ? {}
         : { showAdminButton: overrides.showAdminButton }),
     },
-    on: { nextEvaluationMove, changeSection },
+    on: { nextEvaluationMove, changeSection, changeTeam },
     providers: [
       ...permissionDataProviders(overrides.claims ?? {}),
       evaluationStore,
@@ -104,7 +108,7 @@ async function renderEvaluationInfo(
     // The team buttons render once a team is selected; the home page
     // activates the user's team after this component exists.
     const teamStore = rendered.fixture.debugElement.injector.get(TeamStore);
-    teamStore.set([{ id: 't1', shortName: 'BLUE' }]);
+    teamStore.set(overrides.teams ?? [{ id: 't1', shortName: 'BLUE' }]);
     teamStore.setActive('t1');
   }
   rendered.fixture.detectChanges();
@@ -115,6 +119,7 @@ async function renderEvaluationInfo(
     confirm,
     nextEvaluationMove,
     changeSection,
+    changeTeam,
     user: userEvent.setup(),
   };
 }
@@ -397,6 +402,57 @@ describe('EvaluationInfoComponent', () => {
       ).toBeInTheDocument();
       expect(administrationButton()).not.toBeInTheDocument();
       expect(aggregateReportButton()).not.toBeInTheDocument();
+    });
+  });
+
+  describe('team selector', () => {
+    const TEAMS: Team[] = [
+      { id: 't1', shortName: 'BLUE' },
+      { id: 't2', shortName: 'RED' },
+    ];
+
+    /**
+     * Verifies: with one team the header names it as the user's team, with no team menu.
+     * Interacts with: teamList input, real TeamStore activating t1, getTeamShortName().
+     * Data: teamList BLUE only; myTeamId t1.
+     */
+    it('names the only team without a menu', async () => {
+      await renderEvaluationInfo({
+        activeTeam: true,
+        teams: [{ id: 't1', shortName: 'BLUE' }],
+      });
+
+      expect(screen.getByText('Team:')).toBeVisible();
+      expect(screen.getByText('BLUE')).toBeVisible();
+      // The menu button is named by its text, the selected team.
+      expect(
+        screen.queryByRole('button', { name: 'BLUE' }),
+      ).not.toBeInTheDocument();
+    });
+
+    /**
+     * Verifies: with several teams the menu button shows the selected team, and picking another team emits it and switches the label to Observing.
+     * Interacts with: the Select a team menu (mat-menu), setActiveTeam(), the changeTeam output, getSelectedTeamShortName().
+     * Data: teamList BLUE (t1, the user's team) and RED (t2); t1 active; the user picks RED.
+     */
+    it('switches to another team from the team menu', async () => {
+      const { user, changeTeam } = await renderEvaluationInfo({
+        activeTeam: true,
+        teams: TEAMS,
+      });
+      const teamButton = screen.getByRole('button', { name: 'BLUE' });
+      expect(teamButton).toHaveAttribute('title', 'Select a team');
+      expect(screen.getByText('Team:')).toBeVisible();
+
+      await user.click(teamButton);
+      await user.click(await screen.findByRole('menuitem', { name: 'RED' }));
+
+      expect(changeTeam).toHaveBeenCalledWith('t2');
+      expect(screen.getByRole('button', { name: 'RED' })).toHaveAttribute(
+        'title',
+        'Select a team',
+      );
+      expect(screen.getByText('Observing:')).toBeVisible();
     });
   });
 });
