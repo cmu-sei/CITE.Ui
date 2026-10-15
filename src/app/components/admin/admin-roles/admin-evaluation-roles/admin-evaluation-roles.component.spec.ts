@@ -1,27 +1,69 @@
-/*
-Copyright 2021 Carnegie Mellon University. All Rights Reserved.
- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
-*/
+// Copyright 2026 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, it, expect, vi } from 'vitest';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { screen, within } from '@testing-library/angular';
+import { of } from 'rxjs';
+import {
+  EvaluationPermission,
+  EvaluationRolesService,
+} from '../../../../generated/cite.api';
+import { ApiStub } from '../../../../test-utils/api-stub';
+import { renderComponent } from '../../../../test-utils/render-component';
+import { AdminEvaluationRolesComponent } from './admin-evaluation-roles.component';
 
-import { EvaluationRolesComponent } from './evaluation-roles.component';
+describe('AdminEvaluationRolesComponent', () => {
+  /**
+   * Verifies: the component mounts with the default test providers and shows each role as a read-only column of its permissions.
+   * Interacts with: real EvaluationRoleDataService over a stubbed EvaluationRolesService.
+   * Data: roles Observer (ViewEvaluation) and Manager (all permissions), returned out of order.
+   */
+  it('renders with the default test providers', async () => {
+    const rolesApi = {
+      getAllEvaluationRoles: vi.fn(() =>
+        of([
+          {
+            id: 'r2',
+            name: 'Observer',
+            allPermissions: false,
+            permissions: [EvaluationPermission.ViewEvaluation],
+          },
+          { id: 'r1', name: 'Manager', allPermissions: true, permissions: [] },
+        ]),
+      ),
+    } satisfies ApiStub<EvaluationRolesService>;
+    const { fixture } = await renderComponent(AdminEvaluationRolesComponent, {
+      declarations: [AdminEvaluationRolesComponent],
+      imports: [
+        MatButtonModule,
+        MatCheckboxModule,
+        MatIconModule,
+        MatTableModule,
+        MatTooltipModule,
+      ],
+      providers: [{ provide: EvaluationRolesService, useValue: rolesApi }],
+    });
 
-describe('EvaluationRolesComponent', () => {
-  let component: EvaluationRolesComponent;
-  let fixture: ComponentFixture<EvaluationRolesComponent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [EvaluationRolesComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(EvaluationRolesComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeInstanceOf(
+      AdminEvaluationRolesComponent,
+    );
+    const [header] = screen.getAllByRole('row');
+    expect(
+      within(header)
+        .getAllByRole('columnheader')
+        .map((h) => h.querySelector('p')?.textContent),
+    ).toEqual([undefined, 'Manager', 'Observer']);
+    const viewRow = within(screen.getByRole('table'))
+      .getByText(EvaluationPermission.ViewEvaluation, { selector: 'td' })
+      .closest('tr') as HTMLElement;
+    // Manager holds every permission, so only its All row has a checkbox.
+    const [observerView] = within(viewRow).getAllByRole('checkbox');
+    expect(observerView).toBeChecked();
+    expect(observerView).toBeDisabled();
   });
 });
