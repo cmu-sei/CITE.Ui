@@ -39,7 +39,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             [formControl]="situationDateFormControl" (inputChange)="saveMove('situationDate')"
             (dateChange)="saveMove('situationDate')" style="display: none;">
           <span (click)="data.canEdit && picker.open()">
-            {{situationDateFormControl.value | date: 'dd MMM yyyy HH:mm'}} {{ getTimezoneAbbr() }}
+            {{situationDateFormControl.value | date: 'dd MMM yyyy HH:mm'}} {{ getTimezoneAbbr(situationDateFormControl.value) }}
           </span>
           <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)" [disabled]="!data.canEdit">
           </mat-datepicker-toggle>

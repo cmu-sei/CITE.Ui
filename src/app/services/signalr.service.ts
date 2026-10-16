@@ -15,6 +15,7 @@ import { SubmissionDataService } from 'src/app/data/submission/submission-data.s
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamMembershipDataService } from '../data/team/team-membership-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
+import { SystemMessageService } from 'src/app/services/system-message/system-message.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -32,10 +33,12 @@ export class SignalRService implements OnDestroy {
   private isJoined = false;
   private teamId = '';
   private token = '';
+  private unreachableReported = false;
   private unsubscribe$ = new Subject();
 
   constructor(
     private authService: ComnAuthService,
+    private systemMessageService: SystemMessageService,
     private settingsService: ComnSettingsService,
     private actionDataService: ActionDataService,
     private evaluationDataService: EvaluationDataService,
@@ -66,12 +69,14 @@ export class SignalRService implements OnDestroy {
       .build();
 
     this.hubConnection.onreconnected(() => {
-      this.join();
+      this.onConnected();
     });
 
     this.addHandlers();
     this.connectionPromise = this.hubConnection.start();
-    this.connectionPromise.then((x) => this.join());
+    this.connectionPromise
+      .then(() => this.onConnected())
+      .catch((err) => this.onStartFailed(err));
 
     return this.connectionPromise;
   }
@@ -97,11 +102,29 @@ export class SignalRService implements OnDestroy {
           if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
             setTimeout(() => this.reconnect(), 500);
           } else {
-            this.join();
+            this.onConnected();
           }
-        });
+        }).catch((err) => this.onStartFailed(err));
       });
     }
+  }
+
+  private onConnected() {
+    this.unreachableReported = false;
+    this.join();
+  }
+
+  // report once per outage, not on every retry
+  private onStartFailed(err: any) {
+    if (this.unreachableReported) {
+      return;
+    }
+    this.unreachableReported = true;
+    console.warn('CITE hub unreachable: ' + (err?.message ?? err));
+    this.systemMessageService.displayMessage(
+      'Live Updates Unavailable',
+      'CITE could not connect to the CITE API for live updates. Changes made by others will not appear until the connection is restored. Refresh the page to try again.'
+    );
   }
 
   public join() {

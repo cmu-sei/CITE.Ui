@@ -15,7 +15,7 @@ import {
   SubmissionComment,
   SubmissionCommentService
 } from 'src/app/generated/cite.api';
-import { map, take, tap } from 'rxjs/operators';
+import { map, share, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 
 @Injectable({
@@ -268,29 +268,35 @@ export class SubmissionDataService {
     }
   }
 
-  addSubmissionComment(submissionId: string, submissionOptionId: string, comment: string) {
+  // the comment methods return the request so callers can show its outcome; the store is updated either way
+  addSubmissionComment(submissionId: string, submissionOptionId: string, comment: string): Observable<Submission> {
     const submissionComment = {
       submissionOptionId: submissionOptionId,
       comment: comment
     } as SubmissionComment;
-    this.submissionService.addSubmissionComment(submissionId, submissionComment).pipe(take(1)).subscribe(s => {
+    const request$ = this.submissionService.addSubmissionComment(submissionId, submissionComment).pipe(take(1), share());
+    request$.subscribe(s => {
       this.submissionStore.upsert(s.id, { ...s });
     });
+    return request$;
   }
 
-  changeSubmissionComment(submissionId: string, submissionComment: SubmissionComment) {
-    this.submissionService.changeSubmissionComment(submissionId, submissionComment.id, submissionComment).pipe(take(1)).subscribe(s => {
+  changeSubmissionComment(submissionId: string, submissionComment: SubmissionComment): Observable<Submission> {
+    const request$ = this.submissionService.changeSubmissionComment(submissionId, submissionComment.id, submissionComment).pipe(take(1), share());
+    request$.subscribe(s => {
       this.submissionStore.upsert(s.id, { ...s });
     });
+    return request$;
   }
 
-  removeSubmissionComment(submissionId: string, submissionCommentId: string) {
-    this.submissionService
+  removeSubmissionComment(submissionId: string, submissionCommentId: string): Observable<Submission> {
+    const request$ = this.submissionService
       .removeSubmissionComment(submissionId, submissionCommentId)
-      .pipe(take(1))
-      .subscribe(s => {
-        this.submissionStore.upsert(s.id, { ...s });
-      });
+      .pipe(take(1), share());
+    request$.subscribe(s => {
+      this.submissionStore.upsert(s.id, { ...s });
+    });
+    return request$;
   }
 
   delete(id: string) {
