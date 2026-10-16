@@ -3,11 +3,11 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
-<mat-toolbar class="toolbar" [style.backgroundColor]="'var(--mat-sys-primary)'"
-  [style.color]="'var(--mat-sys-on-primary)'">
+<mat-toolbar class="toolbar" [style.backgroundColor]="'var(--crucible-topbar-background)'"
+  [style.color]="'var(--crucible-topbar-text)'">
   <mat-toolbar-row>
     <span class="margin-auto">
-      <a mat-icon-button style="outline: none; background-color: var(--mat-sys-on-primary);" [routerLink]="['/']"
+      <a mat-icon-button style="outline: none; background-color: var(--crucible-topbar-text);" [routerLink]="['/']"
         title="Home">
         <mat-icon svgIcon="crucible-icon-cite"></mat-icon>
       </a>
@@ -18,8 +18,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <b class="team-text">{{ team.name }}</b>
     @if (teams.length > 1) {
     <div>
-      <button mat-button [matMenuTriggerFor]="teamMenu" style="outline: none;">
-        <mat-icon class="icon-color" fontIcon="mdi-chevron-down"></mat-icon>
+      <button mat-button class="menu-trigger" [matMenuTriggerFor]="teamMenu" style="outline: none;">
+        <mat-icon class="menu-trigger" fontIcon="mdi-chevron-down"></mat-icon>
       </button>
       <mat-menu #teamMenu="matMenu" [overlapTrigger]="false">
         @for (val of teams; track val) {

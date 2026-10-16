@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   ComnAuthQuery,
   ComnAuthService,
-  ComnSettingsService,
+  CrucibleThemeService,
   Theme,
 } from '@cmusei/crucible-common';
 import { Observable, Subject } from 'rxjs';
@@ -80,7 +80,7 @@ export class AppComponent implements OnDestroy {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private authService: ComnAuthService,
-    private settingsService: ComnSettingsService,
+    private themeService: CrucibleThemeService,
   ) {
     this.registerIcons(iconRegistry, sanitizer);
     this.theme$.pipe(takeUntil(this.unsubscribe$)).subscribe((theme) => {
@@ -113,31 +113,9 @@ export class AppComponent implements OnDestroy {
   }
 
   setTheme(theme: Theme) {
-    document.body.classList.toggle('darkMode', theme === Theme.DARK);
-    const topBarColor = this.settingsService.settings?.AppTopBarHexColor || '#C41230';
-    const topBarTextColor = this.settingsService.settings?.AppTopBarHexTextColor || '#FFFFFF';
-    if (topBarColor) {
-      document.documentElement.style.setProperty('--mat-sys-primary', topBarColor);
-      document.body.style.setProperty('--mat-sys-primary', topBarColor);
-      this.updateFavicon(topBarColor);
-    }
-    if (topBarTextColor) {
-      document.documentElement.style.setProperty('--mat-sys-on-primary', topBarTextColor);
-      document.body.style.setProperty('--mat-sys-on-primary', topBarTextColor);
-    }
+    this.themeService.applyTheme(theme);
   }
 
-  private updateFavicon(color: string) {
-    const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
-    if (!link) return;
-    fetch(link.href)
-      .then(res => res.text())
-      .then(svg => {
-        const colored = svg.replace(/\.cls-2\{[^}]*\}/, `.cls-2{fill:${color};}`);
-        const blob = new Blob([colored], { type: 'image/svg+xml' });
-        link.href = URL.createObjectURL(blob);
-      });
-  }
   ngOnDestroy(): void {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
