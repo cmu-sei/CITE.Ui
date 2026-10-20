@@ -3,7 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges, inject, input } from '@angular/core';
 import { combineLatest, forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EvaluationMembershipDataService } from 'src/app/data/evaluation/evaluation-membership-data.service';
@@ -34,8 +34,8 @@ export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
   private groupDataService = inject(GroupDataService);
   private permissionDataService = inject(PermissionDataService);
 
-  @Input() embedded: boolean;
-  @Input() evaluationId: string;
+  readonly embedded = input<boolean>(undefined);
+  readonly evaluationId = input<string>(undefined);
   @Output() goBack = new EventEmitter();
 
   evaluation$: Observable<Evaluation>;
@@ -54,7 +54,7 @@ export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     forkJoin([
-      this.evaluationMembershipDataService.loadMemberships(this.evaluationId),
+      this.evaluationMembershipDataService.loadMemberships(this.evaluationId()),
       this.userDataService.load(),
       this.evaluationRolesDataService.loadRoles(),
       this.groupDataService.load(),
@@ -62,7 +62,7 @@ export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.canEdit = this.permissionDataService.canEditEvaluation(this.evaluationId);
+    this.canEdit = this.permissionDataService.canEditEvaluation(this.evaluationId());
   }
 
   selectUsers(members: boolean) {
@@ -109,9 +109,9 @@ export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
   }
 
   createMembership(evaluationMembership: EvaluationMembership) {
-    evaluationMembership.evaluationId = this.evaluationId;
+    evaluationMembership.evaluationId = this.evaluationId();
     this.evaluationMembershipDataService
-      .createMembership(this.evaluationId, evaluationMembership)
+      .createMembership(this.evaluationId(), evaluationMembership)
       .subscribe();
   }
 

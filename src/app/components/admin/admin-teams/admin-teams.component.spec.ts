@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -28,7 +28,7 @@ import { AdminTeamMembershipsComponent } from 'src/app/components/admin/admin-te
 
 @Component({ selector: 'app-admin-team-memberships', template: '' })
 class TeamMembershipsStubComponent {
-  @Input() teamId!: string;
+  readonly teamId = input.required<string>();
 }
 
 const TEAMS: Team[] = [
@@ -193,6 +193,6 @@ describe('AdminTeamsComponent', () => {
     const memberships = fixture.debugElement.query(
       By.directive(TeamMembershipsStubComponent),
     ).componentInstance as TeamMembershipsStubComponent;
-    expect(memberships.teamId).toBe('t2');
+    expect(memberships.teamId()).toBe('t2');
   });
 });

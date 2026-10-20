@@ -13,7 +13,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         @if (displaying !== 'team') {
           <span>User </span>
         }
-        Submissions Report for {{ selectedEvaluation.description }}
+        Submissions Report for {{ selectedEvaluation().description }}
       </h2>
     </div>
     <div class="right-buttons no-print">
@@ -81,7 +81,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     </div>
                     @for (submission of moveSubmissions; track submission) {
                       <div>
-                        @if (!selectedScoringModel.displayCommentTextBoxes) {
+                        @if (!selectedScoringModel().displayCommentTextBoxes) {
                           <div class="comment-list">
                             @for (
                               comment of optionComments(
@@ -101,7 +101,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                             }
                           </div>
                         }
-                        @if (selectedScoringModel.displayCommentTextBoxes) {
+                        @if (selectedScoringModel().displayCommentTextBoxes) {
                           <div class="comment-box">
                             <span class="comment">
                               @if (displaying === 'team') {
@@ -125,7 +125,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   class="value-container"
                   [ngClass]="tableClass"
                   >
-                  @if (!selectedScoringModel?.hideScoresOnScoreSheet) {
+                  @if (!selectedScoringModel()?.hideScoresOnScoreSheet) {
                     <div class="value-div">
                       {{
                       scoringCategory.calculationMethodId == 0 ||

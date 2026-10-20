@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, inject, input } from '@angular/core';
 import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 import {
   Evaluation,
@@ -56,7 +56,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   dialogService = inject(CrucibleDialogService);
 
   @Input() selectedEvaluationId: string;
-  @Input() canEdit: boolean;
+  readonly canEdit = input<boolean>(undefined);
   teamList: Team[] = [];
   moveList: Move[] = [];
   pageIndex: number = 0;

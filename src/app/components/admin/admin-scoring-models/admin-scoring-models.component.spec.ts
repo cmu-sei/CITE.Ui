@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -50,16 +50,16 @@ const FAST_POINTER = { pointerEventsCheck: PointerEventsCheckLevel.Never };
 
 @Component({ selector: 'app-admin-scoring-categories', template: '' })
 class ScoringCategoriesStubComponent {
-  @Input() scoringModelId!: string;
-  @Input() editScoringCategoryId!: string;
-  @Input() displayScoringModelbyMoveNumber!: boolean;
-  @Input() canEdit!: boolean;
+  readonly scoringModelId = input.required<string>();
+  readonly editScoringCategoryId = input.required<string>();
+  readonly displayScoringModelbyMoveNumber = input.required<boolean>();
+  readonly canEdit = input.required<boolean>();
   @Output() scoringCategoryClick = new EventEmitter<string>();
 }
 
 @Component({ selector: 'app-admin-scoring-model-memberships', template: '' })
 class ScoringModelMembershipsStubComponent {
-  @Input() scoringModelId!: string;
+  readonly scoringModelId = input.required<string>();
 }
 
 const MODELS: ScoringModel[] = [
@@ -284,8 +284,8 @@ describe('AdminScoringModelsComponent', () => {
       );
 
       const categories = await expand('NCISS');
-      expect(categories.scoringModelId).toBe('sm1');
-      expect(categories.canEdit).toBe(true);
+      expect(categories.scoringModelId()).toBe('sm1');
+      expect(categories.canEdit()).toBe(true);
 
       await user.click(button('Edit NCISS'));
       expect(editDialog.config()?.data.canEdit).toBe(true);
@@ -302,8 +302,8 @@ describe('AdminScoringModelsComponent', () => {
       });
 
       const categories = await expand('Custom');
-      expect(categories.scoringModelId).toBe('sm2');
-      expect(categories.canEdit).toBe(true);
+      expect(categories.scoringModelId()).toBe('sm2');
+      expect(categories.canEdit()).toBe(true);
 
       await user.click(button('Edit Custom'));
       expect(editDialog.config()?.data.canEdit).toBe(true);
@@ -329,7 +329,7 @@ describe('AdminScoringModelsComponent', () => {
       });
 
       const categories = await expand('NCISS');
-      expect(categories.canEdit).toBe(false);
+      expect(categories.canEdit()).toBe(false);
 
       await user.click(button('Edit NCISS'));
       expect(editDialog.config()?.data.canEdit).toBe(false);

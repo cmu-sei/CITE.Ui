@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -48,22 +48,22 @@ import { DashboardComponent } from 'src/app/components/dashboard/dashboard.compo
 
 @Component({ selector: 'app-topbar', template: '' })
 class TopbarStubComponent {
-  @Input() title?: string;
-  @Input() topbarView?: unknown;
-  @Input() imageFilePath?: string;
+  readonly title = input<string>(undefined);
+  readonly topbarView = input<unknown>(undefined);
+  readonly imageFilePath = input<string>(undefined);
   @Output() urlNavigate = new EventEmitter<string>();
 }
 @Component({ selector: 'app-evaluation-info', template: '' })
 class EvaluationInfoStubComponent {
-  @Input() showAdminButton!: boolean;
-  @Input() showMoveArrows!: boolean;
-  @Input() teamList!: unknown;
-  @Input() myTeamId!: string;
-  @Input() evaluationList!: unknown;
-  @Input() moveList!: unknown;
-  @Input() scoresheetOnRight!: boolean;
-  @Input() noChanges!: boolean;
-  @Input() selectedSection!: unknown;
+  readonly showAdminButton = input.required<boolean>();
+  readonly showMoveArrows = input.required<boolean>();
+  readonly teamList = input.required<unknown>();
+  readonly myTeamId = input.required<string>();
+  readonly evaluationList = input.required<unknown>();
+  readonly moveList = input.required<unknown>();
+  readonly scoresheetOnRight = input.required<boolean>();
+  readonly noChanges = input.required<boolean>();
+  readonly selectedSection = input.required<unknown>();
   @Output() nextDisplayedMove = new EventEmitter<unknown>();
   @Output() previousDisplayedMove = new EventEmitter<unknown>();
   @Output() nextEvaluationMove = new EventEmitter<unknown>();
@@ -72,9 +72,9 @@ class EvaluationInfoStubComponent {
 }
 @Component({ selector: 'app-dashboard', template: '' })
 class DashboardStubComponent {
-  @Input() unreadArticles!: unknown;
-  @Input() myTeamId!: string;
-  @Input() noChanges!: boolean;
+  readonly unreadArticles = input.required<unknown>();
+  readonly myTeamId = input.required<string>();
+  readonly noChanges = input.required<boolean>();
 }
 
 const EVALUATION: Evaluation = {
@@ -372,7 +372,7 @@ describe('HomeAppComponent', () => {
           { evaluation: 'e1' },
         );
 
-        expect(evaluationInfo()?.showAdminButton).toBe(expected);
+        expect(evaluationInfo()?.showAdminButton()).toBe(expected);
       },
     );
   });

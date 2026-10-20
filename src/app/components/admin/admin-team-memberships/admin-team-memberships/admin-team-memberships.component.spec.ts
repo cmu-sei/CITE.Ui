@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, EventEmitter, Input, Output, Type } from '@angular/core';
+import { Component, EventEmitter, Output, Type, input } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import {
@@ -31,17 +31,17 @@ import { AdminTeamMemberListComponent } from 'src/app/components/admin/admin-tea
 
 @Component({ selector: 'app-admin-team-membership-list', template: '' })
 class NonMemberListStubComponent {
-  @Input() users!: User[];
-  @Input() canEdit!: boolean;
+  readonly users = input.required<User[]>();
+  readonly canEdit = input.required<boolean>();
   @Output() createMembership = new EventEmitter<TeamMembership>();
 }
 
 @Component({ selector: 'app-admin-team-member-list', template: '' })
 class MemberListStubComponent {
-  @Input() memberships!: TeamMembership[];
-  @Input() users!: User[];
-  @Input() roles!: TeamRole[];
-  @Input() canEdit!: boolean;
+  readonly memberships = input.required<TeamMembership[]>();
+  readonly users = input.required<User[]>();
+  readonly roles = input.required<TeamRole[]>();
+  readonly canEdit = input.required<boolean>();
   @Output() deleteMembership = new EventEmitter<string>();
   @Output() editMembership = new EventEmitter<TeamMembership>();
 }
@@ -122,10 +122,10 @@ describe('AdminTeamMembershipsComponent', () => {
   it('splits users into members and non-members', async () => {
     const { nonMembers, members, membershipApi } = await renderMemberships();
     expect(membershipApi.getAllTeamMemberships).toHaveBeenCalledWith('t1');
-    expect(names(members().users)).toEqual(['Alice']);
-    expect(names(nonMembers().users)).toEqual(['Bob', 'Carol']);
-    expect(members().memberships.map((m) => m.id)).toEqual(['tm1']);
-    expect(members().roles.map((r) => r.name)).toEqual(['Member']);
+    expect(names(members().users())).toEqual(['Alice']);
+    expect(names(nonMembers().users())).toEqual(['Bob', 'Carol']);
+    expect(members().memberships().map((m) => m.id)).toEqual(['tm1']);
+    expect(members().roles().map((r) => r.name)).toEqual(['Member']);
   });
 
   /**
@@ -142,8 +142,8 @@ describe('AdminTeamMembershipsComponent', () => {
       userId: 'u2',
       teamId: 't1',
     });
-    expect(names(members().users)).toEqual(['Alice', 'Bob']);
-    expect(names(nonMembers().users)).toEqual(['Carol']);
+    expect(names(members().users())).toEqual(['Alice', 'Bob']);
+    expect(names(nonMembers().users())).toEqual(['Carol']);
   });
 
   /**
@@ -157,8 +157,8 @@ describe('AdminTeamMembershipsComponent', () => {
     members().deleteMembership.emit('tm1');
     await refresh();
     expect(membershipApi.deleteTeamMembership).toHaveBeenCalledWith('tm1');
-    expect(names(members().users)).toEqual([]);
-    expect(names(nonMembers().users)).toEqual(['Alice', 'Bob', 'Carol']);
+    expect(names(members().users())).toEqual([]);
+    expect(names(nonMembers().users())).toEqual(['Alice', 'Bob', 'Carol']);
   });
 
   /**
@@ -179,7 +179,7 @@ describe('AdminTeamMembershipsComponent', () => {
       'tm1',
       expect.objectContaining({ roleId: 'lead' }),
     );
-    expect(members().memberships.map((m) => [m.id, m.roleId])).toEqual([
+    expect(members().memberships().map((m) => [m.id, m.roleId])).toEqual([
       ['tm1', 'lead'],
     ]);
   });
@@ -194,8 +194,8 @@ describe('AdminTeamMembershipsComponent', () => {
       const { nonMembers, members } = await renderMemberships({
         system: [SystemPermission.EditEvaluations],
       });
-      expect(nonMembers().canEdit).toBe(true);
-      expect(members().canEdit).toBe(true);
+      expect(nonMembers().canEdit()).toBe(true);
+      expect(members().canEdit()).toBe(true);
     });
 
     /**
@@ -207,8 +207,8 @@ describe('AdminTeamMembershipsComponent', () => {
       const { nonMembers, members } = await renderMemberships({
         system: [SystemPermission.ViewEvaluations],
       });
-      expect(nonMembers().canEdit).toBe(false);
-      expect(members().canEdit).toBe(false);
+      expect(nonMembers().canEdit()).toBe(false);
+      expect(members().canEdit()).toBe(false);
     });
 
     /**
@@ -228,8 +228,8 @@ describe('AdminTeamMembershipsComponent', () => {
       });
       // The gate checks canEditEvaluation(teamId), so neither the claim on e1
       // nor ManageTeam on t1 matches it.
-      expect(nonMembers().canEdit).toBe(false);
-      expect(members().canEdit).toBe(false);
+      expect(nonMembers().canEdit()).toBe(false);
+      expect(members().canEdit()).toBe(false);
     });
 
     /**
@@ -247,7 +247,7 @@ describe('AdminTeamMembershipsComponent', () => {
           },
         ],
       });
-      expect(members().canEdit).toBe(true);
+      expect(members().canEdit()).toBe(true);
     });
   });
 });

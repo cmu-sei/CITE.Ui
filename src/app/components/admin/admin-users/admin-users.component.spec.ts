@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output, input } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import {
@@ -19,9 +19,9 @@ import { AdminUserListComponent } from 'src/app/components/admin/admin-users/adm
 
 @Component({ selector: 'app-admin-user-list', template: '' })
 class UserListStubComponent {
-  @Input() users!: User[];
-  @Input() isLoading!: boolean;
-  @Input() canEdit!: boolean;
+  readonly users = input.required<User[]>();
+  readonly isLoading = input.required<boolean>();
+  readonly canEdit = input.required<boolean>();
   @Output() create = new EventEmitter<User>();
   @Output() delete = new EventEmitter<string>();
 }
@@ -60,8 +60,8 @@ describe('AdminUsersComponent', () => {
   it('lets the list edit with ManageUsers', async () => {
     const { list } = await renderUsers([SystemPermission.ManageUsers]);
 
-    expect(list().users.map((u) => u.name)).toEqual(['Alice']);
-    expect(list().canEdit).toBe(true);
+    expect(list().users().map((u) => u.name)).toEqual(['Alice']);
+    expect(list().canEdit()).toBe(true);
   });
 
   /**
@@ -72,7 +72,7 @@ describe('AdminUsersComponent', () => {
   it('keeps the list read-only with ViewUsers only', async () => {
     const { list } = await renderUsers([SystemPermission.ViewUsers]);
 
-    expect(list().canEdit).toBe(false);
+    expect(list().canEdit()).toBe(false);
   });
 
   /**
@@ -90,6 +90,6 @@ describe('AdminUsersComponent', () => {
 
     expect(userApi.createUser).toHaveBeenCalledWith({ id: 'u2', name: 'Bob' });
     expect(userApi.deleteUser).toHaveBeenCalledWith('u1');
-    expect(list().users.map((u) => u.name)).toEqual(['Bob']);
+    expect(list().users().map((u) => u.name)).toEqual(['Bob']);
   });
 });

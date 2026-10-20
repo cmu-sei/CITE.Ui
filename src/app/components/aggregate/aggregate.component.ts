@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -49,9 +49,9 @@ export class AggregateComponent implements OnInit, OnDestroy {
   private titleService = inject(Title);
   private uiDataService = inject(UIDataService);
 
-  @Input() selectedEvaluation: Evaluation;
-  @Input() selectedScoringModel: ScoringModel;
-  @Input() moveList: Move[];
+  readonly selectedEvaluation = input<Evaluation>(undefined);
+  readonly selectedScoringModel = input<ScoringModel>(undefined);
+  readonly moveList = input<Move[]>(undefined);
   loggedInUserId = '';
   userId = '';
   teamList$: Observable<Team[]>;
@@ -94,11 +94,12 @@ export class AggregateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.currentMoveNumber = this.selectedEvaluation.currentMoveNumber;
-    this.displaying = this.uiDataService.getSubmissionType(this.selectedEvaluation.id)?.toLowerCase();
+    this.currentMoveNumber = this.selectedEvaluation().currentMoveNumber;
+    const selectedEvaluation = this.selectedEvaluation();
+    this.displaying = this.uiDataService.getSubmissionType(selectedEvaluation.id)?.toLowerCase();
     this.displaying = this.displaying && this.displaying === 'team' ? 'team' : 'user';
-    this.teamList$ = this.teamService.getEvaluationTeams(this.selectedEvaluation.id);
-    this.submissionList$ = this.submissionService.getByEvaluation(this.selectedEvaluation.id);
+    this.teamList$ = this.teamService.getEvaluationTeams(selectedEvaluation.id);
+    this.submissionList$ = this.submissionService.getByEvaluation(selectedEvaluation.id);
     // observe the vital information and process it when it is all present
     combineLatest([this.teamList$, this.submissionList$])
       .pipe(takeUntil(this.unsubscribe$)).subscribe(([teams, submissions]) => {
@@ -127,7 +128,7 @@ export class AggregateComponent implements OnInit, OnDestroy {
         isSelected = so && so.isSelected;
       }
       if (isSelected) {
-        const scoringCategory = this.selectedScoringModel?.scoringCategories?.find(subCat => subCat.id === scoringCategoryId);
+        const scoringCategory = this.selectedScoringModel()?.scoringCategories?.find(subCat => subCat.id === scoringCategoryId);
         const scoringOption = scoringCategory?.scoringOptions?.find(so => so.id === scoringOptionId);
       }
     }
@@ -214,9 +215,9 @@ export class AggregateComponent implements OnInit, OnDestroy {
 
   getDisplayedScoringCategories(moveNumber: number): ScoringCategory[] {
     const displayedScoringCategories: ScoringCategory[] = [];
-    this.selectedScoringModel?.scoringCategories.forEach(scoringCategory => {
+    this.selectedScoringModel()?.scoringCategories.forEach(scoringCategory => {
       let hideIt = false;
-      if (this.selectedScoringModel.displayScoringModelByMoveNumber &&
+      if (this.selectedScoringModel().displayScoringModelByMoveNumber &&
           (+moveNumber < +scoringCategory.moveNumberFirstDisplay ||
           +moveNumber > +scoringCategory.moveNumberLastDisplay)) {
         hideIt = true
@@ -275,8 +276,8 @@ export class AggregateComponent implements OnInit, OnDestroy {
 
   getSortedMoveList(): Move[] {
     const moveList = [];
-    this.moveList.forEach(move => {
-      const addIt = (+move.moveNumber <= +this.selectedEvaluation.currentMoveNumber) && this.getDisplayedScoringCategories(move.moveNumber).length > 0;
+    this.moveList().forEach(move => {
+      const addIt = (+move.moveNumber <= +this.selectedEvaluation().currentMoveNumber) && this.getDisplayedScoringCategories(move.moveNumber).length > 0;
       if (addIt) {
         moveList.push(move);
       }
@@ -285,10 +286,11 @@ export class AggregateComponent implements OnInit, OnDestroy {
   }
 
   hasScoresAndValidMove(vs: PopulatedSubmission): boolean {
-    const hasScores = !this.selectedScoringModel.displayScoringModelByMoveNumber ||
-      this.selectedScoringModel?.scoringCategories.some(
+    const selectedScoringModel = this.selectedScoringModel();
+    const hasScores = !selectedScoringModel.displayScoringModelByMoveNumber ||
+      selectedScoringModel?.scoringCategories.some(
         sc => +vs.moveNumber >= +sc.moveNumberFirstDisplay && +vs.moveNumber <= +sc.moveNumberLastDisplay);
-    const hasValidMove = +vs.moveNumber <= +this.selectedEvaluation.currentMoveNumber;
+    const hasValidMove = +vs.moveNumber <= +this.selectedEvaluation().currentMoveNumber;
     return hasScores && hasValidMove;
   }
 

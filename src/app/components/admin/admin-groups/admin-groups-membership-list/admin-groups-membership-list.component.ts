@@ -3,7 +3,7 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnChanges, OnInit, Output, ViewChild, inject, input } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -29,11 +29,9 @@ export class AdminGroupsMembershipListComponent
 {
   snackBar = inject(MatSnackBar);
 
-  @Input()
-  users: User[];
+  readonly users = input<User[]>(undefined);
 
-  @Input()
-  canEdit: boolean;
+  readonly canEdit = input<boolean>(undefined);
 
   @Output()
   createMembership = new EventEmitter<string>();
@@ -56,10 +54,10 @@ export class AdminGroupsMembershipListComponent
   }
 
   ngOnChanges() {
-    this.dataSource.data = this.users;
+    this.dataSource.data = this.users();
 
     this.displayedColumns = this.viewColumns.concat(
-      this.canEdit ? this.editColumns : []
+      this.canEdit() ? this.editColumns : []
     );
   }
 

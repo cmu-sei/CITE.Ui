@@ -9,7 +9,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-icon class="mdi-24px" fontIcon="mdi-account-group" [style.color]="'var(--mat-sys-primary)'"></mat-icon>
   </div>
   <button mat-icon-button (click)="addOrEditTeam(null)" style="outline: none; margin-left: 20px;" title="Add Team"
-    [disabled]="!canEdit">
+    [disabled]="!canEdit()">
     <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
   </button>
   <mat-form-field class="button-margins search-field">
@@ -41,11 +41,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="cell one-cell">
         <div class="button-div">
           <button mat-icon-button (click)="addOrEditTeam(team); $event.stopPropagation()" title="Edit {{ team.name }}"
-            [disabled]="!canEdit" class="team-button">
+            [disabled]="!canEdit()" class="team-button">
             <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
           </button>
           <button mat-icon-button (click)="deleteTeam(team); $event.stopPropagation()" title="Delete {{ team.name }}"
-            [disabled]="!canEdit" class="team-button">
+            [disabled]="!canEdit()" class="team-button">
             <mat-icon class="mdi-18px self-center" fontIcon="mdi-trash-can-outline"></mat-icon>
           </button>
         </div>

@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, EventEmitter, Input, Output, Type } from '@angular/core';
+import { Component, EventEmitter, Output, Type, input } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import {
@@ -29,19 +29,19 @@ import { AdminEvaluationMemberListComponent } from 'src/app/components/admin/adm
 
 @Component({ selector: 'app-admin-evaluation-membership-list', template: '' })
 class NonMemberListStubComponent {
-  @Input() users!: User[];
-  @Input() groups!: Group[];
-  @Input() canEdit!: boolean;
+  readonly users = input.required<User[]>();
+  readonly groups = input.required<Group[]>();
+  readonly canEdit = input.required<boolean>();
   @Output() createMembership = new EventEmitter<EvaluationMembership>();
 }
 
 @Component({ selector: 'app-admin-evaluation-member-list', template: '' })
 class MemberListStubComponent {
-  @Input() memberships!: EvaluationMembership[];
-  @Input() users!: User[];
-  @Input() groups!: Group[];
-  @Input() roles!: EvaluationRole[];
-  @Input() canEdit!: boolean;
+  readonly memberships = input.required<EvaluationMembership[]>();
+  readonly users = input.required<User[]>();
+  readonly groups = input.required<Group[]>();
+  readonly roles = input.required<EvaluationRole[]>();
+  readonly canEdit = input.required<boolean>();
   @Output() deleteMembership = new EventEmitter<string>();
   @Output() editMembership = new EventEmitter<EvaluationMembership>();
 }
@@ -140,11 +140,11 @@ describe('AdminEvaluationMembershipsComponent', () => {
     expect(membershipApi.getAllEvaluationMemberships).toHaveBeenCalledWith(
       'e1',
     );
-    expect(names(members().users)).toEqual(['Alice']);
-    expect(names(members().groups)).toEqual(['Analysts']);
-    expect(names(members().roles)).toEqual(['Member']);
-    expect(names(nonMembers().users)).toEqual(['Bob']);
-    expect(names(nonMembers().groups)).toEqual(['Responders']);
+    expect(names(members().users())).toEqual(['Alice']);
+    expect(names(members().groups())).toEqual(['Analysts']);
+    expect(names(members().roles())).toEqual(['Member']);
+    expect(names(nonMembers().users())).toEqual(['Bob']);
+    expect(names(nonMembers().groups())).toEqual(['Responders']);
   });
 
   /**
@@ -165,8 +165,8 @@ describe('AdminEvaluationMembershipsComponent', () => {
         evaluationId: 'e1',
       },
     );
-    expect(names(members().groups)).toEqual(['Analysts', 'Responders']);
-    expect(names(nonMembers().groups)).toEqual([]);
+    expect(names(members().groups())).toEqual(['Analysts', 'Responders']);
+    expect(names(nonMembers().groups())).toEqual([]);
   });
 
   /**
@@ -183,7 +183,7 @@ describe('AdminEvaluationMembershipsComponent', () => {
     expect(membershipApi.deleteEvaluationMembership).toHaveBeenCalledWith(
       'em1',
     );
-    expect(names(nonMembers().users)).toEqual(['Alice', 'Bob']);
+    expect(names(nonMembers().users())).toEqual(['Alice', 'Bob']);
   });
 
   /**
@@ -213,8 +213,8 @@ describe('AdminEvaluationMembershipsComponent', () => {
         onEvaluation('e1', EvaluationPermission.ManageEvaluation),
       );
 
-      expect(nonMembers().canEdit).toBe(true);
-      expect(members().canEdit).toBe(true);
+      expect(nonMembers().canEdit()).toBe(true);
+      expect(members().canEdit()).toBe(true);
     });
 
     /**
@@ -228,8 +228,8 @@ describe('AdminEvaluationMembershipsComponent', () => {
       );
 
       // Current behavior; see agent-docs/ui-test-bugs/cite.ui.md.
-      expect(nonMembers().canEdit).toBe(true);
-      expect(members().canEdit).toBe(true);
+      expect(nonMembers().canEdit()).toBe(true);
+      expect(members().canEdit()).toBe(true);
     });
 
     /**
@@ -252,8 +252,8 @@ describe('AdminEvaluationMembershipsComponent', () => {
         ],
       });
 
-      expect(nonMembers().canEdit).toBe(false);
-      expect(members().canEdit).toBe(false);
+      expect(nonMembers().canEdit()).toBe(false);
+      expect(members().canEdit()).toBe(false);
     });
   });
 });

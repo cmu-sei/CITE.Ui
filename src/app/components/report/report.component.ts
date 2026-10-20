@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, inject } from '@angular/core';
+import { Component, Input, OnDestroy, inject, input } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -71,7 +71,7 @@ export class ReportComponent implements OnDestroy {
 
   @Input() selectedEvaluation: Evaluation;
   @Input() selectedScoringModel: ScoringModel;
-  @Input() moveList: Move[];
+  readonly moveList = input<Move[]>(undefined);
   loggedInUserId = '';
   loggedInUserName = '';
   selectedTeam: Team = {};
@@ -350,7 +350,7 @@ export class ReportComponent implements OnDestroy {
 
   getSortedMoveList(): Move[] {
     const moveList = [];
-    this.moveList.forEach(move => {
+    this.moveList().forEach(move => {
       const addIt = (+move.moveNumber <= +this.selectedEvaluation.currentMoveNumber) && this.getDisplayedScoringCategories(move.moveNumber).length > 0;
       if (addIt) {
         moveList.push(move);

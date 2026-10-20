@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, inject } from '@angular/core';
+import { Component, OnDestroy, inject, input } from '@angular/core';
 import { ScoringModel } from 'src/app/generated/cite.api';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { Subject, Observable } from 'rxjs';
@@ -21,13 +21,13 @@ export class RightSideHtmlComponent implements OnDestroy {
   private submissionQuery = inject(SubmissionQuery);
 
   isLoading = false;
-  @Input() scoringModel$: Observable<ScoringModel>;
-  @Input() hideTopbar: boolean;
+  readonly scoringModel$ = input<Observable<ScoringModel>>(undefined);
+  readonly hideTopbar = input<boolean>(undefined);
   editorConfig = VIEW_CONFIG;
   private unsubscribe$ = new Subject();
 
   getTopClass() {
-    if (this.hideTopbar) {
+    if (this.hideTopbar()) {
       return 'top-level-container in-player'
     } else {
       return 'top-level-container out-of-player'

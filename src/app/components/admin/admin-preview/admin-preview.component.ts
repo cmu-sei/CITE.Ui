@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, inject, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import {
@@ -32,7 +32,7 @@ export class AdminPreviewComponent implements OnDestroy, OnInit {
   private scoringModelDataService = inject(ScoringModelDataService);
   private scoringModelQuery = inject(ScoringModelQuery);
 
-  @Input() scoringModelId: string;
+  readonly scoringModelId = input<string>(undefined);
   @Output() closeMe = new EventEmitter<boolean>();
   scoringModel: ScoringModel;
   moveNumberList: number[] = [];
@@ -46,7 +46,7 @@ export class AdminPreviewComponent implements OnDestroy, OnInit {
   constructor() {
     this.titleService.setTitle('CITE Preview');
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(smList => {
-      this.scoringModel = smList.find(m => m.id === this.scoringModelId);
+      this.scoringModel = smList.find(m => m.id === this.scoringModelId());
       if (this.scoringModel && this.scoringModel.scoringCategories.length > 0) {
         let maxValues = this.scoringModel.scoringCategories.map(m => m.moveNumberLastDisplay);
         let maxMoveNumber = maxValues.length > 0 ? Math.max(...maxValues) : 0;
@@ -56,7 +56,7 @@ export class AdminPreviewComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.scoringModelDataService.loadById(this.scoringModelId);
+    this.scoringModelDataService.loadById(this.scoringModelId());
   }
 
   getDisplayedScoringCategories(moveNumber: number): ScoringCategory[] {

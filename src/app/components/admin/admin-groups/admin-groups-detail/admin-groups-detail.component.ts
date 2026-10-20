@@ -3,7 +3,7 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { Component, OnChanges, OnInit, inject, input } from '@angular/core';
 import { combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GroupMembershipDataService } from 'src/app/data/group/group-membership.service';
@@ -24,8 +24,8 @@ export class AdminGroupsDetailComponent implements OnInit, OnChanges {
   private groupMembershipDataService = inject(GroupMembershipDataService);
   private signalRService = inject(SignalRService);
 
-  @Input() groupId: string;
-  @Input() canEdit: boolean;
+  readonly groupId = input<string>(undefined);
+  readonly canEdit = input<boolean>(undefined);
   memberships$ = of([]);
 
   // All users that are not already members of the project
@@ -33,12 +33,12 @@ export class AdminGroupsDetailComponent implements OnInit, OnChanges {
   members$ = this.selectUsers(true);
 
   ngOnInit(): void {
-    this.groupMembershipDataService.loadMemberships(this.groupId).subscribe();
+    this.groupMembershipDataService.loadMemberships(this.groupId()).subscribe();
   }
 
   ngOnChanges() {
     this.memberships$ = this.groupMembershipDataService.selectMemberships(
-      this.groupId
+      this.groupId()
     );
 
     this.nonMembers$ = this.selectUsers(false);
@@ -67,7 +67,7 @@ export class AdminGroupsDetailComponent implements OnInit, OnChanges {
 
   createMembership(userId) {
     this.groupMembershipDataService
-      .createMembership(this.groupId, { groupId: this.groupId, userId: userId })
+      .createMembership(this.groupId(), { groupId: this.groupId(), userId: userId })
       .subscribe();
   }
 

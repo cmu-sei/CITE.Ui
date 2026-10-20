@@ -3,7 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges, inject, input } from '@angular/core';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
@@ -38,8 +38,8 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
   private permissionDataService = inject(PermissionDataService);
   private activatedRoute = inject(ActivatedRoute);
 
-  @Input() embedded: boolean;
-  @Input() scoringModelId: string;
+  readonly embedded = input<boolean>(undefined);
+  readonly scoringModelId = input<string>(undefined);
   @Output() goBack = new EventEmitter();
 
   scoringModel$: Observable<ScoringModel>;
@@ -60,7 +60,7 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
   ngOnInit(): void {
     forkJoin([
       this.scoringModelMembershipDataService.loadMemberships(
-        this.scoringModelId
+        this.scoringModelId()
       ),
       this.userDataService.load(),
       this.scoringModelRolesDataService.loadRoles(),
@@ -69,17 +69,17 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
     this.permissionDataService
       .loadScoringModelPermissions()
       .subscribe((x) =>
-        this.canManage$ = of(this.permissionDataService.canManageScoringModel(this.scoringModelId)));
+        this.canManage$ = of(this.permissionDataService.canManageScoringModel(this.scoringModelId())));
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.scoringModel$ = this.scoringModelQuery
-      .selectEntity(this.scoringModelId)
+      .selectEntity(this.scoringModelId())
       .pipe(
         filter((x) => x != null),
         tap(
           (x) => {
-            this.canManage$ = of(this.permissionDataService.canEditScoringModel(this.scoringModelId));
+            this.canManage$ = of(this.permissionDataService.canEditScoringModel(this.scoringModelId()));
           })
       );
   }
@@ -128,9 +128,9 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
   }
 
   createMembership(scoringModelMembership: ScoringModelMembership) {
-    scoringModelMembership.scoringModelId = this.scoringModelId;
+    scoringModelMembership.scoringModelId = this.scoringModelId();
     this.scoringModelMembershipDataService
-      .createMembership(this.scoringModelId, scoringModelMembership)
+      .createMembership(this.scoringModelId(), scoringModelMembership)
       .subscribe();
   }
 

@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, inject } from '@angular/core';
+import { Component, OnDestroy, inject, input } from '@angular/core';
 import { ScoringModel, Submission } from 'src/app/generated/cite.api/model/models';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { Observable, Subject } from 'rxjs';
@@ -20,7 +20,7 @@ export class ScoreSummaryComponent implements OnDestroy {
   private submissionQuery = inject(SubmissionQuery);
 
   isLoading = false;
-  @Input() selectedScoringModel: ScoringModel;
+  readonly selectedScoringModel = input<ScoringModel>(undefined);
   submissionList: Submission[];
   activeSubmission: Submission = {};
   levels = [

@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -27,8 +27,8 @@ import { AdminScoringOptionsComponent } from 'src/app/components/admin/admin-sco
 
 @Component({ selector: 'app-admin-scoring-options', template: '' })
 class ScoringOptionsStubComponent {
-  @Input() scoringCategoryId!: string;
-  @Input() canEdit!: boolean;
+  readonly scoringCategoryId = input.required<string>();
+  readonly canEdit = input.required<boolean>();
 }
 
 const CATEGORIES: ScoringCategory[] = [
@@ -150,8 +150,8 @@ describe('AdminScoringCategoriesComponent', () => {
 
     await user.click(screen.getByText('Functional impact'));
     expect(scoringCategoryClick).toHaveBeenCalledWith('c1');
-    expect(optionsStub(fixture)?.scoringCategoryId).toBe('c1');
-    expect(optionsStub(fixture)?.canEdit).toBe(true);
+    expect(optionsStub(fixture)?.scoringCategoryId()).toBe('c1');
+    expect(optionsStub(fixture)?.canEdit()).toBe(true);
   });
 
   /**
@@ -172,7 +172,7 @@ describe('AdminScoringCategoriesComponent', () => {
     }
 
     await user.click(screen.getByText('Functional impact'));
-    expect(optionsStub(fixture)?.canEdit).toBe(false);
+    expect(optionsStub(fixture)?.canEdit()).toBe(false);
   });
 
   /**

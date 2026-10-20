@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, inject, input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   Duty,
@@ -48,7 +48,7 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   private activatedRoute = inject(ActivatedRoute);
 
   @Input() selectedEvaluationId: string;
-  @Input() canEdit: boolean;
+  readonly canEdit = input<boolean>(undefined);
   pageIndex: number = 0;
   pageSize: number = 10;
   isLoading = false;
@@ -137,7 +137,7 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
       data: {
         duty: duty,
         teamList: this.teamList,
-        canEdit: this.canEdit
+        canEdit: this.canEdit()
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

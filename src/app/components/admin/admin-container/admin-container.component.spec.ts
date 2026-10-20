@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Component, EventEmitter, Input, Output, Type } from '@angular/core';
+import { Component, EventEmitter, Output, Type, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -46,15 +46,15 @@ import { AdminGroupsComponent } from 'src/app/components/admin/admin-groups/admi
 
 @Component({ selector: 'app-topbar', template: '' })
 class TopbarStubComponent {
-  @Input() title?: string;
-  @Input() topbarView?: TopbarView;
-  @Input() sidenav?: unknown;
+  readonly title = input<string>(undefined);
+  readonly topbarView = input<TopbarView>(undefined);
+  readonly sidenav = input<unknown>(undefined);
   @Output() sidenavToggle = new EventEmitter<boolean>();
 }
 
 @Component({ selector: 'app-admin-evaluations', template: '' })
 class AdminEvaluationsStubComponent {
-  @Input() evaluationList!: Evaluation[];
+  readonly evaluationList = input.required<Evaluation[]>();
 }
 
 @Component({ selector: 'app-admin-scoring-models', template: '' })
@@ -256,7 +256,7 @@ describe('AdminContainerComponent', () => {
       expect(evaluationApi.getEvaluations).toHaveBeenCalled();
       expect(evaluationApi.getMyEvaluations).not.toHaveBeenCalled();
       expect(
-        evaluationsSection(fixture).evaluationList.map((e) => e.id),
+        evaluationsSection(fixture).evaluationList().map((e) => e.id),
       ).toEqual(['e-all']);
     });
 
@@ -272,7 +272,7 @@ describe('AdminContainerComponent', () => {
       await fixture.whenStable();
       expect(evaluationApi.getEvaluations).not.toHaveBeenCalled();
       expect(
-        evaluationsSection(fixture).evaluationList.map((e) => e.id),
+        evaluationsSection(fixture).evaluationList().map((e) => e.id),
       ).toEqual(['e-mine']);
     });
 

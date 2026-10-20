@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, Output, OnDestroy, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnDestroy, inject, input } from '@angular/core';
 import { Evaluation, ItemStatus, Move, Team } from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -41,14 +41,14 @@ export class EvaluationInfoComponent implements OnDestroy {
   private currentUserQuery = inject(CurrentUserQuery);
   private permissionDataService = inject(PermissionDataService);
 
-  @Input() showAdminButton: boolean;
-  @Input() showMoveArrows: boolean;
+  readonly showAdminButton = input<boolean>(undefined);
+  readonly showMoveArrows = input<boolean>(undefined);
   @Input() teamList: Team[];
-  @Input() myTeamId: string;
-  @Input() evaluationList: Evaluation[];
-  @Input() moveList: Move[];
-  @Input() scoresheetOnRight: boolean;
-  @Input() noChanges: boolean;
+  readonly myTeamId = input<string>(undefined);
+  readonly evaluationList = input<Evaluation[]>(undefined);
+  readonly moveList = input<Move[]>(undefined);
+  readonly scoresheetOnRight = input<boolean>(undefined);
+  readonly noChanges = input<boolean>(undefined);
   @Input() selectedSection: Section;
   @Output() nextDisplayedMove = new EventEmitter<Move>();
   @Output() previousDisplayedMove = new EventEmitter<Move>();
@@ -111,7 +111,8 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   sortedMoveList() {
-    return this.moveList ? this.moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1) : [];
+    const moveList = this.moveList();
+    return moveList ? moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1) : [];
   }
 
   getMinMoveNumber() {
@@ -119,7 +120,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   getMaxMoveNumber() {
-    return this.sortedMoveList().length > 0 ? this.sortedMoveList()[this.moveList.length - 1].moveNumber : +this.currentMoveNumber;
+    return this.sortedMoveList().length > 0 ? this.sortedMoveList()[this.moveList().length - 1].moveNumber : +this.currentMoveNumber;
   }
 
   getMoveStyle() {
@@ -127,12 +128,12 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   getMoveDescription() {
-    const move = this.moveList.find(m => m.moveNumber === this.displayedMoveNumber);
+    const move = this.moveList().find(m => m.moveNumber === this.displayedMoveNumber);
     return move ? move.description : 'Move not found in list (description)!';
   }
 
   getEvaluationDescriptionById(evaluationId: string): string {
-    const evaluation = this.evaluationList.find(e => e.id === evaluationId);
+    const evaluation = this.evaluationList().find(e => e.id === evaluationId);
     return evaluation ? evaluation.description : 'Evaluation not found';
   }
 
@@ -175,7 +176,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   getTeamShortName() {
-    const myTeam = this.teamList.find(t => t.id === this.myTeamId);
+    const myTeam = this.teamList.find(t => t.id === this.myTeamId());
     return myTeam ? myTeam.shortName : '';
   }
 
@@ -190,11 +191,11 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   activeEvaluations(): Evaluation[] {
-    return this.evaluationList.filter(e => e.status === ItemStatus.Active);
+    return this.evaluationList().filter(e => e.status === ItemStatus.Active);
   }
 
   hideScoresheet(): boolean {
-    let hideIt = this.scoresheetOnRight;
+    let hideIt = this.scoresheetOnRight();
     const selectedTeam = this.teamList?.find(t => t.id === this.selectedTeamId);
     if (!hideIt && selectedTeam) {
       hideIt = selectedTeam.hideScoresheet;

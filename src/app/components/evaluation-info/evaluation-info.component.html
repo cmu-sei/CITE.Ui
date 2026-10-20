@@ -19,7 +19,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </button>
     @if (showAdvanceMoveButton) {
     <button aria-label="Advance Move" mat-flat-button (click)="advanceCurrentMove()" class="advance-button"
-      title="Advance the evaluation to the next move for all participants" [disabled]="noChanges">
+      title="Advance the evaluation to the next move for all participants" [disabled]="noChanges()">
       Advance Move
     </button>
     }
@@ -32,7 +32,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   }
   @if (selectedEvaluationId && selectedTeamId) {
   <div class="toolbar-group right-buttons">
-    <span class="team-label">{{ selectedTeamId === myTeamId ? 'Team:' : 'Observing:' }}</span>
+    <span class="team-label">{{ selectedTeamId === myTeamId() ? 'Team:' : 'Observing:' }}</span>
     @if (teamList && teamList.length <= 1) {
     <b>{{ getTeamShortName() }}</b>
     }
@@ -64,12 +64,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
     </button>
     }
-    @if (showAdminButton && selectedSection !== aggregateSection) {
+    @if (showAdminButton() && selectedSection !== aggregateSection) {
     <button mat-icon-button style="outline: none;" title="Aggregate Report" (click)="setSection(aggregateSection)">
       <mat-icon class="mdi-24px" fontIcon="mdi-file-document-multiple-outline"></mat-icon>
     </button>
     }
-    @if (showAdminButton) {
+    @if (showAdminButton()) {
     <button aria-label="Show Administration Page" mat-icon-button [routerLink]="['/admin']"
       [queryParams]="{section: 'Evaluations'}" style="outline: none;" title="Administration">
       <mat-icon class="mdi-24px" fontIcon="mdi-cog"></mat-icon>

@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, inject } from '@angular/core';
+import { Component, OnDestroy, inject, input } from '@angular/core';
 import { ScoringModel } from 'src/app/generated/cite.api';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { takeUntil } from 'rxjs/operators';
@@ -20,7 +20,7 @@ export class RightSideIframeComponent implements OnDestroy {
   private sanitizer = inject(DomSanitizer);
   private scoringModelQuery = inject(ScoringModelQuery);
 
-  @Input() hideTopbar: boolean;
+  readonly hideTopbar = input<boolean>(undefined);
   safeUrl: SafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
   private unsubscribe$ = new Subject();
 
@@ -35,7 +35,7 @@ export class RightSideIframeComponent implements OnDestroy {
   }
 
   getTopClass() {
-    if (this.hideTopbar) {
+    if (this.hideTopbar()) {
       return 'top-level-container in-player'
     } else {
       return 'top-level-container out-of-player'

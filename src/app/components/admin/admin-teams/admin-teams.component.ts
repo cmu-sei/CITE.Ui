@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, input } from '@angular/core';
 import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
@@ -40,8 +40,8 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   private teamTypeQuery = inject(TeamTypeQuery);
   private userQuery = inject(UserQuery);
 
-  @Input() evaluationId: string;
-  @Input() canEdit: boolean;
+  readonly evaluationId = input<string>(undefined);
+  readonly canEdit = input<boolean>(undefined);
   filterControl = new UntypedFormControl();
   filterString = '';
   newTeam: Team = { id: '', name: '' };
@@ -85,7 +85,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.filterControl.setValue(this.filterString);
-    this.teamDataService.loadByEvaluationId(this.evaluationId);
+    this.teamDataService.loadByEvaluationId(this.evaluationId());
   }
 
   addOrEditTeam(team: Team) {
@@ -94,7 +94,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
         name: '',
         shortName: '',
         teamTypeId: '',
-        evaluationId: this.evaluationId,
+        evaluationId: this.evaluationId(),
         hideScoresheet: false
       };
     } else {
@@ -164,7 +164,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     let filteredTeams: Team[] = [];
     if (teams) {
       teams.forEach(t => {
-        if (t.evaluationId === this.evaluationId) {
+        if (t.evaluationId === this.evaluationId()) {
           filteredTeams.push({... t});
         } else {
         }

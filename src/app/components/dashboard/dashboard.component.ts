@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { ChangeDetectorRef, Component, Input, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, inject, input } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -89,8 +89,8 @@ export class DashboardComponent implements OnDestroy {
   private changeDetectorRef = inject(ChangeDetectorRef);
 
   @Input() unreadArticles: UnreadArticles;
-  @Input() myTeamId: string;
-  @Input() noChanges: boolean;
+  readonly myTeamId = input<string>(undefined);
+  readonly noChanges = input<boolean>(undefined);
   evaluationUsers: User[] = [];
   teamUsers: User[] = [];
   teamMemberships: TeamMembership[] = [];

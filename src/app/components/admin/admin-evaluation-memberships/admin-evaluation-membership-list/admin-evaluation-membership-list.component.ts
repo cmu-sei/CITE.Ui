@@ -3,7 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, OnChanges, OnInit, Output, ViewChild, inject, input } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -32,14 +32,11 @@ import { MatTooltip } from '@angular/material/tooltip';
 export class AdminEvaluationMembershipListComponent implements OnInit, OnChanges, AfterViewInit {
   snackBar = inject(MatSnackBar);
 
-  @Input()
-  users: User[];
+  readonly users = input<User[]>(undefined);
 
-  @Input()
-  groups: Group[];
+  readonly groups = input<Group[]>(undefined);
 
-  @Input()
-  canEdit: boolean;
+  readonly canEdit = input<boolean>(undefined);
 
   @Output()
   createMembership = new EventEmitter<EvaluationMembership>();
@@ -66,7 +63,7 @@ export class AdminEvaluationMembershipListComponent implements OnInit, OnChanges
     this.dataSource.data = this.buildModel();
 
     this.displayedColumns = this.viewColumns.concat(
-      this.canEdit ? this.editColumns : []
+      this.canEdit() ? this.editColumns : []
     );
   }
 
@@ -85,7 +82,7 @@ export class AdminEvaluationMembershipListComponent implements OnInit, OnChanges
   buildModel(): EvaluationMemberModel[] {
     const evaluationMemberModels = [] as EvaluationMemberModel[];
 
-    this.users.forEach((x) => {
+    this.users().forEach((x) => {
       evaluationMemberModels.push({
         user: x,
         group: null,
@@ -95,7 +92,7 @@ export class AdminEvaluationMembershipListComponent implements OnInit, OnChanges
       });
     });
 
-    this.groups.forEach((x) => {
+    this.groups().forEach((x) => {
       evaluationMemberModels.push({
         user: null,
         group: x,

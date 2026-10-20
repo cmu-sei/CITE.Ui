@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject, input } from '@angular/core';
 import { ComnAuthQuery, ComnAuthService, Theme } from '@cmusei/crucible-common';
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -33,14 +33,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
   private uiDataService = inject(UIDataService);
   private permissionDataService = inject(PermissionDataService);
 
-  @Input() title?: string;
+  readonly title = input<string>(undefined);
   @Input() sidenav?;
   @Input() teams?;
   @Input() team?;
   @Input() topbarColor?;
   @Input() topbarTextColor?;
-  @Input() topbarView?: TopbarView;
-  @Input() imageFilePath: string;
+  readonly topbarView = input<TopbarView>(undefined);
+  readonly imageFilePath = input<string>(undefined);
   @Output() sidenavToggle?: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() setTeam?: EventEmitter<string> = new EventEmitter<string>();
   @Output() urlNavigate?: EventEmitter<string> = new EventEmitter<string>();

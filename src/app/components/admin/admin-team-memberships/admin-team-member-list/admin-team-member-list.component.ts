@@ -7,11 +7,11 @@ import {
   AfterViewInit,
   Component,
   EventEmitter,
-  Input,
   OnChanges,
   OnInit,
   Output,
   ViewChild,
+  input
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
@@ -40,17 +40,13 @@ import { MatTooltip } from '@angular/material/tooltip';
 export class AdminTeamMemberListComponent
   implements OnInit, OnChanges, AfterViewInit
 {
-  @Input()
-  memberships: TeamMembership[];
+  readonly memberships = input<TeamMembership[]>(undefined);
 
-  @Input()
-  users: User[];
+  readonly users = input<User[]>(undefined);
 
-  @Input()
-  roles: TeamRole[];
+  readonly roles = input<TeamRole[]>(undefined);
 
-  @Input()
-  canEdit: boolean;
+  readonly canEdit = input<boolean>(undefined);
 
   @Output()
   deleteMembership = new EventEmitter<string>();
@@ -97,15 +93,15 @@ export class AdminTeamMemberListComponent
     this.buildModel();
 
     this.displayedColumns = this.viewColumns.concat(
-      this.canEdit ? this.editColumns : []
+      this.canEdit() ? this.editColumns : []
     );
   }
 
   buildModel() {
-    this.dataSource.data = this.memberships
+    this.dataSource.data = this.memberships()
       .map((x) => {
-        const user = this.users.find((u) => u.id === x.userId);
-        const role = this.roles.find((r) => r.id === x.roleId);
+        const user = this.users().find((u) => u.id === x.userId);
+        const role = this.roles().find((r) => r.id === x.roleId);
 
         const membership = {
           membership: x,

@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, EventEmitter, Input, Output, Type } from '@angular/core';
+import { Component, EventEmitter, Output, Type, input } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import {
@@ -19,16 +19,16 @@ import { AdminGroupsMemberListComponent } from 'src/app/components/admin/admin-g
 
 @Component({ selector: 'app-admin-groups-membership-list', template: '' })
 class NonMemberListStubComponent {
-  @Input() users!: User[];
-  @Input() canEdit!: boolean;
+  readonly users = input.required<User[]>();
+  readonly canEdit = input.required<boolean>();
   @Output() createMembership = new EventEmitter<string>();
 }
 
 @Component({ selector: 'app-admin-groups-member-list', template: '' })
 class MemberListStubComponent {
-  @Input() memberships!: GroupMembership[];
-  @Input() users!: User[];
-  @Input() canEdit!: boolean;
+  readonly memberships = input.required<GroupMembership[]>();
+  readonly users = input.required<User[]>();
+  readonly canEdit = input.required<boolean>();
   @Output() deleteMembership = new EventEmitter<string>();
 }
 
@@ -94,8 +94,8 @@ describe('AdminGroupsDetailComponent', () => {
     const { groupApi, members, nonMembers } = await renderDetail(true);
 
     expect(groupApi.getGroupMemberships).toHaveBeenCalledWith('g1');
-    expect(names(members().users)).toEqual(['Alice']);
-    expect(names(nonMembers().users)).toEqual(['Bob']);
+    expect(names(members().users())).toEqual(['Alice']);
+    expect(names(nonMembers().users())).toEqual(['Bob']);
   });
 
   /**
@@ -105,8 +105,8 @@ describe('AdminGroupsDetailComponent', () => {
    */
   it('passes canEdit to both lists and adds a member', async () => {
     const { groupApi, members, nonMembers, refresh } = await renderDetail(true);
-    expect(nonMembers().canEdit).toBe(true);
-    expect(members().canEdit).toBe(true);
+    expect(nonMembers().canEdit()).toBe(true);
+    expect(members().canEdit()).toBe(true);
 
     nonMembers().createMembership.emit('u2');
     await refresh();
@@ -114,7 +114,7 @@ describe('AdminGroupsDetailComponent', () => {
       groupId: 'g1',
       userId: 'u2',
     });
-    expect(names(members().users)).toEqual(['Alice', 'Bob']);
+    expect(names(members().users())).toEqual(['Alice', 'Bob']);
   });
 
   /**
@@ -125,8 +125,8 @@ describe('AdminGroupsDetailComponent', () => {
   it('passes canEdit false to both lists', async () => {
     const { members, nonMembers } = await renderDetail(false);
 
-    expect(nonMembers().canEdit).toBe(false);
-    expect(members().canEdit).toBe(false);
+    expect(nonMembers().canEdit()).toBe(false);
+    expect(members().canEdit()).toBe(false);
   });
 
   /**
@@ -140,6 +140,6 @@ describe('AdminGroupsDetailComponent', () => {
     await refresh();
 
     expect(groupApi.deleteGroupMembership).toHaveBeenCalledWith('gm1');
-    expect(names(nonMembers().users)).toEqual(['Alice', 'Bob']);
+    expect(names(nonMembers().users())).toEqual(['Alice', 'Bob']);
   });
 });

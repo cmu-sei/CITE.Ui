@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, Output, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { ScoringCategory, ItemStatus, ScoringOptionSelection, ScoringModel} from 'src/app/generated/cite.api/model/models';
 import { ScoringCategoryDataService } from 'src/app/data/scoring-category/scoring-category-data.service';
 import { ScoringCategoryQuery } from 'src/app/data/scoring-category/scoring-category.query';
@@ -33,11 +33,11 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   dialogService = inject(CrucibleDialogService);
 
-  @Input() scoringModelId: string;
+  readonly scoringModelId = input<string>(undefined);
   @Input() editScoringCategoryId: string;
-  @Input() canEdit: boolean;
+  readonly canEdit = input<boolean>(undefined);
   @Output() scoringCategoryClick = new EventEmitter<string>();
-  @Input() displayScoringModelbyMoveNumber: boolean;
+  readonly displayScoringModelbyMoveNumber = input<boolean>(undefined);
   newScoringCategory: ScoringCategory = { id: '', description: '' };
   scoringCategoryList: ScoringCategory[];
   isLoading = false;
@@ -69,13 +69,13 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.scoringCategoryDataService.loadByScoringModel(this.scoringModelId);
+    this.scoringCategoryDataService.loadByScoringModel(this.scoringModelId());
   }
 
   addOrEditScoringCategory(scoringCategory: ScoringCategory) {
     if (!scoringCategory) {
       scoringCategory = {
-        scoringModelId: this.scoringModelId,
+        scoringModelId: this.scoringModelId(),
         description: '',
         displayOrder: 0,
         calculationEquation: '{max}',
@@ -92,9 +92,9 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
       width: 'auto',
       data: {
         scoringCategory: scoringCategory,
-        displayScoringModelbyMoveNumber: this.displayScoringModelbyMoveNumber,
+        displayScoringModelbyMoveNumber: this.displayScoringModelbyMoveNumber(),
         scoringOptionSelections: this.scoringOptionSelections,
-        canEdit: this.canEdit
+        canEdit: this.canEdit()
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

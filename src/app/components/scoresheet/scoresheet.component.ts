@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, Output, inject, input } from '@angular/core';
 import { MatDialog, MatDialogClose } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -93,9 +93,9 @@ export class ScoresheetComponent implements OnDestroy {
   private titleService = inject(Title);
   private uiDataService = inject(UIDataService);
 
-  @Input() myTeamId: string;
-  @Input() rightSideDisplay: boolean;
-  @Input() noChanges: boolean;
+  readonly myTeamId = input<string>(undefined);
+  readonly rightSideDisplay = input<boolean>(undefined);
+  readonly noChanges = input<boolean>(undefined);
   @Output() selectDisplayedSubmission = new EventEmitter<string>();
   loggedInUserId = '';
   userId = '';

@@ -7,11 +7,11 @@ import {
   AfterViewInit,
   Component,
   EventEmitter,
-  Input,
   OnChanges,
   OnInit,
   Output,
   ViewChild,
+  input
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
@@ -41,20 +41,15 @@ import { MatTooltip } from '@angular/material/tooltip';
 export class AdminEvaluationMemberListComponent
   implements OnInit, OnChanges, AfterViewInit
 {
-  @Input()
-  memberships: EvaluationMembership[];
+  readonly memberships = input<EvaluationMembership[]>(undefined);
 
-  @Input()
-  users: User[];
+  readonly users = input<User[]>(undefined);
 
-  @Input()
-  groups: Group[];
+  readonly groups = input<Group[]>(undefined);
 
-  @Input()
-  roles: EvaluationRole[];
+  readonly roles = input<EvaluationRole[]>(undefined);
 
-  @Input()
-  canEdit: boolean;
+  readonly canEdit = input<boolean>(undefined);
 
   @Output()
   deleteMembership = new EventEmitter<string>();
@@ -101,16 +96,16 @@ export class AdminEvaluationMemberListComponent
     this.buildModel();
 
     this.displayedColumns = this.viewColumns.concat(
-      this.canEdit ? this.editColumns : []
+      this.canEdit() ? this.editColumns : []
     );
   }
 
   buildModel() {
-    this.dataSource.data = this.memberships
+    this.dataSource.data = this.memberships()
       .map((x) => {
-        const user = this.users.find((u) => u.id === x.userId);
-        const group = this.groups.find((g) => g.id === x.groupId);
-        const role = this.roles.find((r) => r.id === x.roleId);
+        const user = this.users().find((u) => u.id === x.userId);
+        const group = this.groups().find((g) => g.id === x.groupId);
+        const role = this.roles().find((r) => r.id === x.roleId);
 
         const membership = {
           membership: x,

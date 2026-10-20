@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, input } from '@angular/core';
 import { Move } from 'src/app/generated/cite.api/model/models';
 import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
@@ -34,8 +34,8 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   private dialogService = inject(CrucibleDialogService);
   private dialog = inject(MatDialog);
 
-  @Input() evaluationId: string;
-  @Input() canEdit: boolean;
+  readonly evaluationId = input<string>(undefined);
+  readonly canEdit = input<boolean>(undefined);
   filterControl: UntypedFormControl = this.moveDataService.filterControl;
   filterString = '';
   sort: Sort = {active: 'moveNumber', direction: 'asc'};
@@ -60,13 +60,13 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.moveDataService.loadByEvaluation(this.evaluationId);
+    this.moveDataService.loadByEvaluation(this.evaluationId());
   }
 
   addOrEditMove(move: Move) {
     if (!move) {
       move = {
-        evaluationId: this.evaluationId,
+        evaluationId: this.evaluationId(),
         description: '',
         moveNumber: this.moveList.length !== 0 ? this.moveList.length : 0,
         situationDescription: '',
@@ -81,7 +81,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
       minWidth: '900px',
       data: {
         move: move,
-        canEdit: this.canEdit
+        canEdit: this.canEdit()
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -123,7 +123,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
     let filteredMoves: Move[] = [];
     if (moves) {
       moves.forEach(se => {
-        if (se.evaluationId === this.evaluationId) {
+        if (se.evaluationId === this.evaluationId()) {
           filteredMoves.push({... se});
         }
       });

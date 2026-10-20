@@ -3,7 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges, inject, input } from '@angular/core';
 import { combineLatest, forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
@@ -32,8 +32,8 @@ export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
   private userQuery = inject(UserQuery);
   private permissionDataService = inject(PermissionDataService);
 
-  @Input() embedded: boolean;
-  @Input() teamId: string;
+  readonly embedded = input<boolean>(undefined);
+  readonly teamId = input<string>(undefined);
   @Output() goBack = new EventEmitter();
 
   team$: Observable<Team>;
@@ -49,14 +49,14 @@ export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     forkJoin([
-      this.teamMembershipDataService.loadMemberships(this.teamId),
+      this.teamMembershipDataService.loadMemberships(this.teamId()),
       this.userDataService.load(),
       this.teamRolesDataService.loadRoles(),
     ]).subscribe();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.canEdit = this.permissionDataService.canEditEvaluation(this.teamId);
+    this.canEdit = this.permissionDataService.canEditEvaluation(this.teamId());
   }
 
   selectUsers(members: boolean) {
@@ -80,9 +80,9 @@ export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
   }
 
   createMembership(teamMembership: TeamMembership) {
-    teamMembership.teamId = this.teamId;
+    teamMembership.teamId = this.teamId();
     this.teamMembershipDataService
-      .createMembership(this.teamId, teamMembership)
+      .createMembership(this.teamId(), teamMembership)
       .subscribe();
   }
 
