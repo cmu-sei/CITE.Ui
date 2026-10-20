@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit, ViewChild, inject, input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject, input, viewChild } from '@angular/core';
 import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 import {
   Evaluation,
@@ -75,7 +75,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   displayedColumns: string[] = ['description', 'moveNumber', 'teamId', 'isChecked'];
   private unsubscribe$ = new Subject();
   dataSource = new MatTableDataSource<Action>();
-  @ViewChild(MatSort) sort: MatSort;
+  readonly sort = viewChild(MatSort);
 
   constructor() {
     this.evaluationQuery
@@ -125,15 +125,15 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
+    this.dataSource.sort = this.sort();
     const initialSortState: Sort = {
       active: 'moveNumber',
       direction: 'asc'
     };
     this.dataSource.data = this.displayedActions;
-    this.sort.active = initialSortState.active;
-    this.sort.direction = initialSortState.direction;
-    this.sort.sortChange.emit(initialSortState);
+    this.sort().active = initialSortState.active;
+    this.sort().direction = initialSortState.direction;
+    this.sort().sortChange.emit(initialSortState);
   }
 
   selectMove(moveNumber: number) {

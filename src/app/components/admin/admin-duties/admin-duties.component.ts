@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, inject, input } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, inject, input, viewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   Duty,
@@ -63,7 +63,7 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   userList$: User[] = [];
   displayedColumns: string[] = ['name', 'teamId', 'users'];
   private unsubscribe$ = new Subject();
-  @ViewChild(MatSort) sort: MatSort;
+  readonly sort = viewChild(MatSort);
 
   constructor() {
     this.teamQuery
@@ -101,14 +101,14 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
+    this.dataSource.sort = this.sort();
     const initialSortState: Sort = {
       active: 'teamId',
       direction: 'asc'
     };
-    this.sort.active = initialSortState.active;
-    this.sort.direction = initialSortState.direction;
-    this.sort.sortChange.emit(initialSortState);
+    this.sort().active = initialSortState.active;
+    this.sort().direction = initialSortState.direction;
+    this.sort().sortChange.emit(initialSortState);
   }
 
   selectTeam(teamId: string) {

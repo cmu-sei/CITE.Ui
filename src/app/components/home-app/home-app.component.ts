@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { DOCUMENT, AsyncPipe, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject, viewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -150,8 +150,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   private uiDataService = inject(UIDataService);
   private xApiService = inject(XApiService);
 
-  @ViewChild('sidenav') sidenav: MatSidenav;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  readonly sidenav = viewChild<MatSidenav>('sidenav');
+  readonly sort = viewChild(MatSort);
   @ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
     if (paginator) {
       this.evaluationDataSource.paginator = paginator;
@@ -446,7 +446,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
     const thisScope = this;
     this.filterString = '';
-    this.evaluationDataSource.sort = this.sort;
+    this.evaluationDataSource.sort = this.sort();
   }
 
   setDataSources() {

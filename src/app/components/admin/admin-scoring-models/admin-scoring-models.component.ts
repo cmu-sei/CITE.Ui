@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, inject, viewChild } from '@angular/core';
 import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
@@ -132,7 +132,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   sort: Sort = {active: 'description', direction: 'asc'};
   isBusy = false;
   uploadProgress = 0;
-  @ViewChild('jsonInput') jsonInput: ElementRef<HTMLInputElement>;
+  readonly jsonInput = viewChild<ElementRef<HTMLInputElement>>('jsonInput');
   showAll = false;
   canCreateScoringModels = this.permissionDataService.canCreateScoringModels();
 
@@ -346,7 +346,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     this.uploadProgress = 0;
     this.isBusy = true;
     this.scoringModelDataService.uploadJson(file, 'events', true);
-    this.jsonInput.nativeElement.value = null;
+    this.jsonInput().nativeElement.value = null;
   }
 
   paginatorEvent(page: PageEvent) {

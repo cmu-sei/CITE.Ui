@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, viewChild } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import { SystemPermission, TeamType } from 'src/app/generated/cite.api/model/models';
@@ -53,7 +53,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   topbarColor = '#ef3a47';
   canEdit = this.permissionDataService.hasPermission(SystemPermission.ManageTeamTypes);
   private unsubscribe$ = new Subject<void>();
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  readonly paginator = viewChild(MatPaginator);
 
   constructor() {
     // subscribe to TeamTypes
@@ -144,9 +144,9 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     this.sortedTeamTypeList = this.getSortedTeamTypes(
       this.filteredTeamTypeList
     );
-    this.paginator.length = this.sortedTeamTypeList.length;
+    this.paginator().length = this.sortedTeamTypeList.length;
     this.pageIndex = 0;
-    this.paginator.pageIndex = 0;
+    this.paginator().pageIndex = 0;
     this.paginateTeamtypes();
   }
 
