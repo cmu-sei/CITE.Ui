@@ -367,7 +367,7 @@ describe('EvaluationDataService', () => {
         description: 'Exercise one',
       });
       // The escaped error reaches ErrorService, the app's ErrorHandler
-      // (app.module.ts), which shows it.
+      // (main.ts), which shows it.
       expect(errors).toEqual([failure]);
     });
 
@@ -384,7 +384,7 @@ describe('EvaluationDataService', () => {
       store.set([makeEvaluation()]);
       service.delete('e1');
       await flush();
-      // delete() sets no loading flag; ErrorService (app.module.ts) shows the error.
+      // delete() sets no loading flag; ErrorService (main.ts) shows the error.
       expect(query.getAll().map((e) => e.id)).toEqual(['e1']);
       expect(query.getValue().loading).toBe(false);
       expect(errors).toEqual([failure]);

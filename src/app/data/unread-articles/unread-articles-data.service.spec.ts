@@ -76,7 +76,7 @@ describe('UnreadArticlesDataService', () => {
     expect(query.getValue().loading).toBe(true);
     expect(query.getAll()).toEqual([]);
     // The escaped error reaches ErrorService, the app's ErrorHandler
-    // (app.module.ts).
+    // (main.ts).
     expect(errors).toEqual([failure]);
   });
 

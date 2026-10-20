@@ -288,7 +288,7 @@ describe('TeamDataService', () => {
       expect(query.getValue().loading).toBe(true);
       expect(query.getAll()).toEqual([makeTeam()]);
       // The escaped error reaches ErrorService, the app's ErrorHandler
-      // (app.module.ts), which shows it.
+      // (main.ts), which shows it.
       expect(errors).toEqual([failure]);
     });
   });

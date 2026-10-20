@@ -215,7 +215,7 @@ describe('UserDataService', () => {
       await flush();
       // update() subscribes without an error callback but sets no loading
       // flag; the escaped error reaches ErrorService, the app's ErrorHandler
-      // (app.module.ts), which shows it.
+      // (main.ts), which shows it.
       expect(query.getEntity('u1')?.name).toBe('Alice');
       expect(errors).toEqual([failure]);
     });

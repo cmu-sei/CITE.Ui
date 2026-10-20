@@ -5,7 +5,6 @@ import { enableProdMode, provideZoneChangeDetection, ErrorHandler, importProvide
 import { platformBrowser, BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { enableAkitaProdMode, persistState } from '@datorama/akita';
 
-import { getBasePath } from './app/app.module';
 import { environment } from './environments/environment';
 import { SystemMessageService } from './app/services/system-message/system-message.service';
 import { UserDataService } from './app/data/user/user-data.service';
@@ -16,7 +15,8 @@ import { ErrorService } from './app/services/error/error.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
 import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
-import { AppRoutingModule } from './app/app-routing.module';
+import { provideRouter } from '@angular/router';
+import { ROUTES } from './app/app.routes';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from 'ngx-clipboard';
@@ -67,6 +67,10 @@ if (environment.production) {
   enableAkitaProdMode();
 }
 
+export function getBasePath(settingsSvc: ComnSettingsService) {
+  return settingsSvc.settings.ApiUrl;
+}
+
 export const storage = persistState({
   key: 'akita-cite-ui',
   include: ['auth.ui'],
@@ -74,7 +78,7 @@ export const storage = persistState({
 
 bootstrapApplication(AppComponent, {
     providers: [
-        importProvidersFrom(environment.production ? [] : AkitaNgDevtools.forRoot(), AkitaNgRouterStoreModule, BrowserModule, AppRoutingModule, BrowserAnimationsModule, A11yModule, ClipboardModule, SwaggerCodegenApiModule, FormsModule, ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatButtonToggleModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDatepickerModule, MatDialogModule, MatExpansionModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatNativeDateModule, MatPaginatorModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatRippleModule, MatSelectModule, MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule, MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MatStepperModule, MatBottomSheetModule, MatBadgeModule, MatFormFieldModule, NgxMatDatepickerActions, NgxMatDatepickerApply, NgxMatDatepickerCancel, NgxMatDatepickerClear, NgxMatDatepickerInput, NgxMatDatepickerToggle, NgxMatDatetimepicker, CdkTableModule, MatTreeModule, CdkTreeModule, ComnAuthModule.forRoot(), ComnSettingsModule.forRoot(), AngularEditorModule, ComnHeaderBarModule, ...CRUCIBLE_DIALOG_IMPORTS),
+        importProvidersFrom(environment.production ? [] : AkitaNgDevtools.forRoot(), AkitaNgRouterStoreModule, BrowserModule, BrowserAnimationsModule, A11yModule, ClipboardModule, SwaggerCodegenApiModule, FormsModule, ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatButtonToggleModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDatepickerModule, MatDialogModule, MatExpansionModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatNativeDateModule, MatPaginatorModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatRippleModule, MatSelectModule, MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule, MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MatStepperModule, MatBottomSheetModule, MatBadgeModule, MatFormFieldModule, NgxMatDatepickerActions, NgxMatDatepickerApply, NgxMatDatepickerCancel, NgxMatDatepickerClear, NgxMatDatepickerInput, NgxMatDatepickerToggle, NgxMatDatetimepicker, CdkTableModule, MatTreeModule, CdkTreeModule, ComnAuthModule.forRoot(), ComnSettingsModule.forRoot(), AngularEditorModule, ComnHeaderBarModule, ...CRUCIBLE_DIALOG_IMPORTS),
         SystemMessageService,
         UserDataService,
         UIDataService,
@@ -87,6 +91,7 @@ bootstrapApplication(AppComponent, {
             provide: ErrorHandler,
             useClass: ErrorService,
         },
+        provideRouter(ROUTES),
         provideHttpClient(withInterceptorsFromDi()),
         provideCrucibleTheme({
             brand: { color: '#E81717', text: '#FFFFFF' },
