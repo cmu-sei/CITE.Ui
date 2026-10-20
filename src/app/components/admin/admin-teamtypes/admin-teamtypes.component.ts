@@ -17,7 +17,7 @@ import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/f
 import { takeUntil } from 'rxjs/operators';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { MatIcon } from '@angular/material/icon';
-import { NgStyle } from '@angular/common';
+
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
 import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
@@ -29,7 +29,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     selector: 'app-admin-teamtypes',
     templateUrl: './admin-teamtypes.component.html',
     styleUrls: ['./admin-teamtypes.component.scss'],
-    imports: [MatIcon, NgStyle, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatSortHeader, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatCard, MatProgressSpinner]
+    imports: [MatIcon, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatSortHeader, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatCard, MatProgressSpinner]
 })
 export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   pageIndex: number = 0;

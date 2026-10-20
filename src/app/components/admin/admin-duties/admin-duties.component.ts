@@ -29,7 +29,7 @@ import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 import { AdminDutyEditDialogComponent } from '../admin-duty-edit-dialog/admin-duty-edit-dialog.component';
 import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import { NgStyle } from '@angular/common';
+
 import { MatIconButton } from '@angular/material/button';
 import { MatFormField, MatLabel, MatInput, MatSuffix } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -41,7 +41,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     selector: 'app-admin-duties',
     templateUrl: './admin-duties.component.html',
     styleUrls: ['./admin-duties.component.scss'],
-    imports: [MatIcon, NgStyle, MatIconButton, MatFormField, MatLabel, MatSelect, MatOption, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner]
+    imports: [MatIcon, MatIconButton, MatFormField, MatLabel, MatSelect, MatOption, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner]
 })
 export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() selectedEvaluationId: string;

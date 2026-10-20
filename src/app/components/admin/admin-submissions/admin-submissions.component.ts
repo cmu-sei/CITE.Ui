@@ -29,7 +29,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { MatIcon } from '@angular/material/icon';
-import { NgStyle, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { MatFormField, MatLabel } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
@@ -43,7 +43,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     selector: 'app-admin-submissions',
     templateUrl: './admin-submissions.component.html',
     styleUrls: ['./admin-submissions.component.scss'],
-    imports: [MatIcon, NgStyle, MatFormField, MatLabel, MatSelect, MatOption, FormsModule, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatIconButton, ClipboardModule, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner, DecimalPipe]
+    imports: [MatIcon, MatFormField, MatLabel, MatSelect, MatOption, FormsModule, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatIconButton, ClipboardModule, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner, DecimalPipe]
 })
 export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   sort: Sort = {

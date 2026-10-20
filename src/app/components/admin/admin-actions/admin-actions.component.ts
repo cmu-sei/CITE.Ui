@@ -31,7 +31,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admin-action-edit-dialog.component';
 import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import { NgStyle } from '@angular/common';
+
 import { MatIconButton } from '@angular/material/button';
 import { MatFormField, MatLabel, MatInput, MatSuffix } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -46,7 +46,7 @@ const ALL_MOVES_VALUE: number = -999;
     selector: 'app-admin-actions',
     templateUrl: './admin-actions.component.html',
     styleUrls: ['./admin-actions.component.scss'],
-    imports: [MatIcon, NgStyle, MatIconButton, MatFormField, MatLabel, MatSelect, MatOption, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner]
+    imports: [MatIcon, MatIconButton, MatFormField, MatLabel, MatSelect, MatOption, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner]
 })
 
 export class AdminActionsComponent implements OnDestroy, OnInit {

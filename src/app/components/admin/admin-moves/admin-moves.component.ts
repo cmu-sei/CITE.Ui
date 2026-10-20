@@ -14,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AdminMoveEditDialogComponent } from '../admin-move-edit-dialog/admin-move-edit-dialog.component';
 import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import { NgStyle } from '@angular/common';
+
 import { MatIconButton } from '@angular/material/button';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
@@ -25,7 +25,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     selector: 'app-admin-moves',
     templateUrl: './admin-moves.component.html',
     styleUrls: ['./admin-moves.component.scss'],
-    imports: [MatIcon, NgStyle, MatIconButton, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatAccordion, MatSort, MatSortHeader, MatExpansionPanel, MatExpansionPanelHeader, MatCard, MatProgressSpinner]
+    imports: [MatIcon, MatIconButton, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatAccordion, MatSort, MatSortHeader, MatExpansionPanel, MatExpansionPanelHeader, MatCard, MatProgressSpinner]
 })
 export class AdminMovesComponent implements OnInit, OnDestroy {
   @Input() evaluationId: string;

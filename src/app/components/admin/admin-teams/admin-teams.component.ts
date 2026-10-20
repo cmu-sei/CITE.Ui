@@ -17,7 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AdminTeamEditDialogComponent } from 'src/app/components/admin/admin-team-edit-dialog/admin-team-edit-dialog.component';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 import { MatIcon } from '@angular/material/icon';
-import { NgStyle } from '@angular/common';
+
 import { MatIconButton } from '@angular/material/button';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
@@ -29,7 +29,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     selector: 'app-admin-teams',
     templateUrl: './admin-teams.component.html',
     styleUrls: ['./admin-teams.component.scss'],
-    imports: [MatIcon, NgStyle, MatIconButton, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatAccordion, MatSort, MatSortHeader, MatExpansionPanel, MatExpansionPanelHeader, AdminTeamMembershipsComponent, MatCard, MatProgressSpinner]
+    imports: [MatIcon, MatIconButton, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatAccordion, MatSort, MatSortHeader, MatExpansionPanel, MatExpansionPanelHeader, AdminTeamMembershipsComponent, MatCard, MatProgressSpinner]
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
   @Input() evaluationId: string;
