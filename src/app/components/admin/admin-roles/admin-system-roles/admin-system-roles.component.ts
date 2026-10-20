@@ -23,7 +23,7 @@ import { CrucibleDialogService } from '@cmusei/crucible-common';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
-import { NgFor, NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 const NAME_VALUE = 'nameValue';
 
@@ -31,7 +31,7 @@ const NAME_VALUE = 'nameValue';
     selector: 'app-admin-system-roles',
     templateUrl: './admin-system-roles.component.html',
     styleUrls: ['./admin-system-roles.component.scss'],
-    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatIconButton, MatTooltip, MatIcon, MatCellDef, MatCell, NgFor, NgIf, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe]
+    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatIconButton, MatTooltip, MatIcon, MatCellDef, MatCell, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe]
 })
 export class AdminSystemRolesComponent implements OnInit, OnDestroy {
   private roleService = inject(RoleDataService);

@@ -15,14 +15,14 @@ import { EvaluationRoleDataService } from 'src/app/data/evaluation/evaluation-ro
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
-import { NgFor, NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
     selector: 'app-admin-evaluation-roles',
     templateUrl: './admin-evaluation-roles.component.html',
     styleUrls: ['./admin-evaluation-roles.component.scss'],
-    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatIconButton, MatTooltip, MatIcon, NgFor, NgIf, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe]
+    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatIconButton, MatTooltip, MatIcon, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe]
 })
 export class AdminEvaluationRolesComponent implements OnInit {
   private evaluationRoleService = inject(EvaluationRoleDataService);

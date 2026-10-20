@@ -21,7 +21,7 @@ import { User } from 'src/app/generated/cite.api';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
+
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ClipboardModule } from 'ngx-clipboard';
@@ -31,7 +31,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     selector: 'app-admin-groups-membership-list',
     templateUrl: './admin-groups-membership-list.component.html',
     styleUrls: ['./admin-groups-membership-list.component.scss'],
-    imports: [MatToolbar, MatToolbarRow, MatFormField, MatInput, FormsModule, NgIf, MatIconButton, MatSuffix, MatIcon, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, ClipboardModule, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow]
+    imports: [MatToolbar, MatToolbarRow, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatIcon, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, ClipboardModule, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow]
 })
 export class AdminGroupsMembershipListComponent
   implements OnInit, OnChanges, AfterViewInit

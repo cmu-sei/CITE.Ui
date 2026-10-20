@@ -20,7 +20,7 @@ import { GroupMembership, User } from 'src/app/generated/cite.api';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
+
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -29,7 +29,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     selector: 'app-admin-groups-member-list',
     templateUrl: './admin-groups-member-list.component.html',
     styleUrls: ['./admin-groups-member-list.component.scss'],
-    imports: [MatToolbar, MatToolbarRow, MatFormField, MatInput, FormsModule, NgIf, MatIconButton, MatSuffix, MatIcon, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
+    imports: [MatToolbar, MatToolbarRow, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatIcon, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
 })
 export class AdminGroupsMemberListComponent
   implements OnInit, OnChanges, AfterViewInit

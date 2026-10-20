@@ -15,14 +15,14 @@ import { ScoringModelRoleDataService } from 'src/app/data/scoring-model/scoring-
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
-import { NgFor, NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
     selector: 'app-admin-scoring-model-roles',
     templateUrl: './admin-scoring-model-roles.component.html',
     styleUrls: ['./admin-scoring-model-roles.component.scss'],
-    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatIconButton, MatTooltip, MatIcon, NgFor, NgIf, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe]
+    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatIconButton, MatTooltip, MatIcon, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe]
 })
 export class AdminScoringModelRolesComponent implements OnInit {
   private scoringModelRoleService = inject(ScoringModelRoleDataService);

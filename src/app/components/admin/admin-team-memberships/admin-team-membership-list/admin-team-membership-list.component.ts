@@ -26,7 +26,7 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
+
 import { MatIconButton } from '@angular/material/button';
 import { ClipboardModule } from 'ngx-clipboard';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -36,7 +36,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     templateUrl: './admin-team-membership-list.component.html',
     styleUrls: ['./admin-team-membership-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbar, MatToolbarRow, MatIcon, MatFormField, MatInput, FormsModule, NgIf, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, ClipboardModule, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
+    imports: [MatToolbar, MatToolbarRow, MatIcon, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, ClipboardModule, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
 })
 export class AdminTeamMembershipListComponent implements OnInit, OnChanges, AfterViewInit {
   @Input()

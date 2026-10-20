@@ -26,7 +26,7 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -35,7 +35,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     selector: 'app-admin-team-member-list',
     templateUrl: './admin-team-member-list.component.html',
     styleUrls: ['./admin-team-member-list.component.scss'],
-    imports: [MatToolbar, MatToolbarRow, MatIcon, MatFormField, MatInput, FormsModule, NgIf, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatSelect, NgFor, MatOption, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
+    imports: [MatToolbar, MatToolbarRow, MatIcon, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatSelect, MatOption, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
 })
 export class AdminTeamMemberListComponent
   implements OnInit, OnChanges, AfterViewInit
