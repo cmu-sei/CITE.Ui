@@ -3,15 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { combineLatest, forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
@@ -34,6 +26,12 @@ import { AsyncPipe } from '@angular/common';
     imports: [AdminTeamMembershipListComponent, AdminTeamMemberListComponent, AsyncPipe]
 })
 export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private teamRolesDataService = inject(TeamRoleDataService);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private permissionDataService = inject(PermissionDataService);
+
   @Input() embedded: boolean;
   @Input() teamId: string;
   @Output() goBack = new EventEmitter();
@@ -48,14 +46,6 @@ export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
   members$ = this.selectUsers(true);
 
   canEdit: boolean;
-
-  constructor(
-    private teamMembershipDataService: TeamMembershipDataService,
-    private teamRolesDataService: TeamRoleDataService,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private permissionDataService: PermissionDataService
-  ) {}
 
   ngOnInit(): void {
     forkJoin([

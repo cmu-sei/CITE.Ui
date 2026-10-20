@@ -3,15 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
@@ -37,6 +29,15 @@ import { AsyncPipe } from '@angular/common';
     imports: [AdminScoringModelMembershipListComponent, AdminScoringModelMemberListComponent, AsyncPipe]
 })
 export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges {
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private scoringModelMembershipDataService = inject(ScoringModelMembershipDataService);
+  private scoringModelRolesDataService = inject(ScoringModelRoleDataService);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private groupDataService = inject(GroupDataService);
+  private permissionDataService = inject(PermissionDataService);
+  private activatedRoute = inject(ActivatedRoute);
+
   @Input() embedded: boolean;
   @Input() scoringModelId: string;
   @Output() goBack = new EventEmitter();
@@ -55,17 +56,6 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
   groupMembers$ = this.selectGroups(true);
 
   canManage$: Observable<boolean>;
-
-  constructor(
-    private scoringModelQuery: ScoringModelQuery,
-    private scoringModelMembershipDataService: ScoringModelMembershipDataService,
-    private scoringModelRolesDataService: ScoringModelRoleDataService,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private groupDataService: GroupDataService,
-    private permissionDataService: PermissionDataService,
-    private activatedRoute: ActivatedRoute
-  ) {}
 
   ngOnInit(): void {
     forkJoin([

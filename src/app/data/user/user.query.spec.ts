@@ -2,6 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect } from 'vitest';
+import { Injector, runInInjectionContext } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Theme } from '@cmusei/crucible-common';
 import { CurrentUserQuery, UserQuery } from './user.query';
@@ -17,7 +18,10 @@ describe('UserQuery', () => {
    */
   it('gives new users the initial UI state', () => {
     const store = new UserStore();
-    const query = new UserQuery(store);
+    const injector = Injector.create({
+      providers: [{ provide: UserStore, useValue: store }],
+    });
+    const query = runInInjectionContext(injector, () => new UserQuery());
     store.set([
       { id: 'u1', name: 'Alice' },
       { id: 'u2', name: 'Bob' },
@@ -35,7 +39,10 @@ describe('UserQuery', () => {
    */
   it('tracks UI state per user', () => {
     const store = new UserStore();
-    const query = new UserQuery(store);
+    const injector = Injector.create({
+      providers: [{ provide: UserStore, useValue: store }],
+    });
+    const query = runInInjectionContext(injector, () => new UserQuery());
     store.set([{ id: 'u1', name: 'Alice' }]);
     const ui = recordEmissions(query.ui.selectEntity('u1'));
     store.ui.update('u1', { isEditing: true });
@@ -50,7 +57,10 @@ describe('UserQuery', () => {
    */
   it('isLoading$ follows the store loading flag', () => {
     const store = new UserStore();
-    const query = new UserQuery(store);
+    const injector = Injector.create({
+      providers: [{ provide: UserStore, useValue: store }],
+    });
+    const query = runInInjectionContext(injector, () => new UserQuery());
     const loading = recordEmissions(query.isLoading$);
     store.set([{ id: 'u1', name: 'Alice' }]);
     expect(loading).toEqual([true, false]);
@@ -63,7 +73,10 @@ describe('UserQuery', () => {
    */
   it('selectByUserId emits the user', async () => {
     const store = new UserStore();
-    const query = new UserQuery(store);
+    const injector = Injector.create({
+      providers: [{ provide: UserStore, useValue: store }],
+    });
+    const query = runInInjectionContext(injector, () => new UserQuery());
     store.set([{ id: 'u1', name: 'Alice' }]);
     expect((await firstValueFrom(query.selectByUserId('u1')))?.name).toBe(
       'Alice',
@@ -79,7 +92,10 @@ describe('CurrentUserQuery', () => {
    */
   it('emits the theme as it changes', () => {
     const store = new CurrentUserStore();
-    const query = new CurrentUserQuery(store);
+    const injector = Injector.create({
+      providers: [{ provide: CurrentUserStore, useValue: store }],
+    });
+    const query = runInInjectionContext(injector, () => new CurrentUserQuery());
     const themes = recordEmissions(query.userTheme$);
     store.update({ theme: Theme.DARK });
     expect(themes).toEqual([Theme.LIGHT, Theme.DARK]);
@@ -91,7 +107,12 @@ describe('CurrentUserQuery', () => {
    * Data: a fresh store with an empty lastRoute.
    */
   it('getLastRoute() defaults to the root', () => {
-    const query = new CurrentUserQuery(new CurrentUserStore());
+    const injector = Injector.create({
+      providers: [
+        { provide: CurrentUserStore, useValue: new CurrentUserStore() },
+      ],
+    });
+    const query = runInInjectionContext(injector, () => new CurrentUserQuery());
     expect(query.getLastRoute()).toBe('/');
   });
 
@@ -102,7 +123,10 @@ describe('CurrentUserQuery', () => {
    */
   it('getLastRoute() returns the recorded route', () => {
     const store = new CurrentUserStore();
-    const query = new CurrentUserQuery(store);
+    const injector = Injector.create({
+      providers: [{ provide: CurrentUserStore, useValue: store }],
+    });
+    const query = runInInjectionContext(injector, () => new CurrentUserQuery());
     store.update({ lastRoute: '/admin' });
     expect(query.getLastRoute()).toBe('/admin');
   });

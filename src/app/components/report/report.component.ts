@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, inject } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -58,6 +58,17 @@ import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
     ],
 })
 export class ReportComponent implements OnDestroy {
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private submissionDataService = inject(SubmissionDataService);
+  private submissionQuery = inject(SubmissionQuery);
+  private evaluationQuery = inject(EvaluationQuery);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private teamQuery = inject(TeamQuery);
+  private titleService = inject(Title);
+  private uiDataService = inject(UIDataService);
+
   @Input() selectedEvaluation: Evaluation;
   @Input() selectedScoringModel: ScoringModel;
   @Input() moveList: Move[];
@@ -87,18 +98,7 @@ export class ReportComponent implements OnDestroy {
   buttonClass = 'mat-user';
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private scoringModelQuery: ScoringModelQuery,
-    private submissionDataService: SubmissionDataService,
-    private submissionQuery: SubmissionQuery,
-    private evaluationQuery: EvaluationQuery,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private currentUserQuery: CurrentUserQuery,
-    private teamQuery: TeamQuery,
-    private titleService: Title,
-    private uiDataService: UIDataService
-  ) {
+  constructor() {
     this.titleService.setTitle('CITE Report');
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {

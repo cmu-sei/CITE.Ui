@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, inject } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -67,6 +67,27 @@ interface Situation extends SituationMove {
     imports: [MatCard, MatButton, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatIconButton, MatIcon, MatCheckbox, MatTooltip, MatSelect, MatOption, MatFormField, MatLabel, FormsModule]
 })
 export class DashboardComponent implements OnDestroy {
+  private actionDataService = inject(ActionDataService);
+  private actionQuery = inject(ActionQuery);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private evaluationQuery = inject(EvaluationQuery);
+  private moveQuery = inject(MoveQuery);
+  private dutyDataService = inject(DutyDataService);
+  private dutyQuery = inject(DutyQuery);
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private teamQuery = inject(TeamQuery);
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private teamRoleDataService = inject(TeamRoleDataService);
+  private unreadArticlesDataService = inject(UnreadArticlesDataService);
+  dialogService = inject(CrucibleDialogService);
+  matDialog = inject(MatDialog);
+  private titleService = inject(Title);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private permissionDataService = inject(PermissionDataService);
+  private settingsService = inject(ComnSettingsService);
+  private changeDetectorRef = inject(ChangeDetectorRef);
+
   @Input() unreadArticles: UnreadArticles;
   @Input() myTeamId: string;
   @Input() noChanges: boolean;
@@ -99,28 +120,7 @@ export class DashboardComponent implements OnDestroy {
   canSubmitTeamScore = false;
   canContributeToTeamScore = false;
 
-  constructor(
-    private actionDataService: ActionDataService,
-    private actionQuery: ActionQuery,
-    private currentUserQuery: CurrentUserQuery,
-    private evaluationQuery: EvaluationQuery,
-    private moveQuery: MoveQuery,
-    private dutyDataService: DutyDataService,
-    private dutyQuery: DutyQuery,
-    private scoringModelQuery: ScoringModelQuery,
-    private teamQuery: TeamQuery,
-    private teamMembershipDataService: TeamMembershipDataService,
-    private teamRoleDataService: TeamRoleDataService,
-    private unreadArticlesDataService: UnreadArticlesDataService,
-    public dialogService: CrucibleDialogService,
-    public matDialog: MatDialog,
-    private titleService: Title,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private permissionDataService: PermissionDataService,
-    private settingsService: ComnSettingsService,
-    private changeDetectorRef: ChangeDetectorRef
-  ) {
+  constructor() {
     this.titleService.setTitle('CITE Dashboard');
     //observe the current user
     this.currentUserQuery

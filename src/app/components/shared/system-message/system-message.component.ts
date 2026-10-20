@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   MatBottomSheetRef,
   MAT_BOTTOM_SHEET_DATA,
@@ -17,13 +17,15 @@ import { MatIcon } from '@angular/material/icon';
     imports: [MatIconButton, MatIcon]
 })
 export class SystemMessageComponent implements OnInit {
+  messageSheet = inject<MatBottomSheetRef<SystemMessageComponent>>(MatBottomSheetRef);
+  data = inject(MAT_BOTTOM_SHEET_DATA);
+
   public displayTitle: string;
   public displayMessage: string;
 
-  constructor(
-    public messageSheet: MatBottomSheetRef<SystemMessageComponent>,
-    @Inject(MAT_BOTTOM_SHEET_DATA) public data: any
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.displayTitle = data.title;
     this.displayMessage = data.message;
   }

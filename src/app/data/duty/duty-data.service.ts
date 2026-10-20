@@ -4,7 +4,7 @@
 
 import { DutyStore } from './duty.store';
 import { DutyQuery } from './duty.query';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -19,6 +19,12 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
   providedIn: 'root',
 })
 export class DutyDataService {
+  private dutyStore = inject(DutyStore);
+  private dutyQuery = inject(DutyQuery);
+  private dutyService = inject(DutyService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+
   private _requestedDutyId: string;
   private _requestedDutyId$ = this.activatedRoute.queryParamMap.pipe(
     map((params) => params.get('dutyId') || '')
@@ -33,13 +39,9 @@ export class DutyDataService {
   private pageSize: Observable<number>;
   private pageIndex: Observable<number>;
 
-  constructor(
-    private dutyStore: DutyStore,
-    private dutyQuery: DutyQuery,
-    private dutyService: DutyService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {
+  constructor() {
+    const activatedRoute = this.activatedRoute;
+
     this.filterTerm = activatedRoute.queryParamMap.pipe(
       map((params) => params.get('dutymask') || '')
     );

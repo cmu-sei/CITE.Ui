@@ -2,11 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import {
@@ -46,6 +42,15 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     imports: [MatIcon, MatFormField, MatLabel, MatSelect, MatOption, FormsModule, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatIconButton, ClipboardModule, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner, DecimalPipe]
 })
 export class AdminSubmissionsComponent implements OnInit, OnDestroy {
+  private settingsService = inject(ComnSettingsService);
+  private evaluationQuery = inject(EvaluationQuery);
+  private submissionDataService = inject(SubmissionDataService);
+  private submissionQuery = inject(SubmissionQuery);
+  private teamDataService = inject(TeamDataService);
+  private dialogService = inject(CrucibleDialogService);
+  matDialog = inject(MatDialog);
+  private permissionDataService = inject(PermissionDataService);
+
   sort: Sort = {
     active: 'name',
     direction: 'asc',
@@ -79,16 +84,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   ];
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private evaluationQuery: EvaluationQuery,
-    private submissionDataService: SubmissionDataService,
-    private submissionQuery: SubmissionQuery,
-    private teamDataService: TeamDataService,
-    private dialogService: CrucibleDialogService,
-    public matDialog: MatDialog,
-    private permissionDataService: PermissionDataService
-  ) {
+  constructor() {
 
     this.evaluationQuery
       .selectAll()

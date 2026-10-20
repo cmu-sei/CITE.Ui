@@ -8,7 +8,7 @@ import {
   ScoringModelStore,
 } from './scoring-model.store';
 import { ScoringModel } from 'src/app/generated/cite.api';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
 
@@ -20,8 +20,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ScoringModelQuery extends QueryEntity<ScoringModelState> {
-  constructor(protected store: ScoringModelStore) {
+  protected store: ScoringModelStore;
+
+  constructor() {
+    const store = inject(ScoringModelStore);
+
     super(store);
+  
+    this.store = store;
   }
 
   selectById(id: string): Observable<ScoringModel> {

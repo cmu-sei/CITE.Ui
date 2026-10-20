@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
 import { Move } from 'src/app/generated/cite.api/model/models';
 import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
@@ -28,6 +28,12 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     imports: [MatIcon, MatIconButton, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatAccordion, MatSort, MatSortHeader, MatExpansionPanel, MatExpansionPanelHeader, MatCard, MatProgressSpinner]
 })
 export class AdminMovesComponent implements OnInit, OnDestroy {
+  private settingsService = inject(ComnSettingsService);
+  private moveDataService = inject(MoveDataService);
+  private moveQuery = inject(MoveQuery);
+  private dialogService = inject(CrucibleDialogService);
+  private dialog = inject(MatDialog);
+
   @Input() evaluationId: string;
   @Input() canEdit: boolean;
   filterControl: UntypedFormControl = this.moveDataService.filterControl;
@@ -40,13 +46,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   topbarColor = '#ef3a47';
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private moveDataService: MoveDataService,
-    private moveQuery: MoveQuery,
-    private dialogService: CrucibleDialogService,
-    private dialog: MatDialog
-  ) {
+  constructor() {
     this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
       this.moveList = moves;
       this.sortedMoves = this.getSortedMoves(this.getFilteredMoves(this.moveList));

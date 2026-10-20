@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
 import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
@@ -90,6 +90,17 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 })
 
 export class AdminEvaluationsComponent implements OnInit, OnDestroy {
+  private settingsService = inject(ComnSettingsService);
+  private evaluationDataService = inject(EvaluationDataService);
+  private evaluationQuery = inject(EvaluationQuery);
+  private permissionDataService = inject(PermissionDataService);
+  private scoringModelDataService = inject(ScoringModelDataService);
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private userQuery = inject(UserQuery);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+
   @Input() evaluationList: Evaluation[];
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -125,18 +136,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   canCreateEvaluations = this.permissionDataService.canCreateEvaluations();
   @ViewChild('jsonInput') jsonInput: ElementRef<HTMLInputElement>;
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private evaluationDataService: EvaluationDataService,
-    private evaluationQuery: EvaluationQuery,
-    private permissionDataService: PermissionDataService,
-    private scoringModelDataService: ScoringModelDataService,
-    private scoringModelQuery: ScoringModelQuery,
-    private teamMembershipDataService: TeamMembershipDataService,
-    private userQuery: UserQuery,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService
-  ) {
+  constructor() {
       // observe the scoring models
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {
       this.scoringModels = scoringModels;

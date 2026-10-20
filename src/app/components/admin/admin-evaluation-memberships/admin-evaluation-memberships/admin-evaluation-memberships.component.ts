@@ -3,15 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { combineLatest, forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EvaluationMembershipDataService } from 'src/app/data/evaluation/evaluation-membership-data.service';
@@ -35,6 +27,13 @@ import { AsyncPipe } from '@angular/common';
     imports: [AdminEvaluationMembershipListComponent, AdminEvaluationMemberListComponent, AsyncPipe]
 })
 export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
+  private evaluationMembershipDataService = inject(EvaluationMembershipDataService);
+  private evaluationRolesDataService = inject(EvaluationRoleDataService);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private groupDataService = inject(GroupDataService);
+  private permissionDataService = inject(PermissionDataService);
+
   @Input() embedded: boolean;
   @Input() evaluationId: string;
   @Output() goBack = new EventEmitter();
@@ -52,15 +51,6 @@ export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
   groupMembers$ = this.selectGroups(true);
 
   canEdit: boolean;
-
-  constructor(
-    private evaluationMembershipDataService: EvaluationMembershipDataService,
-    private evaluationRolesDataService: EvaluationRoleDataService,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private groupDataService: GroupDataService,
-    private permissionDataService: PermissionDataService
-  ) {}
 
   ngOnInit(): void {
     forkJoin([

@@ -2,13 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core';
 import { MatDialog, MatDialogClose } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -83,6 +77,22 @@ import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
     ],
 })
 export class ScoresheetComponent implements OnDestroy {
+  private permissionDataService = inject(PermissionDataService);
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private submissionDataService = inject(SubmissionDataService);
+  private submissionQuery = inject(SubmissionQuery);
+  private evaluationQuery = inject(EvaluationQuery);
+  private moveQuery = inject(MoveQuery);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private teamQuery = inject(TeamQuery);
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private dialogService = inject(CrucibleDialogService);
+  matDialog = inject(MatDialog);
+  private titleService = inject(Title);
+  private uiDataService = inject(UIDataService);
+
   @Input() myTeamId: string;
   @Input() rightSideDisplay: boolean;
   @Input() noChanges: boolean;
@@ -119,23 +129,7 @@ export class ScoresheetComponent implements OnDestroy {
   commentSaveStates: { [scoringOptionId: string]: 'saving' | 'saved' | 'failed' } = {};
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private permissionDataService: PermissionDataService,
-    private scoringModelQuery: ScoringModelQuery,
-    private submissionDataService: SubmissionDataService,
-    private submissionQuery: SubmissionQuery,
-    private evaluationQuery: EvaluationQuery,
-    private moveQuery: MoveQuery,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private currentUserQuery: CurrentUserQuery,
-    private teamQuery: TeamQuery,
-    private teamMembershipDataService: TeamMembershipDataService,
-    private dialogService: CrucibleDialogService,
-    public matDialog: MatDialog,
-    private titleService: Title,
-    private uiDataService: UIDataService
-  ) {
+  constructor() {
     this.titleService.setTitle('CITE Scoresheet');
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>)

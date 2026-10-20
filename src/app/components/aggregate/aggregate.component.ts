@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -39,6 +39,16 @@ import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
     imports: [MatIconButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow, DisplayOrderPipe]
 })
 export class AggregateComponent implements OnInit, OnDestroy {
+  private submissionService = inject(SubmissionService);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private teamService = inject(TeamService);
+  private teamQuery = inject(TeamQuery);
+  matDialog = inject(MatDialog);
+  private titleService = inject(Title);
+  private uiDataService = inject(UIDataService);
+
   @Input() selectedEvaluation: Evaluation;
   @Input() selectedScoringModel: ScoringModel;
   @Input() moveList: Move[];
@@ -63,18 +73,7 @@ export class AggregateComponent implements OnInit, OnDestroy {
   buttonClass = 'mat-user';
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private submissionService: SubmissionService,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private currentUserQuery: CurrentUserQuery,
-    private teamService: TeamService,
-    private teamQuery: TeamQuery,
-    public matDialog: MatDialog,
-    private titleService: Title,
-    private uiDataService: UIDataService
-
-  ) {
+  constructor() {
     this.titleService.setTitle('CITE Report');
     // observe the logged in user ID
     this.currentUserQuery.select()

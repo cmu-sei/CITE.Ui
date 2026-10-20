@@ -2,13 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import {
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 import {
   Evaluation,
@@ -50,6 +44,17 @@ const ALL_MOVES_VALUE: number = -999;
 })
 
 export class AdminActionsComponent implements OnDestroy, OnInit {
+  private settingsService = inject(ComnSettingsService);
+  private evaluationQuery = inject(EvaluationQuery);
+  private actionDataService = inject(ActionDataService);
+  private actionQuery = inject(ActionQuery);
+  private moveDataService = inject(MoveDataService);
+  private moveQuery = inject(MoveQuery);
+  private teamDataService = inject(TeamDataService);
+  private teamQuery = inject(TeamQuery);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+
   @Input() selectedEvaluationId: string;
   @Input() canEdit: boolean;
   teamList: Team[] = [];
@@ -72,18 +77,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   dataSource = new MatTableDataSource<Action>();
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private evaluationQuery: EvaluationQuery,
-    private actionDataService: ActionDataService,
-    private actionQuery: ActionQuery,
-    private moveDataService: MoveDataService,
-    private moveQuery: MoveQuery,
-    private teamDataService: TeamDataService,
-    private teamQuery: TeamQuery,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService
-  ) {
+  constructor() {
     this.evaluationQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))

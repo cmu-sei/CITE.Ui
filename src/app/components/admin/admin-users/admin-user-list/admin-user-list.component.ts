@@ -1,16 +1,7 @@
 // Copyright 2024 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  ViewChild,
-  Input,
-  Output,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild, Input, Output, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
@@ -42,6 +33,10 @@ export interface Action {
     imports: [MatIcon, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatPaginator, MatTooltip, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, ClipboardModule, MatSelect, MatOption, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatCard, MatProgressSpinner, AsyncPipe]
 })
 export class AdminUserListComponent implements OnInit, OnChanges {
+  private confirmService = inject(CrucibleDialogService);
+  private roleDataService = inject(RoleDataService);
+  private userDataService = inject(UserDataService);
+
   displayedColumns: string[] = ['id', 'name', 'role'];
   filterString = '';
   savedFilterString = '';
@@ -58,12 +53,6 @@ export class AdminUserListComponent implements OnInit, OnChanges {
   @Output() delete: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-
-  constructor(
-    private confirmService: CrucibleDialogService,
-    private roleDataService: RoleDataService,
-    private userDataService: UserDataService
-  ) { }
 
   ngOnInit() {
     if (this.paginator) {

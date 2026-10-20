@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import { SystemPermission, TeamType } from 'src/app/generated/cite.api/model/models';
@@ -32,6 +32,13 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     imports: [MatIcon, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatSortHeader, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatCard, MatProgressSpinner]
 })
 export class AdminTeamTypesComponent implements OnInit, OnDestroy {
+  private dialog = inject(MatDialog);
+  private dialogService = inject(CrucibleDialogService);
+  private teamTypeDataService = inject(TeamTypeDataService);
+  private teamTypeQuery = inject(TeamTypeQuery);
+  private settingsService = inject(ComnSettingsService);
+  private permissionDataService = inject(PermissionDataService);
+
   pageIndex: number = 0;
   pageSize: number = 10;
   teamTypeList: TeamType[] = [];
@@ -48,14 +55,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(
-    private dialog: MatDialog,
-    private dialogService: CrucibleDialogService,
-    private teamTypeDataService: TeamTypeDataService,
-    private teamTypeQuery: TeamTypeQuery,
-    private settingsService: ComnSettingsService,
-    private permissionDataService: PermissionDataService
-  ) {
+  constructor() {
     // subscribe to TeamTypes
     this.teamTypeQuery
       .selectAll()

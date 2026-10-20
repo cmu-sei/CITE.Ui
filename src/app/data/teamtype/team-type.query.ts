@@ -8,7 +8,7 @@ import {
   TeamTypeStore,
 } from './team-type.store';
 import { TeamType } from 'src/app/generated/cite.api';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @QueryConfig({
@@ -19,8 +19,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TeamTypeQuery extends QueryEntity<TeamTypeState> {
-  constructor(protected store: TeamTypeStore) {
+  protected store: TeamTypeStore;
+
+  constructor() {
+    const store = inject(TeamTypeStore);
+
     super(store);
+  
+    this.store = store;
   }
 
   selectById(id: string): Observable<TeamType> {

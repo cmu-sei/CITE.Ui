@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, Output, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnDestroy, OnInit, inject } from '@angular/core';
 import { ScoringCategory, ItemStatus, ScoringOptionSelection, ScoringModel} from 'src/app/generated/cite.api/model/models';
 import { ScoringCategoryDataService } from 'src/app/data/scoring-category/scoring-category-data.service';
 import { ScoringCategoryQuery } from 'src/app/data/scoring-category/scoring-category.query';
@@ -27,6 +27,12 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     imports: [MatAccordion, MatIconButton, MatIcon, MatExpansionPanel, MatExpansionPanelHeader, AdminScoringOptionsComponent, MatCard, MatProgressSpinner]
 })
 export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
+  private settingsService = inject(ComnSettingsService);
+  private scoringCategoryDataService = inject(ScoringCategoryDataService);
+  private scoringCategoryQuery = inject(ScoringCategoryQuery);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+
   @Input() scoringModelId: string;
   @Input() editScoringCategoryId: string;
   @Input() canEdit: boolean;
@@ -53,13 +59,7 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   ];
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private scoringCategoryDataService: ScoringCategoryDataService,
-    private scoringCategoryQuery: ScoringCategoryQuery,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService
-  ) {
+  constructor() {
     this.scoringCategoryQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringCategories => {
       this.scoringCategoryList = [];
       scoringCategories.sort((a, b) => +a.displayOrder < +b.displayOrder ? -1 : 1).forEach(scoringCategory => {

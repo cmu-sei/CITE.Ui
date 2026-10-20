@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { DOCUMENT, AsyncPipe, DatePipe } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -122,6 +122,34 @@ export enum Section {
     ],
 })
 export class HomeAppComponent implements OnDestroy, OnInit {
+  private _document = inject<HTMLDocument>(DOCUMENT);
+  private authService = inject(ComnAuthService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private permissionDataService = inject(PermissionDataService);
+  private settingsService = inject(ComnSettingsService);
+  private authQuery = inject(ComnAuthQuery);
+  private evaluationDataService = inject(EvaluationDataService);
+  private evaluationQuery = inject(EvaluationQuery);
+  private moveDataService = inject(MoveDataService);
+  private scoringModelDataService = inject(ScoringModelDataService);
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private submissionDataService = inject(SubmissionDataService);
+  private submissionQuery = inject(SubmissionQuery);
+  private teamDataService = inject(TeamDataService);
+  private teamQuery = inject(TeamQuery);
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private teamRoleDataService = inject(TeamRoleDataService);
+  private signalRService = inject(SignalRService);
+  private gallerySignalRService = inject(GallerySignalRService);
+  private moveQuery = inject(MoveQuery);
+  private unreadArticlesQuery = inject(UnreadArticlesQuery);
+  private uiDataService = inject(UIDataService);
+  private xApiService = inject(XApiService);
+
   @ViewChild('sidenav') sidenav: MatSidenav;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
@@ -181,36 +209,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   canViewAdministration = false;
   readonly SystemPermission = SystemPermission;
 
-  constructor(
-    @Inject(DOCUMENT) private _document: HTMLDocument,
-    private authService: ComnAuthService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private currentUserQuery: CurrentUserQuery,
-    private permissionDataService: PermissionDataService,
-    private settingsService: ComnSettingsService,
-    private authQuery: ComnAuthQuery,
-    private evaluationDataService: EvaluationDataService,
-    private evaluationQuery: EvaluationQuery,
-    private moveDataService: MoveDataService,
-    private scoringModelDataService: ScoringModelDataService,
-    private scoringModelQuery: ScoringModelQuery,
-    private submissionDataService: SubmissionDataService,
-    private submissionQuery: SubmissionQuery,
-    private teamDataService: TeamDataService,
-    private teamQuery: TeamQuery,
-    private teamMembershipDataService: TeamMembershipDataService,
-    private teamRoleDataService: TeamRoleDataService,
-    private signalRService: SignalRService,
-    private gallerySignalRService: GallerySignalRService,
-    private moveQuery: MoveQuery,
-    private unreadArticlesQuery: UnreadArticlesQuery,
-    private uiDataService: UIDataService,
-    private xApiService: XApiService,
-    titleService: Title
-  ) {
+  constructor() {
+    const titleService = inject(Title);
+
     const appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
     titleService.setTitle(appTitle);
     this.topbarTextBase =

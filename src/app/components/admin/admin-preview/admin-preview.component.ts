@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import {
@@ -27,6 +27,11 @@ import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
     imports: [MatIconButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatCheckbox, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow, DisplayOrderPipe]
 })
 export class AdminPreviewComponent implements OnDestroy, OnInit {
+  matDialog = inject(MatDialog);
+  private titleService = inject(Title);
+  private scoringModelDataService = inject(ScoringModelDataService);
+  private scoringModelQuery = inject(ScoringModelQuery);
+
   @Input() scoringModelId: string;
   @Output() closeMe = new EventEmitter<boolean>();
   scoringModel: ScoringModel;
@@ -38,12 +43,7 @@ export class AdminPreviewComponent implements OnDestroy, OnInit {
   buttonClass = 'mat-user';
   private unsubscribe$ = new Subject();
 
-  constructor(
-    public matDialog: MatDialog,
-    private titleService: Title,
-    private scoringModelDataService: ScoringModelDataService,
-    private scoringModelQuery: ScoringModelQuery
-  ) {
+  constructor() {
     this.titleService.setTitle('CITE Preview');
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(smList => {
       this.scoringModel = smList.find(m => m.id === this.scoringModelId);

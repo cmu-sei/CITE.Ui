@@ -2,14 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   Duty,
@@ -44,6 +37,16 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     imports: [MatIcon, MatIconButton, MatFormField, MatLabel, MatSelect, MatOption, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner]
 })
 export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
+  private settingsService = inject(ComnSettingsService);
+  private dutyDataService = inject(DutyDataService);
+  private dutyQuery = inject(DutyQuery);
+  private teamDataService = inject(TeamDataService);
+  private teamQuery = inject(TeamQuery);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+  matDialog = inject(MatDialog);
+  private activatedRoute = inject(ActivatedRoute);
+
   @Input() selectedEvaluationId: string;
   @Input() canEdit: boolean;
   pageIndex: number = 0;
@@ -62,17 +65,7 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   private unsubscribe$ = new Subject();
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private dutyDataService: DutyDataService,
-    private dutyQuery: DutyQuery,
-    private teamDataService: TeamDataService,
-    private teamQuery: TeamQuery,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService,
-    public matDialog: MatDialog,
-    private activatedRoute: ActivatedRoute
-  ) {
+  constructor() {
     this.teamQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))

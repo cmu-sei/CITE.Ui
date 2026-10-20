@@ -3,16 +3,7 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -36,6 +27,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 export class AdminGroupsMembershipListComponent
   implements OnInit, OnChanges, AfterViewInit
 {
+  snackBar = inject(MatSnackBar);
+
   @Input()
   users: User[];
 
@@ -54,8 +47,6 @@ export class AdminGroupsMembershipListComponent
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
-  constructor(public snackBar: MatSnackBar) {}
 
   ngOnInit(): void {}
 

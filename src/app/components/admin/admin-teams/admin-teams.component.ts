@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
 import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
@@ -32,6 +32,14 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     imports: [MatIcon, MatIconButton, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatAccordion, MatSort, MatSortHeader, MatExpansionPanel, MatExpansionPanelHeader, AdminTeamMembershipsComponent, MatCard, MatProgressSpinner]
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
+  private settingsService = inject(ComnSettingsService);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+  private teamDataService = inject(TeamDataService);
+  private teamQuery = inject(TeamQuery);
+  private teamTypeQuery = inject(TeamTypeQuery);
+  private userQuery = inject(UserQuery);
+
   @Input() evaluationId: string;
   @Input() canEdit: boolean;
   filterControl = new UntypedFormControl();
@@ -53,15 +61,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   sortedTeams: Team[] = [];
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService,
-    private teamDataService: TeamDataService,
-    private teamQuery: TeamQuery,
-    private teamTypeQuery: TeamTypeQuery,
-    private userQuery: UserQuery
-  ) {
+  constructor() {
     // subscribe to TeamTypes
     this.teamTypeQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamTypes => {
       this.teamTypeList = teamTypes.sort((a: TeamType, b: TeamType) => {

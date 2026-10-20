@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { ScoringOption, ItemStatus } from 'src/app/generated/cite.api/model/models';
 import { ScoringOptionDataService } from 'src/app/data/scoring-option/scoring-option-data.service';
 import { ScoringOptionQuery } from 'src/app/data/scoring-option/scoring-option.query';
@@ -25,6 +25,12 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     imports: [MatIconButton, MatIcon, MatCheckbox, FormsModule, MatCard, MatProgressSpinner]
 })
 export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
+  private settingsService = inject(ComnSettingsService);
+  private scoringOptionDataService = inject(ScoringOptionDataService);
+  private scoringOptionQuery = inject(ScoringOptionQuery);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+
   @Input() scoringCategoryId: string;
   @Input() canEdit: boolean;
   newScoringOption: ScoringOption = { id: '', description: '' };
@@ -43,13 +49,7 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
   ];
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private scoringOptionDataService: ScoringOptionDataService,
-    private scoringOptionQuery: ScoringOptionQuery,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService
-  ) {
+  constructor() {
     this.scoringOptionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringOptions => {
       this.scoringOptionList = [];
       scoringOptions.sort((a, b) => +a.displayOrder < +b.displayOrder ? -1 : 1).forEach(scoringOption => {

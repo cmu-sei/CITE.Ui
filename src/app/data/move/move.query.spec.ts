@@ -2,6 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect } from 'vitest';
+import { Injector, runInInjectionContext } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { MoveStore } from './move.store';
 import { MoveQuery } from './move.query';
@@ -16,7 +17,10 @@ describe('MoveQuery', () => {
    */
   it('selectById tracks one move through updates', () => {
     const store = new MoveStore();
-    const query = new MoveQuery(store);
+    const injector = Injector.create({
+      providers: [{ provide: MoveStore, useValue: store }],
+    });
+    const query = runInInjectionContext(injector, () => new MoveQuery());
     store.set([
       { id: 'm1', description: 'first' },
       { id: 'm2', description: 'second' },
@@ -34,7 +38,10 @@ describe('MoveQuery', () => {
    */
   it('selectAll keeps store order instead of sorting by move number', async () => {
     const store = new MoveStore();
-    const query = new MoveQuery(store);
+    const injector = Injector.create({
+      providers: [{ provide: MoveStore, useValue: store }],
+    });
+    const query = runInInjectionContext(injector, () => new MoveQuery());
     store.set([
       { id: 'm3', moveNumber: 3 },
       { id: 'm1', moveNumber: 1 },

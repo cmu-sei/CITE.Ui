@@ -4,7 +4,7 @@
 
 import { ActionStore } from './action.store';
 import { ActionQuery } from './action.query';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -19,6 +19,12 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
   providedIn: 'root',
 })
 export class ActionDataService {
+  private actionStore = inject(ActionStore);
+  private actionQuery = inject(ActionQuery);
+  private actionService = inject(ActionService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+
   private _requestedActionId: string;
   private _requestedActionId$ = this.activatedRoute.queryParamMap.pipe(
     map((params) => params.get('actionId') || '')
@@ -33,13 +39,9 @@ export class ActionDataService {
   private pageSize: Observable<number>;
   private pageIndex: Observable<number>;
 
-  constructor(
-    private actionStore: ActionStore,
-    private actionQuery: ActionQuery,
-    private actionService: ActionService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {
+  constructor() {
+    const activatedRoute = this.activatedRoute;
+
     this.filterTerm = activatedRoute.queryParamMap.pipe(
       map((params) => params.get('actionmask') || '')
     );

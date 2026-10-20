@@ -1,7 +1,7 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
@@ -71,6 +71,21 @@ import { AdminGroupsComponent } from '../admin-groups/admin-groups.component';
     ],
 })
 export class AdminContainerComponent implements OnDestroy, OnInit {
+  private router = inject(Router);
+  private authService = inject(ComnAuthService);
+  private evaluationDataService = inject(EvaluationDataService);
+  private evaluationQuery = inject(EvaluationQuery);
+  private scoringModelDataService = inject(ScoringModelDataService);
+  private teamTypeDataService = inject(TeamTypeDataService);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private healthCheckService = inject(HealthCheckService);
+  private settingsService = inject(ComnSettingsService);
+  private authQuery = inject(ComnAuthQuery);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private permissionDataService = inject(PermissionDataService);
+  private signalRService = inject(SignalRService);
+
   usersText = 'Users';
   evaluationsText = 'Evaluations';
   scoringModelsText = 'Scoring Models';
@@ -113,24 +128,10 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   canViewRoles = false;
   readonly SystemPermission = SystemPermission;
 
-  constructor(
-    private router: Router,
-    private authService: ComnAuthService,
-    private evaluationDataService: EvaluationDataService,
-    private evaluationQuery: EvaluationQuery,
-    private scoringModelDataService: ScoringModelDataService,
-    private teamTypeDataService: TeamTypeDataService,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    activatedRoute: ActivatedRoute,
-    private healthCheckService: HealthCheckService,
-    private settingsService: ComnSettingsService,
-    private authQuery: ComnAuthQuery,
-    private currentUserQuery: CurrentUserQuery,
-    private permissionDataService: PermissionDataService,
-    titleService: Title,
-    private signalRService: SignalRService
-  ) {
+  constructor() {
+    const activatedRoute = inject(ActivatedRoute);
+    const titleService = inject(Title);
+
     this.theme$ = this.authQuery.userTheme$;
     this.hideTopbar = this.inIframe();
     this.pageSize = activatedRoute.queryParamMap.pipe(

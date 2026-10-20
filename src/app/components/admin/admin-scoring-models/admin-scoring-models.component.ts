@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
 import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
@@ -85,6 +85,16 @@ import { AdminPreviewComponent } from '../admin-preview/admin-preview.component'
 ],
 })
 export class AdminScoringModelsComponent implements OnInit, OnDestroy {
+  private settingsService = inject(ComnSettingsService);
+  private scoringModelDataService = inject(ScoringModelDataService);
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private userQuery = inject(UserQuery);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private permissionDataService = inject(PermissionDataService);
+
   scoringModelList: ScoringModel[] = [];
   sortedScoringModelList: ScoringModel[] = [];
   userList: User[] = [];
@@ -126,17 +136,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   showAll = false;
   canCreateScoringModels = this.permissionDataService.canCreateScoringModels();
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private scoringModelDataService: ScoringModelDataService,
-    private scoringModelQuery: ScoringModelQuery,
-    private userQuery: UserQuery,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private permissionDataService: PermissionDataService
-  ) {
+  constructor() {
     this.scoringModelDataService.load();
     // observe the scoring models
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {

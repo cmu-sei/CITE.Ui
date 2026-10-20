@@ -8,13 +8,7 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
@@ -51,21 +45,19 @@ const NAME_VALUE = 'nameValue';
     imports: [MatIcon, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatTooltip, MatCellDef, MatCell, MatSortHeader, AdminGroupsDetailComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe]
 })
 export class AdminGroupsComponent implements OnInit, AfterViewInit {
+  private groupDataService = inject(GroupDataService);
+  private userDataService = inject(UserDataService);
+  private dialog = inject(MatDialog);
+  private confirmService = inject(CrucibleDialogService);
+  private permissionDataService = inject(PermissionDataService);
+  private settingsService = inject(ComnSettingsService);
+
   @ViewChild(MatSort) sort: MatSort;
 
   filterString = '';
   displayedColumns: string[] = ['actions', 'name'];
   dataSource: MatTableDataSource<Group> = new MatTableDataSource();
   expandedGroupId: string | null = null;
-
-  constructor(
-    private groupDataService: GroupDataService,
-    private userDataService: UserDataService,
-    private dialog: MatDialog,
-    private confirmService: CrucibleDialogService,
-    private permissionDataService: PermissionDataService,
-    private settingsService: ComnSettingsService
-  ) { }
 
   dataSource$ = this.groupDataService.groups$.pipe(
     map((x) => {

@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, inject } from '@angular/core';
 import { ScoringModel } from 'src/app/generated/cite.api';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { takeUntil } from 'rxjs/operators';
@@ -17,15 +17,15 @@ import { NgClass } from '@angular/common';
     imports: [NgClass]
 })
 export class RightSideIframeComponent implements OnDestroy {
+  private sanitizer = inject(DomSanitizer);
+  private scoringModelQuery = inject(ScoringModelQuery);
+
   @Input() hideTopbar: boolean;
   safeUrl: SafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
   private unsubscribe$ = new Subject();
 
 
-  constructor(
-    private sanitizer: DomSanitizer,
-    private scoringModelQuery: ScoringModelQuery
-  ) {
+  constructor() {
     // observe active evaluation
     (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {

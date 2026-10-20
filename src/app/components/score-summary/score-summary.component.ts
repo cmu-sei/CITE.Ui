@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, inject } from '@angular/core';
 import { ScoringModel, Submission } from 'src/app/generated/cite.api/model/models';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { Observable, Subject } from 'rxjs';
@@ -17,6 +17,8 @@ import { NgClass } from '@angular/common';
     imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow]
 })
 export class ScoreSummaryComponent implements OnDestroy {
+  private submissionQuery = inject(SubmissionQuery);
+
   isLoading = false;
   @Input() selectedScoringModel: ScoringModel;
   submissionList: Submission[];
@@ -44,9 +46,7 @@ export class ScoreSummaryComponent implements OnDestroy {
   private unsubscribe$ = new Subject();
 
 
-  constructor(
-    private submissionQuery: SubmissionQuery
-  ) {
+  constructor() {
     this.submissionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
       this.submissionList = submissions;
     });

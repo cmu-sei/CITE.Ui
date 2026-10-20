@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, HostListener, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnDestroy, inject } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
@@ -17,6 +17,12 @@ import { takeUntil } from 'rxjs/operators';
     imports: [ComnHeaderBarModule, RouterOutlet],
 })
 export class AppComponent implements OnDestroy {
+  private authQuery = inject(ComnAuthQuery);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authService = inject(ComnAuthService);
+  private themeService = inject(CrucibleThemeService);
+
   @HostListener('document:keydown.backspace', ['$event'])
   onKeyDown(evt: KeyboardEvent) {
     let doPrevent = true;
@@ -68,15 +74,10 @@ export class AppComponent implements OnDestroy {
   private paramTheme;
   unsubscribe$: Subject<null> = new Subject<null>();
 
-  constructor(
-    iconRegistry: MatIconRegistry,
-    sanitizer: DomSanitizer,
-    private authQuery: ComnAuthQuery,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private authService: ComnAuthService,
-    private themeService: CrucibleThemeService,
-  ) {
+  constructor() {
+    const iconRegistry = inject(MatIconRegistry);
+    const sanitizer = inject(DomSanitizer);
+
     this.registerIcons(iconRegistry, sanitizer);
     this.theme$.pipe(takeUntil(this.unsubscribe$)).subscribe((theme) => {
       if (this.paramTheme && this.paramTheme !== theme) {

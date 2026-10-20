@@ -3,17 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -42,6 +32,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 export class AdminScoringModelMembershipListComponent
   implements OnInit, OnChanges, AfterViewInit
 {
+  snackBar = inject(MatSnackBar);
+
   @Input()
   users: User[];
 
@@ -61,8 +53,6 @@ export class AdminScoringModelMembershipListComponent
   dataSource = new MatTableDataSource<ScoringModelMemberModel>();
 
   filterString = '';
-
-  constructor(public snackBar: MatSnackBar) {}
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;

@@ -2,14 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective, NgForm, UntypedFormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import {
@@ -66,14 +59,16 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
     ],
 })
 export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
+  data = inject(MAT_DIALOG_DATA);
+  private formBuilder = inject(FormBuilder);
+
   @Output() editComplete = new EventEmitter<any>();
   public form: FormGroup;
 
   editorConfig = EDITOR_CONFIG;
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private formBuilder: FormBuilder
-  ) {
+  constructor() {
+    const data = this.data;
+
     const evaluation = data.evaluation;
     const disabled = !data.canEdit;
     this.form = this.formBuilder.group({

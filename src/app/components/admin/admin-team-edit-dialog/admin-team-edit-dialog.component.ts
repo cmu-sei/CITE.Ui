@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, UntypedFormControl, FormGroupDirective, NgForm, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -33,15 +33,17 @@ const MIN_NAME_LENGTH = 3;
 })
 
 export class AdminTeamEditDialogComponent {
+  data = inject(MAT_DIALOG_DATA);
+  private formBuilder = inject(FormBuilder);
+
   @Output() editComplete = new EventEmitter<any>();
   public form: FormGroup;
 
   readonly MIN_NAME_LENGTH = MIN_NAME_LENGTH;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private formBuilder: FormBuilder
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.form = this.formBuilder.group({
       name: [
         data.team.name,
