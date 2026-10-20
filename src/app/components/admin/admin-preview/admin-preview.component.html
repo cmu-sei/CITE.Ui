@@ -18,7 +18,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         title="Print Preview"
         (click)="printpage()"
         >
-        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-printer"></mat-icon>
+        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-printer" />
       </button>
       <button
         aria-label="Close Preview"
@@ -27,7 +27,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         title="Close Preview"
         (click)="closePreview()"
         >
-        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-close-circle-outline" />
       </button>
     </div>
   </div>
@@ -58,8 +58,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   <div class="score-option">
                     @if (scoringCategory.scoringOptionSelection !== 'None') {
                       <div class="checkbox-div">
-                        <mat-checkbox [aria-label]="scoringOption.description">
-                        </mat-checkbox>
+                        <mat-checkbox [aria-label]="scoringOption.description" />
                       </div>
                     }
                     <div class="description-div">
@@ -83,13 +82,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 }
               </mat-cell>
             </ng-container>
-            <mat-row *matRowDef="let row; columns: ['scoringOptionDescription', 'value']"></mat-row>
+            <mat-row *matRowDef="let row; columns: ['scoringOptionDescription', 'value']" />
           </mat-table>
         </mat-cell>
       </ng-container>
       <!-- Header and Row Declarations -->
-      <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']"></mat-row>
+      <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']" />
+      <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']" />
     </mat-table>
   }
 </div>

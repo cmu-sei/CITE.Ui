@@ -10,7 +10,7 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
       <th mat-header-cell *matHeaderCellDef>All</th>
       <td mat-cell *matCellDef="let permission">
         <button mat-icon-button color="primary" [matTooltip]="permissionMap.get(permission)" [matTooltipShowDelay]="0">
-          <mat-icon class="mdi-24px" fontIcon="mdi-information"> </mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-information" />
         </button>
         {{ permission }}
       </td>
@@ -26,7 +26,7 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
         <td mat-cell *matCellDef="let permission">
           @if (permission == allPermission || !role.allPermissions) {
             <mat-checkbox color="primary"
-            [checked]="hasPermission(permission, role)" disabled="true"></mat-checkbox>
+            [checked]="hasPermission(permission, role)" disabled="true" />
           }
         </td>
       </ng-container>

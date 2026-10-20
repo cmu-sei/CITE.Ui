@@ -9,13 +9,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
     @if (selectedEvaluationId && displayedMoveNumber > -1) {
     <button aria-label="Decrement Displayed Move" mat-icon-button [disabled]="isMinMoveNumber"
       (click)="decrementDisplayedMove()" title="Previous Move">
-      <mat-icon class="icon-color" fontIcon="mdi-chevron-left"></mat-icon>
+      <mat-icon class="icon-color" fontIcon="mdi-chevron-left" />
     </button>
     <span class="move-label">Move <span [ngStyle]="getMoveStyle()">{{ displayedMoveNumber }}</span> of {{
       getMaxMoveNumber() }}</span>
     <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isCurrentMoveNumber"
       (click)="incrementDisplayedMove()" title="Next Move">
-      <mat-icon class="icon-color" fontIcon="mdi-chevron-right"></mat-icon>
+      <mat-icon class="icon-color" fontIcon="mdi-chevron-right" />
     </button>
     @if (showAdvanceMoveButton) {
     <button aria-label="Advance Move" mat-flat-button (click)="advanceCurrentMove()" class="advance-button"
@@ -39,7 +39,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     @if (teamList && teamList.length > 1) {
     <button mat-button class="team-button" [matMenuTriggerFor]="teamMenu" title="Select a team">
       <b>{{ getSelectedTeamShortName() }}</b>
-      <mat-icon iconPositionEnd fontIcon="mdi-chevron-down"></mat-icon>
+      <mat-icon iconPositionEnd fontIcon="mdi-chevron-down" />
     </button>
     <mat-menu #teamMenu="matMenu" [overlapTrigger]="false">
       @for (team of teamList; track team.id) {
@@ -51,28 +51,28 @@ project root for license information or contact permission@sei.cmu.edu for full 
     }
     @if (selectedSection !== dashboardSection) {
     <button mat-icon-button style="outline: none;" title="Dashboard" (click)="setSection(dashboardSection)">
-      <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard"></mat-icon>
+      <mat-icon class="mdi-24px" fontIcon="mdi-view-dashboard" />
     </button>
     }
     @if (selectedSection !== scoresheetSection && !hideScoresheet()) {
     <button mat-icon-button style="outline: none;" title="Scoresheet" (click)="setSection(scoresheetSection)">
-      <mat-icon class="mdi-24px" fontIcon="mdi-grid"></mat-icon>
+      <mat-icon class="mdi-24px" fontIcon="mdi-grid" />
     </button>
     }
     @if (selectedSection !== reportSection) {
     <button mat-icon-button style="outline: none;" title="SubmissionReview" (click)="setSection(reportSection)">
-      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline"></mat-icon>
+      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-outline" />
     </button>
     }
     @if (showAdminButton() && selectedSection !== aggregateSection) {
     <button mat-icon-button style="outline: none;" title="Aggregate Report" (click)="setSection(aggregateSection)">
-      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-multiple-outline"></mat-icon>
+      <mat-icon class="mdi-24px" fontIcon="mdi-file-document-multiple-outline" />
     </button>
     }
     @if (showAdminButton()) {
     <button aria-label="Show Administration Page" mat-icon-button [routerLink]="['/admin']"
       [queryParams]="{section: 'Evaluations'}" style="outline: none;" title="Administration">
-      <mat-icon class="mdi-24px" fontIcon="mdi-cog"></mat-icon>
+      <mat-icon class="mdi-24px" fontIcon="mdi-cog" />
     </button>
     }
   </div>

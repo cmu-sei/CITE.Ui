@@ -11,7 +11,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="header-cell nine-cell center-self">
         <button mat-icon-button (click)="addOrEditScoringCategory(null)" style="outline: none; margin-left: 20px;"
           title="Add Scoring Category" [disabled]="!canEdit()">
-          <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+          <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle" />
         </button>
         <span style="margin-left: 20px;">Description</span>
       </div>
@@ -25,11 +25,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="cell nine-cell">
           <button mat-icon-button (click)="addOrEditScoringCategory(scoringCategory); $event.stopPropagation()"
             style="outline: none;" title="Edit Scoring Category" [disabled]="!canEdit()">
-            <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline" />
           </button>
           <button mat-icon-button (click)="deleteScoringCategoryRequest(scoringCategory); $event.stopPropagation()"
             style="outline: none;" title="Delete Scoring Category" [disabled]="!canEdit()">
-            <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can-outline"></mat-icon>
+            <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can-outline" />
           </button>
           <span class="center-self">
             {{ scoringCategory.description }}
@@ -48,7 +48,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       @if (editScoringCategoryId === scoringCategory.id) {
       <div class="sub-container">
         <app-admin-scoring-options [scoringCategoryId]="scoringCategory.id"
-          [canEdit]="canEdit()"></app-admin-scoring-options>
+          [canEdit]="canEdit()" />
       </div>
       }
     </mat-expansion-panel>
@@ -59,7 +59,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 @if (isLoading) {
 <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
-  <mat-progress-spinner color="primary" mode="indeterminate">
-  </mat-progress-spinner>
+  <mat-progress-spinner color="primary" mode="indeterminate" />
 </mat-card>
 }

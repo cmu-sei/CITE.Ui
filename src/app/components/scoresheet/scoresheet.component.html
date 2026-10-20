@@ -133,7 +133,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   <button id="add-comment" aria-label="Add Comment" mat-icon-button class="small-button"
                     (click)="addComment(addCommenttemplate, scoringOption)" title="Add Comment" [disabled]="noChanges()">
                     <mat-icon class="small-icon" [ngClass]="tableClass" fontIcon="mdi-plus-box-outline"
-                      aria-hidden="false"></mat-icon>
+                      aria-hidden="false" />
                   </button>
                   }
                 </div>
@@ -165,14 +165,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
                       editComment(addCommenttemplate, scoringOption, comment)
                     " title="Edit Comment" [disabled]="noChanges()">
                       <mat-icon class="icon-color small-icon" fontIcon="mdi-square-edit-outline"
-                        aria-hidden="false"></mat-icon>
+                        aria-hidden="false" />
                     </button>
                     }
                     @if (showModifyControls && myTeamId() === activeTeamId) {
                     <button aria-label="Delete Comment" mat-icon-button class="small-button"
                       (click)="deleteComment(comment)" title="Delete Comment" [disabled]="noChanges()">
                       <mat-icon class="icon-color small-icon" fontIcon="mdi-trash-can-outline"
-                        aria-hidden="false"></mat-icon>
+                        aria-hidden="false" />
                     </button>
                     }
                   </div>
@@ -215,13 +215,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
               }
             </mat-cell>
           </ng-container>
-          <mat-row *matRowDef="let row; columns: selectedScoringModel.hideScoresOnScoreSheet || scoringCategory.calculationMethodId == 0 ? ['scoringOptionDescription'] : ['scoringOptionDescription', 'value']"></mat-row>
+          <mat-row *matRowDef="let row; columns: selectedScoringModel.hideScoresOnScoreSheet || scoringCategory.calculationMethodId == 0 ? ['scoringOptionDescription'] : ['scoringOptionDescription', 'value']" />
         </mat-table>
       </mat-cell>
     </ng-container>
     <!-- Header and Row Declarations -->
-    <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']"></mat-row>
+    <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']" />
+    <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']" />
   </mat-table>
 
   @if (!selectedEvaluation.id || !selectedScoringModel) {

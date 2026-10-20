@@ -6,7 +6,7 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
 <div class="mat-elevation-z8">
   <mat-toolbar class="background">
     <mat-toolbar-row>
-      <mat-icon class="mdi-24px" fontIcon="mdi-account-group"></mat-icon>
+      <mat-icon class="mdi-24px" fontIcon="mdi-account-group" />
       <p>Users/Groups</p>
     </mat-toolbar-row>
     <mat-toolbar-row>
@@ -15,11 +15,11 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
           placeholder="Search" />
           @if (filterString) {
             <button matSuffix mat-icon-button aria-label="Clear" (click)="clearFilter()">
-              <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+              <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline" />
             </button>
           }
         </mat-form-field>
-        <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" aria-label="Select page of members"></mat-paginator>
+        <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" aria-label="Select page of members" />
       </mat-toolbar-row></mat-toolbar>
       <table mat-table matSort matSortActive="name" matSortDirection="asc" [dataSource]="dataSource" class="w-100">
         <ng-container matColumnDef="name">
@@ -28,7 +28,7 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
             <button mat-icon-button ngxClipboard [cbContent]="model.id"
               (cbOnSuccess)="snackBar.open('Copied to clipboard', 'Dismiss')" (click)="$event.stopPropagation()"
               title="Copy:  {{ model.id }}">
-              <mat-icon class="mdi-24px" fontIcon="mdi-content-copy"></mat-icon>
+              <mat-icon class="mdi-24px" fontIcon="mdi-content-copy" />
             </button>
             {{ model.name }}
           </td>
@@ -46,7 +46,7 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
           <td mat-cell *matCellDef="let model">
             <button mat-icon-button matTooltip="Add {{ model.name }}" (click)="add(model.id, model.type)"
               [disabled]="!canEdit()">
-              <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline"></mat-icon>
+              <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle-outline" />
             </button>
           </td>
         </ng-container>

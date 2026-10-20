@@ -24,7 +24,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         title="Toggle between user and team scores"
         (click)="toggleDisplaying()"
         >
-        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-swap-horizontal"></mat-icon>
+        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-swap-horizontal" />
       </button>
       <button
         aria-label="Print Submission Review"
@@ -33,7 +33,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         title="Print Submission Review"
         (click)="printpage()"
         >
-        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-printer"></mat-icon>
+        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-printer" />
       </button>
     </div>
   </div>
@@ -137,20 +137,17 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   }
                 </mat-cell>
               </ng-container>
-              <mat-row
-                *matRowDef="let row; columns: ['scoringOptionDescription', 'value']"
-              ></mat-row>
+              <mat-row *matRowDef="let row; columns: ['scoringOptionDescription', 'value']"
+               />
             </mat-table>
           </mat-cell>
         </ng-container>
       }
       <!-- Header and Row Declarations -->
-      <mat-header-row
-        *matHeaderRowDef="['scoringCategoryDescription']"
-      ></mat-header-row>
-      <mat-row
-        *matRowDef="let row; columns: ['scoringCategoryDescription']"
-      ></mat-row>
+      <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']"
+       />
+      <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']"
+       />
     </mat-table>
   }
 </div>

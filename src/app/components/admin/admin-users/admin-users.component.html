@@ -5,5 +5,4 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <app-admin-user-list [users]="users$ | async" [isLoading]="isLoading$ | async"
-  [canEdit]="canEdit" (create)="create($event)" (delete)="deleteUser($event)">
-</app-admin-user-list>
+  [canEdit]="canEdit" (create)="create($event)" (delete)="deleteUser($event)" />

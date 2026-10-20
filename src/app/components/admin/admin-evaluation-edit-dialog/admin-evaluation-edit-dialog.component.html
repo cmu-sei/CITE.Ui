@@ -78,8 +78,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <span (click)="data.canEdit && picker.open()">
             {{situationDateFormControl.value | date: 'dd MMM yyyy HH:mm'}} {{ getTimezoneAbbr(situationDateFormControl.value) }}
           </span>
-          <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)" [disabled]="!data.canEdit">
-          </mat-datepicker-toggle>
+          <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)" [disabled]="!data.canEdit" />
           <ngx-mat-datetime-picker #picker [showSpinners]=true [showSeconds]=false [stepHour]=1 [stepMinute]=5
             [stepSecond]=1 [touchUi]=false [enableMeridian]=true [disableMinute]=false [hideTime]=false [color]="'warn'">
             <ngx-mat-datepicker-actions>
@@ -93,7 +92,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="add-margin">
         <mat-label class="gray">Situation Description</mat-label>
         <angular-editor [placeholder]="'Enter situation description here...'"
-        formControlName="situationDescription" [config]="editorConfig"></angular-editor>
+        formControlName="situationDescription" [config]="editorConfig" />
       </div>
       <div class="add-margin">
         <mat-checkbox formControlName="showAdvanceButton">
