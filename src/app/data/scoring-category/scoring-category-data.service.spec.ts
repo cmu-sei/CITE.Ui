@@ -217,7 +217,7 @@ describe('ScoringCategoryDataService', () => {
       expect(query.getValue().loading).toBe(true);
       expect(query.getAll()).toEqual([makeCategory()]);
       // The escaped error reaches ErrorService, the app's ErrorHandler
-      // (main.ts), which shows it.
+      // (app.config.ts), which shows it.
       expect(errors).toEqual([failure]);
     });
   });

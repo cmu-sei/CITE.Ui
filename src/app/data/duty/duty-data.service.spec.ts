@@ -248,7 +248,7 @@ describe('DutyDataService', () => {
       expect(query.getValue().loading).toBe(true);
       expect(query.getAll()).toEqual([makeDuty()]);
       // The escaped error reaches ErrorService, the app's ErrorHandler
-      // (main.ts), which shows it.
+      // (app.config.ts), which shows it.
       expect(errors).toEqual([failure]);
     });
   });
