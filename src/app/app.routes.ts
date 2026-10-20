@@ -4,18 +4,18 @@
 
 import { Routes } from '@angular/router';
 import { ComnAuthGuardService } from '@cmusei/crucible-common';
-import { AdminContainerComponent } from './components/admin/admin-container/admin-container.component';
-import { HomeAppComponent } from './components/home-app/home-app.component';
+
+
 
 export const ROUTES: Routes = [
   {
     path: '',
-    component: HomeAppComponent,
+    loadComponent: () => import('./components/home-app/home-app.component').then(m => m.HomeAppComponent),
     canActivate: [ComnAuthGuardService],
   },
   {
     path: 'admin',
-    component: AdminContainerComponent,
+    loadComponent: () => import('./components/admin/admin-container/admin-container.component').then(m => m.AdminContainerComponent),
     canActivate: [ComnAuthGuardService],
   },
 ];
