@@ -5,21 +5,16 @@
 import { Component, HostListener, OnDestroy } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ComnAuthQuery,
-  ComnAuthService,
-  CrucibleThemeService,
-  Theme,
-} from '@cmusei/crucible-common';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { ComnAuthQuery, ComnAuthService, CrucibleThemeService, Theme, ComnHeaderBarModule } from '@cmusei/crucible-common';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: false,
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    imports: [ComnHeaderBarModule, RouterOutlet],
 })
 export class AppComponent implements OnDestroy {
   @HostListener('document:keydown.backspace', ['$event'])
