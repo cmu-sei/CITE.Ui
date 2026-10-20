@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, Output, OnDestroy, OnInit, inject, input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject, input, output } from '@angular/core';
 import { ScoringCategory, ItemStatus, ScoringOptionSelection, ScoringModel} from 'src/app/generated/cite.api/model/models';
 import { ScoringCategoryDataService } from 'src/app/data/scoring-category/scoring-category-data.service';
 import { ScoringCategoryQuery } from 'src/app/data/scoring-category/scoring-category.query';
@@ -36,7 +36,7 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   readonly scoringModelId = input<string>(undefined);
   @Input() editScoringCategoryId: string;
   readonly canEdit = input<boolean>(undefined);
-  @Output() scoringCategoryClick = new EventEmitter<string>();
+  readonly scoringCategoryClick = output<string>();
   readonly displayScoringModelbyMoveNumber = input<boolean>(undefined);
   newScoringCategory: ScoringCategory = { id: '', description: '' };
   scoringCategoryList: ScoringCategory[];

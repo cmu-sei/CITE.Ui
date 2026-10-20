@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, OnDestroy, OnInit, Output, inject, input } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input, output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import {
@@ -33,7 +33,7 @@ export class AdminPreviewComponent implements OnDestroy, OnInit {
   private scoringModelQuery = inject(ScoringModelQuery);
 
   readonly scoringModelId = input<string>(undefined);
-  @Output() closeMe = new EventEmitter<boolean>();
+  readonly closeMe = output<boolean>();
   scoringModel: ScoringModel;
   moveNumberList: number[] = [];
   loggedInUserId = '';

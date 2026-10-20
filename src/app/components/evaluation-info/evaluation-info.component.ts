@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, Output, OnDestroy, inject, input } from '@angular/core';
+import { Component, Input, OnDestroy, inject, input, output } from '@angular/core';
 import { Evaluation, ItemStatus, Move, Team } from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -50,11 +50,11 @@ export class EvaluationInfoComponent implements OnDestroy {
   readonly scoresheetOnRight = input<boolean>(undefined);
   readonly noChanges = input<boolean>(undefined);
   @Input() selectedSection: Section;
-  @Output() nextDisplayedMove = new EventEmitter<Move>();
-  @Output() previousDisplayedMove = new EventEmitter<Move>();
-  @Output() nextEvaluationMove = new EventEmitter<number>();
-  @Output() changeTeam = new EventEmitter<string>();
-  @Output() changeSection = new EventEmitter<string>();
+  readonly nextDisplayedMove = output<Move>();
+  readonly previousDisplayedMove = output<Move>();
+  readonly nextEvaluationMove = output<number>();
+  readonly changeTeam = output<string>();
+  readonly changeSection = output<string>();
   selectedEvaluationId = '';
   dashboardSection = Section.dashboard;
   scoresheetSection = Section.scoresheet;

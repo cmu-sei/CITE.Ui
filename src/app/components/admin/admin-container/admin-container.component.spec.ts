@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Component, EventEmitter, Output, Type, input } from '@angular/core';
+import { Component, Type, input, output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -49,7 +49,7 @@ class TopbarStubComponent {
   readonly title = input<string>(undefined);
   readonly topbarView = input<TopbarView>(undefined);
   readonly sidenav = input<unknown>(undefined);
-  @Output() sidenavToggle = new EventEmitter<boolean>();
+  readonly sidenavToggle = output<boolean>();
 }
 
 @Component({ selector: 'app-admin-evaluations', template: '' })

@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, EventEmitter, Output, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -54,7 +54,7 @@ class ScoringCategoriesStubComponent {
   readonly editScoringCategoryId = input.required<string>();
   readonly displayScoringModelbyMoveNumber = input.required<boolean>();
   readonly canEdit = input.required<boolean>();
-  @Output() scoringCategoryClick = new EventEmitter<string>();
+  readonly scoringCategoryClick = output<string>();
 }
 
 @Component({ selector: 'app-admin-scoring-model-memberships', template: '' })

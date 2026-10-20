@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, EventEmitter, Output, Type, input } from '@angular/core';
+import { Component, Type, input, output } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import {
@@ -36,7 +36,7 @@ class NonMemberListStubComponent {
   readonly users = input.required<User[]>();
   readonly groups = input.required<Group[]>();
   readonly canEdit = input.required<boolean>();
-  @Output() createMembership = new EventEmitter<ScoringModelMembership>();
+  readonly createMembership = output<ScoringModelMembership>();
 }
 
 @Component({ selector: 'app-admin-scoring-model-member-list', template: '' })
@@ -46,8 +46,8 @@ class MemberListStubComponent {
   readonly groups = input.required<Group[]>();
   readonly roles = input.required<ScoringModelRole[]>();
   readonly canEdit = input.required<boolean>();
-  @Output() deleteMembership = new EventEmitter<string>();
-  @Output() editMembership = new EventEmitter<ScoringModelMembership>();
+  readonly deleteMembership = output<string>();
+  readonly editMembership = output<ScoringModelMembership>();
 }
 
 const onModel = (

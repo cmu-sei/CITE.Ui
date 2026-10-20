@@ -3,7 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, OnChanges, OnInit, Output, ViewChild, inject, input } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnChanges, OnInit, ViewChild, inject, input, output } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -38,8 +38,7 @@ export class AdminEvaluationMembershipListComponent implements OnInit, OnChanges
 
   readonly canEdit = input<boolean>(undefined);
 
-  @Output()
-  createMembership = new EventEmitter<EvaluationMembership>();
+  readonly createMembership = output<EvaluationMembership>();
 
   viewColumns = ['name', 'type'];
   editColumns = ['actions'];

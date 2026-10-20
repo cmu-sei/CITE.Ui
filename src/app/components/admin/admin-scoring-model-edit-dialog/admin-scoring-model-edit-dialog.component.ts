@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { FormBuilder, FormGroup, UntypedFormControl, FormGroupDirective, NgForm, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -39,7 +39,7 @@ export class AdminScoringModelEditDialogComponent {
   data = inject(MAT_DIALOG_DATA);
   private formBuilder = inject(FormBuilder);
 
-  @Output() editComplete = new EventEmitter<any>();
+  readonly editComplete = output<any>();
   public form: FormGroup;
   editorConfig = EDITOR_CONFIG;
 

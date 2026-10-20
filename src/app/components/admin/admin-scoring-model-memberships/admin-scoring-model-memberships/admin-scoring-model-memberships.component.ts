@@ -3,7 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges, inject, input } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges, inject, input, output } from '@angular/core';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
@@ -40,7 +40,7 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
 
   readonly embedded = input<boolean>(undefined);
   readonly scoringModelId = input<string>(undefined);
-  @Output() goBack = new EventEmitter();
+  readonly goBack = output();
 
   scoringModel$: Observable<ScoringModel>;
 

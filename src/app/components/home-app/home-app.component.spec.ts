@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Component, EventEmitter, Output, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -51,7 +51,7 @@ class TopbarStubComponent {
   readonly title = input<string>(undefined);
   readonly topbarView = input<unknown>(undefined);
   readonly imageFilePath = input<string>(undefined);
-  @Output() urlNavigate = new EventEmitter<string>();
+  readonly urlNavigate = output<string>();
 }
 @Component({ selector: 'app-evaluation-info', template: '' })
 class EvaluationInfoStubComponent {
@@ -64,11 +64,11 @@ class EvaluationInfoStubComponent {
   readonly scoresheetOnRight = input.required<boolean>();
   readonly noChanges = input.required<boolean>();
   readonly selectedSection = input.required<unknown>();
-  @Output() nextDisplayedMove = new EventEmitter<unknown>();
-  @Output() previousDisplayedMove = new EventEmitter<unknown>();
-  @Output() nextEvaluationMove = new EventEmitter<unknown>();
-  @Output() changeTeam = new EventEmitter<string>();
-  @Output() changeSection = new EventEmitter<unknown>();
+  readonly nextDisplayedMove = output<unknown>();
+  readonly previousDisplayedMove = output<unknown>();
+  readonly nextEvaluationMove = output<unknown>();
+  readonly changeTeam = output<string>();
+  readonly changeSection = output<unknown>();
 }
 @Component({ selector: 'app-dashboard', template: '' })
 class DashboardStubComponent {

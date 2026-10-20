@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, EventEmitter, Output, Type, input } from '@angular/core';
+import { Component, Type, input, output } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import {
@@ -33,7 +33,7 @@ import { AdminTeamMemberListComponent } from 'src/app/components/admin/admin-tea
 class NonMemberListStubComponent {
   readonly users = input.required<User[]>();
   readonly canEdit = input.required<boolean>();
-  @Output() createMembership = new EventEmitter<TeamMembership>();
+  readonly createMembership = output<TeamMembership>();
 }
 
 @Component({ selector: 'app-admin-team-member-list', template: '' })
@@ -42,8 +42,8 @@ class MemberListStubComponent {
   readonly users = input.required<User[]>();
   readonly roles = input.required<TeamRole[]>();
   readonly canEdit = input.required<boolean>();
-  @Output() deleteMembership = new EventEmitter<string>();
-  @Output() editMembership = new EventEmitter<TeamMembership>();
+  readonly deleteMembership = output<string>();
+  readonly editMembership = output<TeamMembership>();
 }
 
 type MembershipApi = ApiStub<TeamMembershipsService>;
