@@ -17,10 +17,10 @@ import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
 import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 import { provideRouter } from '@angular/router';
 import { ROUTES } from './app/app.routes';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { A11yModule } from '@angular/cdk/a11y';
-import { MatNativeDateModule } from '@angular/material/core';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { AppComponent } from './app/app.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 if (environment.production) {
   enableProdMode();
@@ -39,7 +39,7 @@ export const storage = persistState({
 bootstrapApplication(AppComponent, {
     providers: [
         provideZoneChangeDetection(),
-        importProvidersFrom(environment.production ? [] : AkitaNgDevtools.forRoot(), AkitaNgRouterStoreModule, BrowserAnimationsModule, A11yModule, MatNativeDateModule, ComnAuthModule.forRoot(), ComnSettingsModule.forRoot()),
+        importProvidersFrom(environment.production ? [] : AkitaNgDevtools.forRoot(), AkitaNgRouterStoreModule, A11yModule, ComnAuthModule.forRoot(), ComnSettingsModule.forRoot()),
         SystemMessageService,
         UserDataService,
         UIDataService,
@@ -53,6 +53,8 @@ bootstrapApplication(AppComponent, {
             useClass: ErrorService,
         },
         provideRouter(ROUTES),
+        provideNativeDateAdapter(),
+        provideAnimationsAsync(),
         provideHttpClient(withInterceptorsFromDi()),
         provideCrucibleTheme({
             brand: { color: '#E81717', text: '#FFFFFF' },
