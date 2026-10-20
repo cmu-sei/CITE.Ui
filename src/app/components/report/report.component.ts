@@ -25,12 +25,37 @@ import {
 import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
+import { NgClass, DecimalPipe } from '@angular/common';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
 @Component({
-  selector: 'app-report',
-  templateUrl: './report.component.html',
-  styleUrls: ['./report.component.scss'],
-  standalone: false,
+    selector: 'app-report',
+    templateUrl: './report.component.html',
+    styleUrls: ['./report.component.scss'],
+    imports: [
+        MatIconButton,
+        MatIcon,
+        MatTable,
+        MatColumnDef,
+        MatHeaderCellDef,
+        MatHeaderCell,
+        MatCellDef,
+        MatCell,
+        NgClass,
+        MatCheckbox,
+        MatTooltip,
+        MatRowDef,
+        MatRow,
+        MatHeaderRowDef,
+        MatHeaderRow,
+        DecimalPipe,
+        DisplayOrderPipe,
+    ],
 })
 export class ReportComponent implements OnDestroy {
   @Input() selectedEvaluation: Evaluation;

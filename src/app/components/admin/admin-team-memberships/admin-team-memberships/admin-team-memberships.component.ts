@@ -23,12 +23,15 @@ import {
   Team,
 } from 'src/app/generated/cite.api';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { AdminTeamMembershipListComponent } from '../admin-team-membership-list/admin-team-membership-list.component';
+import { AdminTeamMemberListComponent } from '../admin-team-member-list/admin-team-member-list.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-admin-team-memberships',
-  templateUrl: './admin-team-memberships.component.html',
-  styleUrls: ['./admin-team-memberships.component.scss'],
-  standalone: false
+    selector: 'app-admin-team-memberships',
+    templateUrl: './admin-team-memberships.component.html',
+    styleUrls: ['./admin-team-memberships.component.scss'],
+    imports: [AdminTeamMembershipListComponent, AdminTeamMemberListComponent, AsyncPipe]
 })
 export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
   @Input() embedded: boolean;

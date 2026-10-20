@@ -4,7 +4,7 @@
 
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
+import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import { SystemPermission, TeamType } from 'src/app/generated/cite.api/model/models';
 import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,15 +13,23 @@ import { AdminTeamTypeEditDialogComponent } from '../admin-teamtype-edit-dialog/
 import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 import { Subject } from 'rxjs';
-import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { MatIcon } from '@angular/material/icon';
+import { NgStyle } from '@angular/common';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { MatIconButton } from '@angular/material/button';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-admin-teamtypes',
     templateUrl: './admin-teamtypes.component.html',
     styleUrls: ['./admin-teamtypes.component.scss'],
-    standalone: false
+    imports: [MatIcon, NgStyle, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatSortHeader, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatCard, MatProgressSpinner]
 })
 export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   pageIndex: number = 0;

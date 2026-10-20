@@ -41,6 +41,11 @@ import {
 } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminEvaluationsComponent } from './admin-evaluations.component';
+import { AdminMovesComponent } from 'src/app/components/admin/admin-moves/admin-moves.component';
+import { AdminTeamsComponent } from 'src/app/components/admin/admin-teams/admin-teams.component';
+import { AdminActionsComponent } from 'src/app/components/admin/admin-actions/admin-actions.component';
+import { AdminDutiesComponent } from 'src/app/components/admin/admin-duties/admin-duties.component';
+import { AdminEvaluationMembershipsComponent } from 'src/app/components/admin/admin-evaluation-memberships/admin-evaluation-memberships/admin-evaluation-memberships.component';
 
 // The global stylesheets make every computed-style lookup slow in jsdom, and
 // user-event's pointer-events check looks one up per ancestor on each click
@@ -144,7 +149,6 @@ async function renderEvaluations(grants: PermissionGrants) {
   const editDialog = matDialogStub();
 
   const rendered = await renderComponent(AdminEvaluationsComponent, {
-    declarations: [AdminEvaluationsComponent],
     imports: [
       MatButtonModule,
       MatCardModule,
@@ -157,11 +161,16 @@ async function renderEvaluations(grants: PermissionGrants) {
       MatSelectModule,
       MatSortModule,
       MatTableModule,
-      MovesStubComponent,
-      TeamsStubComponent,
-      ActionsStubComponent,
-      DutiesStubComponent,
-      EvaluationMembershipsStubComponent,
+    ],
+    childStubs: [
+      { replace: AdminMovesComponent, with: MovesStubComponent },
+      { replace: AdminTeamsComponent, with: TeamsStubComponent },
+      { replace: AdminActionsComponent, with: ActionsStubComponent },
+      { replace: AdminDutiesComponent, with: DutiesStubComponent },
+      {
+        replace: AdminEvaluationMembershipsComponent,
+        with: EvaluationMembershipsStubComponent,
+      },
     ],
     providers: [
       ...permissionDataProviders(grants),

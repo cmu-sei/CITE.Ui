@@ -23,6 +23,7 @@ import { dialogRefStub } from '../../../test-utils/dialog-refs';
 import { matDialogStub } from '../../../test-utils/mat-dialog';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminScoringCategoriesComponent } from './admin-scoring-categories.component';
+import { AdminScoringOptionsComponent } from 'src/app/components/admin/admin-scoring-options/admin-scoring-options.component';
 
 @Component({ selector: 'app-admin-scoring-options', template: '' })
 class ScoringOptionsStubComponent {
@@ -65,14 +66,18 @@ async function renderCategories(canEdit: boolean) {
   const scoringCategoryClick = vi.fn();
 
   const rendered = await renderComponent(AdminScoringCategoriesComponent, {
-    declarations: [AdminScoringCategoriesComponent],
     imports: [
       MatButtonModule,
       MatCardModule,
       MatExpansionModule,
       MatIconModule,
       MatProgressSpinnerModule,
-      ScoringOptionsStubComponent,
+    ],
+    childStubs: [
+      {
+        replace: AdminScoringOptionsComponent,
+        with: ScoringOptionsStubComponent,
+      },
     ],
     componentInputs: {
       scoringModelId: 'sm1',

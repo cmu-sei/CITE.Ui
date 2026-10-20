@@ -39,6 +39,8 @@ import {
 } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminScoringModelsComponent } from './admin-scoring-models.component';
+import { AdminScoringCategoriesComponent } from 'src/app/components/admin/admin-scoring-categories/admin-scoring-categories.component';
+import { AdminScoringModelMembershipsComponent } from 'src/app/components/admin/admin-scoring-model-memberships/admin-scoring-model-memberships/admin-scoring-model-memberships.component';
 
 // The global stylesheets make every computed-style lookup slow in jsdom, and
 // user-event's pointer-events check looks one up per ancestor on each click
@@ -92,7 +94,6 @@ async function renderScoringModels(grants: PermissionGrants) {
   const editDialog = matDialogStub();
 
   const rendered = await renderComponent(AdminScoringModelsComponent, {
-    declarations: [AdminScoringModelsComponent],
     imports: [
       MatButtonModule,
       MatCardModule,
@@ -106,8 +107,16 @@ async function renderScoringModels(grants: PermissionGrants) {
       MatSelectModule,
       MatSortModule,
       MatTableModule,
-      ScoringCategoriesStubComponent,
-      ScoringModelMembershipsStubComponent,
+    ],
+    childStubs: [
+      {
+        replace: AdminScoringCategoriesComponent,
+        with: ScoringCategoriesStubComponent,
+      },
+      {
+        replace: AdminScoringModelMembershipsComponent,
+        with: ScoringModelMembershipsStubComponent,
+      },
     ],
     providers: [
       ...permissionDataProviders(grants),

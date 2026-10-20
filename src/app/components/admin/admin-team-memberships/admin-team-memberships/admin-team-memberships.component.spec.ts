@@ -26,6 +26,8 @@ import {
   permissionDataProviders,
 } from '../../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../../test-utils/render-component';
+import { AdminTeamMembershipListComponent } from 'src/app/components/admin/admin-team-memberships/admin-team-membership-list/admin-team-membership-list.component';
+import { AdminTeamMemberListComponent } from 'src/app/components/admin/admin-team-memberships/admin-team-member-list/admin-team-member-list.component';
 
 @Component({ selector: 'app-admin-team-membership-list', template: '' })
 class NonMemberListStubComponent {
@@ -73,8 +75,14 @@ async function renderMemberships(claims: PermissionGrants = {}) {
   } satisfies ApiStub<TeamRolesService>;
 
   const rendered = await renderComponent(AdminTeamMembershipsComponent, {
-    declarations: [AdminTeamMembershipsComponent],
-    imports: [NonMemberListStubComponent, MemberListStubComponent],
+    imports: [],
+    childStubs: [
+      {
+        replace: AdminTeamMembershipListComponent,
+        with: NonMemberListStubComponent,
+      },
+      { replace: AdminTeamMemberListComponent, with: MemberListStubComponent },
+    ],
     componentInputs: { teamId: 't1' },
     providers: [
       ...permissionDataProviders(claims),

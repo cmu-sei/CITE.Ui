@@ -15,6 +15,7 @@ import { ApiStub } from '../../../test-utils/api-stub';
 import { permissionDataProviders } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminUsersComponent } from './admin-users.component';
+import { AdminUserListComponent } from 'src/app/components/admin/admin-users/admin-user-list/admin-user-list.component';
 
 @Component({ selector: 'app-admin-user-list', template: '' })
 class UserListStubComponent {
@@ -31,8 +32,10 @@ async function renderUsers(system: SystemPermission[]) {
     deleteUser: vi.fn(() => of(null)),
   } satisfies ApiStub<UserService>;
   const rendered = await renderComponent(AdminUsersComponent, {
-    declarations: [AdminUsersComponent],
-    imports: [UserListStubComponent],
+    imports: [],
+    childStubs: [
+      { replace: AdminUserListComponent, with: UserListStubComponent },
+    ],
     providers: [
       ...permissionDataProviders({ system }),
       { provide: UserService, useValue: userApi },

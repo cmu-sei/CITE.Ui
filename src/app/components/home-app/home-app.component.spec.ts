@@ -42,6 +42,9 @@ import {
 import { renderComponent } from '../../test-utils/render-component';
 import { captureUnhandledRejections } from '../../test-utils/unhandled-rx-errors';
 import { HomeAppComponent } from './home-app.component';
+import { TopbarComponent } from 'src/app/components/shared/top-bar/topbar.component';
+import { EvaluationInfoComponent } from 'src/app/components/evaluation-info/evaluation-info.component';
+import { DashboardComponent } from 'src/app/components/dashboard/dashboard.component';
 
 @Component({ selector: 'app-topbar', template: '' })
 class TopbarStubComponent {
@@ -166,7 +169,6 @@ async function renderHome(
   const { route } = activatedRouteStub(evaluation ? { evaluation } : {});
 
   const rendered = await renderComponent(HomeAppComponent, {
-    declarations: [HomeAppComponent],
     imports: [
       MatButtonModule,
       MatCardModule,
@@ -177,9 +179,11 @@ async function renderHome(
       MatProgressSpinnerModule,
       MatSortModule,
       MatTableModule,
-      TopbarStubComponent,
-      EvaluationInfoStubComponent,
-      DashboardStubComponent,
+    ],
+    childStubs: [
+      { replace: TopbarComponent, with: TopbarStubComponent },
+      { replace: EvaluationInfoComponent, with: EvaluationInfoStubComponent },
+      { replace: DashboardComponent, with: DashboardStubComponent },
     ],
     providers: [
       ...permissionDataProviders(grants),
@@ -202,7 +206,13 @@ async function renderHome(
     rendered.fixture.debugElement.query(
       By.directive(EvaluationInfoStubComponent),
     )?.componentInstance as EvaluationInfoStubComponent | undefined;
-  return { ...rendered, evaluationApi, signalR, gallerySignalR, evaluationInfo };
+  return {
+    ...rendered,
+    evaluationApi,
+    signalR,
+    gallerySignalR,
+    evaluationInfo,
+  };
 }
 
 const adminButton = () =>
@@ -260,10 +270,7 @@ describe('HomeAppComponent', () => {
     ])(
       "starts the Gallery hub $started time(s) with GalleryApiUrl '$url'",
       async ({ url, started }) => {
-        const { gallerySignalR } = await renderHome(
-          {},
-          { galleryApiUrl: url },
-        );
+        const { gallerySignalR } = await renderHome({}, { galleryApiUrl: url });
 
         expect(gallerySignalR.startConnection).toHaveBeenCalledTimes(started);
         expect(gallerySignalR.join).toHaveBeenCalledTimes(started);

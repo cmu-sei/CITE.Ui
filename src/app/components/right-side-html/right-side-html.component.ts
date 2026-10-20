@@ -7,12 +7,15 @@ import { ScoringModel } from 'src/app/generated/cite.api';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { Subject, Observable } from 'rxjs';
 import { VIEW_CONFIG } from 'src/app/utilities/editor-config';
+import { AngularEditorModule } from '@kolkov/angular-editor';
+import { FormsModule } from '@angular/forms';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
     selector: 'app-right-side-html',
     templateUrl: './right-side-html.component.html',
     styleUrls: ['./right-side-html.component.scss'],
-    standalone: false
+    imports: [AngularEditorModule, FormsModule, AsyncPipe]
 })
 export class RightSideHtmlComponent implements OnDestroy {
   isLoading = false;

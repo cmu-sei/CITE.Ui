@@ -28,6 +28,7 @@ import { matDialogStub } from '../../../test-utils/mat-dialog';
 import { permissionDataProviders } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminGroupsComponent } from './admin-groups.component';
+import { AdminGroupsDetailComponent } from 'src/app/components/admin/admin-groups/admin-groups-detail/admin-groups-detail.component';
 
 @Component({ selector: 'app-admin-groups-detail', template: '' })
 class GroupsDetailStubComponent {
@@ -55,7 +56,6 @@ async function renderGroups(system: SystemPermission[]) {
   const nameDialog = matDialogStub({ nameValue: 'Coordinators' });
 
   const rendered = await renderComponent(AdminGroupsComponent, {
-    declarations: [AdminGroupsComponent],
     imports: [
       MatButtonModule,
       MatFormFieldModule,
@@ -64,7 +64,9 @@ async function renderGroups(system: SystemPermission[]) {
       MatSortModule,
       MatTableModule,
       MatTooltipModule,
-      GroupsDetailStubComponent,
+    ],
+    childStubs: [
+      { replace: AdminGroupsDetailComponent, with: GroupsDetailStubComponent },
     ],
     providers: [
       ...permissionDataProviders({ system }),

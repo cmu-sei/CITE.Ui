@@ -9,7 +9,7 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogClose } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -38,13 +38,49 @@ import {
 } from 'src/app/generated/cite.api/model/models';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
-import { CrucibleDialogService } from '@cmusei/crucible-common';
+import { CrucibleDialogService, CrucibleDialogComponent, CrucibleDialogContentDirective, CrucibleDialogActionsDirective } from '@cmusei/crucible-common';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { NgClass, DecimalPipe } from '@angular/common';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput, MatFormField, MatLabel } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
 @Component({
-  selector: 'app-scoresheet',
-  templateUrl: './scoresheet.component.html',
-  styleUrls: ['./scoresheet.component.scss'],
-  standalone: false,
+    selector: 'app-scoresheet',
+    templateUrl: './scoresheet.component.html',
+    styleUrls: ['./scoresheet.component.scss'],
+    imports: [
+        MatTable,
+        MatColumnDef,
+        MatHeaderCellDef,
+        MatHeaderCell,
+        MatButton,
+        NgClass,
+        MatCellDef,
+        MatCell,
+        MatCheckbox,
+        MatTooltip,
+        MatIconButton,
+        MatIcon,
+        MatInput,
+        FormsModule,
+        MatRowDef,
+        MatRow,
+        MatHeaderRowDef,
+        MatHeaderRow,
+        CrucibleDialogComponent,
+        CrucibleDialogContentDirective,
+        MatFormField,
+        MatLabel,
+        CrucibleDialogActionsDirective,
+        MatDialogClose,
+        DecimalPipe,
+        DisplayOrderPipe,
+    ],
 })
 export class ScoresheetComponent implements OnDestroy {
   @Input() myTeamId: string;

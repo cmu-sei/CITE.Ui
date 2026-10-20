@@ -14,6 +14,8 @@ import { UserStore } from '../../../../data/user/user.store';
 import { ApiStub } from '../../../../test-utils/api-stub';
 import { renderComponent } from '../../../../test-utils/render-component';
 import { AdminGroupsDetailComponent } from './admin-groups-detail.component';
+import { AdminGroupsMembershipListComponent } from 'src/app/components/admin/admin-groups/admin-groups-membership-list/admin-groups-membership-list.component';
+import { AdminGroupsMemberListComponent } from 'src/app/components/admin/admin-groups/admin-groups-member-list/admin-groups-member-list.component';
 
 @Component({ selector: 'app-admin-groups-membership-list', template: '' })
 class NonMemberListStubComponent {
@@ -42,8 +44,17 @@ async function renderDetail(canEdit: boolean) {
   } satisfies ApiStub<GroupService>;
 
   const rendered = await renderComponent(AdminGroupsDetailComponent, {
-    declarations: [AdminGroupsDetailComponent],
-    imports: [NonMemberListStubComponent, MemberListStubComponent],
+    imports: [],
+    childStubs: [
+      {
+        replace: AdminGroupsMembershipListComponent,
+        with: NonMemberListStubComponent,
+      },
+      {
+        replace: AdminGroupsMemberListComponent,
+        with: MemberListStubComponent,
+      },
+    ],
     componentInputs: { groupId: 'g1', canEdit },
     providers: [{ provide: GroupService, useValue: groupApi }],
     configureTestBed: (testBed) => {

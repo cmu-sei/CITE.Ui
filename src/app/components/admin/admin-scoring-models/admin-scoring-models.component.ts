@@ -4,9 +4,9 @@
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   ScoringModel,
   ItemStatus,
@@ -23,18 +23,66 @@ import { AdminScoringModelEditDialogComponent } from '../admin-scoring-model-edi
 import { UserQuery } from 'src/app/data/user/user.query';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { MatIcon } from '@angular/material/icon';
+import { NgStyle, DatePipe } from '@angular/common';
+import { MatFormField, MatInput, MatSuffix, MatLabel } from '@angular/material/input';
+import { MatIconButton } from '@angular/material/button';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import { MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import { AdminScoringCategoriesComponent } from '../admin-scoring-categories/admin-scoring-categories.component';
+import { AdminScoringModelMembershipsComponent } from '../admin-scoring-model-memberships/admin-scoring-model-memberships/admin-scoring-model-memberships.component';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { AdminPreviewComponent } from '../admin-preview/admin-preview.component';
 
 @Component({
     selector: 'app-admin-scoring-models',
     templateUrl: './admin-scoring-models.component.html',
     styleUrls: ['./admin-scoring-models.component.scss'],
-    standalone: false,
     animations: [
-      trigger('detailExpand', [
-        state('collapsed', style({ height: '0px', minHeight: '0' })),
-        state('expanded', style({ height: '*' })),
-        transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-      ]),
+        trigger('detailExpand', [
+            state('collapsed', style({ height: '0px', minHeight: '0' })),
+            state('expanded', style({ height: '*' })),
+            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+        ]),
+    ],
+    imports: [
+        MatIcon,
+        NgStyle,
+        MatFormField,
+        MatInput,
+        FormsModule,
+        ReactiveFormsModule,
+        MatIconButton,
+        MatSuffix,
+        MatLabel,
+        MatSelect,
+        MatOption,
+        MatCheckbox,
+        MatPaginator,
+        MatTable,
+        MatSort,
+        MatColumnDef,
+        MatHeaderCellDef,
+        MatHeaderCell,
+        MatCellDef,
+        MatCell,
+        MatSortHeader,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        AdminScoringCategoriesComponent,
+        AdminScoringModelMembershipsComponent,
+        MatHeaderRowDef,
+        MatHeaderRow,
+        MatRowDef,
+        MatRow,
+        MatCard,
+        MatProgressSpinner,
+        AdminPreviewComponent,
+        DatePipe,
     ],
 })
 export class AdminScoringModelsComponent implements OnInit, OnDestroy {

@@ -35,6 +35,14 @@ import { activatedRouteStub } from '../../../test-utils/activated-route';
 import { permissionDataProviders } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
 import { captureUnhandledRejections } from '../../../test-utils/unhandled-rx-errors';
+import { TopbarComponent } from 'src/app/components/shared/top-bar/topbar.component';
+import { AdminEvaluationsComponent } from 'src/app/components/admin/admin-evaluations/admin-evaluations.component';
+import { AdminScoringModelsComponent } from 'src/app/components/admin/admin-scoring-models/admin-scoring-models.component';
+import { AdminSubmissionsComponent } from 'src/app/components/admin/admin-submissions/admin-submissions.component';
+import { AdminTeamTypesComponent } from 'src/app/components/admin/admin-teamtypes/admin-teamtypes.component';
+import { AdminUsersComponent } from 'src/app/components/admin/admin-users/admin-users.component';
+import { AdminRolesComponent } from 'src/app/components/admin/admin-roles/admin-roles.component';
+import { AdminGroupsComponent } from 'src/app/components/admin/admin-groups/admin-groups.component';
 
 @Component({ selector: 'app-topbar', template: '' })
 class TopbarStubComponent {
@@ -100,21 +108,31 @@ async function renderAdminContainer(
   );
 
   const rendered = await renderComponent(AdminContainerComponent, {
-    declarations: [AdminContainerComponent],
     imports: [
       MatButtonModule,
       MatIconModule,
       MatListModule,
       MatSidenavModule,
       MatToolbarModule,
-      TopbarStubComponent,
-      AdminEvaluationsStubComponent,
-      AdminScoringModelsStubComponent,
-      AdminSubmissionsStubComponent,
-      AdminTeamTypesStubComponent,
-      AdminUsersStubComponent,
-      AdminRolesStubComponent,
-      AdminGroupsStubComponent,
+    ],
+    childStubs: [
+      { replace: TopbarComponent, with: TopbarStubComponent },
+      {
+        replace: AdminEvaluationsComponent,
+        with: AdminEvaluationsStubComponent,
+      },
+      {
+        replace: AdminScoringModelsComponent,
+        with: AdminScoringModelsStubComponent,
+      },
+      {
+        replace: AdminSubmissionsComponent,
+        with: AdminSubmissionsStubComponent,
+      },
+      { replace: AdminTeamTypesComponent, with: AdminTeamTypesStubComponent },
+      { replace: AdminUsersComponent, with: AdminUsersStubComponent },
+      { replace: AdminRolesComponent, with: AdminRolesStubComponent },
+      { replace: AdminGroupsComponent, with: AdminGroupsStubComponent },
     ],
     providers: [
       ...permissionDataProviders({ system: overrides.system ?? [] }),

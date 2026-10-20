@@ -3,16 +3,12 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  UntypedFormControl,
-  FormGroupDirective,
-  NgForm,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, UntypedFormControl, FormGroupDirective, NgForm, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CrucibleDialogComponent, CrucibleDialogContentDirective } from '@cmusei/crucible-common';
+import { MatFormField, MatLabel, MatInput } from '@angular/material/input';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class UserErrorStateMatcher implements ErrorStateMatcher {
@@ -29,7 +25,7 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
     selector: 'app-admin-teamtype-edit-dialog',
     templateUrl: './admin-teamtype-edit-dialog.component.html',
     styleUrls: ['./admin-teamtype-edit-dialog.component.scss'],
-    standalone: false
+    imports: [CrucibleDialogComponent, CrucibleDialogContentDirective, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatCheckbox]
 })
 
 export class AdminTeamTypeEditDialogComponent {

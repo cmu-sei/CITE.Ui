@@ -25,6 +25,8 @@ import {
 } from '../../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../../test-utils/render-component';
 import { AdminScoringModelMembershipsComponent } from './admin-scoring-model-memberships.component';
+import { AdminScoringModelMembershipListComponent } from 'src/app/components/admin/admin-scoring-model-memberships/admin-scoring-model-membership-list/admin-scoring-model-membership-list.component';
+import { AdminScoringModelMemberListComponent } from 'src/app/components/admin/admin-scoring-model-memberships/admin-scoring-model-member-list/admin-scoring-model-member-list.component';
 
 @Component({
   selector: 'app-admin-scoring-model-membership-list',
@@ -86,7 +88,17 @@ async function renderMemberships(
     AdminScoringModelMembershipsComponent,
     {
       declarations: [AdminScoringModelMembershipsComponent],
-      imports: [NonMemberListStubComponent, MemberListStubComponent],
+      imports: [],
+      childStubs: [
+        {
+          replace: AdminScoringModelMembershipListComponent,
+          with: NonMemberListStubComponent,
+        },
+        {
+          replace: AdminScoringModelMemberListComponent,
+          with: MemberListStubComponent,
+        },
+      ],
       componentInputs: { scoringModelId: 'sm1' },
       providers: [
         ...permissionDataProviders(grants),

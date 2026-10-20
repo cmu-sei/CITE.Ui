@@ -37,6 +37,16 @@ import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-com
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { MatCard } from '@angular/material/card';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatIcon } from '@angular/material/icon';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatFormField, MatLabel } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 interface SituationMove {
   moveNumber?: number;
@@ -51,10 +61,10 @@ interface Situation extends SituationMove {
 }
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
-  standalone: false
+    selector: 'app-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss'],
+    imports: [MatCard, MatButton, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatIconButton, MatIcon, MatCheckbox, MatTooltip, MatSelect, MatOption, MatFormField, MatLabel, FormsModule]
 })
 export class DashboardComponent implements OnDestroy {
   @Input() unreadArticles: UnreadArticles;

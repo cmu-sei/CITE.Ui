@@ -17,12 +17,17 @@ import { UserDataService } from 'src/app/data/user/user-data.service';
 import { CurrentUserQuery } from 'src/app/data/user/user.query';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { CrucibleDialogService } from '@cmusei/crucible-common';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgStyle } from '@angular/common';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-evaluation-info',
     templateUrl: './evaluation-info.component.html',
     styleUrls: ['./evaluation-info.component.scss'],
-    standalone: false
+    imports: [MatIconButton, MatIcon, NgStyle, MatButton, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink]
 })
 export class EvaluationInfoComponent implements OnDestroy {
   @Input() showAdminButton: boolean;

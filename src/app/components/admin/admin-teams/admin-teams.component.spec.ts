@@ -24,6 +24,7 @@ import { dialogRefStub } from '../../../test-utils/dialog-refs';
 import { matDialogStub } from '../../../test-utils/mat-dialog';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminTeamsComponent } from './admin-teams.component';
+import { AdminTeamMembershipsComponent } from 'src/app/components/admin/admin-team-memberships/admin-team-memberships/admin-team-memberships.component';
 
 @Component({ selector: 'app-admin-team-memberships', template: '' })
 class TeamMembershipsStubComponent {
@@ -58,7 +59,6 @@ async function renderTeams(canEdit: boolean) {
   const editDialog = matDialogStub();
 
   const rendered = await renderComponent(AdminTeamsComponent, {
-    declarations: [AdminTeamsComponent],
     imports: [
       MatButtonModule,
       MatCardModule,
@@ -68,7 +68,12 @@ async function renderTeams(canEdit: boolean) {
       MatInputModule,
       MatProgressSpinnerModule,
       MatSortModule,
-      TeamMembershipsStubComponent,
+    ],
+    childStubs: [
+      {
+        replace: AdminTeamMembershipsComponent,
+        with: TeamMembershipsStubComponent,
+      },
     ],
     componentInputs: { evaluationId: 'e1', canEdit },
     providers: [

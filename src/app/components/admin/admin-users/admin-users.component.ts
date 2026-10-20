@@ -11,12 +11,14 @@ import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { ComnSettingsService } from '@cmusei/crucible-common';
+import { AdminUserListComponent } from './admin-user-list/admin-user-list.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-admin-users',
-  templateUrl: './admin-users.component.html',
-  styleUrls: ['./admin-users.component.scss'],
-  standalone: false
+    selector: 'app-admin-users',
+    templateUrl: './admin-users.component.html',
+    styleUrls: ['./admin-users.component.scss'],
+    imports: [AdminUserListComponent, AsyncPipe]
 })
 export class AdminUsersComponent implements OnInit {
   matcher = new UserErrorStateMatcher();

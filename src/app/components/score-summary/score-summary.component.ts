@@ -7,12 +7,14 @@ import { ScoringModel, Submission } from 'src/app/generated/cite.api/model/model
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-score-summary',
     templateUrl: './score-summary.component.html',
     styleUrls: ['./score-summary.component.scss'],
-    standalone: false
+    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow]
 })
 export class ScoreSummaryComponent implements OnDestroy {
   isLoading = false;

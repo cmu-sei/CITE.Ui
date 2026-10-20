@@ -7,12 +7,14 @@ import {
   MatBottomSheetRef,
   MAT_BOTTOM_SHEET_DATA,
 } from '@angular/material/bottom-sheet';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     selector: 'app-system-message',
     templateUrl: './system-message.component.html',
     styleUrls: ['./system-message.component.scss'],
-    standalone: false
+    imports: [MatIconButton, MatIcon]
 })
 export class SystemMessageComponent implements OnInit {
   public displayTitle: string;

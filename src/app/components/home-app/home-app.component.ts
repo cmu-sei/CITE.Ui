@@ -2,11 +2,11 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, AsyncPipe, DatePipe } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BehaviorSubject, Subject, Observable, combineLatest } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import {
@@ -51,10 +51,25 @@ import { GallerySignalRService } from 'src/app/services/gallery-signalr.service'
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { XApiService } from 'src/app/services/xapi/xapi.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
+import { TopbarComponent } from '../shared/top-bar/topbar.component';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { EvaluationInfoComponent } from '../evaluation-info/evaluation-info.component';
+import { DashboardComponent } from '../dashboard/dashboard.component';
+import { ScoresheetComponent } from '../scoresheet/scoresheet.component';
+import { ReportComponent } from '../report/report.component';
+import { AggregateComponent } from '../aggregate/aggregate.component';
+import { ScoreSummaryComponent } from '../score-summary/score-summary.component';
+import { RightSideHtmlComponent } from '../right-side-html/right-side-html.component';
+import { RightSideIframeComponent } from '../right-side-iframe/right-side-iframe.component';
 
 export enum Section {
   dashboard = 'dashboard',
@@ -64,10 +79,47 @@ export enum Section {
 }
 
 @Component({
-  selector: 'app-home-app',
-  templateUrl: './home-app.component.html',
-  styleUrls: ['./home-app.component.scss'],
-  standalone: false,
+    selector: 'app-home-app',
+    templateUrl: './home-app.component.html',
+    styleUrls: ['./home-app.component.scss'],
+    imports: [
+        TopbarComponent,
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatCardSubtitle,
+        MatProgressSpinner,
+        MatIconButton,
+        RouterLink,
+        MatIcon,
+        MatFormField,
+        MatInput,
+        FormsModule,
+        MatSuffix,
+        MatTable,
+        MatSort,
+        MatColumnDef,
+        MatHeaderCellDef,
+        MatHeaderCell,
+        MatSortHeader,
+        MatCellDef,
+        MatCell,
+        MatHeaderRowDef,
+        MatHeaderRow,
+        MatRowDef,
+        MatRow,
+        MatPaginator,
+        EvaluationInfoComponent,
+        DashboardComponent,
+        ScoresheetComponent,
+        ReportComponent,
+        AggregateComponent,
+        ScoreSummaryComponent,
+        RightSideHtmlComponent,
+        RightSideIframeComponent,
+        AsyncPipe,
+        DatePipe,
+    ],
 })
 export class HomeAppComponent implements OnDestroy, OnInit {
   @ViewChild('sidenav') sidenav: MatSidenav;

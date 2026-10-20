@@ -26,12 +26,17 @@ import { TeamService } from 'src/app/generated/cite.api';
 import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
+import { NgClass } from '@angular/common';
+import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
 @Component({
-  selector: 'app-aggregate',
-  templateUrl: './aggregate.component.html',
-  styleUrls: ['./aggregate.component.scss'],
-  standalone: false
+    selector: 'app-aggregate',
+    templateUrl: './aggregate.component.html',
+    styleUrls: ['./aggregate.component.scss'],
+    imports: [MatIconButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow, DisplayOrderPipe]
 })
 export class AggregateComponent implements OnInit, OnDestroy {
   @Input() selectedEvaluation: Evaluation;

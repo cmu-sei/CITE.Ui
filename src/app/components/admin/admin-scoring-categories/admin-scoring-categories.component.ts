@@ -13,12 +13,18 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   AdminScoringCategoryEditDialogComponent
 } from '../admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { AdminScoringOptionsComponent } from '../admin-scoring-options/admin-scoring-options.component';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-admin-scoring-categories',
     templateUrl: './admin-scoring-categories.component.html',
     styleUrls: ['./admin-scoring-categories.component.scss'],
-    standalone: false
+    imports: [MatAccordion, MatIconButton, MatIcon, MatExpansionPanel, MatExpansionPanelHeader, AdminScoringOptionsComponent, MatCard, MatProgressSpinner]
 })
 export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   @Input() scoringModelId: string;

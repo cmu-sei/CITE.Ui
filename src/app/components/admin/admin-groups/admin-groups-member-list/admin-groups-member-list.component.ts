@@ -14,15 +14,22 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { GroupMembership, User } from 'src/app/generated/cite.api';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { NgIf } from '@angular/common';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-  selector: 'app-admin-groups-member-list',
-  templateUrl: './admin-groups-member-list.component.html',
-  styleUrls: ['./admin-groups-member-list.component.scss'],
-  standalone: false
+    selector: 'app-admin-groups-member-list',
+    templateUrl: './admin-groups-member-list.component.html',
+    styleUrls: ['./admin-groups-member-list.component.scss'],
+    imports: [MatToolbar, MatToolbarRow, MatFormField, MatInput, FormsModule, NgIf, MatIconButton, MatSuffix, MatIcon, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
 })
 export class AdminGroupsMemberListComponent
   implements OnInit, OnChanges, AfterViewInit

@@ -9,12 +9,15 @@ import { map } from 'rxjs/operators';
 import { GroupMembershipDataService } from 'src/app/data/group/group-membership.service';
 import { SignalRService } from 'src/app/services/signalr.service';
 import { UserQuery } from 'src/app/data/user/user.query';
+import { AdminGroupsMembershipListComponent } from '../admin-groups-membership-list/admin-groups-membership-list.component';
+import { AdminGroupsMemberListComponent } from '../admin-groups-member-list/admin-groups-member-list.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-admin-groups-detail',
-  templateUrl: './admin-groups-detail.component.html',
-  styleUrls: ['./admin-groups-detail.component.scss'],
-  standalone: false
+    selector: 'app-admin-groups-detail',
+    templateUrl: './admin-groups-detail.component.html',
+    styleUrls: ['./admin-groups-detail.component.scss'],
+    imports: [AdminGroupsMembershipListComponent, AdminGroupsMemberListComponent, AsyncPipe]
 })
 export class AdminGroupsDetailComponent implements OnInit, OnChanges {
   @Input() groupId: string;

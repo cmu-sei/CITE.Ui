@@ -26,12 +26,15 @@ import {
 import { GroupDataService } from 'src/app/data/group/group-data.service';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { ActivatedRoute } from '@angular/router';
+import { AdminScoringModelMembershipListComponent } from '../admin-scoring-model-membership-list/admin-scoring-model-membership-list.component';
+import { AdminScoringModelMemberListComponent } from '../admin-scoring-model-member-list/admin-scoring-model-member-list.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-admin-scoring-model-memberships',
-  templateUrl: './admin-scoring-model-memberships.component.html',
-  styleUrls: ['./admin-scoring-model-memberships.component.scss'],
-  standalone: false
+    selector: 'app-admin-scoring-model-memberships',
+    templateUrl: './admin-scoring-model-memberships.component.html',
+    styleUrls: ['./admin-scoring-model-memberships.component.scss'],
+    imports: [AdminScoringModelMembershipListComponent, AdminScoringModelMemberListComponent, AsyncPipe]
 })
 export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges {
   @Input() embedded: boolean;

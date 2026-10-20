@@ -24,6 +24,8 @@ import {
 } from '../../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../../test-utils/render-component';
 import { AdminEvaluationMembershipsComponent } from './admin-evaluation-memberships.component';
+import { AdminEvaluationMembershipListComponent } from 'src/app/components/admin/admin-evaluation-memberships/admin-evaluation-membership-list/admin-evaluation-membership-list.component';
+import { AdminEvaluationMemberListComponent } from 'src/app/components/admin/admin-evaluation-memberships/admin-evaluation-member-list/admin-evaluation-member-list.component';
 
 @Component({ selector: 'app-admin-evaluation-membership-list', template: '' })
 class NonMemberListStubComponent {
@@ -87,8 +89,17 @@ async function renderMemberships(grants: PermissionGrants = {}) {
   } satisfies ApiStub<GroupService>;
 
   const rendered = await renderComponent(AdminEvaluationMembershipsComponent, {
-    declarations: [AdminEvaluationMembershipsComponent],
-    imports: [NonMemberListStubComponent, MemberListStubComponent],
+    imports: [],
+    childStubs: [
+      {
+        replace: AdminEvaluationMembershipListComponent,
+        with: NonMemberListStubComponent,
+      },
+      {
+        replace: AdminEvaluationMemberListComponent,
+        with: MemberListStubComponent,
+      },
+    ],
     componentInputs: { evaluationId: 'e1' },
     providers: [
       ...permissionDataProviders(grants),

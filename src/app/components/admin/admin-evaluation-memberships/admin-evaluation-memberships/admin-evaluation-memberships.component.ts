@@ -24,12 +24,15 @@ import {
 } from 'src/app/generated/cite.api';
 import { GroupDataService } from 'src/app/data/group/group-data.service';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { AdminEvaluationMembershipListComponent } from '../admin-evaluation-membership-list/admin-evaluation-membership-list.component';
+import { AdminEvaluationMemberListComponent } from '../admin-evaluation-member-list/admin-evaluation-member-list.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-admin-evaluation-memberships',
-  templateUrl: './admin-evaluation-memberships.component.html',
-  styleUrls: ['./admin-evaluation-memberships.component.scss'],
-  standalone: false
+    selector: 'app-admin-evaluation-memberships',
+    templateUrl: './admin-evaluation-memberships.component.html',
+    styleUrls: ['./admin-evaluation-memberships.component.scss'],
+    imports: [AdminEvaluationMembershipListComponent, AdminEvaluationMemberListComponent, AsyncPipe]
 })
 export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
   @Input() embedded: boolean;

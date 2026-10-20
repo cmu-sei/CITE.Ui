@@ -11,12 +11,18 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminScoringOptionEditDialogComponent } from '../admin-scoring-option-edit-dialog/admin-scoring-option-edit-dialog.component';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-admin-scoring-options',
     templateUrl: './admin-scoring-options.component.html',
     styleUrls: ['./admin-scoring-options.component.scss'],
-    standalone: false
+    imports: [MatIconButton, MatIcon, MatCheckbox, FormsModule, MatCard, MatProgressSpinner]
 })
 export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
   @Input() scoringCategoryId: string;

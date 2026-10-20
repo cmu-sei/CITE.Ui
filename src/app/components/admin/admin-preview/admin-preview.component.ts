@@ -13,12 +13,18 @@ import { Title } from '@angular/platform-browser';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { takeUntil } from 'rxjs';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
+import { NgClass } from '@angular/common';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
 @Component({
-  selector: 'app-admin-preview',
-  templateUrl: './admin-preview.component.html',
-  styleUrl: './admin-preview.component.scss',
-  standalone: false
+    selector: 'app-admin-preview',
+    templateUrl: './admin-preview.component.html',
+    styleUrl: './admin-preview.component.scss',
+    imports: [MatIconButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatCheckbox, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow, DisplayOrderPipe]
 })
 export class AdminPreviewComponent implements OnDestroy, OnInit {
   @Input() scoringModelId: string;
