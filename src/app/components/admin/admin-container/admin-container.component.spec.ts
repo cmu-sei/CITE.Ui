@@ -2,18 +2,26 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Component, EventEmitter, Input, Output, Type } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  NgZone,
+  Output,
+  Type,
+} from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
-import { screen } from '@testing-library/angular';
+import { EMPTY, of, throwError } from 'rxjs';
+import { screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ComnAuthService } from '@cmusei/crucible-common';
 import {
   Evaluation,
   EvaluationService,
@@ -34,7 +42,11 @@ import { ApiStub, BodyOverload } from '../../../test-utils/api-stub';
 import { activatedRouteStub } from '../../../test-utils/activated-route';
 import { permissionDataProviders } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
-import { captureUnhandledRejections } from '../../../test-utils/unhandled-rx-errors';
+import {
+  captureUnhandledRejections,
+  captureUnhandledRxErrors,
+  flush,
+} from '../../../test-utils/unhandled-rx-errors';
 
 @Component({ selector: 'app-topbar', template: '' })
 class TopbarStubComponent {
@@ -70,6 +82,7 @@ async function renderAdminContainer(
       BodyOverload<HealthCheckService['getVersion']>
     >;
     hubStart?: () => Promise<void>;
+    logout?: ComnAuthService['logout'];
   } = {},
 ) {
   const evaluationApi = {
@@ -129,6 +142,18 @@ async function renderAdminContainer(
       { provide: TeamTypeService, useValue: teamTypeApi },
       { provide: HealthCheckService, useValue: healthApi },
       { provide: SignalRService, useValue: signalR },
+      ...(overrides.logout
+        ? [
+            {
+              provide: ComnAuthService,
+              useValue: {
+                // No signed-in user is emitted in the default container render.
+                user$: EMPTY,
+                logout: overrides.logout,
+              } satisfies Pick<ComnAuthService, 'user$' | 'logout'>,
+            },
+          ]
+        : []),
       { provide: ActivatedRoute, useValue: route },
     ],
   });
@@ -472,6 +497,31 @@ describe('AdminContainerComponent', () => {
       apiVersion: () => throwError(() => new Error('down')),
     });
     expect(screen.getByText(/API API ERROR!$/)).toBeInTheDocument();
+  });
+
+  /**
+   * Verifies: a rejected sign-out escapes unchanged when the container's logout method is invoked.
+   * Interacts with: ComnAuthService.logout stub, Angular zone, captureUnhandledRxErrors.
+   * Data: the container renders; the sign-out promise rejects with a missing endpoint error.
+   */
+  it('lets a rejected logout from the container escape', async () => {
+    const errors = captureUnhandledRxErrors();
+    const failure = new Error('No end session endpoint');
+    const logoutCalled = vi.fn();
+    const { fixture } = await renderAdminContainer({
+      logout: () => {
+        logoutCalled();
+        return Promise.reject(failure);
+      },
+    });
+
+    TestBed.inject(NgZone).run(() => fixture.componentInstance.logout());
+    await waitFor(() => expect(errors).toEqual([failure]));
+    await flush();
+
+    expect(logoutCalled).toHaveBeenCalledExactlyOnceWith();
+    expect(errors).toEqual([failure]);
+    expect(screen.getByText(/API 1\.4\.2$/)).toBeInTheDocument();
   });
 
   /**
