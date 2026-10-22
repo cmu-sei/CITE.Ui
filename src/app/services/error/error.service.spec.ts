@@ -22,8 +22,7 @@ function setup() {
   return { service: TestBed.inject(ErrorService), displayMessage };
 }
 
-// An unhandled promise rejection as Angular's zone hands it to the ErrorHandler:
-// an Error whose message starts 'Uncaught (in promise)', carrying the reason.
+// A supplied error envelope carrying its rejection reason.
 function rejection(reason: unknown, text = String(reason)) {
   return Object.assign(new Error(`Uncaught (in promise): ${text}`), {
     rejection: reason,
@@ -101,10 +100,10 @@ describe('ErrorService', () => {
   });
 
   /**
-   * Verifies: unhandled rejections are triaged: 401 silent, network errors as identity-server errors,
-   * SignalR fetch failures only warned, anything else shown as-is (a reason that is not an Error as its text).
+   * Verifies: supplied rejection envelopes are triaged: 401 silent, network errors as identity-server errors,
+   * fetch failures only warned, anything else shown as-is (a reason that is not an Error as its text).
    * Interacts with: SystemMessageService.displayMessage stub, console.warn spy.
-   * Data: per row, one rejection reason, the messages it shows and the console.warn lines it writes.
+   * Data: per row, an envelope carrying one reason, the messages it shows and console.warn lines it writes.
    */
   it.each<{
     kind: string;
@@ -162,6 +161,31 @@ describe('ErrorService', () => {
     service.handleError(rejection(reason));
     expect(displayMessage.mock.calls).toEqual(shown);
     expect(warnings).toEqual(warned);
+  });
+
+  /**
+   * Verifies: raw promise rejection reasons are logged unchanged without a message or warning.
+   * Interacts with: ErrorService.handleError, SystemMessageService.displayMessage stub, console recorders.
+   * Data: per row, the original reason supplied by Angular's zone without an envelope.
+   */
+  it.each([
+    { kind: 'a 401', reason: { statusCode: 401, message: 'Unauthorized' } },
+    { kind: 'a network error', reason: new Error('Network Error') },
+    { kind: 'a fetch failure', reason: new TypeError('Failed to fetch') },
+    { kind: 'another error', reason: new Error('Something odd') },
+    { kind: 'a string', reason: 'token expired' },
+    { kind: 'no reason', reason: undefined },
+  ])('logs a raw rejection for $kind without showing it', ({ reason }) => {
+    const errorLog = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const { service, displayMessage } = setup();
+
+    service.handleError(reason);
+
+    expect(errorLog.mock.calls).toEqual([[reason]]);
+    expect(displayMessage).not.toHaveBeenCalled();
+    expect(warnings).toEqual([]);
   });
 
   /**
