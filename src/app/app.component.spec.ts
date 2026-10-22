@@ -18,6 +18,7 @@ import {
 import { activatedRouteStub } from './test-utils/activated-route';
 import { renderComponent } from './test-utils/render-component';
 import { AppComponent } from './app.component';
+import { UIDataService } from './data/ui/ui-data.service';
 
 async function renderApp(options: { theme?: Theme; queryTheme?: string } = {}) {
   const setUserTheme = vi.fn();
@@ -132,5 +133,18 @@ describe('AppComponent', () => {
     const { setUserTheme } = await renderApp({ queryTheme: Theme.DARK });
 
     expect(setUserTheme).toHaveBeenCalledWith(Theme.DARK);
+  });
+
+  /**
+   * Verifies: a theme query parameter is also saved where the top bar restores the theme from when it
+   *           initializes, so a top bar created after the param (as after a login redirect) keeps it.
+   * Interacts with: the ActivatedRoute stub's queryParamMap, the real UIDataService (localStorage).
+   * Data: ?theme=dark-theme, no saved uiState.
+   */
+  it('saves the theme from the query string for the top bar to restore', async () => {
+    localStorage.removeItem('uiState');
+    const { fixture } = await renderApp({ queryTheme: Theme.DARK });
+
+    expect(fixture.debugElement.injector.get(UIDataService).getTheme()).toBe(Theme.DARK);
   });
 });

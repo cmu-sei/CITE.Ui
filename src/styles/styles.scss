@@ -29,6 +29,11 @@ html {
     ));
   @include mat.icon-button-overrides((icon-color: var(--mat-sys-primary),
     ));
+  // Light mode keeps the brand primary exactly (colors design spec §1), and
+  // #E81717 only reaches 4.5:1 as text on white: it measures 4.37:1 on the
+  // palette's #F9F9F9 surface. A white surface keeps primary text buttons and
+  // links on dialogs and pages compliant with WCAG 1.4.3.
+  @include mat.theme-overrides((surface: #ffffff));
 }
 
 .darkMode {
