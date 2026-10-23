@@ -89,6 +89,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   private unsubscribe$ = new Subject();
   hideTopbar = false;
   topbarImage = this.settingsService.settings.AppTopBarImage;
+  // An optional image URL from settings, so a site can brand the evaluation
+  // list without shipping the image in this repo.
+  backgroundImage = this.settingsService.settings.AppLandingBackgroundImage
+    ? `url("${this.settingsService.settings.AppLandingBackgroundImage}")`
+    : null;
   TopbarView = TopbarView;
   theme$: Observable<Theme>;
   selectedEvaluationId = '';

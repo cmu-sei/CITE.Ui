@@ -28,6 +28,24 @@
   background-color: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
   overflow: hidden;
+
+  // Matches the Moodle site background: the image as-is in light mode, and in
+  // dark mode a near-black tint over it, so the page stays dark. The list
+  // panel keeps the surface color so it stays readable over the image.
+  &.has-background {
+    background-image: var(--landing-background);
+    background-size: cover;
+    background-position: center;
+
+    .evaluation-list-container {
+      background-color: var(--mat-sys-surface);
+    }
+  }
+}
+
+:host-context(.darkMode) .app-events-container.has-background {
+  background-color: #101215;
+  background-image: linear-gradient(rgba(7, 9, 12, 0.52), rgba(7, 9, 12, 0.44)), var(--landing-background);
 }
 
 .main-area {

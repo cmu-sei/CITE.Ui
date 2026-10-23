@@ -93,12 +93,14 @@ async function renderHome(
   {
     evaluation,
     galleryApiUrl = '',
+    background,
     hubStart = () => Promise.resolve(),
     galleryHubStart = () => Promise.resolve(),
     logout = () => Promise.resolve(),
   }: {
     evaluation?: string;
     galleryApiUrl?: string;
+    background?: string;
     hubStart?: () => Promise<void>;
     galleryHubStart?: () => Promise<void>;
     logout?: ComnAuthService['logout'];
@@ -151,6 +153,7 @@ async function renderHome(
       AppTopBarHexColor: '#C41230',
       AppTopBarHexTextColor: '#FFFFFF',
       XApiEnabled: false,
+      AppLandingBackgroundImage: background,
     },
   };
   const auth: Pick<ComnAuthService, 'user$' | 'logout'> = {
@@ -283,6 +286,49 @@ describe('HomeAppComponent', () => {
     expect(
       screen.getByRole('link', { name: 'Ransomware exercise' }),
     ).toBeInTheDocument();
+  });
+
+  /**
+   * Verifies: the evaluation list shows the background image named in settings, and none without the setting.
+   * Interacts with: ComnSettingsService.settings (stub), HomeAppComponent template.
+   * Data: AppLandingBackgroundImage set to a relative asset URL, or unset; no evaluation in the route.
+   */
+  it.each([
+    {
+      label: 'with',
+      background: '/assets/local/landing-background.jpg',
+      expected: 'url("/assets/local/landing-background.jpg")',
+    },
+    { label: 'without', background: undefined, expected: '' },
+  ])(
+    'shows the landing background $label the setting',
+    async ({ background, expected }) => {
+      const { container } = await renderHome({}, { background });
+
+      const page = container.querySelector(
+        '.app-events-container',
+      ) as HTMLElement;
+      expect(page.style.getPropertyValue('--landing-background')).toBe(
+        expected,
+      );
+      expect(page.classList.contains('has-background')).toBe(!!background);
+    },
+  );
+
+  /**
+   * Verifies: an open evaluation hides the landing background even with the setting.
+   * Interacts with: the route's evaluation parameter, HomeAppComponent template.
+   * Data: ?evaluation=e1; AppLandingBackgroundImage set to a relative asset URL.
+   */
+  it('hides the landing background inside an evaluation', async () => {
+    const { container } = await renderHome(
+      {},
+      { evaluation: 'e1', background: '/assets/local/landing-background.jpg' },
+    );
+
+    const page = container.querySelector('.app-events-container') as HTMLElement;
+    expect(page.style.getPropertyValue('--landing-background')).toBe('');
+    expect(page.classList.contains('has-background')).toBe(false);
   });
 
   describe('hubs', () => {
