@@ -8,17 +8,19 @@ This project uses [Angular CLI](https://github.com/angular/angular-cli) version 
 
 ## Color Theming
 
-CITE uses a monochrome gray Material 3 SCSS palette with runtime top-bar color overrides from `settings.json`.
+CITE uses a monochrome gray Material 3 SCSS palette (`src/styles/_theme-colors.scss`, `src/styles/_dark-theme-colors.scss`) with runtime top bar and primary color overrides from the settings. Light mode paints the surface white (`src/styles/styles.scss`), because `#E81717` only reaches 4.5:1 as text on white.
 
-### Changing the top bar color
+### Changing the top bar and primary colors
 
 | File | Field / Value | Purpose |
 |------|---------------|---------|
 | `src/assets/config/settings.json` | `"AppTopBarHexColor": "#E81717"` | Runtime config -- top bar background color |
 | `src/assets/config/settings.json` | `"AppTopBarHexTextColor": "#FFFFFF"` | Runtime config -- top bar text color |
-| `src/app/app.component.ts` | `'#C41230'` / `'#FFFFFF'` fallbacks in `setTheme()` | Runtime fallbacks when settings are not provided |
+| `src/assets/config/settings.json` | `"AppLightModePrimaryHexColor": "#E81717"` / `"AppLightModePrimaryHexTextColor": "#FFFFFF"` | Runtime config -- primary color and its text color in light mode |
+| `src/assets/config/settings.json` | `"AppDarkModePrimaryHexColor": "#F48B8B"` / `"AppDarkModePrimaryHexTextColor": "#000000"` | Runtime config -- primary color and its text color in dark mode (falls back to the light-mode value) |
+| `src/app/app.module.ts` | `provideCrucibleTheme({ brand: { color: '#E81717', text: '#FFFFFF' } })` | Fallbacks when a top bar or light-mode key is not set |
 
-To change the top bar color for a deployment, update `AppTopBarHexColor` and `AppTopBarHexTextColor` in `settings.json`.
+The app loads `settings.json`, then `settings.shared.json` and `settings.env.json` from `src/assets/config/` when they exist, and merges them in that order, so later files override earlier ones. To change the colors for a deployment, set these keys in `settings.env.json`. Overriding colors moves accessibility responsibility to the operator, and rebranding usually means setting the top bar, light-mode and dark-mode keys together.
 
 ## Development server
 

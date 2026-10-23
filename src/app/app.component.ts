@@ -9,6 +9,7 @@ import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { ComnAuthQuery, ComnAuthService, CrucibleThemeService, Theme, ComnHeaderBarModule } from '@cmusei/crucible-common';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { UIDataService } from './data/ui/ui-data.service';
 
 @Component({
     selector: 'app-root',
@@ -22,6 +23,7 @@ export class AppComponent implements OnDestroy {
   private router = inject(Router);
   private authService = inject(ComnAuthService);
   private themeService = inject(CrucibleThemeService);
+  private uiDataService = inject(UIDataService);
 
   @HostListener('document:keydown.backspace', ['$event'])
   onKeyDown(evt: KeyboardEvent) {
@@ -93,6 +95,8 @@ export class AppComponent implements OnDestroy {
       if (theme) {
         this.paramTheme = theme === Theme.DARK ? Theme.DARK : Theme.LIGHT;
         this.authService.setUserTheme(this.paramTheme);
+        // the top bar restores the saved theme when it initializes, so save the param's too
+        this.uiDataService.setTheme(this.paramTheme);
       }
     });
   }

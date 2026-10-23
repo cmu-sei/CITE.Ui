@@ -2,7 +2,8 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Component, input, output } from '@angular/core';
+import { Component, NgZone, input, output } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,7 +15,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
-import { screen } from '@testing-library/angular';
+import { screen, waitFor } from '@testing-library/angular';
 import { of } from 'rxjs';
 import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
 import { User } from 'oidc-client-ts';
@@ -40,7 +41,11 @@ import {
   permissionDataProviders,
 } from '../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../test-utils/render-component';
-import { captureUnhandledRejections } from '../../test-utils/unhandled-rx-errors';
+import {
+  captureUnhandledRejections,
+  captureUnhandledRxErrors,
+  flush,
+} from '../../test-utils/unhandled-rx-errors';
 import { HomeAppComponent } from './home-app.component';
 import { TopbarComponent } from 'src/app/components/shared/top-bar/topbar.component';
 import { EvaluationInfoComponent } from 'src/app/components/evaluation-info/evaluation-info.component';
@@ -93,11 +98,13 @@ async function renderHome(
     galleryApiUrl = '',
     hubStart = () => Promise.resolve(),
     galleryHubStart = () => Promise.resolve(),
+    logout = () => Promise.resolve(),
   }: {
     evaluation?: string;
     galleryApiUrl?: string;
     hubStart?: () => Promise<void>;
     galleryHubStart?: () => Promise<void>;
+    logout?: ComnAuthService['logout'];
   } = {},
 ) {
   const evaluationApi = {
@@ -149,8 +156,8 @@ async function renderHome(
       XApiEnabled: false,
     },
   };
-  // The component reads only user$ (UserDataService.setCurrentUser).
-  const auth: Pick<ComnAuthService, 'user$'> = {
+  const auth: Pick<ComnAuthService, 'user$' | 'logout'> = {
+    logout,
     user$: of(
       new User({
         access_token: 'test-token',
@@ -256,6 +263,36 @@ describe('HomeAppComponent', () => {
     ).toBeInTheDocument();
     expect(signalR.startConnection).toHaveBeenCalledOnce();
     expect(signalR.join).toHaveBeenCalledOnce();
+  });
+
+  /**
+   * Verifies: a rejected sign-out escapes unchanged when the home page's logout method is invoked.
+   * Interacts with: ComnAuthService.logout stub, Angular zone, captureUnhandledRxErrors.
+   * Data: Alice's evaluation list renders; the sign-out promise rejects with a missing endpoint error.
+   */
+  it('lets a rejected logout from the home page escape', async () => {
+    const errors = captureUnhandledRxErrors();
+    const failure = new Error('No end session endpoint');
+    const logoutCalled = vi.fn();
+    const { fixture } = await renderHome(
+      {},
+      {
+        logout: () => {
+          logoutCalled();
+          return Promise.reject(failure);
+        },
+      },
+    );
+
+    TestBed.inject(NgZone).run(() => fixture.componentInstance.logout());
+    await waitFor(() => expect(errors).toEqual([failure]));
+    await flush();
+
+    expect(logoutCalled).toHaveBeenCalledExactlyOnceWith();
+    expect(errors).toEqual([failure]);
+    expect(
+      screen.getByRole('link', { name: 'Ransomware exercise' }),
+    ).toBeInTheDocument();
   });
 
   describe('hubs', () => {
