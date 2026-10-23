@@ -26,6 +26,8 @@ import { Observable }                                        from 'rxjs';
 import { Action } from '../model/action';
 // @ts-ignore
 import { ProblemDetails } from '../model/problemDetails';
+// @ts-ignore
+import { UpdateActionRequest } from '../model/updateActionRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -610,14 +612,14 @@ export class ActionService extends BaseService {
      * Updates an Action
      * Updates an Action with the attributes specified &lt;para /&gt; Accessible only to a SuperUser or a User on an Admin Team within the specified Action
      * @param id The Id of the Action to update
-     * @param action The updated Action values
+     * @param updateActionRequest The updated Action values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateAction(id: string, action?: Action, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Action>;
-    public updateAction(id: string, action?: Action, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Action>>;
-    public updateAction(id: string, action?: Action, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Action>>;
-    public updateAction(id: string, action?: Action, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateAction(id: string, updateActionRequest?: UpdateActionRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Action>;
+    public updateAction(id: string, updateActionRequest?: UpdateActionRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Action>>;
+    public updateAction(id: string, updateActionRequest?: UpdateActionRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Action>>;
+    public updateAction(id: string, updateActionRequest?: UpdateActionRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateAction.');
         }
@@ -668,7 +670,7 @@ export class ActionService extends BaseService {
         return this.httpClient.request<Action>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: action,
+                body: updateActionRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

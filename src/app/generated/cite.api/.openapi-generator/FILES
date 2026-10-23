@@ -40,6 +40,8 @@ model/action.ts
 model/assembly.ts
 model/callingConventions.ts
 model/constructorInfo.ts
+model/createScoringModelRequest.ts
+model/createTeamRequest.ts
 model/customAttributeData.ts
 model/customAttributeNamedArgument.ts
 model/customAttributeTypedArgument.ts
@@ -108,6 +110,18 @@ model/type.ts
 model/typeAttributes.ts
 model/typeInfo.ts
 model/unreadArticles.ts
+model/updateActionRequest.ts
+model/updateDutyRequest.ts
+model/updateEvaluationMembershipRequest.ts
+model/updateEvaluationRequest.ts
+model/updateMoveRequest.ts
+model/updateScoringCategoryRequest.ts
+model/updateScoringModelRequest.ts
+model/updateScoringOptionRequest.ts
+model/updateSubmissionCommentRequest.ts
+model/updateSubmissionOptionRequest.ts
+model/updateSubmissionRequest.ts
+model/updateTeamRequest.ts
 model/user.ts
 model/userIdentity.ts
 param.ts

@@ -26,6 +26,8 @@ import { Observable }                                        from 'rxjs';
 import { EvaluationMembership } from '../model/evaluationMembership';
 // @ts-ignore
 import { ProblemDetails } from '../model/problemDetails';
+// @ts-ignore
+import { UpdateEvaluationMembershipRequest } from '../model/updateEvaluationMembershipRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -294,14 +296,14 @@ export class EvaluationMembershipsService extends BaseService {
      * Updates a EvaluationMembership
      * Updates a EvaluationMembership with the attributes specified
      * @param id The Id of the Exericse to update
-     * @param evaluationMembership The updated EvaluationMembership values
+     * @param updateEvaluationMembershipRequest The updated EvaluationMembership values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateEvaluationMembership(id: string, evaluationMembership?: EvaluationMembership, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<EvaluationMembership>;
-    public updateEvaluationMembership(id: string, evaluationMembership?: EvaluationMembership, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EvaluationMembership>>;
-    public updateEvaluationMembership(id: string, evaluationMembership?: EvaluationMembership, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EvaluationMembership>>;
-    public updateEvaluationMembership(id: string, evaluationMembership?: EvaluationMembership, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateEvaluationMembership(id: string, updateEvaluationMembershipRequest?: UpdateEvaluationMembershipRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<EvaluationMembership>;
+    public updateEvaluationMembership(id: string, updateEvaluationMembershipRequest?: UpdateEvaluationMembershipRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EvaluationMembership>>;
+    public updateEvaluationMembership(id: string, updateEvaluationMembershipRequest?: UpdateEvaluationMembershipRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EvaluationMembership>>;
+    public updateEvaluationMembership(id: string, updateEvaluationMembershipRequest?: UpdateEvaluationMembershipRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateEvaluationMembership.');
         }
@@ -352,7 +354,7 @@ export class EvaluationMembershipsService extends BaseService {
         return this.httpClient.request<EvaluationMembership>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: evaluationMembership,
+                body: updateEvaluationMembershipRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

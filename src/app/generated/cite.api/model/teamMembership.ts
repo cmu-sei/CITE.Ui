@@ -20,7 +20,7 @@ export interface TeamMembership {
     id?: string;
     teamId?: string;
     userId?: string | null;
-    roleId?: string | null;
+    roleId?: string;
     role?: TeamRole;
 }
 

@@ -433,10 +433,9 @@ describe('ScoresheetComponent', () => {
         ],
       });
       await user.click(toolbarButton('Reopen')!);
-      expect(submissionApi.updateSubmission).toHaveBeenCalledWith(
-        's1',
-        expect.objectContaining({ id: 's1', status: ItemStatus.Active }),
-      );
+      expect(submissionApi.updateSubmission).toHaveBeenCalledWith('s1', {
+        status: ItemStatus.Active,
+      });
     });
 
     /**

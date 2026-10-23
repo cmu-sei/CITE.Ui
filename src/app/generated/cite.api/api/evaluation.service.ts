@@ -28,6 +28,8 @@ import { Evaluation } from '../model/evaluation';
 import { EvaluationSituation } from '../model/evaluationSituation';
 // @ts-ignore
 import { ProblemDetails } from '../model/problemDetails';
+// @ts-ignore
+import { UpdateEvaluationRequest } from '../model/updateEvaluationRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -532,14 +534,14 @@ export class EvaluationService extends BaseService {
      * Updates an Evaluation
      * Updates an Evaluation with the attributes specified. The ID from the route MUST MATCH the ID contained in the evaluation parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the Evaluation to update
-     * @param evaluation The updated Evaluation values
+     * @param updateEvaluationRequest The updated Evaluation values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateEvaluation(id: string, evaluation?: Evaluation, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Evaluation>;
-    public updateEvaluation(id: string, evaluation?: Evaluation, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Evaluation>>;
-    public updateEvaluation(id: string, evaluation?: Evaluation, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Evaluation>>;
-    public updateEvaluation(id: string, evaluation?: Evaluation, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateEvaluation(id: string, updateEvaluationRequest?: UpdateEvaluationRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Evaluation>;
+    public updateEvaluation(id: string, updateEvaluationRequest?: UpdateEvaluationRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Evaluation>>;
+    public updateEvaluation(id: string, updateEvaluationRequest?: UpdateEvaluationRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Evaluation>>;
+    public updateEvaluation(id: string, updateEvaluationRequest?: UpdateEvaluationRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateEvaluation.');
         }
@@ -590,7 +592,7 @@ export class EvaluationService extends BaseService {
         return this.httpClient.request<Evaluation>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: evaluation,
+                body: updateEvaluationRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

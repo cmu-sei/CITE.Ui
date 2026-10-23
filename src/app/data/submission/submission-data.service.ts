@@ -208,7 +208,7 @@ export class SubmissionDataService {
   updateSubmission(submission: Submission) {
     this.submissionStore.setLoading(true);
     this.submissionService
-      .updateSubmission(submission.id, submission)
+      .updateSubmission(submission.id, { status: submission.status })
       .pipe(
         tap(() => {
           this.submissionStore.setLoading(false);
