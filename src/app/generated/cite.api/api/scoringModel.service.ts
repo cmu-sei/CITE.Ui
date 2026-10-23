@@ -23,9 +23,13 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
+import { CreateScoringModelRequest } from '../model/createScoringModelRequest';
+// @ts-ignore
 import { ProblemDetails } from '../model/problemDetails';
 // @ts-ignore
 import { ScoringModel } from '../model/scoringModel';
+// @ts-ignore
+import { UpdateScoringModelRequest } from '../model/updateScoringModelRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -106,14 +110,14 @@ export class ScoringModelService extends BaseService {
     /**
      * Creates a new ScoringModel
      * Creates a new ScoringModel with the attributes specified &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
-     * @param scoringModel The data used to create the ScoringModel
+     * @param createScoringModelRequest The data used to create the ScoringModel
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createScoringModel(scoringModel?: ScoringModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<ScoringModel>;
-    public createScoringModel(scoringModel?: ScoringModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ScoringModel>>;
-    public createScoringModel(scoringModel?: ScoringModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ScoringModel>>;
-    public createScoringModel(scoringModel?: ScoringModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public createScoringModel(createScoringModelRequest?: CreateScoringModelRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<ScoringModel>;
+    public createScoringModel(createScoringModelRequest?: CreateScoringModelRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ScoringModel>>;
+    public createScoringModel(createScoringModelRequest?: CreateScoringModelRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ScoringModel>>;
+    public createScoringModel(createScoringModelRequest?: CreateScoringModelRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -161,7 +165,7 @@ export class ScoringModelService extends BaseService {
         return this.httpClient.request<ScoringModel>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: scoringModel,
+                body: createScoringModelRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -410,14 +414,14 @@ export class ScoringModelService extends BaseService {
      * Updates a  ScoringModel
      * Updates a ScoringModel with the attributes specified. The ID from the route MUST MATCH the ID contained in the scoringModel parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the ScoringModel to update
-     * @param scoringModel The updated ScoringModel values
+     * @param updateScoringModelRequest The updated ScoringModel values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateScoringModel(id: string, scoringModel?: ScoringModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<ScoringModel>;
-    public updateScoringModel(id: string, scoringModel?: ScoringModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ScoringModel>>;
-    public updateScoringModel(id: string, scoringModel?: ScoringModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ScoringModel>>;
-    public updateScoringModel(id: string, scoringModel?: ScoringModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateScoringModel(id: string, updateScoringModelRequest?: UpdateScoringModelRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<ScoringModel>;
+    public updateScoringModel(id: string, updateScoringModelRequest?: UpdateScoringModelRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ScoringModel>>;
+    public updateScoringModel(id: string, updateScoringModelRequest?: UpdateScoringModelRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ScoringModel>>;
+    public updateScoringModel(id: string, updateScoringModelRequest?: UpdateScoringModelRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateScoringModel.');
         }
@@ -468,7 +472,7 @@ export class ScoringModelService extends BaseService {
         return this.httpClient.request<ScoringModel>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: scoringModel,
+                body: updateScoringModelRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

@@ -7,6 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Observable, Subject, defer, firstValueFrom, of, throwError } from 'rxjs';
 import {
+  ItemStatus,
   Submission,
   SubmissionOptionService,
   SubmissionService,
@@ -240,18 +241,22 @@ describe('SubmissionDataService', () => {
     });
 
     /**
-     * Verifies: updateSubmission() sends the submission and stores the API's copy.
+     * Verifies: updateSubmission() sends only the status, the one field the API edits, and stores the API's copy.
      * Interacts with: SubmissionService.updateSubmission stub, SubmissionQuery.
-     * Data: s1 at score 0, updated to 7.
+     * Data: s1 at score 0 and Active; completed, and the API answers with score 7.
      */
-    it('updateSubmission() stores the updated submission', () => {
-      const { service, query, store, api } = setup();
+    it('updateSubmission() sends the status and stores the updated submission', () => {
+      const updateSubmission = vi.fn<
+        BodyOverload<SubmissionService['updateSubmission']>
+      >(() => of(makeSubmission({ score: 7, status: ItemStatus.Complete })));
+      const { service, query, store } = setup({ api: { updateSubmission } });
       store.set([makeSubmission()]);
-      service.updateSubmission(makeSubmission({ score: 7 }));
-      expect(api.updateSubmission).toHaveBeenCalledWith(
-        's1',
-        expect.objectContaining({ score: 7 }),
+      service.updateSubmission(
+        makeSubmission({ score: 7, status: ItemStatus.Complete }),
       );
+      expect(updateSubmission).toHaveBeenCalledWith('s1', {
+        status: ItemStatus.Complete,
+      });
       expect(query.getEntity('s1')?.score).toBe(7);
     });
 
