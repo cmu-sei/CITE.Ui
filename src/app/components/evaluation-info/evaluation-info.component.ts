@@ -10,7 +10,7 @@ import { MoveQuery } from 'src/app/data/move/move.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
 import { Observable, Subject } from 'rxjs';
-import { Section } from 'src/app/components/home-app/home-app.component';
+import { Section } from 'src/app/components/home-app/section';
 import { takeUntil } from 'rxjs';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';

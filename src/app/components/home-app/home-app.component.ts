@@ -70,13 +70,7 @@ import { AggregateComponent } from '../aggregate/aggregate.component';
 import { ScoreSummaryComponent } from '../score-summary/score-summary.component';
 import { RightSideHtmlComponent } from '../right-side-html/right-side-html.component';
 import { RightSideIframeComponent } from '../right-side-iframe/right-side-iframe.component';
-
-export enum Section {
-  dashboard = 'dashboard',
-  scoresheet = 'scoresheet',
-  report = 'report',
-  aggregate = 'aggregate'
-}
+import { Section } from './section';
 
 @Component({
     selector: 'app-home-app',
