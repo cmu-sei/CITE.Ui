@@ -3,10 +3,10 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
+import { Component, ElementRef, Input, OnInit, OnDestroy, inject, viewChild } from '@angular/core';
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   Evaluation,
   ItemStatus,
@@ -25,22 +25,82 @@ import { AdminEvaluationEditDialogComponent } from '../admin-evaluation-edit-dia
 import { UserQuery } from 'src/app/data/user/user.query';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { MatIcon } from '@angular/material/icon';
+import { DatePipe } from '@angular/common';
+import { MatFormField, MatInput, MatSuffix, MatLabel } from '@angular/material/input';
+import { MatIconButton } from '@angular/material/button';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import { MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import { AdminMovesComponent } from '../admin-moves/admin-moves.component';
+import { AdminTeamsComponent } from '../admin-teams/admin-teams.component';
+import { AdminActionsComponent } from '../admin-actions/admin-actions.component';
+import { AdminDutiesComponent } from '../admin-duties/admin-duties.component';
+import { AdminEvaluationMembershipsComponent } from '../admin-evaluation-memberships/admin-evaluation-memberships/admin-evaluation-memberships.component';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-admin-evaluations',
     templateUrl: './admin-evaluations.component.html',
     styleUrls: ['./admin-evaluations.component.scss'],
-    standalone: false,
     animations: [
-      trigger('detailExpand', [
-        state('collapsed', style({ height: '0px', minHeight: '0' })),
-        state('expanded', style({ height: '*' })),
-        transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-      ]),
+        trigger('detailExpand', [
+            state('collapsed', style({ height: '0px', minHeight: '0' })),
+            state('expanded', style({ height: '*' })),
+            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+        ]),
     ],
+    imports: [
+    MatIcon,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIconButton,
+    MatSuffix,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatPaginator,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatSortHeader,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    AdminMovesComponent,
+    AdminTeamsComponent,
+    AdminActionsComponent,
+    AdminDutiesComponent,
+    AdminEvaluationMembershipsComponent,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatCard,
+    MatProgressSpinner,
+    DatePipe
+],
 })
 
 export class AdminEvaluationsComponent implements OnInit, OnDestroy {
+  private settingsService = inject(ComnSettingsService);
+  private evaluationDataService = inject(EvaluationDataService);
+  private evaluationQuery = inject(EvaluationQuery);
+  private permissionDataService = inject(PermissionDataService);
+  private scoringModelDataService = inject(ScoringModelDataService);
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private userQuery = inject(UserQuery);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+
   @Input() evaluationList: Evaluation[];
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -74,20 +134,9 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   isBusy = false;
   uploadProgress = 0;
   canCreateEvaluations = this.permissionDataService.canCreateEvaluations();
-  @ViewChild('jsonInput') jsonInput: ElementRef<HTMLInputElement>;
+  readonly jsonInput = viewChild<ElementRef<HTMLInputElement>>('jsonInput');
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private evaluationDataService: EvaluationDataService,
-    private evaluationQuery: EvaluationQuery,
-    private permissionDataService: PermissionDataService,
-    private scoringModelDataService: ScoringModelDataService,
-    private scoringModelQuery: ScoringModelQuery,
-    private teamMembershipDataService: TeamMembershipDataService,
-    private userQuery: UserQuery,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService
-  ) {
+  constructor() {
       // observe the scoring models
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {
       this.scoringModels = scoringModels;
@@ -349,7 +398,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     this.uploadProgress = 0;
     this.isBusy = true;
     this.evaluationDataService.uploadJson(file, 'events', true);
-    this.jsonInput.nativeElement.value = null;
+    this.jsonInput().nativeElement.value = null;
   }
 
   paginatorEvent(page: PageEvent) {

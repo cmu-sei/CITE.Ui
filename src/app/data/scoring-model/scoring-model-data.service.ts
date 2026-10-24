@@ -4,7 +4,7 @@
 
 import { ScoringModelStore } from './scoring-model.store';
 import { ScoringModelQuery } from './scoring-model.query';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -20,6 +20,12 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
   providedIn: 'root',
 })
 export class ScoringModelDataService {
+  private scoringModelStore = inject(ScoringModelStore);
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private scoringModelService = inject(ScoringModelService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+
   readonly scoringModelList: Observable<ScoringModel[]>;
   readonly selected: Observable<ScoringModel>;
   readonly filterControl = new UntypedFormControl();
@@ -32,13 +38,9 @@ export class ScoringModelDataService {
   private pageIndex: Observable<number>;
   public uploadProgress = new Subject<number>();
 
-  constructor(
-    private scoringModelStore: ScoringModelStore,
-    private scoringModelQuery: ScoringModelQuery,
-    private scoringModelService: ScoringModelService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {
+  constructor() {
+    const activatedRoute = this.activatedRoute;
+
     this.filterTerm = activatedRoute.queryParamMap.pipe(
       map((params) => params.get('modelterm') || '')
     );

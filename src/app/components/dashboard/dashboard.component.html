@@ -46,20 +46,20 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-expansion-panel-header>
         <mat-panel-title title="Participant Actions during an Exercise">Actions ({{ actionList.length }})</mat-panel-title>
       </mat-expansion-panel-header>
-      @if (myTeamId === activeTeamId) {
+      @if (myTeamId() === activeTeamId) {
       <div class="panel-toolbar">
         @if (!isActionEditMode) {
         <button mat-icon-button (click)="isActionEditMode = true" title="Edit Actions"
-          [disabled]="noChanges || !canSubmitTeamScore">
-          <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline"></mat-icon>
+          [disabled]="noChanges() || !canSubmitTeamScore">
+          <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline" />
         </button>
         }
         @if (isActionEditMode) {
         <button mat-icon-button (click)="addOrEditAction(null)" title="Add Action">
-          <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle"></mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle" />
         </button>
         <button mat-icon-button (click)="isActionEditMode = false" title="Close Action Editing">
-          <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline" />
         </button>
         }
       </div>
@@ -68,17 +68,17 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="panel-row">
         @if (isActionEditMode) {
         <button mat-icon-button (click)="addOrEditAction(action); $event.stopPropagation()" title="Edit Action">
-          <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline"></mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline" />
         </button>
         <button mat-icon-button (click)="deleteActionRequest(action); $event.stopPropagation()"
           title="Delete Action">
-          <mat-icon class="mdi-24px" fontIcon="mdi-trash-can-outline"></mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-trash-can-outline" />
         </button>
         <span>{{ action.description }}</span>
         } @else {
         <mat-checkbox [checked]="action.isChecked" (change)="checkAction(action.id, $event.checked)"
           [matTooltip]="changedBy(action.id)"
-          [disabled]="noChanges || myTeamId !== activeTeamId || !canContributeToTeamScore">
+          [disabled]="noChanges() || myTeamId() !== activeTeamId || !canContributeToTeamScore">
           {{ action.description }}
         </mat-checkbox>
         }
@@ -94,16 +94,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="panel-toolbar">
         @if (!isDutyEditMode) {
         <button mat-icon-button (click)="isDutyEditMode = true" title="Edit Duties"
-          [disabled]="noChanges || !canSubmitTeamScore">
-          <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline"></mat-icon>
+          [disabled]="noChanges() || !canSubmitTeamScore">
+          <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline" />
         </button>
         }
         @if (isDutyEditMode) {
         <button mat-icon-button (click)="addOrEditDuty(null)" title="Add Duty">
-          <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle"></mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle" />
         </button>
         <button mat-icon-button (click)="isDutyEditMode = false" title="Close Duty Editing">
-          <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline"></mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-close-circle-outline" />
         </button>
         }
       </div>
@@ -111,10 +111,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="panel-row">
         @if (isDutyEditMode) {
         <button mat-icon-button (click)="addOrEditDuty(duty); $event.stopPropagation()" title="Edit Duty">
-          <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline"></mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline" />
         </button>
         <button mat-icon-button (click)="deleteDutyRequest(duty); $event.stopPropagation()" title="Delete Duty">
-          <mat-icon class="mdi-24px" fontIcon="mdi-trash-can-outline"></mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-trash-can-outline" />
         </button>
         }
         <label class="row-label">{{ duty.name }}</label>
@@ -122,7 +122,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           @if (!isDutyEditMode && canContributeToTeamScore) {
           <mat-select placeholder="Assign Users" [value]="duty.users" multiple (opened)="openDutyUsers(duty)"
             (selectionChange)="updateDutyUsers(duty.id, $event)" (closed)="closeDutyUsers(duty.id)"
-            [disabled]="noChanges || myTeamId !== activeTeamId" title="Select a Team Member">
+            [disabled]="noChanges() || myTeamId() !== activeTeamId" title="Select a Team Member">
             @for (membership of teamMemberships; track membership.id) {
             <mat-option [value]="getUser(membership.userId)">{{ getUserName(membership.userId) }}
             </mat-option>
@@ -148,7 +148,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-form-field class="row-value" subscriptSizing="dynamic">
           <mat-label>Role</mat-label>
           <mat-select placeholder="Role" [(ngModel)]="teamMembership.roleId"
-            [disabled]="noChanges || !canManageTeam || teamMembership.userId === loggedInUserId">
+            [disabled]="noChanges() || !canManageTeam || teamMembership.userId === loggedInUserId">
             @for (role of teamRoles; track role.id) {
             <mat-option [value]="role.id">
               {{ role.name }}

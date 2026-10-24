@@ -5,9 +5,9 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
 
 <div class="d-flex gap-5 justify-content-center">
   <app-admin-evaluation-membership-list [users]="nonMembers$ | async" [groups]="groupNonMembers$ | async"
-    [canEdit]="canEdit" (createMembership)="createMembership($event)"></app-admin-evaluation-membership-list>
+    [canEdit]="canEdit" (createMembership)="createMembership($event)" />
 
   <app-admin-evaluation-member-list [memberships]="memberships$ | async" [users]="members$ | async"
     [groups]="groupMembers$ | async" [roles]="roles$ | async" [canEdit]="canEdit"
-    (deleteMembership)="deleteMembership($event)" (editMembership)="editMembership($event)"></app-admin-evaluation-member-list>
+    (deleteMembership)="deleteMembership($event)" (editMembership)="editMembership($event)" />
 </div>

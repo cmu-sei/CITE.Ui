@@ -1,7 +1,7 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
@@ -29,14 +29,63 @@ import {
 } from 'src/app/services/signalr.service';
 import { environment } from 'src/environments/environment';
 import { HealthCheckService } from 'src/app/generated/cite.api/api/api';
+import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIcon } from '@angular/material/icon';
+import { MatList, MatListItem, MatListItemIcon } from '@angular/material/list';
+import { NgClass, AsyncPipe } from '@angular/common';
+import { MatIconButton } from '@angular/material/button';
+import { TopbarComponent } from '../../shared/top-bar/topbar.component';
+import { AdminScoringModelsComponent } from '../admin-scoring-models/admin-scoring-models.component';
+import { AdminEvaluationsComponent } from '../admin-evaluations/admin-evaluations.component';
+import { AdminSubmissionsComponent } from '../admin-submissions/admin-submissions.component';
+import { AdminTeamTypesComponent } from '../admin-teamtypes/admin-teamtypes.component';
+import { AdminUsersComponent } from '../admin-users/admin-users.component';
+import { AdminRolesComponent } from '../admin-roles/admin-roles.component';
+import { AdminGroupsComponent } from '../admin-groups/admin-groups.component';
 
 @Component({
-  selector: 'app-admin-container',
-  templateUrl: './admin-container.component.html',
-  styleUrls: ['./admin-container.component.scss'],
-  standalone: false,
+    selector: 'app-admin-container',
+    templateUrl: './admin-container.component.html',
+    styleUrls: ['./admin-container.component.scss'],
+    imports: [
+        MatSidenavContainer,
+        MatSidenav,
+        MatToolbar,
+        MatIcon,
+        MatList,
+        MatListItem,
+        NgClass,
+        MatListItemIcon,
+        MatIconButton,
+        MatSidenavContent,
+        TopbarComponent,
+        AdminScoringModelsComponent,
+        AdminEvaluationsComponent,
+        AdminSubmissionsComponent,
+        AdminTeamTypesComponent,
+        AdminUsersComponent,
+        AdminRolesComponent,
+        AdminGroupsComponent,
+        AsyncPipe,
+    ],
 })
 export class AdminContainerComponent implements OnDestroy, OnInit {
+  private router = inject(Router);
+  private authService = inject(ComnAuthService);
+  private evaluationDataService = inject(EvaluationDataService);
+  private evaluationQuery = inject(EvaluationQuery);
+  private scoringModelDataService = inject(ScoringModelDataService);
+  private teamTypeDataService = inject(TeamTypeDataService);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private healthCheckService = inject(HealthCheckService);
+  private settingsService = inject(ComnSettingsService);
+  private authQuery = inject(ComnAuthQuery);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private permissionDataService = inject(PermissionDataService);
+  private signalRService = inject(SignalRService);
+
   usersText = 'Users';
   evaluationsText = 'Evaluations';
   scoringModelsText = 'Scoring Models';
@@ -79,24 +128,10 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
   canViewRoles = false;
   readonly SystemPermission = SystemPermission;
 
-  constructor(
-    private router: Router,
-    private authService: ComnAuthService,
-    private evaluationDataService: EvaluationDataService,
-    private evaluationQuery: EvaluationQuery,
-    private scoringModelDataService: ScoringModelDataService,
-    private teamTypeDataService: TeamTypeDataService,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    activatedRoute: ActivatedRoute,
-    private healthCheckService: HealthCheckService,
-    private settingsService: ComnSettingsService,
-    private authQuery: ComnAuthQuery,
-    private currentUserQuery: CurrentUserQuery,
-    private permissionDataService: PermissionDataService,
-    titleService: Title,
-    private signalRService: SignalRService
-  ) {
+  constructor() {
+    const activatedRoute = inject(ActivatedRoute);
+    const titleService = inject(Title);
+
     this.theme$ = this.authQuery.userTheme$;
     this.hideTopbar = this.inIframe();
     this.pageSize = activatedRoute.queryParamMap.pipe(

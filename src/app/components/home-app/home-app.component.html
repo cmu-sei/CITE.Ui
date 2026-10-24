@@ -8,7 +8,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   [style.--landing-background]="selectedEvaluationId ? null : backgroundImage">
   @if (!hideTopbar) {
   <app-topbar [title]="topbarText" [topbarView]="TopbarView.CITE_HOME" [imageFilePath]="topbarImage"
-    (urlNavigate)="topBarNavigate($event)"></app-topbar>
+    (urlNavigate)="topBarNavigate($event)" />
   }
 
   @if (!permissions) {
@@ -18,8 +18,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <mat-card-title>Initializing Data</mat-card-title>
         <mat-card-subtitle>Please wait ...</mat-card-subtitle>
       </mat-card-header>
-      <mat-progress-spinner color="primary" mode="indeterminate">
-      </mat-progress-spinner>
+      <mat-progress-spinner color="primary" mode="indeterminate" />
     </mat-card>
   </span>
   }
@@ -32,14 +31,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
         @if (canViewAdministration) {
         <button aria-label="Show Administration Page" mat-icon-button [routerLink]="['/admin']"
           [queryParams]="{section: 'Evaluations'}" style="outline: none;" title="Administration">
-          <mat-icon class="mdi-24px center-self" fontIcon="mdi-cog"></mat-icon>
+          <mat-icon class="mdi-24px center-self" fontIcon="mdi-cog" />
         </button>
         }
       </div>
     </div>
     <div class="elevate evaluation-list-container">
       <div class="icon-text-container">
-        <mat-icon class="crucible-icon-cite" svgIcon="crucible-icon-cite"></mat-icon>
+        <mat-icon class="crucible-icon-cite" svgIcon="crucible-icon-cite" />
         <span class="evaluation-title text">My Evaluations</span>
         <div class="searchBox">
           <!-- Search Bar -->
@@ -48,7 +47,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               placeholder="Search" />
             @if (filterString !== '') {
             <button mat-icon-button matSuffix (click)="clearFilter()" title="Clear Search">
-              <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline"></mat-icon>
+              <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline" />
             </button>
             }
           </mat-form-field>
@@ -77,8 +76,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <mat-header-cell *matHeaderCellDef mat-sort-header>Created</mat-header-cell>
             <mat-cell *matCellDef="let evaluation">{{ evaluation.dateCreated | date:"yyyy-MM-dd HH:mm" }}</mat-cell>
           </ng-container>
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+          <mat-header-row *matHeaderRowDef="displayedColumns" />
+          <mat-row *matRowDef="let row; columns: displayedColumns" />
         </mat-table>
         @if (evaluationDataSource.filteredData.length === 0) {
         <div class="text no-results">
@@ -86,8 +85,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
         }
         <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons
-          aria-label="Select page of evaluations">
-        </mat-paginator>
+          aria-label="Select page of evaluations" />
       </div>
     </div>
     }
@@ -101,7 +99,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           [noChanges]="noChanges$ | async" [selectedSection]="selectedSection"
           (nextDisplayedMove)="nextDisplayedMove($event)" (previousDisplayedMove)="previousDisplayedMove($event)"
           (nextEvaluationMove)="nextEvaluationMove($event)" (changeTeam)="changeTeam($event)"
-          (changeSection)="changeSection($event)"></app-evaluation-info>
+          (changeSection)="changeSection($event)" />
       </div>
       <div class="app-content-container">
         @if (selectedSection !== section.scoresheet && !(selectedSection === section.report || selectedSection ===
@@ -109,33 +107,33 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="app-model-container elevate app-score-container">
           @if (unreadArticles$ && moveList$) {
           <app-dashboard [unreadArticles]="unreadArticles$ | async" [myTeamId]="myTeamId$ | async"
-            [noChanges]="noChanges$ | async"></app-dashboard>
+            [noChanges]="noChanges$ | async" />
           }
         </div>
         }
         @if (selectedSection === section.scoresheet) {
         <div class="app-model-container elevate app-score-container" autosize>
           <app-scoresheet [myTeamId]="myTeamId$ | async" (selectDisplayedSubmission)="selectDisplayedSubmission($event)"
-            [noChanges]="noChanges$ | async"></app-scoresheet>
+            [noChanges]="noChanges$ | async" />
         </div>
         }
         @if (selectedSection === section.report) {
         <div class="app-model-container elevate app-score-container" autosize>
           <app-report [selectedEvaluation]="activeEvaluation$ | async"
-            [selectedScoringModel]="activeScoringModel$ | async" [moveList]="moveList$ | async"></app-report>
+            [selectedScoringModel]="activeScoringModel$ | async" [moveList]="moveList$ | async" />
         </div>
         }
         @if (selectedSection === section.aggregate) {
         <div class="app-model-container elevate app-score-container" autosize>
           <app-aggregate [selectedEvaluation]="activeEvaluation$ | async"
-            [selectedScoringModel]="activeScoringModel$ | async" [moveList]="moveList$ | async"></app-aggregate>
+            [selectedScoringModel]="activeScoringModel$ | async" [moveList]="moveList$ | async" />
         </div>
         }
         @if ((activeScoringModel$ | async)?.rightSideDisplay === 'ScoreSummary' && !(selectedSection === section.report
         || selectedSection === section.aggregate)) {
         <div class="flex-35" autosize>
           @if (unreadArticles$ && moveList$) {
-          <app-score-summary [selectedScoringModel]="activeScoringModel$ | async"></app-score-summary>
+          <app-score-summary [selectedScoringModel]="activeScoringModel$ | async" />
           }
         </div>
         }
@@ -145,14 +143,14 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <div class="app-model-container elevate app-score-container" class="app-score-container flex-50 elevate"
           autosize>
           @if ((activeScoringModel$ | async)?.rightSideDisplay === 'HtmlBlock') {
-          <app-right-side-html [scoringModel$]="activeScoringModel$" [hideTopbar]="hideTopbar"></app-right-side-html>
+          <app-right-side-html [scoringModel$]="activeScoringModel$" [hideTopbar]="hideTopbar" />
           }
           @if ((activeScoringModel$ | async)?.rightSideDisplay === 'EmbeddedUrl') {
-          <app-right-side-iframe [hideTopbar]="hideTopbar"></app-right-side-iframe>
+          <app-right-side-iframe [hideTopbar]="hideTopbar" />
           }
           @if ((activeScoringModel$ | async)?.rightSideDisplay === 'Scoresheet') {
           <app-scoresheet [rightSideDisplay]="true" [myTeamId]="myTeamId$ | async" [noChanges]="noChanges$ | async"
-            (selectDisplayedSubmission)="selectDisplayedSubmission($event)"></app-scoresheet>
+            (selectDisplayedSubmission)="selectDisplayedSubmission($event)" />
           }
         </div>
         }

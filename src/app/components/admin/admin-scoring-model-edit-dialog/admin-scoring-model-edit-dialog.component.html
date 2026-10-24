@@ -24,7 +24,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="A name or description for this scoring model. Shown in the admin scoring-model list and when selecting a model for an evaluation."
           #descTip="matTooltip" (click)="descTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
         </button>
       </div>
     </div>
@@ -43,7 +43,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="Lifecycle state of this scoring model. Used for filtering in the admin list and to mark whether a model is still in use."
           #statusTip="matTooltip" (click)="statusTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
         </button>
       </div>
     </div>
@@ -56,7 +56,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
           matTooltip="Formula that computes the overall score from the weighted category scores. Supports the following placeholders: {count} (number of scoring categories), {minPossible} (weighted minimum possible score), {maxPossible} (weighted maximum possible score), {sum} (weighted actual score), and {average} (average of weighted category scores). May optionally be prefixed with a clamp range in the form 'MAX > equation' or 'MAX > equation > MIN' to cap the result."
           #modelEqTip="matTooltip" (click)="modelEqTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
         </button>
       </div>
     </div>
@@ -68,7 +68,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, each participant can submit their own individual score for the evaluation."
             #useUserTip="matTooltip" (click)="useUserTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -78,7 +78,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, a team can submit a single team-wide score for the evaluation."
             #useTeamTip="matTooltip" (click)="useTeamTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -88,7 +88,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, an official score can be submitted for the evaluation by authorized teams or users."
             #useOfficialTip="matTooltip" (click)="useOfficialTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -98,7 +98,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, a team's score is computed as the average of its members' individual user scores. Requires Use Individual User Scoring."
             #useTeamAvgTip="matTooltip" (click)="useTeamAvgTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -108,7 +108,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, a score is computed as the average across all teams of the same team type. Requires Use Team Scoring."
             #useTypeAvgTip="matTooltip" (click)="useTypeAvgTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -121,7 +121,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, participants must click Submit to finalize their response for each move. When disabled, selections are saved automatically."
             #useSubmitTip="matTooltip" (click)="useSubmitTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -131,7 +131,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, the numeric value of each scoring option is hidden from participants on the scoresheet. The computed scores are still displayed."
             #hideScoresTip="matTooltip" (click)="hideScoresTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -141,7 +141,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, comments on scoring options are shown as always-visible textboxes instead of collapsible indicators."
             #commentsTip="matTooltip" (click)="commentsTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -151,7 +151,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, each scoring category can be restricted to a specific range of moves using its First Move to Display and Last Move to Display fields."
             #byMoveTip="matTooltip" (click)="byMoveTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -161,7 +161,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="When enabled, the dashboard displays situation descriptions from previous moves in addition to the current one."
             #pastSitTip="matTooltip" (click)="pastSitTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -181,7 +181,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <button mat-icon-button type="button" class="info-button" tabindex="-1"
             matTooltip="Chooses what appears in the right-hand pane of the dashboard: a Score Summary, an HTML Block, an Embedded URL, the Scoresheet, or nothing."
             #rsdTip="matTooltip" (click)="rsdTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
@@ -192,10 +192,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <button mat-icon-button type="button" class="info-button" tabindex="-1"
               matTooltip="Rich-text content shown in the right-hand pane when Right Side Display is set to HtmlBlock."
               #htmlTip="matTooltip" (click)="htmlTip.toggle()">
-              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
             </button>
           </div>
-          <angular-editor [placeholder]="'Enter content here...'" formControlName="rightSideHtmlBlock" [config]="editorConfig"></angular-editor>
+          <angular-editor [placeholder]="'Enter content here...'" formControlName="rightSideHtmlBlock" [config]="editorConfig" />
         </div>
       }
       @if (form.controls['rightSideDisplay'].value === 'EmbeddedUrl') {
@@ -208,7 +208,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <button mat-icon-button type="button" class="info-button" tabindex="-1"
               matTooltip="URL to embed in the right-hand pane when Right Side Display is set to EmbeddedUrl. The URL must allow being framed."
               #urlTip="matTooltip" (click)="urlTip.toggle()">
-              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline"></mat-icon>
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
             </button>
           </div>
         </div>

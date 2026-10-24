@@ -5,7 +5,7 @@
 import { Order, Query, QueryConfig, QueryEntity } from '@datorama/akita';
 import { SubmissionState, SubmissionStore } from './submission.store';
 import { Submission } from 'src/app/generated/cite.api';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { PopulatedSubmission, SubmissionType } from './submission.models';
 import { TeamQuery } from '../team/team.query';
@@ -20,12 +20,16 @@ import { UserQuery } from '../user/user.query';
   providedIn: 'root',
 })
 export class SubmissionQuery extends QueryEntity<SubmissionState> {
-  constructor(
-    protected store: SubmissionStore,
-    protected teamQuery: TeamQuery,
-    protected userQuery: UserQuery
-  ) {
+  protected store: SubmissionStore;
+  protected teamQuery = inject(TeamQuery);
+  protected userQuery = inject(UserQuery);
+
+  constructor() {
+    const store = inject(SubmissionStore);
+
     super(store);
+  
+    this.store = store;
   }
 
   selectById(id: string): Observable<Submission> {

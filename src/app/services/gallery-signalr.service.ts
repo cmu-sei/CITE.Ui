@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
 import * as signalR from '@microsoft/signalr';
 import { UnreadArticles } from 'src/app/data/unread-articles/unread-articles';
@@ -15,6 +15,11 @@ import { takeUntil } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class GallerySignalRService implements OnDestroy {
+  private authService = inject(ComnAuthService);
+  private systemMessageService = inject(SystemMessageService);
+  private settingsService = inject(ComnSettingsService);
+  private unreadArticlesDataService = inject(UnreadArticlesDataService);
+
   private hubConnection: signalR.HubConnection;
   private connectionPromise: Promise<void>;
   private isJoined = false;
@@ -22,12 +27,7 @@ export class GallerySignalRService implements OnDestroy {
   private unreachableReported = false;
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private authService: ComnAuthService,
-    private systemMessageService: SystemMessageService,
-    private settingsService: ComnSettingsService,
-    private unreadArticlesDataService: UnreadArticlesDataService
-  ) {
+  constructor() {
     this.authService.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       this.reconnect();
     });

@@ -1,7 +1,7 @@
 // Copyright 2025 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
@@ -13,13 +13,13 @@ import {
   providedIn: 'root',
 })
 export class TeamMembershipDataService {
+  private teamMembershipsService = inject(TeamMembershipsService);
+
   private teamMembershipsSubject = new BehaviorSubject<
     TeamMembership[]
   >([]);
   public teamMemberships$ = this.teamMembershipsSubject.asObservable();
   public teamMemberships: TeamMembership[] = [];
-
-  constructor(private teamMembershipsService: TeamMembershipsService) {}
 
   loadMemberships(teamId: string): Observable<TeamMembership[]> {
     return this.teamMembershipsService

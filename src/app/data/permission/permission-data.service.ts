@@ -1,7 +1,7 @@
 // Copyright 2025 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the scoringModel root for license information.
 
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap, take } from 'rxjs/operators';
 import {
@@ -22,6 +22,11 @@ import {
   providedIn: 'root',
 })
 export class PermissionDataService {
+  private permissionsService = inject(SystemPermissionsService);
+  private evaluationPermissionsService = inject(EvaluationPermissionsService);
+  private scoringModelPermissionsService = inject(ScoringModelPermissionsService);
+  private teamPermissionService = inject(TeamPermissionsService);
+
   private _permissions: SystemPermission[] = [];
   get permissions(): SystemPermission[] {
     return this._permissions;
@@ -41,13 +46,6 @@ export class PermissionDataService {
   get TeamPermissions(): TeamPermissionClaim[] {
     return this._teamPermissions;
   }
-
-  constructor(
-    private permissionsService: SystemPermissionsService,
-    private evaluationPermissionsService: EvaluationPermissionsService,
-    private scoringModelPermissionsService: ScoringModelPermissionsService,
-    private teamPermissionService: TeamPermissionsService
-  ) {}
 
   load(): Observable<SystemPermission[]> {
     return this.permissionsService.getMySystemPermissions().pipe(

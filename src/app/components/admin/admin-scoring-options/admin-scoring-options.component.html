@@ -12,8 +12,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <div class="header-row">
     <span class="header-cell eight-cell">
       <button mat-icon-button (click)="addOrEditScoringOption(null); $event.stopPropagation()"
-        style="outline: none; margin-left: 20px;" title="Add Scoring Option" [disabled]="!canEdit">
-        <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+        style="outline: none; margin-left: 20px;" title="Add Scoring Option" [disabled]="!canEdit()">
+        <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle" />
       </button>
       <span style="margin-left: 20px;">Description</span>
     </span>
@@ -28,12 +28,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="row">
       <div class="cell eight-cell">
         <button mat-icon-button (click)="addOrEditScoringOption(scoringOption); $event.stopPropagation()"
-          style="outline: none;" title="Edit Scoring Option" [disabled]="!canEdit">
-          <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+          style="outline: none;" title="Edit Scoring Option" [disabled]="!canEdit()">
+          <mat-icon class="mdi-24px self-center" fontIcon="mdi-square-edit-outline" />
         </button>
         <button mat-icon-button (click)="deleteScoringOptionRequest(scoringOption); $event.stopPropagation()"
-          style="outline: none;" title="Delete Scoring Option" [disabled]="!canEdit">
-          <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can-outline"></mat-icon>
+          style="outline: none;" title="Delete Scoring Option" [disabled]="!canEdit()">
+          <mat-icon class="mdi-24px self-center" fontIcon="mdi-trash-can-outline" />
         </button>
         <span class="center-self">
           {{ scoringOption.description }}
@@ -46,7 +46,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         {{ scoringOption.displayOrder }}
       </div>
       <div class="one-cell  center-text">
-        <mat-checkbox [(ngModel)]="scoringOption.isModifier" [disabled]="true"></mat-checkbox>
+        <mat-checkbox [(ngModel)]="scoringOption.isModifier" [disabled]="true" />
       </div>
     </div>
     }
@@ -56,7 +56,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 @if (isLoading) {
 <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
-  <mat-progress-spinner color="primary" mode="indeterminate">
-  </mat-progress-spinner>
+  <mat-progress-spinner color="primary" mode="indeterminate" />
 </mat-card>
 }
