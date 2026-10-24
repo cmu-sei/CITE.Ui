@@ -4,73 +4,112 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="form-container">
-  <mat-table [dataSource]="getDisplayedScoringCategories() | displayOrder" class="full-width full-height">
-    <!-- Description Definition -->
+<div class="scoresheet-container">
+  <mat-table [dataSource]="getDisplayedScoringCategories() | displayOrder" class="scoresheet-table">
     <ng-container matColumnDef="scoringCategoryDescription">
+      <!-- toolbar, kept in view while the questions scroll -->
       <mat-header-cell *matHeaderCellDef class="scoresheet-toolbar">
         @if (haveSomeScoringCategories) {
         @if (showHeader) {
         <span class="view-buttons" role="group" aria-label="Displayed score">
-          <button [matButton]="displaying === 'user' ? 'filled' : 'outlined'" (click)="selectDisplayedSubmission.emit('user')"
-            [disabled]="myTeamId !== activeTeamId" title="Your personal score">
+          <button matButton="outlined" [class.selected]="displaying === 'user'"
+            [attr.aria-pressed]="displaying === 'user'" (click)="selectDisplayedSubmission.emit('user')" [disabled]="myTeamId !== activeTeamId"
+            matTooltip="Your personal score">
+            @if (displaying === 'user') {
+            <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>
+            }
             User
           </button>
-          <button [matButton]="displaying === 'team' ? 'filled' : 'outlined'" (click)="selectDisplayedSubmission.emit('team')"
-            title="The team's score">
+          <button matButton="outlined" [class.selected]="displaying === 'team'"
+            [attr.aria-pressed]="displaying === 'team'" (click)="selectDisplayedSubmission.emit('team')"
+            matTooltip="The team's score">
+            @if (displaying === 'team') {
+            <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>
+            }
             Team
           </button>
           @if (!rightSideDisplay) {
-          <button [matButton]="displaying === 'team-avg' ? 'filled' : 'outlined'"
-            (click)="selectDisplayedSubmission.emit('team-avg')" [disabled]="myTeamId !== activeTeamId"
-            title="The average of all user scores for your team">
+          <button matButton="outlined" [class.selected]="displaying === 'team-avg'"
+            [attr.aria-pressed]="displaying === 'team-avg'" (click)="selectDisplayedSubmission.emit('team-avg')" [disabled]="myTeamId !== activeTeamId"
+            matTooltip="The average of all user scores for your team">
+            @if (displaying === 'team-avg') {
+            <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>
+            }
             Team Avg
           </button>
           @if (showGroupAvgScore || displaying === 'group-avg') {
-          <button [matButton]="displaying === 'group-avg' ? 'filled' : 'outlined'"
-            (click)="selectDisplayedSubmission.emit('group-avg')" title="The average of all team scores for your group">
+          <button matButton="outlined" [class.selected]="displaying === 'group-avg'"
+            [attr.aria-pressed]="displaying === 'group-avg'" (click)="selectDisplayedSubmission.emit('group-avg')"
+            matTooltip="The average of all team scores for your group">
+            @if (displaying === 'group-avg') {
+            <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>
+            }
             Group Avg
           </button>
           }
           @if (showOfficialScore || displaying === 'official') {
-          <button [matButton]="displaying === 'official' ? 'filled' : 'outlined'"
-            (click)="selectDisplayedSubmission.emit('official')" title="The official score for this move">
+          <button matButton="outlined" [class.selected]="displaying === 'official'"
+            [attr.aria-pressed]="displaying === 'official'" (click)="selectDisplayedSubmission.emit('official')"
+            matTooltip="The official score for this move">
+            @if (displaying === 'official') {
+            <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>
+            }
             Official
           </button>
           }
           }
         </span>
         }
-        @if (!selectedScoringModel.hideScoresOnScoreSheet) {
-        <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}">{{
-          displayedSubmission.score | number: '1.2-2' }}</span>
-        }
-        @if (!displayedSubmission.scoreIsAnAverage) {
-        @let counts = getAnsweredCounts();
-        <span class="answered-count">Answered {{ counts.answered }} of {{ counts.total }}</span>
-        }
+        <div class="toolbar-summary">
+          @if (!selectedScoringModel.hideScoresOnScoreSheet) {
+          <span class="score-badge" [ngClass]="displayedScoreClass" [matTooltip]="displayedScoreHover">
+            <span class="score-label">Score</span>
+            <span class="score-value">{{ displayedSubmission.score | number: '1.2-2' }}</span>
+            <span class="visually-hidden">, {{ displayedScoreHover }}</span>
+          </span>
+          }
+          @if (!displayedSubmission.scoreIsAnAverage) {
+          @let counts = getAnsweredCounts();
+          <div class="answered">
+            <span class="answered-count">Answered {{ counts.answered }} of {{ counts.total }}</span>
+            <mat-progress-bar class="answered-bar" mode="determinate" aria-hidden="true"
+              [value]="counts.total ? (100 * counts.answered) / counts.total : 0"></mat-progress-bar>
+          </div>
+          }
+          @if (displayedSubmission.scoreIsAnAverage) {
+          <span class="status-chip">
+            <mat-icon fontIcon="mdi-account-multiple-outline" aria-hidden="true"></mat-icon>
+            Average, read only
+          </span>
+          }
+        </div>
         @if (selectedScoringModel.useSubmit) {
         @if (myTeamId === activeTeamId) {
         <span class="toolbar-buttons">
+          @if (showReopenButton) {
+          <span class="status-chip submitted">
+            <mat-icon fontIcon="mdi-check-circle-outline" aria-hidden="true"></mat-icon>
+            Submitted
+          </span>
+          }
           @if (showModifyControls) {
-          <button matButton="outlined" (click)="presetSelections()" title="Preset selections to the previous move"
+          <button matButton="outlined" (click)="presetSelections()" matTooltip="Preset selections to the previous move"
             [disabled]="noChanges">
             Preset
           </button>
-          <button matButton="outlined" (click)="clearSelections()" title="Clear all selections"
+          <button matButton="outlined" (click)="clearSelections()" matTooltip="Clear all selections"
             [disabled]="noChanges">
             Clear
           </button>
           }
           @if (showSubmitButton) {
-          <button matButton="filled" (click)="completeSubmission()" title="Submit completed score"
+          <button matButton="filled" (click)="completeSubmission()" matTooltip="Submit completed score"
             [disabled]="noChanges">
             Submit
           </button>
           }
           @if (showReopenButton) {
-          <span class="status-font">Submitted</span>
-          <button matButton="outlined" (click)="activateSubmission()" title="Reopen to change score"
+          <button matButton="outlined" (click)="activateSubmission()" matTooltip="Reopen to change score"
             [disabled]="noChanges">
             Reopen
           </button>
@@ -78,11 +117,18 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </span>
         }
         @if (myTeamId !== activeTeamId && !displayedSubmission.scoreIsAnAverage) {
-        <span class="status-font">{{ getSubmissionStatusText() }}</span>
+        <span class="toolbar-buttons">
+          @let submitted = getSubmissionStatusText() === 'Submitted';
+          <span class="status-chip" [class.submitted]="submitted">
+            <mat-icon aria-hidden="true" [fontIcon]="submitted ? 'mdi-check-circle-outline' : 'mdi-circle-outline'"></mat-icon>
+            {{ getSubmissionStatusText() }}
+          </span>
+        </span>
         }
         }
         } @else {
-        <div class="empty-move">
+        <div class="empty-state">
+          <mat-icon class="empty-icon" fontIcon="mdi-clipboard-check-outline" aria-hidden="true"></mat-icon>
           <h2>No responses required for this move.</h2>
           @if (getNextQuestionMove(); as nextQuestionMove) {
           <p>Questions open in {{ nextQuestionMove }}.</p>
@@ -90,152 +136,147 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
         }
       </mat-header-cell>
-      <!-- scoresheet display -->
-      <mat-cell *matCellDef="let scoringCategory" class="form-container" [ngClass]="tableClass">
-        <div class="scoring-category-description" [ngClass]="tableClass">
-          {{ scoringCategory.displayOrder }}. {{ scoringCategory.description }}
-          @if (scoringCategory.calculationMethodId > 0) {
-          <span>
-            &nbsp;&nbsp;-&nbsp;&nbsp;[{{
-            categoryScore(scoringCategory.id) | number: '1.0-0'
-            }}]
-          </span>
-          }
-        </div>
-        <mat-table [dataSource]="scoringCategory.scoringOptions | displayOrder" class="full-width"
-          [ngClass]="tableClass">
-          <ng-container matColumnDef="scoringOptionDescription">
-            <mat-cell *matCellDef="let scoringOption; let optionIndex = index" [ngClass]="tableClass">
-              <div [ngClass]="tableClass" style="width: 100%;">
-                @if (scoringCategory.scoringOptionSelection !== 'None') {
-                <div [ngClass]="tableClass" class="option-row">
-                  @if (!displayedSubmission.scoreIsAnAverage) {
-                  <mat-checkbox [aria-label]="scoringOption.description"
-                    [checked]="isSelected(scoringCategory.id, scoringOption.id)"
-                    [disabled]="noChanges || !showModifyControls || myTeamId !== activeTeamId"
-                    [matTooltip]="selectedBy(scoringCategory.id, scoringOption.id)" (change)="
-                    toggleOption($event, scoringCategory.id, scoringOption.id)
-                  " [ngClass]="tableClass">
-                    @if (selectedScoringModel.displayCommentTextBoxes) {
-                    <span class="question-number">{{ optionIndex + 1 }}.</span>
-                    }
-                    {{ scoringOption.description }} &nbsp;
-                  </mat-checkbox>
-                  }
-                  @if (displayedSubmission.scoreIsAnAverage) {
-                  <span>
-                    [{{ selectedCount(scoringCategory.id, scoringOption.id) }}]
-                    &nbsp;&nbsp;{{ scoringOption.description }}
-                  </span>
-                  }
-                  @if (showModifyControls && myTeamId === activeTeamId && !selectedScoringModel.displayCommentTextBoxes)
-                  {
-                  <button id="add-comment" aria-label="Add Comment" mat-icon-button class="small-button"
-                    (click)="addComment(addCommenttemplate, scoringOption)" title="Add Comment" [disabled]="noChanges">
-                    <mat-icon class="small-icon" [ngClass]="tableClass" fontIcon="mdi-plus-box-outline"
-                      aria-hidden="false"></mat-icon>
-                  </button>
-                  }
-                </div>
-                }
-                @if (scoringCategory.scoringOptionSelection === 'None') {
-                <div [ngClass]="tableClass">
+      <!-- one card per scoring category -->
+      <mat-cell *matCellDef="let scoringCategory" class="category-cell">
+        @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
+        @let showValues = canSelect && !selectedScoringModel.hideScoresOnScoreSheet;
+        @let canModify = showModifyControls && myTeamId === activeTeamId;
+        <mat-card appearance="outlined" class="category-card">
+          <div class="category-header">
+            <h3 class="category-title">
+              <span class="category-number">{{ scoringCategory.displayOrder }}</span>
+              <span class="category-text">{{ scoringCategory.description }}</span>
+            </h3>
+            @if (scoringCategory.scoringOptionSelection === 'Single') {
+            <span class="selection-hint">Choose one</span>
+            }
+            @if (scoringCategory.scoringOptionSelection === 'Multiple') {
+            <span class="selection-hint">Choose any</span>
+            }
+          </div>
+          <div class="option-list">
+            @let scoringOptions = scoringCategory.scoringOptions | displayOrder;
+            @for (scoringOption of scoringOptions; track scoringOption.id; let optionIndex = $index) {
+            @if (scoringOption.isModifier && !scoringOptions[optionIndex - 1]?.isModifier) {
+            <div class="modifier-heading">Modifiers</div>
+            }
+            @let selected = canSelect && isSelected(scoringCategory.id, scoringOption.id);
+            <div class="option" [class.selected]="selected && !displayedSubmission.scoreIsAnAverage"
+              [class.modifier]="scoringOption.isModifier">
+              <div class="option-row">
+                @if (canSelect && !displayedSubmission.scoreIsAnAverage) {
+                <mat-checkbox class="option-checkbox" [aria-label]="scoringOption.description" [checked]="selected"
+                  [disabled]="noChanges || !showModifyControls || myTeamId !== activeTeamId"
+                  [matTooltip]="selectedBy(scoringCategory.id, scoringOption.id)"
+                  (change)="toggleOption($event, scoringCategory.id, scoringOption.id)">
                   @if (selectedScoringModel.displayCommentTextBoxes) {
                   <span class="question-number">{{ optionIndex + 1 }}.</span>
                   }
                   {{ scoringOption.description }}
-                </div>
+                </mat-checkbox>
+                } @else if (canSelect) {
+                @let count = selectedCount(scoringCategory.id, scoringOption.id);
+                <span class="selected-count" [class.has-selections]="count > 0"
+                  matTooltip="Number of selections">{{ count }}</span>
+                <span class="option-text">{{ scoringOption.description }}</span>
+                } @else {
+                <span class="option-text">
+                  @if (selectedScoringModel.displayCommentTextBoxes) {
+                  <span class="question-number">{{ optionIndex + 1 }}.</span>
+                  }
+                  {{ scoringOption.description }}
+                </span>
                 }
-                @if (!selectedScoringModel.displayCommentTextBoxes) {
-                <div class="comment-list">
-                  @for (
-                  comment of optionComments(
-                  scoringCategory.id,
-                  scoringOption.id
-                  )
-                  ; track
-                  comment.id) {
-                  <div class="option-row">
+                <span class="option-actions">
+                  @if (canModify && !selectedScoringModel.displayCommentTextBoxes) {
+                  <button aria-label="Add Comment" mat-icon-button class="small-button"
+                    (click)="addComment(addCommenttemplate, scoringOption)" matTooltip="Add Comment"
+                    [disabled]="noChanges">
+                    <mat-icon fontIcon="mdi-comment-plus-outline"></mat-icon>
+                  </button>
+                  }
+                  @if (showValues) {
+                  @if (scoringOption.isModifier) {
+                  <span class="option-value spacer" aria-hidden="true"></span>
+                  } @else {
+                  <span class="option-value">{{ scoringOption.value }}</span>
+                  }
+                  }
+                </span>
+              </div>
+              @if (!selectedScoringModel.displayCommentTextBoxes) {
+              @let comments = optionComments(scoringCategory.id, scoringOption.id);
+              @if (comments?.length) {
+              <ul class="comment-list">
+                @for (comment of comments; track comment.id) {
+                <li class="comment">
+                  <mat-icon class="comment-icon" fontIcon="mdi-comment-text-outline" aria-hidden="true"></mat-icon>
+                  <span class="comment-text">
                     {{ comment.comment }}
                     @if (displaying === 'team') {
-                    <span> - {{ getUserName(comment.createdBy) }}</span>
+                    <span class="comment-author">- {{ getUserName(comment.createdBy) }}</span>
                     }
-                    @if (showModifyControls && myTeamId === activeTeamId) {
-                    <button aria-label="Edit Comment" mat-icon-button class="small-button" (click)="
-                      editComment(addCommenttemplate, scoringOption, comment)
-                    " title="Edit Comment" [disabled]="noChanges">
-                      <mat-icon class="icon-color small-icon" fontIcon="mdi-square-edit-outline"
-                        aria-hidden="false"></mat-icon>
-                    </button>
-                    }
-                    @if (showModifyControls && myTeamId === activeTeamId) {
-                    <button aria-label="Delete Comment" mat-icon-button class="small-button"
-                      (click)="deleteComment(comment)" title="Delete Comment" [disabled]="noChanges">
-                      <mat-icon class="icon-color small-icon" fontIcon="mdi-trash-can-outline"
-                        aria-hidden="false"></mat-icon>
-                    </button>
-                    }
-                  </div>
+                  </span>
+                  @if (canModify) {
+                  <button aria-label="Edit Comment" mat-icon-button class="small-button"
+                    (click)="editComment(addCommenttemplate, scoringOption, comment)" matTooltip="Edit Comment"
+                    [disabled]="noChanges">
+                    <mat-icon fontIcon="mdi-square-edit-outline"></mat-icon>
+                  </button>
+                  <button aria-label="Delete Comment" mat-icon-button class="small-button"
+                    (click)="deleteComment(comment)" matTooltip="Delete Comment" [disabled]="noChanges">
+                    <mat-icon fontIcon="mdi-trash-can-outline"></mat-icon>
+                  </button>
                   }
-                </div>
+                </li>
                 }
-                @if (selectedScoringModel.displayCommentTextBoxes) {
-                <div class="comment-box">
-                  <textarea matInput [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
-                    (change)="changeComment(scoringCategory.id, scoringOption.id, $event)" class="comment"
-                    [disabled]="noChanges || (selectedScoringModel.useSubmit && !showSubmitButton)"
-                    [attr.aria-label]="scoringOption.description"></textarea>
-                  @switch (commentSaveStates[scoringOption.id]) {
-                  @case ('saving') {
-                  <div class="save-state">Saving…</div>
-                  }
-                  @case ('saved') {
-                  <div class="save-state">Saved</div>
-                  }
-                  @case ('failed') {
-                  <div class="save-state save-failed">Not saved</div>
-                  }
-                  }
-                </div>
-                }
-              </div>
-            </mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="value">
-            <mat-cell *matCellDef="let scoringOption" class="value-container" [ngClass]="tableClass">
-              @if (!selectedScoringModel.hideScoresOnScoreSheet) {
-              <div class="value-div">
-                {{
-                scoringCategory.calculationMethodId == 0 ||
-                scoringOption.isModifier
-                ? ' '
-                : scoringOption.value
-                }}
-              </div>
+              </ul>
               }
-            </mat-cell>
-          </ng-container>
-          <mat-row *matRowDef="let row; columns: selectedScoringModel.hideScoresOnScoreSheet || scoringCategory.calculationMethodId == 0 ? ['scoringOptionDescription'] : ['scoringOptionDescription', 'value']"></mat-row>
-        </mat-table>
+              }
+              @if (selectedScoringModel.displayCommentTextBoxes) {
+              <mat-form-field class="comment-box" appearance="outline" subscriptSizing="dynamic">
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2"
+                  [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
+                  (change)="changeComment(scoringCategory.id, scoringOption.id, $event)"
+                  [disabled]="noChanges || (selectedScoringModel.useSubmit && !showSubmitButton)"
+                  [attr.aria-label]="scoringOption.description" placeholder="Type your answer"></textarea>
+                @switch (commentSaveStates[scoringOption.id]) {
+                @case ('saving') {
+                <mat-hint align="end">Saving…</mat-hint>
+                }
+                @case ('saved') {
+                <mat-hint align="end" class="save-state">
+                  <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>Saved
+                </mat-hint>
+                }
+                @case ('failed') {
+                <mat-hint align="end" class="save-failed">Not saved</mat-hint>
+                }
+                }
+              </mat-form-field>
+              }
+            </div>
+            }
+          </div>
+        </mat-card>
       </mat-cell>
     </ng-container>
-    <!-- Header and Row Declarations -->
-    <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']"></mat-header-row>
+    <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']; sticky: true"></mat-header-row>
     <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']"></mat-row>
   </mat-table>
 
   @if (!selectedEvaluation.id || !selectedScoringModel) {
-  <div class="text-center">
-    <p>&nbsp;</p>
-    <h1>An evaluation has not been properly configured.</h1>
-    <h1>Please contact your administrator.</h1>
+  <div class="empty-state">
+    <mat-icon class="empty-icon" fontIcon="mdi-alert-circle-outline" aria-hidden="true"></mat-icon>
+    <h2>An evaluation has not been properly configured.</h2>
+    <p>Please contact your administrator.</p>
   </div>
   }
   @if (selectedEvaluation.id && selectedScoringModel && !activeTeamId) {
-  <div class="text-center">
-    <p>&nbsp;</p>
-    <h1>You have not been given appropriate access to this application.</h1>
-    <h1>Please contact your administrator.</h1>
+  <div class="empty-state">
+    <mat-icon class="empty-icon" fontIcon="mdi-lock-outline" aria-hidden="true"></mat-icon>
+    <h2>You have not been given appropriate access to this application.</h2>
+    <p>Please contact your administrator.</p>
   </div>
   }
 </div>

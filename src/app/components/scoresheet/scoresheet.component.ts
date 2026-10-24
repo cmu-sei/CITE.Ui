@@ -77,7 +77,6 @@ export class ScoresheetComponent implements OnDestroy {
   showModifyControls = false;
   commentOptionDescription = 'this is the description';
   currentComment = 'current comment';
-  tableClass = '';
   showHeader = false;
   // save state of each answer box, keyed by scoring option id
   commentSaveStates: { [scoringOptionId: string]: 'saving' | 'saved' | 'failed' } = {};
@@ -258,10 +257,10 @@ export class ScoresheetComponent implements OnDestroy {
         const so = sc.submissionOptions.find(
           (subOpt) => subOpt.scoringOptionId === scoringOptionId
         );
-        selectedCount = so ? so.selectedCount : 0;
+        selectedCount = so?.selectedCount ?? 0;
       }
     }
-    return selectedCount > 0 ? selectedCount.toString() : '   ';
+    return selectedCount;
   }
 
   toggleOption(event: any, scoringCategoryId: string, scoringOptionId: string) {
@@ -660,7 +659,6 @@ export class ScoresheetComponent implements OnDestroy {
       canModify &&
       !this.displayedSubmission.scoreIsAnAverage &&
       this.displayedSubmission.status === ItemStatus.Active;
-    // this.tableClass = this.displaying + '-background';
   }
 
   private getResolvedDisplayedMoveNumber(): number | null {

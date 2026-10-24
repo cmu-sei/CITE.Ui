@@ -8,10 +8,12 @@ import { Observable, Subject, of } from 'rxjs';
 import { screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CrucibleDialogService } from '@cmusei/crucible-common';
@@ -175,10 +177,12 @@ async function renderScoresheet(
     declarations: [ScoresheetComponent, DisplayOrderPipe],
     imports: [
       MatButtonModule,
+      MatCardModule,
       MatCheckboxModule,
       MatFormFieldModule,
       MatIconModule,
       MatInputModule,
+      MatProgressBarModule,
       MatTableModule,
       MatTooltipModule,
     ],
@@ -234,8 +238,13 @@ const toolbarButton = (name: string): HTMLButtonElement | null =>
     .queryAllByRole('button')
     .find((b) => b.textContent?.trim() === name) as HTMLButtonElement) ?? null;
 
+// Each category heading holds its number badge and its description.
 const shownCategories = () =>
-  screen.queryAllByText(/^\d+\. Category /).map((el) => el.textContent?.trim());
+  Array.from(document.querySelectorAll('.category-title')).map(
+    (el) =>
+      `${el.querySelector('.category-number')?.textContent?.trim()}. ` +
+      el.querySelector('.category-text')?.textContent?.trim(),
+  );
 
 describe('ScoresheetComponent', () => {
   beforeEach(() => {
@@ -535,28 +544,28 @@ describe('ScoresheetComponent', () => {
 
   describe('view buttons', () => {
     /**
-     * Verifies: the saved view's button is filled and the others outlined; with no saved view the shown submission's kind is filled.
-     * Interacts with: the toolbar's User and Team buttons (matButton appearance), UIDataService saved type.
+     * Verifies: the saved view's button is pressed and the others not; with no saved view the shown submission's kind is pressed.
+     * Interacts with: the toolbar's User and Team toggle buttons (aria-pressed), UIDataService saved type.
      * Data: per row, the saved type (or none) and the shown submission (team, or user u1).
      */
     it.each<{
       label: string;
       displaying: 'user' | 'team' | null;
       userId?: string;
-      filled: string;
-      outlined: string;
+      pressed: string;
+      unpressed: string;
     }>([
-      { label: 'saved Team', displaying: 'team', userId: 'u1', filled: 'Team', outlined: 'User' },
-      { label: 'saved User', displaying: 'user', filled: 'User', outlined: 'Team' },
-      { label: 'no saved view and a team submission', displaying: null, filled: 'Team', outlined: 'User' },
-      { label: 'no saved view and a user submission', displaying: null, userId: 'u1', filled: 'User', outlined: 'Team' },
+      { label: 'saved Team', displaying: 'team', userId: 'u1', pressed: 'Team', unpressed: 'User' },
+      { label: 'saved User', displaying: 'user', pressed: 'User', unpressed: 'Team' },
+      { label: 'no saved view and a team submission', displaying: null, pressed: 'Team', unpressed: 'User' },
+      { label: 'no saved view and a user submission', displaying: null, userId: 'u1', pressed: 'User', unpressed: 'Team' },
     ])(
-      'fills $filled for $label',
-      async ({ displaying, userId, filled, outlined }) => {
+      'presses $pressed for $label',
+      async ({ displaying, userId, pressed, unpressed }) => {
         await renderScoresheet({ displaying, activeSubmission: { userId } });
 
-        expect(toolbarButton(filled)).toHaveClass('mat-mdc-unelevated-button');
-        expect(toolbarButton(outlined)).toHaveClass('mat-mdc-outlined-button');
+        expect(toolbarButton(pressed)).toHaveAttribute('aria-pressed', 'true');
+        expect(toolbarButton(unpressed)).toHaveAttribute('aria-pressed', 'false');
       },
     );
 
