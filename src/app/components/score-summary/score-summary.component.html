@@ -40,8 +40,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </ng-container>
 
     <!-- Header and Row Declarations -->
-    <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: columnsToDisplay" title="{{ row.definition }}"></mat-row>
+    <mat-header-row *matHeaderRowDef="columnsToDisplay" />
+    <mat-row *matRowDef="let row; columns: columnsToDisplay" title="{{ row.definition }}" />
   </mat-table>
 </div>
 @if (!activeSubmission) {

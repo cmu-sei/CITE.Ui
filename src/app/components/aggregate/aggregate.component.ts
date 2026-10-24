@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -26,17 +26,32 @@ import { TeamService } from 'src/app/generated/cite.api';
 import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
+import { NgClass } from '@angular/common';
+import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
 @Component({
-  selector: 'app-aggregate',
-  templateUrl: './aggregate.component.html',
-  styleUrls: ['./aggregate.component.scss'],
-  standalone: false
+    selector: 'app-aggregate',
+    templateUrl: './aggregate.component.html',
+    styleUrls: ['./aggregate.component.scss'],
+    imports: [MatIconButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow, DisplayOrderPipe]
 })
 export class AggregateComponent implements OnInit, OnDestroy {
-  @Input() selectedEvaluation: Evaluation;
-  @Input() selectedScoringModel: ScoringModel;
-  @Input() moveList: Move[];
+  private submissionService = inject(SubmissionService);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private teamService = inject(TeamService);
+  private teamQuery = inject(TeamQuery);
+  matDialog = inject(MatDialog);
+  private titleService = inject(Title);
+  private uiDataService = inject(UIDataService);
+
+  readonly selectedEvaluation = input<Evaluation>(undefined);
+  readonly selectedScoringModel = input<ScoringModel>(undefined);
+  readonly moveList = input<Move[]>(undefined);
   loggedInUserId = '';
   userId = '';
   teamList$: Observable<Team[]>;
@@ -58,18 +73,7 @@ export class AggregateComponent implements OnInit, OnDestroy {
   buttonClass = 'mat-user';
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private submissionService: SubmissionService,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private currentUserQuery: CurrentUserQuery,
-    private teamService: TeamService,
-    private teamQuery: TeamQuery,
-    public matDialog: MatDialog,
-    private titleService: Title,
-    private uiDataService: UIDataService
-
-  ) {
+  constructor() {
     this.titleService.setTitle('CITE Report');
     // observe the logged in user ID
     this.currentUserQuery.select()
@@ -90,11 +94,12 @@ export class AggregateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.currentMoveNumber = this.selectedEvaluation.currentMoveNumber;
-    this.displaying = this.uiDataService.getSubmissionType(this.selectedEvaluation.id)?.toLowerCase();
+    this.currentMoveNumber = this.selectedEvaluation().currentMoveNumber;
+    const selectedEvaluation = this.selectedEvaluation();
+    this.displaying = this.uiDataService.getSubmissionType(selectedEvaluation.id)?.toLowerCase();
     this.displaying = this.displaying && this.displaying === 'team' ? 'team' : 'user';
-    this.teamList$ = this.teamService.getEvaluationTeams(this.selectedEvaluation.id);
-    this.submissionList$ = this.submissionService.getByEvaluation(this.selectedEvaluation.id);
+    this.teamList$ = this.teamService.getEvaluationTeams(selectedEvaluation.id);
+    this.submissionList$ = this.submissionService.getByEvaluation(selectedEvaluation.id);
     // observe the vital information and process it when it is all present
     combineLatest([this.teamList$, this.submissionList$])
       .pipe(takeUntil(this.unsubscribe$)).subscribe(([teams, submissions]) => {
@@ -123,7 +128,7 @@ export class AggregateComponent implements OnInit, OnDestroy {
         isSelected = so && so.isSelected;
       }
       if (isSelected) {
-        const scoringCategory = this.selectedScoringModel?.scoringCategories?.find(subCat => subCat.id === scoringCategoryId);
+        const scoringCategory = this.selectedScoringModel()?.scoringCategories?.find(subCat => subCat.id === scoringCategoryId);
         const scoringOption = scoringCategory?.scoringOptions?.find(so => so.id === scoringOptionId);
       }
     }
@@ -210,9 +215,9 @@ export class AggregateComponent implements OnInit, OnDestroy {
 
   getDisplayedScoringCategories(moveNumber: number): ScoringCategory[] {
     const displayedScoringCategories: ScoringCategory[] = [];
-    this.selectedScoringModel?.scoringCategories.forEach(scoringCategory => {
+    this.selectedScoringModel()?.scoringCategories.forEach(scoringCategory => {
       let hideIt = false;
-      if (this.selectedScoringModel.displayScoringModelByMoveNumber &&
+      if (this.selectedScoringModel().displayScoringModelByMoveNumber &&
           (+moveNumber < +scoringCategory.moveNumberFirstDisplay ||
           +moveNumber > +scoringCategory.moveNumberLastDisplay)) {
         hideIt = true
@@ -271,8 +276,8 @@ export class AggregateComponent implements OnInit, OnDestroy {
 
   getSortedMoveList(): Move[] {
     const moveList = [];
-    this.moveList.forEach(move => {
-      const addIt = (+move.moveNumber <= +this.selectedEvaluation.currentMoveNumber) && this.getDisplayedScoringCategories(move.moveNumber).length > 0;
+    this.moveList().forEach(move => {
+      const addIt = (+move.moveNumber <= +this.selectedEvaluation().currentMoveNumber) && this.getDisplayedScoringCategories(move.moveNumber).length > 0;
       if (addIt) {
         moveList.push(move);
       }
@@ -281,10 +286,11 @@ export class AggregateComponent implements OnInit, OnDestroy {
   }
 
   hasScoresAndValidMove(vs: PopulatedSubmission): boolean {
-    const hasScores = !this.selectedScoringModel.displayScoringModelByMoveNumber ||
-      this.selectedScoringModel?.scoringCategories.some(
+    const selectedScoringModel = this.selectedScoringModel();
+    const hasScores = !selectedScoringModel.displayScoringModelByMoveNumber ||
+      selectedScoringModel?.scoringCategories.some(
         sc => +vs.moveNumber >= +sc.moveNumberFirstDisplay && +vs.moveNumber <= +sc.moveNumberLastDisplay);
-    const hasValidMove = +vs.moveNumber <= +this.selectedEvaluation.currentMoveNumber;
+    const hasValidMove = +vs.moveNumber <= +this.selectedEvaluation().currentMoveNumber;
     return hasScores && hasValidMove;
   }
 

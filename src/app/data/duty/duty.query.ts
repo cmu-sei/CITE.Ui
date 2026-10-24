@@ -8,7 +8,7 @@ import {
   DutyStore,
 } from './duty.store';
 import { Duty } from 'src/app/generated/cite.api';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
 
@@ -20,8 +20,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class DutyQuery extends QueryEntity<DutyState> {
-  constructor(protected store: DutyStore) {
+  protected store: DutyStore;
+
+  constructor() {
+    const store = inject(DutyStore);
+
     super(store);
+  
+    this.store = store;
   }
 
   selectById(id: string): Observable<Duty> {

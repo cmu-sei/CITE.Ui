@@ -3,15 +3,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges, inject, input, output } from '@angular/core';
 import { combineLatest, forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
@@ -23,17 +15,26 @@ import {
   Team,
 } from 'src/app/generated/cite.api';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { AdminTeamMembershipListComponent } from '../admin-team-membership-list/admin-team-membership-list.component';
+import { AdminTeamMemberListComponent } from '../admin-team-member-list/admin-team-member-list.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-admin-team-memberships',
-  templateUrl: './admin-team-memberships.component.html',
-  styleUrls: ['./admin-team-memberships.component.scss'],
-  standalone: false
+    selector: 'app-admin-team-memberships',
+    templateUrl: './admin-team-memberships.component.html',
+    styleUrls: ['./admin-team-memberships.component.scss'],
+    imports: [AdminTeamMembershipListComponent, AdminTeamMemberListComponent, AsyncPipe]
 })
 export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
-  @Input() embedded: boolean;
-  @Input() teamId: string;
-  @Output() goBack = new EventEmitter();
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private teamRolesDataService = inject(TeamRoleDataService);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private permissionDataService = inject(PermissionDataService);
+
+  readonly embedded = input<boolean>(undefined);
+  readonly teamId = input<string>(undefined);
+  readonly goBack = output();
 
   team$: Observable<Team>;
 
@@ -46,24 +47,16 @@ export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
 
   canEdit: boolean;
 
-  constructor(
-    private teamMembershipDataService: TeamMembershipDataService,
-    private teamRolesDataService: TeamRoleDataService,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private permissionDataService: PermissionDataService
-  ) {}
-
   ngOnInit(): void {
     forkJoin([
-      this.teamMembershipDataService.loadMemberships(this.teamId),
+      this.teamMembershipDataService.loadMemberships(this.teamId()),
       this.userDataService.load(),
       this.teamRolesDataService.loadRoles(),
     ]).subscribe();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.canEdit = this.permissionDataService.canEditEvaluation(this.teamId);
+    this.canEdit = this.permissionDataService.canEditEvaluation(this.teamId());
   }
 
   selectUsers(members: boolean) {
@@ -87,9 +80,9 @@ export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
   }
 
   createMembership(teamMembership: TeamMembership) {
-    teamMembership.teamId = this.teamId;
+    teamMembership.teamId = this.teamId();
     this.teamMembershipDataService
-      .createMembership(this.teamId, teamMembership)
+      .createMembership(this.teamId(), teamMembership)
       .subscribe();
   }
 

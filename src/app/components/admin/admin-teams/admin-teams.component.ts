@@ -2,10 +2,10 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { Component, OnInit, OnDestroy, inject, input } from '@angular/core';
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
+import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import { Team, TeamType, User } from 'src/app/generated/cite.api/model/models';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
@@ -16,16 +16,32 @@ import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminTeamEditDialogComponent } from 'src/app/components/admin/admin-team-edit-dialog/admin-team-edit-dialog.component';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
+import { MatIcon } from '@angular/material/icon';
+
+import { MatIconButton } from '@angular/material/button';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import { AdminTeamMembershipsComponent } from '../admin-team-memberships/admin-team-memberships/admin-team-memberships.component';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-admin-teams',
     templateUrl: './admin-teams.component.html',
     styleUrls: ['./admin-teams.component.scss'],
-    standalone: false
+    imports: [MatIcon, MatIconButton, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatAccordion, MatSort, MatSortHeader, MatExpansionPanel, MatExpansionPanelHeader, AdminTeamMembershipsComponent, MatCard, MatProgressSpinner]
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
-  @Input() evaluationId: string;
-  @Input() canEdit: boolean;
+  private settingsService = inject(ComnSettingsService);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+  private teamDataService = inject(TeamDataService);
+  private teamQuery = inject(TeamQuery);
+  private teamTypeQuery = inject(TeamTypeQuery);
+  private userQuery = inject(UserQuery);
+
+  readonly evaluationId = input<string>(undefined);
+  readonly canEdit = input<boolean>(undefined);
   filterControl = new UntypedFormControl();
   filterString = '';
   newTeam: Team = { id: '', name: '' };
@@ -45,15 +61,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   sortedTeams: Team[] = [];
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService,
-    private teamDataService: TeamDataService,
-    private teamQuery: TeamQuery,
-    private teamTypeQuery: TeamTypeQuery,
-    private userQuery: UserQuery
-  ) {
+  constructor() {
     // subscribe to TeamTypes
     this.teamTypeQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamTypes => {
       this.teamTypeList = teamTypes.sort((a: TeamType, b: TeamType) => {
@@ -77,7 +85,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.filterControl.setValue(this.filterString);
-    this.teamDataService.loadByEvaluationId(this.evaluationId);
+    this.teamDataService.loadByEvaluationId(this.evaluationId());
   }
 
   addOrEditTeam(team: Team) {
@@ -86,7 +94,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
         name: '',
         shortName: '',
         teamTypeId: '',
-        evaluationId: this.evaluationId,
+        evaluationId: this.evaluationId(),
         hideScoresheet: false
       };
     } else {
@@ -156,7 +164,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     let filteredTeams: Team[] = [];
     if (teams) {
       teams.forEach(t => {
-        if (t.evaluationId === this.evaluationId) {
+        if (t.evaluationId === this.evaluationId()) {
           filteredTeams.push({... t});
         } else {
         }

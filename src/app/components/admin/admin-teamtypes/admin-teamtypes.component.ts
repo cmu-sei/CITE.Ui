@@ -2,9 +2,9 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, viewChild } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
+import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import { SystemPermission, TeamType } from 'src/app/generated/cite.api/model/models';
 import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,17 +13,32 @@ import { AdminTeamTypeEditDialogComponent } from '../admin-teamtype-edit-dialog/
 import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 import { Subject } from 'rxjs';
-import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { MatIcon } from '@angular/material/icon';
+
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { MatIconButton } from '@angular/material/button';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-admin-teamtypes',
     templateUrl: './admin-teamtypes.component.html',
     styleUrls: ['./admin-teamtypes.component.scss'],
-    standalone: false
+    imports: [MatIcon, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatSortHeader, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatCard, MatProgressSpinner]
 })
 export class AdminTeamTypesComponent implements OnInit, OnDestroy {
+  private dialog = inject(MatDialog);
+  private dialogService = inject(CrucibleDialogService);
+  private teamTypeDataService = inject(TeamTypeDataService);
+  private teamTypeQuery = inject(TeamTypeQuery);
+  private settingsService = inject(ComnSettingsService);
+  private permissionDataService = inject(PermissionDataService);
+
   pageIndex: number = 0;
   pageSize: number = 10;
   teamTypeList: TeamType[] = [];
@@ -38,16 +53,9 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   topbarColor = '#ef3a47';
   canEdit = this.permissionDataService.hasPermission(SystemPermission.ManageTeamTypes);
   private unsubscribe$ = new Subject<void>();
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  readonly paginator = viewChild(MatPaginator);
 
-  constructor(
-    private dialog: MatDialog,
-    private dialogService: CrucibleDialogService,
-    private teamTypeDataService: TeamTypeDataService,
-    private teamTypeQuery: TeamTypeQuery,
-    private settingsService: ComnSettingsService,
-    private permissionDataService: PermissionDataService
-  ) {
+  constructor() {
     // subscribe to TeamTypes
     this.teamTypeQuery
       .selectAll()
@@ -136,9 +144,9 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     this.sortedTeamTypeList = this.getSortedTeamTypes(
       this.filteredTeamTypeList
     );
-    this.paginator.length = this.sortedTeamTypeList.length;
+    this.paginator().length = this.sortedTeamTypeList.length;
     this.pageIndex = 0;
-    this.paginator.pageIndex = 0;
+    this.paginator().pageIndex = 0;
     this.paginateTeamtypes();
   }
 

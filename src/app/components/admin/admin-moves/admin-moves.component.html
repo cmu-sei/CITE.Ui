@@ -6,17 +6,17 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon" style="margin-right: 10px;">
-    <mat-icon class="mdi-24px" fontIcon="mdi-clipboard-list-outline" [ngStyle]="{'color': 'var(--mat-sys-primary)'}"></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-clipboard-list-outline" [style.color]="'var(--mat-sys-primary)'" />
   </div>
   <button mat-icon-button (click)="addOrEditMove(null)" style="outline: none; margin-left: 20px;" title="Add Move"
-    [disabled]="!canEdit">
-    <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle"></mat-icon>
+    [disabled]="!canEdit()">
+    <mat-icon class="mdi-24px self-center" fontIcon="mdi-plus-circle" />
   </button>
   <mat-form-field class="button-margins search-field">
     <input matInput [formControl]="filterControl" placeholder="Search" />
     @if (filterControl.value) {
     <button mat-icon-button matSuffix (click)="applyFilter('')" title="Clear Search">
-      <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline"></mat-icon>
+      <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline" />
     </button>
     }
   </mat-form-field>
@@ -36,11 +36,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="cell cell-two">
         <button mat-icon-button (click)="addOrEditMove(move); $event.stopPropagation()" style="outline: none;"
           title="Edit Move">
-          <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline"></mat-icon>
+          <mat-icon class="mdi-18px self-center" fontIcon="mdi-square-edit-outline" />
         </button>
         <button mat-icon-button (click)="deleteMoveRequest(move); $event.stopPropagation()" title="Delete Move"
-          [disabled]="!canEdit">
-          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can-outline"></mat-icon>
+          [disabled]="!canEdit()">
+          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can-outline" />
         </button>
       </div>
       <div class="cell cell-one center-self">
@@ -57,7 +57,6 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 @if (isLoading) {
 <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
-  <mat-progress-spinner color="primary" mode="indeterminate">
-  </mat-progress-spinner>
+  <mat-progress-spinner color="primary" mode="indeterminate" />
 </mat-card>
 }

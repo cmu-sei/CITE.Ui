@@ -4,7 +4,7 @@
 
 import { SubmissionStore } from './submission.store';
 import { SubmissionQuery } from './submission.query';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -22,6 +22,14 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
   providedIn: 'root',
 })
 export class SubmissionDataService {
+  private submissionStore = inject(SubmissionStore);
+  private submissionQuery = inject(SubmissionQuery);
+  private submissionService = inject(SubmissionService);
+  private submissionOptionService = inject(SubmissionOptionService);
+  private submissionCommentService = inject(SubmissionCommentService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+
   readonly submissionList: Observable<Submission[]>;
   readonly filterControl = new UntypedFormControl();
   private filterTerm: Observable<string>;
@@ -32,15 +40,9 @@ export class SubmissionDataService {
   private pageSize: Observable<number>;
   private pageIndex: Observable<number>;
 
-  constructor(
-    private submissionStore: SubmissionStore,
-    private submissionQuery: SubmissionQuery,
-    private submissionService: SubmissionService,
-    private submissionOptionService: SubmissionOptionService,
-    private submissionCommentService: SubmissionCommentService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {
+  constructor() {
+    const activatedRoute = this.activatedRoute;
+
     this.filterTerm = activatedRoute.queryParamMap.pipe(
       map((params) => params.get('submissionmask') || '')
     );

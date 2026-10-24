@@ -4,7 +4,7 @@
 
 import { EvaluationStore } from './evaluation.store';
 import { EvaluationQuery } from './evaluation.query';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -21,6 +21,12 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
   providedIn: 'root',
 })
 export class EvaluationDataService {
+  private evaluationStore = inject(EvaluationStore);
+  private evaluationQuery = inject(EvaluationQuery);
+  private evaluationService = inject(EvaluationService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+
   private _requestedEvaluationId: string;
   private _requestedEvaluationId$ = this.activatedRoute.queryParamMap.pipe(
     map((params) => params.get('evaluationId') || '')
@@ -36,13 +42,9 @@ export class EvaluationDataService {
   private pageIndex: Observable<number>;
   public uploadProgress = new Subject<number>();
 
-  constructor(
-    private evaluationStore: EvaluationStore,
-    private evaluationQuery: EvaluationQuery,
-    private evaluationService: EvaluationService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {
+  constructor() {
+    const activatedRoute = this.activatedRoute;
+
     this.filterTerm = activatedRoute.queryParamMap.pipe(
       map((params) => params.get('evalterm') || '')
     );

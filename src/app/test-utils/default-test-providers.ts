@@ -55,7 +55,7 @@ import {
   XApiService,
 } from '../generated/cite.api';
 
-// 3. RouterQuery: app.module.ts imports AkitaNgRouterStoreModule.
+// 3. RouterQuery: app.config.ts imports AkitaNgRouterStoreModule.
 import { RouterQuery } from '@datorama/akita-ng-router-store';
 
 export function getDefaultProviders(

@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { UnreadArticlesStore } from './unread-articles.store';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UnreadArticles } from './unread-articles';
 import { GalleryService } from 'src/app/generated/cite.api';
 import { take, tap } from 'rxjs/operators';
@@ -14,13 +14,11 @@ import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
   providedIn: 'root',
 })
 export class UnreadArticlesDataService {
-  readonly unreadArticlesList: Observable<UnreadArticles[]>;
+  private unreadArticlesStore = inject(UnreadArticlesStore);
+  private galleryService = inject(GalleryService);
+  private evaluationQuery = inject(EvaluationQuery);
 
-  constructor(
-    private unreadArticlesStore: UnreadArticlesStore,
-    private galleryService: GalleryService,
-    private evaluationQuery: EvaluationQuery,
-  ) {}
+  readonly unreadArticlesList: Observable<UnreadArticles[]>;
 
   loadById(evaluationId: string) {
     this.unreadArticlesStore.setLoading(true);

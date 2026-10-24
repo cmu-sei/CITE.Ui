@@ -2,14 +2,8 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import {
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
-import { MatSort, Sort } from '@angular/material/sort';
+import { Component, Input, OnDestroy, OnInit, inject, input, viewChild } from '@angular/core';
+import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 import {
   Evaluation,
   Action,
@@ -26,23 +20,43 @@ import { TeamQuery } from 'src/app/data/team/team.query';
 import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admin-action-edit-dialog.component';
-import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIcon } from '@angular/material/icon';
+
+import { MatIconButton } from '@angular/material/button';
+import { MatFormField, MatLabel, MatInput, MatSuffix } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 const ALL_MOVES_VALUE: number = -999;
 
 @Component({
-  selector: 'app-admin-actions',
-  templateUrl: './admin-actions.component.html',
-  styleUrls: ['./admin-actions.component.scss'],
-  standalone: false
+    selector: 'app-admin-actions',
+    templateUrl: './admin-actions.component.html',
+    styleUrls: ['./admin-actions.component.scss'],
+    imports: [MatIcon, MatIconButton, MatFormField, MatLabel, MatSelect, MatOption, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner]
 })
 
 export class AdminActionsComponent implements OnDestroy, OnInit {
+  private settingsService = inject(ComnSettingsService);
+  private evaluationQuery = inject(EvaluationQuery);
+  private actionDataService = inject(ActionDataService);
+  private actionQuery = inject(ActionQuery);
+  private moveDataService = inject(MoveDataService);
+  private moveQuery = inject(MoveQuery);
+  private teamDataService = inject(TeamDataService);
+  private teamQuery = inject(TeamQuery);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+
   @Input() selectedEvaluationId: string;
-  @Input() canEdit: boolean;
+  readonly canEdit = input<boolean>(undefined);
   teamList: Team[] = [];
   moveList: Move[] = [];
   pageIndex: number = 0;
@@ -61,20 +75,9 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   displayedColumns: string[] = ['description', 'moveNumber', 'teamId', 'isChecked'];
   private unsubscribe$ = new Subject();
   dataSource = new MatTableDataSource<Action>();
-  @ViewChild(MatSort) sort: MatSort;
+  readonly sort = viewChild(MatSort);
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private evaluationQuery: EvaluationQuery,
-    private actionDataService: ActionDataService,
-    private actionQuery: ActionQuery,
-    private moveDataService: MoveDataService,
-    private moveQuery: MoveQuery,
-    private teamDataService: TeamDataService,
-    private teamQuery: TeamQuery,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService
-  ) {
+  constructor() {
     this.evaluationQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
@@ -122,15 +125,15 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
+    this.dataSource.sort = this.sort();
     const initialSortState: Sort = {
       active: 'moveNumber',
       direction: 'asc'
     };
     this.dataSource.data = this.displayedActions;
-    this.sort.active = initialSortState.active;
-    this.sort.direction = initialSortState.direction;
-    this.sort.sortChange.emit(initialSortState);
+    this.sort().active = initialSortState.active;
+    this.sort().direction = initialSortState.direction;
+    this.sort().sortChange.emit(initialSortState);
   }
 
   selectMove(moveNumber: number) {

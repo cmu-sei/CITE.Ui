@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import {
@@ -15,14 +15,15 @@ import { ApiStub } from '../../../test-utils/api-stub';
 import { permissionDataProviders } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminUsersComponent } from './admin-users.component';
+import { AdminUserListComponent } from 'src/app/components/admin/admin-users/admin-user-list/admin-user-list.component';
 
 @Component({ selector: 'app-admin-user-list', template: '' })
 class UserListStubComponent {
-  @Input() users!: User[];
-  @Input() isLoading!: boolean;
-  @Input() canEdit!: boolean;
-  @Output() create = new EventEmitter<User>();
-  @Output() delete = new EventEmitter<string>();
+  readonly users = input.required<User[]>();
+  readonly isLoading = input.required<boolean>();
+  readonly canEdit = input.required<boolean>();
+  readonly create = output<User>();
+  readonly delete = output<string>();
 }
 
 async function renderUsers(system: SystemPermission[]) {
@@ -31,8 +32,10 @@ async function renderUsers(system: SystemPermission[]) {
     deleteUser: vi.fn(() => of(null)),
   } satisfies ApiStub<UserService>;
   const rendered = await renderComponent(AdminUsersComponent, {
-    declarations: [AdminUsersComponent],
-    imports: [UserListStubComponent],
+    imports: [],
+    childStubs: [
+      { replace: AdminUserListComponent, with: UserListStubComponent },
+    ],
     providers: [
       ...permissionDataProviders({ system }),
       { provide: UserService, useValue: userApi },
@@ -57,8 +60,8 @@ describe('AdminUsersComponent', () => {
   it('lets the list edit with ManageUsers', async () => {
     const { list } = await renderUsers([SystemPermission.ManageUsers]);
 
-    expect(list().users.map((u) => u.name)).toEqual(['Alice']);
-    expect(list().canEdit).toBe(true);
+    expect(list().users().map((u) => u.name)).toEqual(['Alice']);
+    expect(list().canEdit()).toBe(true);
   });
 
   /**
@@ -69,7 +72,7 @@ describe('AdminUsersComponent', () => {
   it('keeps the list read-only with ViewUsers only', async () => {
     const { list } = await renderUsers([SystemPermission.ViewUsers]);
 
-    expect(list().canEdit).toBe(false);
+    expect(list().canEdit()).toBe(false);
   });
 
   /**
@@ -87,6 +90,6 @@ describe('AdminUsersComponent', () => {
 
     expect(userApi.createUser).toHaveBeenCalledWith({ id: 'u2', name: 'Bob' });
     expect(userApi.deleteUser).toHaveBeenCalledWith('u1');
-    expect(list().users.map((u) => u.name)).toEqual(['Bob']);
+    expect(list().users().map((u) => u.name)).toEqual(['Bob']);
   });
 });
