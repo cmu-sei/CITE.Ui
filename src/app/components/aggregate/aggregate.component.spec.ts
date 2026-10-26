@@ -4,7 +4,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { screen } from '@testing-library/angular';
 import userEvent, {
   PointerEventsCheckLevel,
@@ -18,6 +17,7 @@ import {
   SubmissionService,
   TeamService,
 } from '../../generated/cite.api';
+import { UIDataService } from '../../data/ui/ui-data.service';
 import { UserStore } from '../../data/user/user.store';
 import { DisplayOrderPipe } from '../../utilities/sort-by-pipe';
 import { ApiStub } from '../../test-utils/api-stub';
@@ -30,7 +30,9 @@ import { AggregateComponent } from './aggregate.component';
 // enabled, visible controls here, so the check is skipped.
 const FAST_POINTER = { pointerEventsCheck: PointerEventsCheckLevel.Never };
 // Role queries are slow here for the same reason, so the header and its
-// buttons are found by their text and aria-label.
+// buttons are found by their text.
+const viewButton = (name: 'User' | 'Team') =>
+  screen.getByText(name, { selector: '.view-buttons button *' });
 
 const EVALUATION: Evaluation = {
   id: 'e1',
@@ -70,7 +72,13 @@ const withComment = (
   ],
 });
 
-async function renderAggregate() {
+// savedType: the view saved from the scoresheet (or before a print reload).
+async function renderAggregate(savedType?: string) {
+  // UIDataService reads the submission type from localStorage when built.
+  if (savedType) {
+    new UIDataService().setSubmissionType('e1', savedType);
+  }
+  const selectDisplayedSubmission = vi.fn();
   const submissionApi = {
     getByEvaluation: vi.fn(() =>
       of([
@@ -94,7 +102,7 @@ async function renderAggregate() {
   } satisfies ApiStub<TeamService>;
   const rendered = await renderComponent(AggregateComponent, {
     declarations: [AggregateComponent, DisplayOrderPipe],
-    imports: [MatButtonModule, MatIconModule, MatTableModule],
+    imports: [MatButtonModule, MatIconModule],
     componentInputs: {
       selectedEvaluation: EVALUATION,
       selectedScoringModel: SCORING_MODEL,
@@ -104,6 +112,7 @@ async function renderAggregate() {
         { id: 'm2', moveNumber: 2 },
       ],
     },
+    on: { selectDisplayedSubmission },
     providers: [
       { provide: SubmissionService, useValue: submissionApi },
       { provide: TeamService, useValue: teamApi },
@@ -112,7 +121,12 @@ async function renderAggregate() {
       testBed.inject(UserStore).set([{ id: 'u1', name: 'Alice' }]);
     },
   });
-  return { ...rendered, submissionApi, user: userEvent.setup(FAST_POINTER) };
+  return {
+    ...rendered,
+    submissionApi,
+    selectDisplayedSubmission,
+    user: userEvent.setup(FAST_POINTER),
+  };
 }
 
 describe('AggregateComponent', () => {
@@ -143,24 +157,44 @@ describe('AggregateComponent', () => {
   });
 
   /**
-   * Verifies: the toggle switches the report to team submissions, whose comments show without their author (current behavior).
-   * Interacts with: the toggle button, the comment list's displaying check.
+   * Verifies: the Team button switches the report to team submissions, whose comments show without their author (current behavior), and reports the change for the home page to save.
+   * Interacts with: the Team view button, the selectDisplayedSubmission output, the comment list's displaying check.
    * Data: the team submission's comment was written by Alice.
    */
   it('switches to team submissions without comment authors', async () => {
-    const { user } = await renderAggregate();
-    await user.click(
-      screen.getByLabelText('Toggle between user and team scores'),
-    );
+    const { user, selectDisplayedSubmission } = await renderAggregate();
+    await user.click(viewButton('Team'));
 
     expect(
       screen.getByText(/Submissions Report for Ransomware exercise/, {
         selector: 'h2',
       }),
     ).toHaveTextContent('Team Submissions Report for Ransomware exercise');
+    expect(selectDisplayedSubmission).toHaveBeenCalledExactlyOnceWith('team');
     // Current behavior; see agent-docs/ui-test-bugs/cite.ui.md.
     expect(screen.getByText('Payroll offline')).toHaveTextContent(
       /^Payroll offline$/,
     );
+  });
+
+  /**
+   * Verifies: the report opens on the saved Team view, so the choice made on the scoresheet (or before printing) is kept.
+   * Interacts with: UIDataService.getSubmissionType, the selectDisplayedSubmission output.
+   * Data: saved type team; the team submission's comment is Payroll offline.
+   */
+  it('opens on the saved team view', async () => {
+    const { selectDisplayedSubmission } = await renderAggregate('team');
+
+    expect(
+      screen.getByText(/Submissions Report for Ransomware exercise/, {
+        selector: 'h2',
+      }),
+    ).toHaveTextContent('Team Submissions Report for Ransomware exercise');
+    expect(viewButton('Team').closest('button')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.getByText('Payroll offline')).toBeInTheDocument();
+    expect(selectDisplayedSubmission).not.toHaveBeenCalled();
   });
 });

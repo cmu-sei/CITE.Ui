@@ -119,13 +119,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
         @if (selectedSection === section.report) {
         <div class="app-model-container elevate app-score-container" autosize>
           <app-report [selectedEvaluation]="activeEvaluation$ | async"
-            [selectedScoringModel]="activeScoringModel$ | async" [moveList]="moveList$ | async" />
+            [selectedScoringModel]="activeScoringModel$ | async" [moveList]="moveList$ | async"
+            (selectDisplayedSubmission)="selectDisplayedSubmission($event)" />
         </div>
         }
         @if (selectedSection === section.aggregate) {
         <div class="app-model-container elevate app-score-container" autosize>
           <app-aggregate [selectedEvaluation]="activeEvaluation$ | async"
-            [selectedScoringModel]="activeScoringModel$ | async" [moveList]="moveList$ | async" />
+            [selectedScoringModel]="activeScoringModel$ | async" [moveList]="moveList$ | async"
+            (selectDisplayedSubmission)="selectDisplayedSubmission($event)" />
         </div>
         }
         @if ((activeScoringModel$ | async)?.rightSideDisplay === 'ScoreSummary' && !(selectedSection === section.report

@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, inject, input } from '@angular/core';
+import { Component, Input, OnDestroy, inject, input, output } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -25,11 +25,9 @@ import {
 import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
-import { NgClass, DecimalPipe } from '@angular/common';
-import { MatCheckbox } from '@angular/material/checkbox';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
@@ -38,21 +36,10 @@ import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
     templateUrl: './report.component.html',
     styleUrls: ['./report.component.scss'],
     imports: [
-        MatIconButton,
+        MatButton,
         MatIcon,
-        MatTable,
-        MatColumnDef,
-        MatHeaderCellDef,
-        MatHeaderCell,
-        MatCellDef,
-        MatCell,
-        NgClass,
-        MatCheckbox,
         MatTooltip,
-        MatRowDef,
-        MatRow,
-        MatHeaderRowDef,
-        MatHeaderRow,
+        DatePipe,
         DecimalPipe,
         DisplayOrderPipe,
     ],
@@ -72,6 +59,7 @@ export class ReportComponent implements OnDestroy {
   @Input() selectedEvaluation: Evaluation;
   @Input() selectedScoringModel: ScoringModel;
   readonly moveList = input<Move[]>(undefined);
+  readonly selectDisplayedSubmission = output<string>();
   loggedInUserId = '';
   loggedInUserName = '';
   selectedTeam: Team = {};
@@ -96,6 +84,8 @@ export class ReportComponent implements OnDestroy {
   commentOptionDescription = 'this is the description';
   currentComment = 'current comment';
   buttonClass = 'mat-user';
+  generatedOn = new Date();
+  private displayingEvaluationId = '';
   private unsubscribe$ = new Subject();
 
   constructor() {
@@ -105,7 +95,12 @@ export class ReportComponent implements OnDestroy {
       if (active) {
         this.selectedEvaluation = active;
         this.currentMoveNumber = active.currentMoveNumber;
-        this.displaying = this.displaying && this.displaying === 'team' ? 'team' : 'user';
+        // start on the view saved from the scoresheet or this page; later
+        // updates to the evaluation keep whatever the user has picked since
+        if (active.id !== this.displayingEvaluationId) {
+          this.displayingEvaluationId = active.id;
+          this.displaying = this.uiDataService.getSubmissionType(active.id) === 'team' ? 'team' : 'user';
+        }
       }
     });
     // observe the selected scoring model
@@ -377,9 +372,20 @@ export class ReportComponent implements OnDestroy {
     }
   }
 
+  setDisplaying(displaying: 'user' | 'team') {
+    if (this.displaying !== displaying) {
+      this.toggleDisplaying();
+      // the home page saves the choice and shows the same submission on the scoresheet
+      this.selectDisplayedSubmission.emit(displaying);
+    }
+  }
+
   printpage() {
-    var printContents = document.getElementById('printable-area').innerHTML;
-    document.body.innerHTML = printContents;
+    // Print the report alone, keeping its root element so its print styles
+    // apply, and in the light theme so a dark background never reaches the
+    // page. The reload restores the app.
+    document.body.innerHTML = document.getElementById('printable-area').outerHTML;
+    document.body.classList.remove('darkMode');
     window.print();
     location.reload();
   }

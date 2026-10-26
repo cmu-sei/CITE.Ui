@@ -1,11 +1,9 @@
 // Copyright 2026 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { screen } from '@testing-library/angular';
 import userEvent, {
@@ -25,6 +23,7 @@ import { EvaluationStore } from '../../data/evaluation/evaluation.store';
 import { ScoringModelStore } from '../../data/scoring-model/scoring-model.store';
 import { SubmissionStore } from '../../data/submission/submission.store';
 import { TeamStore } from '../../data/team/team.store';
+import { UIDataService } from '../../data/ui/ui-data.service';
 import { DisplayOrderPipe } from '../../utilities/sort-by-pipe';
 import { renderComponent } from '../../test-utils/render-component';
 import { ReportComponent } from './report.component';
@@ -36,6 +35,8 @@ import { ReportComponent } from './report.component';
 const FAST_POINTER = { pointerEventsCheck: PointerEventsCheckLevel.Never };
 // Role queries are slow here for the same reason, so the header and its
 // buttons are found by their text and aria-label.
+const viewButton = (name: 'User' | 'Team') =>
+  screen.getByText(name, { selector: '.view-buttons button *' });
 
 const EVALUATION: Evaluation = {
   id: 'e1',
@@ -68,7 +69,13 @@ const selecting = (base: Submission, optionId: string): Submission => ({
   ],
 });
 
-async function renderReport() {
+// savedType: the view saved from the scoresheet (or before a print reload).
+async function renderReport(savedType?: string) {
+  // UIDataService reads the submission type from localStorage when built.
+  if (savedType) {
+    new UIDataService().setSubmissionType('e1', savedType);
+  }
+  const selectDisplayedSubmission = vi.fn();
   // The component reads only user$ (UserDataService.setCurrentUser).
   const auth: Pick<ComnAuthService, 'user$'> = {
     user$: of(
@@ -88,18 +95,13 @@ async function renderReport() {
   };
   const rendered = await renderComponent(ReportComponent, {
     declarations: [ReportComponent, DisplayOrderPipe],
-    imports: [
-      MatButtonModule,
-      MatCheckboxModule,
-      MatIconModule,
-      MatTableModule,
-      MatTooltipModule,
-    ],
+    imports: [MatButtonModule, MatIconModule, MatTooltipModule],
     componentInputs: {
       selectedEvaluation: EVALUATION,
       selectedScoringModel: SCORING_MODEL,
       moveList: [{ id: 'm1', moveNumber: 1 }],
     },
+    on: { selectDisplayedSubmission },
     providers: [{ provide: ComnAuthService, useValue: auth }],
     configureTestBed: (testBed) => {
       // The home page activates the evaluation, scoring model and team before
@@ -127,7 +129,11 @@ async function renderReport() {
         ]);
     },
   });
-  return { ...rendered, user: userEvent.setup(FAST_POINTER) };
+  return {
+    ...rendered,
+    selectDisplayedSubmission,
+    user: userEvent.setup(FAST_POINTER),
+  };
 }
 
 describe('ReportComponent', () => {
@@ -150,19 +156,49 @@ describe('ReportComponent', () => {
   });
 
   /**
-   * Verifies: the toggle switches to the active team's responses.
-   * Interacts with: the toggle button, real TeamQuery.selectActive.
-   * Data: the active team BLU selected Significant.
+   * Verifies: the Team button switches to the active team's responses and User switches back, each change reported for the home page to save.
+   * Interacts with: the User and Team view buttons (aria-pressed), the selectDisplayedSubmission output, real TeamQuery.selectActive.
+   * Data: the active team BLU selected Significant; Alice selected Minimal.
    */
-  it('switches to the team responses', async () => {
-    const { user } = await renderReport();
-    await user.click(
-      screen.getByLabelText('Toggle between user and team scores'),
-    );
+  it('switches between the user and team responses', async () => {
+    const { user, selectDisplayedSubmission } = await renderReport();
+    await user.click(viewButton('Team'));
 
     expect(
       screen.getByText(/Responses for Ransomware exercise/, { selector: 'h2' }),
     ).toHaveTextContent("BLU's Responses for Ransomware exercise");
+    expect(viewButton('Team').closest('button')).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByLabelText('Significant')).toBeChecked();
+    expect(screen.getByLabelText('Minimal')).not.toBeChecked();
+    expect(selectDisplayedSubmission).toHaveBeenLastCalledWith('team');
+
+    await user.click(viewButton('User'));
+
+    expect(viewButton('User').closest('button')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByLabelText('Minimal')).toBeChecked();
+    expect(selectDisplayedSubmission).toHaveBeenLastCalledWith('user');
   });
+
+  /**
+   * Verifies: the report opens on the saved view, so Team chosen on the scoresheet (or before printing) is still shown.
+   * Interacts with: UIDataService.getSubmissionType, the selectDisplayedSubmission output.
+   * Data: the saved type per row; the active team BLU selected Significant.
+   */
+  it.each([
+    { savedType: 'team', heading: "BLU's", pressed: 'Team' },
+    { savedType: 'user', heading: "Alice's", pressed: 'User' },
+    { savedType: undefined, heading: "Alice's", pressed: 'User' },
+  ])(
+    'opens on $pressed when the saved view is $savedType',
+    async ({ savedType, heading, pressed }) => {
+      const { selectDisplayedSubmission } = await renderReport(savedType);
+
+      expect(
+        screen.getByText(/Responses for Ransomware exercise/, { selector: 'h2' }),
+      ).toHaveTextContent(`${heading} Responses for Ransomware exercise`);
+      expect(viewButton(pressed as 'User' | 'Team').closest('button')).toHaveAttribute('aria-pressed', 'true');
+      // opening the report never changes the saved view
+      expect(selectDisplayedSubmission).not.toHaveBeenCalled();
+    },
+  );
 });

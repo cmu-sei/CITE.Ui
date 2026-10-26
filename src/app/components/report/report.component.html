@@ -3,132 +3,125 @@ Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
-<div id="printable-area">
-  <div class="header-div">
-    <div class="header-text">
+<div id="printable-area" class="report">
+  <header class="report-header">
+    <div class="report-heading">
+      <span class="report-kind">Submission Review</span>
       <h2>
         @if (displaying === 'team') {
-          <span>{{ selectedTeam.shortName }}'s</span>
-        }
-        @if (displaying !== 'team') {
-          <span>{{ loggedInUserName }}'s</span>
+        <span>{{ selectedTeam.shortName }}'s</span>
+        } @else {
+        <span>{{ loggedInUserName }}'s</span>
         }
         Responses for {{ selectedEvaluation.description }}
       </h2>
+      <span class="report-generated">Generated {{ generatedOn | date: 'medium' }}</span>
     </div>
-    <div class="right-buttons no-print">
-      <button
-        aria-label="Toggle between user and team scores"
-        mat-icon-button
-        style="outline: none;"
-        title="Toggle between user and team scores"
-        (click)="toggleDisplaying()"
-        >
-        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-swap-horizontal" />
-      </button>
-      <button
-        aria-label="Print Submission Review"
-        mat-icon-button
-        style="outline: none;"
-        title="Print Submission Review"
-        (click)="printpage()"
-        >
-        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-printer" />
+    <div class="report-actions no-print">
+      <span class="view-buttons" role="group" aria-label="Displayed responses">
+        <button matButton="outlined" [class.selected]="displaying !== 'team'"
+          [attr.aria-pressed]="displaying !== 'team'" (click)="setDisplaying('user')">
+          User
+        </button>
+        <button matButton="outlined" [class.selected]="displaying === 'team'"
+          [attr.aria-pressed]="displaying === 'team'" (click)="setDisplaying('team')">
+          Team
+        </button>
+      </span>
+      <button matButton="outlined" (click)="printpage()">
+        <mat-icon fontIcon="mdi-printer" aria-hidden="true" />
+        Print
       </button>
     </div>
-  </div>
+  </header>
+
   @for (submission of displayedSubmissionList; track submission.id) {
-    <mat-table [dataSource]="getDisplayedScoringCategories(submission.moveNumber) | displayOrder" class="full-width"
-      >
-      <!-- Description Definition -->
-      <ng-container matColumnDef="scoringCategoryDescription">
-        <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
-          <div class="title-font">
-            Move {{ submission.moveNumber }}
-            @if (!selectedScoringModel?.hideScoresOnScoreSheet) {
-              <span title="{{ displayedScoreHover }}"> - {{
-                submission.score | number: '1.2-2' }}
-              </span>
+  <section class="report-move">
+    <div class="move-header">
+      <h3 class="move-title">Move {{ submission.moveNumber }}</h3>
+      <div class="move-meta">
+        @if (selectedScoringModel?.useSubmit) {
+        <span class="chip">{{ getSubmissionStatusText(submission) }}</span>
+        }
+        @if (!selectedScoringModel?.hideScoresOnScoreSheet) {
+        <span class="chip">
+          <span class="chip-label">Score</span>
+          <strong>{{ submission.score | number: '1.2-2' }}</strong>
+        </span>
+        }
+      </div>
+    </div>
+    @for (scoringCategory of getDisplayedScoringCategories(submission.moveNumber) | displayOrder; track scoringCategory.id) {
+    @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
+    @let showValues = !selectedScoringModel?.hideScoresOnScoreSheet && scoringCategory.calculationMethodId != 0;
+    <div class="category">
+      <div class="category-header">
+        <h4 class="category-title">
+          <span class="category-number">{{ scoringCategory.displayOrder }}</span>
+          <span class="category-text">{{ scoringCategory.description }}</span>
+        </h4>
+        @if (scoringCategory.calculationMethodId > 0) {
+        <span class="chip">
+          <span class="chip-label">Score</span>
+          <strong>{{ categoryScore(submission, scoringCategory.id) | number: '1.0-0' }}</strong>
+        </span>
+        }
+      </div>
+      <ul class="option-list">
+        @let scoringOptions = scoringCategory.scoringOptions | displayOrder;
+        @for (scoringOption of scoringOptions; track scoringOption.id; let optionIndex = $index) {
+        @if (scoringOption.isModifier && !scoringOptions[optionIndex - 1]?.isModifier) {
+        <li class="modifier-heading">Modifiers</li>
+        }
+        @let selected = canSelect && isSelected(submission, scoringCategory.id, scoringOption.id);
+        <li class="option" [class.selected]="selected">
+          <div class="option-row">
+            @if (canSelect) {
+            <span class="option-check" role="checkbox" aria-readonly="true" [attr.aria-checked]="selected"
+              [attr.aria-label]="scoringOption.description"
+              [matTooltip]="selectedBy(submission, scoringCategory.id, scoringOption.id)">
+              <mat-icon aria-hidden="true" [fontIcon]="selected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'" />
+            </span>
+            }
+            <span class="option-text">
+              @if (selectedScoringModel.displayCommentTextBoxes) {
+              <span class="question-number">{{ optionIndex + 1 }}.</span>
+              }
+              {{ scoringOption.description }}
+            </span>
+            @if (showValues && !scoringOption.isModifier) {
+            <span class="option-value">{{ scoringOption.value }}</span>
             }
           </div>
-        </mat-header-cell>
-        <!-- Report display -->
-        <mat-cell *matCellDef="let scoringCategory" class="description-container">
-          <div class="scoring-category-description">
-            {{ scoringCategory.displayOrder }}. {{ scoringCategory.description }}
-            @if (scoringCategory.calculationMethodId > 0) {
-              <span>
-                &nbsp;&nbsp;-&nbsp;&nbsp;[{{
-                categoryScore(submission, scoringCategory.id) | number: '1.0-0'
-                }}]
-              </span>
+          @if (selectedScoringModel.displayCommentTextBoxes) {
+          @let answer = optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment;
+          @if (answer) {
+          <div class="answer">{{ answer }}</div>
+          } @else {
+          <div class="answer no-response">No response</div>
+          }
+          } @else {
+          @let comments = optionComments(submission, scoringCategory.id, scoringOption.id);
+          @if (comments?.length) {
+          <ul class="comment-list">
+            @for (comment of comments; track comment.id) {
+            <li class="comment">
+              {{ comment.comment }}
+              @if (displaying === 'Team') {
+              <span> - {{ getUserName(comment.createdBy) }}</span>
+              }
+            </li>
             }
-          </div>
-          <mat-table [dataSource]="scoringCategory.scoringOptions | displayOrder" class="full-width">
-            <ng-container matColumnDef="scoringOptionDescription" class="description-cell">
-              <mat-cell *matCellDef="let scoringOption" class="description-container">
-                <div [ngClass]="scoringOption.isModifier ? 'indent-div' : 'no-indent-div'">
-                  <div class="score-option">
-                    @if (scoringCategory.scoringOptionSelection !== 'None') {
-                      <div class="checkbox-div">
-                        <mat-checkbox [aria-label]="scoringOption.description"
-                          [checked]="isSelected(submission, scoringCategory.id, scoringOption.id)" [disabled]="true"
-                          [matTooltip]="selectedBy(submission, scoringCategory.id, scoringOption.id)" />
-                      </div>
-                    }
-                    <div class="description-div">
-                      {{ scoringOption.description }} &nbsp;
-                    </div>
-                  </div>
-                  @if (!selectedScoringModel.displayCommentTextBoxes) {
-                    <div class="comment-list">
-                      @for (
-                        comment of optionComments(
-                        submission,
-                        scoringCategory.id,
-                        scoringOption.id
-                        )
-                        ; track
-                        comment.id) {
-                        <div>
-                          {{ comment.comment }}
-                          @if (displaying === 'Team') {
-                            <span> - {{ getUserName(comment.createdBy) }}</span>
-                          }
-                        </div>
-                      }
-                    </div>
-                  }
-                  @if (selectedScoringModel.displayCommentTextBoxes) {
-                    <div class="comment-box">
-                      <span class="comment">{{ optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment
-                      }}</span>
-                    </div>
-                  }
-                </div>
-              </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="value">
-              <mat-cell *matCellDef="let scoringOption" class="value-container">
-                @if (!selectedScoringModel?.hideScoresOnScoreSheet) {
-                  <div class="value-div">
-                    {{
-                    scoringCategory.calculationMethodId == 0 ||
-                    scoringOption.isModifier
-                    ? ' '
-                    : scoringOption.value
-                    }}
-                  </div>
-                }
-              </mat-cell>
-            </ng-container>
-            <mat-row *matRowDef="let row; columns: ['scoringOptionDescription', 'value']" />
-          </mat-table>
-        </mat-cell>
-      </ng-container>
-      <!-- Header and Row Declarations -->
-      <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']" />
-      <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']" />
-    </mat-table>
+          </ul>
+          }
+          }
+        </li>
+        }
+      </ul>
+    </div>
+    }
+  </section>
+  } @empty {
+  <div class="empty-state">There are no responses to review yet.</div>
   }
 </div>
