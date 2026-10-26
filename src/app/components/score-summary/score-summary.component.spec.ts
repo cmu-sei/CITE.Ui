@@ -3,7 +3,6 @@
 
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { MatTableModule } from '@angular/material/table';
 import { screen, within } from '@testing-library/angular';
 import { SubmissionStore } from '../../data/submission/submission.store';
 import { renderComponent } from '../../test-utils/render-component';
@@ -18,14 +17,23 @@ describe('ScoreSummaryComponent', () => {
   it('renders with the default test providers', async () => {
     const { fixture } = await renderComponent(ScoreSummaryComponent, {
       declarations: [ScoreSummaryComponent],
-      imports: [MatTableModule],
     });
 
     expect(fixture.componentInstance).toBeInstanceOf(ScoreSummaryComponent);
     expect(
       screen.getByRole('heading', { name: 'Score Summary' }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole('row')).toHaveLength(7);
+    expect(
+      screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
+    ).toEqual([
+      'Level 5 - Emergency',
+      'Level 4 - Severe',
+      'Level 3 - High',
+      'Level 2 - Medium',
+      'Level 1 - Low',
+      'Level 0 - Baseline',
+    ]);
+    expect(screen.getByText('No Active Submission')).toBeInTheDocument();
   });
 
   /**
@@ -36,7 +44,6 @@ describe('ScoreSummaryComponent', () => {
   it('places the active move submissions in their levels', async () => {
     const { fixture } = await renderComponent(ScoreSummaryComponent, {
       declarations: [ScoreSummaryComponent],
-      imports: [MatTableModule],
     });
     const store = TestBed.inject(SubmissionStore);
     store.set([
@@ -54,17 +61,52 @@ describe('ScoreSummaryComponent', () => {
     store.setActive('s1');
     fixture.detectChanges();
 
-    const scoreCell = (level: string) =>
-      within(
-        screen
-          .getByText(level, { selector: 'div' })
-          .closest('mat-row') as HTMLElement,
-      )
-        .getAllByRole('cell')[0]
-        .textContent?.trim();
-    expect(scoreCell('Emergency')).toBe('91 (user)');
-    expect(scoreCell('High')).toBe('70 (team-avg)');
-    expect(scoreCell('Low')).toBe('40 (official)');
-    expect(scoreCell('Baseline')).toBe('');
+    // the scores listed under a level, as "type score"
+    const levelScores = (name: string) => {
+      const list = screen.queryByRole('list', { name: `Scores in ${name}` });
+      return list
+        ? within(list)
+            .getAllByRole('listitem')
+            .map((chip) => chip.textContent?.replace(/\s+/g, ' ').trim())
+        : [];
+    };
+    expect(levelScores('Emergency')).toEqual(['User 91']);
+    expect(levelScores('High')).toEqual(['Team Avg 70']);
+    expect(levelScores('Low')).toEqual(['Official 40']);
+    expect(levelScores('Baseline')).toEqual([]);
+    expect(screen.getByText('Move 1')).toBeInTheDocument();
+    expect(screen.queryByText('No Active Submission')).not.toBeInTheDocument();
+  });
+
+  /**
+   * Verifies: the level and score of the submission shown on the scoresheet are marked as current.
+   * Interacts with: real SubmissionStore/SubmissionQuery (selectAll, selectActive).
+   * Data: move 2 has a team 80 (active) and a group average 80; a user 20 sits in Baseline.
+   */
+  it('marks the active submission and its level', async () => {
+    const { fixture } = await renderComponent(ScoreSummaryComponent, {
+      declarations: [ScoreSummaryComponent],
+    });
+    const store = TestBed.inject(SubmissionStore);
+    store.set([
+      { id: 't', moveNumber: 2, score: 80, teamId: 't1' },
+      { id: 'g', moveNumber: 2, score: 80, groupId: 'g1', scoreIsAnAverage: true },
+      { id: 'u', moveNumber: 2, score: 20, userId: 'u1' },
+    ]);
+    store.setActive('t');
+    fixture.detectChanges();
+
+    const level = (name: string) =>
+      screen.getByRole('heading', { name: new RegExp(name) }).closest('li');
+    expect(level('Severe')).toHaveClass('current');
+    expect(level('Baseline')).not.toHaveClass('current');
+    const chips = within(
+      screen.getByRole('list', { name: 'Scores in Severe' }),
+    ).getAllByRole('listitem');
+    expect(chips.map((chip) => chip.classList.contains('active'))).toEqual([
+      true,
+      false,
+    ]);
+    expect(chips[1]).toHaveTextContent('Group Avg');
   });
 });

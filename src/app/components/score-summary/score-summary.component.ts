@@ -7,14 +7,22 @@ import { ScoringModel, Submission } from 'src/app/generated/cite.api/model/model
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
 import { NgClass } from '@angular/common';
+
+export interface ScoreSummaryLevel {
+  scoremin: string;
+  scoremax: string;
+  level: number;
+  name: string;
+  color: string;
+  definition: string;
+}
 
 @Component({
     selector: 'app-score-summary',
     templateUrl: './score-summary.component.html',
     styleUrls: ['./score-summary.component.scss'],
-    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow]
+    imports: [NgClass]
 })
 export class ScoreSummaryComponent implements OnDestroy {
   private submissionQuery = inject(SubmissionQuery);
@@ -23,10 +31,10 @@ export class ScoreSummaryComponent implements OnDestroy {
   readonly selectedScoringModel = input<ScoringModel>(undefined);
   submissionList: Submission[];
   activeSubmission: Submission = {};
-  levels = [
+  levels: ScoreSummaryLevel[] = [
     {
       scoremin: '90', scoremax: '100', level: 5, name: 'Emergency', color: 'black',
-      definition: 'Poses an imminent threat to the provision of wide-scale critical infrastructure services, national goverment stability, or to the lives of U.S. persons'},
+      definition: 'Poses an imminent threat to the provision of wide-scale critical infrastructure services, national government stability, or to the lives of U.S. persons'},
     {
       scoremin: '75', scoremax: '89.99', level: 4, name: 'Severe', color: 'red',
       definition: 'Likely to result in a significant impact to public health or safety, national security, economic security, foreign relations, or civil liberties.'},
@@ -42,7 +50,6 @@ export class ScoreSummaryComponent implements OnDestroy {
     {
       scoremin: '0', scoremax: '34.99', level: 0, name: 'Baseline', color: 'white', definition: 'Unsubstantiated or inconsequential event'}
   ];
-  columnsToDisplay = ['score', 'scoremin', 'name'];
   private unsubscribe$ = new Subject();
 
 
@@ -67,27 +74,42 @@ export class ScoreSummaryComponent implements OnDestroy {
     }
   }
 
-  showScore(level, submission) {
-    let displayText = '';
-    const score = (Math.round((submission.score + Number.EPSILON) * 100) / 100);
-    if (score >= +level.scoremin && score <= +level.scoremax) {
-      if (submission.userId != null) {
-        displayText = ' (user)';
-      } else if (submission.teamId != null) {
-        if (submission.scoreIsAnAverage) {
-          displayText = ' (team-avg)';
-        } else {
-          displayText = ' (team)';
-        }
-      } else if (submission.groupId != null) {
-        displayText = ' (group-avg)';
-      } else {
-        displayText = ' (official)';
-      }
-      return score + displayText;
-    }
+  // the active move's scores that fall in a level, highest first
+  scoresInLevel(level: ScoreSummaryLevel) {
+    return this.currentSubmissions()
+      .filter(submission => this.inLevel(level, submission))
+      .map(submission => ({
+        id: submission.id,
+        score: this.roundedScore(submission),
+        type: this.submissionType(submission),
+        isActive: submission.id === this.activeSubmission.id,
+      }));
+  }
 
-    return '';
+  // the level holding the score shown on the scoresheet
+  isCurrentLevel(level: ScoreSummaryLevel) {
+    return !!this.activeSubmission.id && this.inLevel(level, this.activeSubmission);
+  }
+
+  // named as on the scoresheet's view buttons
+  submissionType(submission: Submission) {
+    if (submission.userId != null) {
+      return 'User';
+    } else if (submission.teamId != null) {
+      return submission.scoreIsAnAverage ? 'Team Avg' : 'Team';
+    } else if (submission.groupId != null) {
+      return 'Group Avg';
+    }
+    return 'Official';
+  }
+
+  private inLevel(level: ScoreSummaryLevel, submission: Submission) {
+    const score = this.roundedScore(submission);
+    return score >= +level.scoremin && score <= +level.scoremax;
+  }
+
+  private roundedScore(submission: Submission) {
+    return Math.round((submission.score + Number.EPSILON) * 100) / 100;
   }
 
   ngOnDestroy() {
