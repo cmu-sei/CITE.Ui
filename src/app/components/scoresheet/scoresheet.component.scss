@@ -194,34 +194,12 @@ textarea.mat-input-element {
   height: 100%;
 }
 
-.black {
-  background-color: black;
-  color: white;
-}
-
-.red {
-  background-color: darkred;
-  color: white;
-}
-
-.orange {
-  background-color: darkorange;
-  color: black;
-}
-
-.yellow {
-  background-color: yellow;
-  color: black;
-}
-
-.green {
-  background-color: lightgreen;
-  color: black;
-}
-
-.white {
-  background-color: white;
-  color: black;
+// colored by the scoring model's severity level; the border keeps white and
+// black badges visible
+.score-level {
+  padding: 0 8px;
+  border: 1px solid #6b6b6b;
+  border-radius: 4px;
 }
 
 .mat-column-description {

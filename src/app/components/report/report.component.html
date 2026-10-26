@@ -46,7 +46,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <div class="title-font">
             Move {{ submission.moveNumber }}
             @if (!selectedScoringModel?.hideScoresOnScoreSheet) {
-              <span title="{{ displayedScoreHover }}"> - {{
+              <span [title]="scoreLevelLabel(submission.score)"> - {{
                 submission.score | number: '1.2-2' }}
               </span>
             }

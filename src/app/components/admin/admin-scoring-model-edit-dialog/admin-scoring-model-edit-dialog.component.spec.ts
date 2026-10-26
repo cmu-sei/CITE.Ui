@@ -149,4 +149,89 @@ describe('AdminScoringModelEditDialogComponent', () => {
 
     expect(screen.queryByLabelText('Right Side URL')).not.toBeInTheDocument();
   });
+
+  /**
+   * Verifies: a model without severity levels says it uses the defaults, and saving it keeps none.
+   * Interacts with: the Severity Levels section and the crucible-dialog Save button.
+   * Data: canEdit true; no severity levels; the description is edited so Save is enabled.
+   */
+  it('keeps the default severity levels unless they are customized', async () => {
+    const { editComplete, user } = await renderModelDialog(true);
+    expect(screen.getByText('Using the default CISA levels.')).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText('Scoring Model Description'), ' v2');
+    await user.click(save());
+
+    expect(editComplete).toHaveBeenCalledWith({
+      saveChanges: true,
+      scoringModel: expect.objectContaining({ severityLevels: [] }),
+    });
+  });
+
+  /**
+   * Verifies: Customize Levels loads the six default levels, highest first, as editable rows that are saved.
+   * Interacts with: the Customize Levels button, a level's Name field and the Save button.
+   * Data: canEdit true; no severity levels; Emergency renamed to Critical.
+   */
+  it('customizes the default severity levels', async () => {
+    const { editComplete, user } = await renderModelDialog(true);
+
+    await user.click(screen.getByRole('button', { name: 'Customize Levels' }));
+    const names = screen.getAllByLabelText('Name') as HTMLInputElement[];
+    expect(names.map((input) => input.value)).toEqual([
+      'Emergency', 'Severe', 'High', 'Medium', 'Low', 'Baseline',
+    ]);
+    await user.clear(names[0]);
+    await user.type(names[0], 'Critical');
+    await user.click(save());
+
+    const saved = editComplete.mock.calls[0][0].scoringModel.severityLevels;
+    expect(saved).toHaveLength(6);
+    expect(saved[0]).toEqual(expect.objectContaining({ name: 'Critical', minimumScore: 90, color: '#000000' }));
+  });
+
+  /**
+   * Verifies: two levels with the same Minimum Score are flagged and can't be saved; Use Default Levels clears them.
+   * Interacts with: the Minimum Score fields, the Save button and the Use Default Levels button.
+   * Data: canEdit true; levels Low at 0 and High at 50; High changed to 0.
+   */
+  it('refuses severity levels that share a minimum score', async () => {
+    const { editComplete, user } = await renderModelDialog(true, {
+      severityLevels: [
+        { name: 'Low', minimumScore: 0, color: '#00FF00', description: '' },
+        { name: 'High', minimumScore: 50, color: '#FF0000', description: '' },
+      ],
+    });
+
+    const minimums = screen.getAllByLabelText('Minimum Score');
+    await user.clear(minimums[1]);
+    await user.type(minimums[1], '0');
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Each level needs a different Minimum Score.');
+    expect(save()).toBeDisabled();
+
+    await user.click(screen.getByRole('button', { name: 'Use Default Levels' }));
+    expect(screen.getByText('Using the default CISA levels.')).toBeInTheDocument();
+    await user.click(save());
+    expect(editComplete).toHaveBeenCalledWith({
+      saveChanges: true,
+      scoringModel: expect.objectContaining({ severityLevels: [] }),
+    });
+  });
+
+  /**
+   * Verifies: without canEdit the severity levels are shown but can't be changed.
+   * Interacts with: the Severity Levels section.
+   * Data: canEdit false; one level.
+   */
+  it('shows the severity levels read-only without canEdit', async () => {
+    await renderModelDialog(false, {
+      severityLevels: [{ name: 'Only', minimumScore: 0, color: '#00FF00', description: 'All of it' }],
+    });
+
+    expect(screen.getByLabelText('Name')).toBeDisabled();
+    expect(screen.getByLabelText('Color of Only')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Remove Only' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Add Level' })).toBeDisabled();
+  });
 });

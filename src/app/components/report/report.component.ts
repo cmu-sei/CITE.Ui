@@ -32,6 +32,7 @@ import { NgClass, DecimalPipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
+import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/app/utilities/severity-levels';
 
 @Component({
     selector: 'app-report',
@@ -83,8 +84,6 @@ export class ReportComponent implements OnDestroy {
   submissionList: PopulatedSubmission[] = [];
   teamSubmissionList: PopulatedSubmission[] = [];
   userSubmissionList: PopulatedSubmission[] = [];
-  displayedScoreClass = 'white';
-  displayedScoreHover = 'Level 0 - Baseline';
   displaying = '';
   displayedScoringCategories: ScoringCategory[] = [];
   isLoading = false;
@@ -375,6 +374,11 @@ export class ReportComponent implements OnDestroy {
       this.displaying = 'team';
       this.displayedSubmissionList = this.teamSubmissionList;
     }
+  }
+
+  // e.g. "Level 4 - Severe", from the scoring model's severity levels
+  scoreLevelLabel(score: number) {
+    return severityLevelLabel(severityLevelForScore(severityLevels(this.selectedScoringModel), score));
   }
 
   printpage() {

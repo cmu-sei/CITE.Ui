@@ -42,7 +42,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </span>
         }
         @if (!selectedScoringModel.hideScoresOnScoreSheet) {
-        <span class="title-font" [ngClass]="displayedScoreClass" title="{{ displayedScoreHover }}">{{
+        @let scoreLevel = displayedSeverityLevel();
+        <span class="title-font score-level" [style.background-color]="scoreLevel?.color"
+          [style.color]="scoreLevel?.textColor" [title]="severityLevelLabel(scoreLevel)">{{
           displayedSubmission.score | number: '1.2-2' }}</span>
         }
         @if (!displayedSubmission.scoreIsAnAverage) {

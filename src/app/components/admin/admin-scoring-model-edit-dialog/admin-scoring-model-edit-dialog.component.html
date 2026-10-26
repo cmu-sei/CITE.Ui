@@ -214,6 +214,62 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </div>
       }
     </div>
+    <div class="add-margin severity-levels" formArrayName="severityLevels">
+      <div class="field-row">
+        <h3 class="section-title">Severity Levels</h3>
+        <button mat-icon-button type="button" class="info-button" tabindex="-1"
+          matTooltip="The levels the Score Summary and scoresheet place scores in. A score falls in the level with the highest Minimum Score at or below it. Without levels of its own, a scoring model uses the default CISA levels."
+          #levelsTip="matTooltip" (click)="levelsTip.toggle()">
+          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+        </button>
+      </div>
+      @if (severityLevels.length === 0) {
+      <div class="field-row">
+        <span class="default-levels">Using the default CISA levels.</span>
+        <button matButton="outlined" type="button" (click)="customizeSeverityLevels()" [disabled]="!data.canEdit">
+          Customize Levels
+        </button>
+      </div>
+      } @else {
+      @for (level of severityLevels.controls; track level; let i = $index) {
+      <div class="severity-level" [formGroupName]="i">
+        <div class="field-row">
+          <mat-form-field class="level-name">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+          </mat-form-field>
+          <mat-form-field class="level-minimum">
+            <mat-label>Minimum Score</mat-label>
+            <input matInput type="number" formControlName="minimumScore" />
+          </mat-form-field>
+          <label class="level-color">
+            <span>Color</span>
+            <input type="color" formControlName="color" [attr.aria-label]="'Color of ' + (level.value.name || 'this level')" />
+          </label>
+          <button mat-icon-button type="button" (click)="removeSeverityLevel(i)" [disabled]="!data.canEdit"
+            [attr.aria-label]="'Remove ' + (level.value.name || 'this level')" matTooltip="Remove Level">
+            <mat-icon fontIcon="mdi-trash-can-outline" />
+          </button>
+        </div>
+        <mat-form-field class="full-width">
+          <mat-label>Description</mat-label>
+          <input matInput formControlName="description" />
+        </mat-form-field>
+      </div>
+      }
+      @if (severityLevels.hasError('duplicateMinimumScore')) {
+      <div class="level-error" role="alert">Each level needs a different Minimum Score.</div>
+      }
+      <div class="field-row">
+        <button matButton="outlined" type="button" (click)="addSeverityLevel()" [disabled]="!data.canEdit">
+          Add Level
+        </button>
+        <button matButton type="button" (click)="useDefaultSeverityLevels()" [disabled]="!data.canEdit">
+          Use Default Levels
+        </button>
+      </div>
+      }
+    </div>
   </div>
 }
 </crucible-dialog>
