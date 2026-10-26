@@ -39,7 +39,10 @@ import { NgClass, DecimalPipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput, MatFormField, MatLabel } from '@angular/material/input';
+import { MatInput, MatFormField, MatLabel, MatHint } from '@angular/material/input';
+import { MatCard } from '@angular/material/card';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { FormsModule } from '@angular/forms';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
@@ -61,6 +64,10 @@ import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
         MatIconButton,
         MatIcon,
         MatInput,
+        CdkTextareaAutosize,
+        MatHint,
+        MatCard,
+        MatProgressBar,
         FormsModule,
         MatRowDef,
         MatRow,
