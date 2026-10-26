@@ -2,17 +2,18 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  UntypedFormControl,
-  FormGroupDirective,
-  NgForm,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, output } from '@angular/core';
+import { FormBuilder, FormGroup, UntypedFormControl, FormGroupDirective, NgForm, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CrucibleDialogComponent, CrucibleDialogContentDirective } from '@cmusei/crucible-common';
+import { MatFormField, MatLabel, MatInput } from '@angular/material/input';
+import { MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class UserErrorStateMatcher implements ErrorStateMatcher {
@@ -29,17 +30,19 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
     selector: 'app-admin-scoring-category-edit-dialog',
     templateUrl: './admin-scoring-category-edit-dialog.component.html',
     styleUrls: ['./admin-scoring-category-edit-dialog.component.scss'],
-    standalone: false
+    imports: [CrucibleDialogComponent, CrucibleDialogContentDirective, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatIconButton, MatTooltip, MatIcon, MatSelect, MatOption, MatCheckbox]
 })
 
 export class AdminScoringCategoryEditDialogComponent {
-  @Output() editComplete = new EventEmitter<any>();
+  data = inject(MAT_DIALOG_DATA);
+  private formBuilder = inject(FormBuilder);
+
+  readonly editComplete = output<any>();
   public form: FormGroup;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private formBuilder: FormBuilder
-  ) {
+  constructor() {
+    const data = this.data;
+
     const category = data.scoringCategory;
     const disabled = !data.canEdit;
     this.form = this.formBuilder.group({

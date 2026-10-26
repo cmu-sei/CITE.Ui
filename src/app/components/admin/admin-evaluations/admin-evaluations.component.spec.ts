@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, Input, Type } from '@angular/core';
+import { Component, Type, input, InputSignal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -41,6 +41,11 @@ import {
 } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminEvaluationsComponent } from './admin-evaluations.component';
+import { AdminMovesComponent } from 'src/app/components/admin/admin-moves/admin-moves.component';
+import { AdminTeamsComponent } from 'src/app/components/admin/admin-teams/admin-teams.component';
+import { AdminActionsComponent } from 'src/app/components/admin/admin-actions/admin-actions.component';
+import { AdminDutiesComponent } from 'src/app/components/admin/admin-duties/admin-duties.component';
+import { AdminEvaluationMembershipsComponent } from 'src/app/components/admin/admin-evaluation-memberships/admin-evaluation-memberships/admin-evaluation-memberships.component';
 
 // The global stylesheets make every computed-style lookup slow in jsdom, and
 // user-event's pointer-events check looks one up per ancestor on each click
@@ -50,28 +55,28 @@ const FAST_POINTER = { pointerEventsCheck: PointerEventsCheckLevel.Never };
 
 @Component({ selector: 'app-admin-moves', template: '' })
 class MovesStubComponent {
-  @Input() evaluationId!: string;
-  @Input() canEdit!: boolean;
+  readonly evaluationId = input.required<string>();
+  readonly canEdit = input.required<boolean>();
 }
 @Component({ selector: 'app-admin-teams', template: '' })
 class TeamsStubComponent {
-  @Input() evaluationId!: string;
-  @Input() canEdit!: boolean;
+  readonly evaluationId = input.required<string>();
+  readonly canEdit = input.required<boolean>();
 }
 @Component({ selector: 'app-admin-actions', template: '' })
 class ActionsStubComponent {
-  @Input() selectedEvaluationId!: string;
-  @Input() canEdit!: boolean;
+  readonly selectedEvaluationId = input.required<string>();
+  readonly canEdit = input.required<boolean>();
 }
 @Component({ selector: 'app-admin-duties', template: '' })
 class DutiesStubComponent {
-  @Input() selectedEvaluationId!: string;
-  @Input() canEdit!: boolean;
+  readonly selectedEvaluationId = input.required<string>();
+  readonly canEdit = input.required<boolean>();
 }
 @Component({ selector: 'app-admin-evaluation-memberships', template: '' })
 class EvaluationMembershipsStubComponent {
-  @Input() evaluationId!: string;
-  @Input() embedded!: boolean;
+  readonly evaluationId = input.required<string>();
+  readonly embedded = input.required<boolean>();
 }
 
 const MOVES = [
@@ -144,7 +149,6 @@ async function renderEvaluations(grants: PermissionGrants) {
   const editDialog = matDialogStub();
 
   const rendered = await renderComponent(AdminEvaluationsComponent, {
-    declarations: [AdminEvaluationsComponent],
     imports: [
       MatButtonModule,
       MatCardModule,
@@ -157,11 +161,16 @@ async function renderEvaluations(grants: PermissionGrants) {
       MatSelectModule,
       MatSortModule,
       MatTableModule,
-      MovesStubComponent,
-      TeamsStubComponent,
-      ActionsStubComponent,
-      DutiesStubComponent,
-      EvaluationMembershipsStubComponent,
+    ],
+    childStubs: [
+      { replace: AdminMovesComponent, with: MovesStubComponent },
+      { replace: AdminTeamsComponent, with: TeamsStubComponent },
+      { replace: AdminActionsComponent, with: ActionsStubComponent },
+      { replace: AdminDutiesComponent, with: DutiesStubComponent },
+      {
+        replace: AdminEvaluationMembershipsComponent,
+        with: EvaluationMembershipsStubComponent,
+      },
     ],
     providers: [
       ...permissionDataProviders(grants),
@@ -210,14 +219,14 @@ async function renderEvaluations(grants: PermissionGrants) {
   };
 }
 
-const SECTION_STUBS: Type<{ canEdit: boolean }>[] = [
+const SECTION_STUBS: Type<{ canEdit: InputSignal<boolean> }>[] = [
   MovesStubComponent,
   TeamsStubComponent,
   ActionsStubComponent,
   DutiesStubComponent,
 ];
 const childGates = (child: <T>(type: Type<T>) => T | undefined) =>
-  SECTION_STUBS.map((type) => child(type)?.canEdit);
+  SECTION_STUBS.map((type) => child(type)?.canEdit());
 
 describe('AdminEvaluationsComponent', () => {
   /**
@@ -336,7 +345,7 @@ describe('AdminEvaluationsComponent', () => {
       expect(
         screen.getByText('Memberships', { selector: 'h4' }),
       ).toBeInTheDocument();
-      expect(child(EvaluationMembershipsStubComponent)?.evaluationId).toBe(
+      expect(child(EvaluationMembershipsStubComponent)?.evaluationId()).toBe(
         'e1',
       );
     });
@@ -356,7 +365,7 @@ describe('AdminEvaluationsComponent', () => {
       await expand('Exercise A');
 
       expect(evaluationApi.getEvaluation).toHaveBeenCalledWith('e1');
-      expect(child(MovesStubComponent)?.evaluationId).toBe('e1');
+      expect(child(MovesStubComponent)?.evaluationId()).toBe('e1');
       expect(childGates(child)).toEqual([true, true, true, true]);
 
       await user.click(button('Exercise A', 'Edit Evaluation'));

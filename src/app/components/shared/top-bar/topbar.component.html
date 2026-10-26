@@ -9,17 +9,17 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <span class="margin-auto">
       <a mat-icon-button style="outline: none; background-color: var(--crucible-topbar-text);" [routerLink]="['/']"
         title="Home">
-        <mat-icon svgIcon="crucible-icon-cite"></mat-icon>
+        <mat-icon svgIcon="crucible-icon-cite" />
       </a>
     </span>
-    <span class="view-text">{{ title }}</span>
+    <span class="view-text">{{ title() }}</span>
     @if (teams && team && teams.length > 0) {
     <div class="team-text">Team:</div>
     <b class="team-text">{{ team.name }}</b>
     @if (teams.length > 1) {
     <div>
       <button mat-button class="menu-trigger" [matMenuTriggerFor]="teamMenu" style="outline: none;">
-        <mat-icon class="menu-trigger" fontIcon="mdi-chevron-down"></mat-icon>
+        <mat-icon class="menu-trigger" fontIcon="mdi-chevron-down" />
       </button>
       <mat-menu #teamMenu="matMenu" [overlapTrigger]="false">
         @for (val of teams; track val) {
@@ -36,15 +36,15 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="options-text">
       <button mat-button class="menu-trigger" [matMenuTriggerFor]="menu" style="outline: none;">
         <strong>{{ currentUser.name }}</strong>
-        <mat-icon aria-hidden="false" class="menu-trigger" fontIcon="mdi-chevron-down"></mat-icon>
+        <mat-icon aria-hidden="false" class="menu-trigger" fontIcon="mdi-chevron-down" />
       </button>
       <mat-menu #menu="matMenu" [overlapTrigger]="false">
-        @if (topbarView === TopbarView.CITE_ADMIN) {
+        @if (topbarView() === TopbarView.CITE_ADMIN) {
         <button [routerLink]="['/']" mat-menu-item>
           Exit Administration
         </button>
         }
-        @if (topbarView !== TopbarView.CITE_ADMIN && canViewAdmin) {
+        @if (topbarView() !== TopbarView.CITE_ADMIN && canViewAdmin) {
         <button [routerLink]="['/admin']" mat-menu-item>
           Administration
         </button>

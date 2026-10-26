@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input, output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import {
@@ -13,16 +13,27 @@ import { Title } from '@angular/platform-browser';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 import { takeUntil } from 'rxjs';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
+import { NgClass } from '@angular/common';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
 @Component({
-  selector: 'app-admin-preview',
-  templateUrl: './admin-preview.component.html',
-  styleUrl: './admin-preview.component.scss',
-  standalone: false
+    selector: 'app-admin-preview',
+    templateUrl: './admin-preview.component.html',
+    styleUrl: './admin-preview.component.scss',
+    imports: [MatIconButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatCheckbox, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow, DisplayOrderPipe]
 })
 export class AdminPreviewComponent implements OnDestroy, OnInit {
-  @Input() scoringModelId: string;
-  @Output() closeMe = new EventEmitter<boolean>();
+  matDialog = inject(MatDialog);
+  private titleService = inject(Title);
+  private scoringModelDataService = inject(ScoringModelDataService);
+  private scoringModelQuery = inject(ScoringModelQuery);
+
+  readonly scoringModelId = input<string>(undefined);
+  readonly closeMe = output<boolean>();
   scoringModel: ScoringModel;
   moveNumberList: number[] = [];
   loggedInUserId = '';
@@ -32,15 +43,10 @@ export class AdminPreviewComponent implements OnDestroy, OnInit {
   buttonClass = 'mat-user';
   private unsubscribe$ = new Subject();
 
-  constructor(
-    public matDialog: MatDialog,
-    private titleService: Title,
-    private scoringModelDataService: ScoringModelDataService,
-    private scoringModelQuery: ScoringModelQuery
-  ) {
+  constructor() {
     this.titleService.setTitle('CITE Preview');
     this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(smList => {
-      this.scoringModel = smList.find(m => m.id === this.scoringModelId);
+      this.scoringModel = smList.find(m => m.id === this.scoringModelId());
       if (this.scoringModel && this.scoringModel.scoringCategories.length > 0) {
         let maxValues = this.scoringModel.scoringCategories.map(m => m.moveNumberLastDisplay);
         let maxMoveNumber = maxValues.length > 0 ? Math.max(...maxValues) : 0;
@@ -50,7 +56,7 @@ export class AdminPreviewComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.scoringModelDataService.loadById(this.scoringModelId);
+    this.scoringModelDataService.loadById(this.scoringModelId());
   }
 
   getDisplayedScoringCategories(moveNumber: number): ScoringCategory[] {

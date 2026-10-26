@@ -8,7 +8,7 @@ import {
   UnreadArticlesStore,
 } from './unread-articles.store';
 import { UnreadArticles } from './unread-articles';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
 
@@ -18,8 +18,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class UnreadArticlesQuery extends QueryEntity<UnreadArticlesState> {
-  constructor(protected store: UnreadArticlesStore) {
+  protected store: UnreadArticlesStore;
+
+  constructor() {
+    const store = inject(UnreadArticlesStore);
+
     super(store);
+  
+    this.store = store;
   }
 
   selectById(id: string): Observable<UnreadArticles> {

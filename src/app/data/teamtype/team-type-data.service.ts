@@ -4,7 +4,7 @@
 
 import { TeamTypeStore } from './team-type.store';
 import { TeamTypeQuery } from './team-type.query';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -19,6 +19,12 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
   providedIn: 'root',
 })
 export class TeamTypeDataService {
+  private teamTypeStore = inject(TeamTypeStore);
+  private teamTypeQuery = inject(TeamTypeQuery);
+  private teamTypeService = inject(TeamTypeService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+
   // private _requestedTeamTypeId: string;
   // private _requestedTeamTypeId$ = this.activatedRoute.queryParamMap.pipe(
   //   map((params) => params.get('teamTypeId') || '')
@@ -34,13 +40,9 @@ export class TeamTypeDataService {
   private pageSize: Observable<number>;
   private pageIndex: Observable<number>;
 
-  constructor(
-    private teamTypeStore: TeamTypeStore,
-    private teamTypeQuery: TeamTypeQuery,
-    private teamTypeService: TeamTypeService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {
+  constructor() {
+    const activatedRoute = this.activatedRoute;
+
     this.filterTerm = activatedRoute.queryParamMap.pipe(
       map((params) => params.get('modelterm') || '')
     );

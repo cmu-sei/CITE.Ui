@@ -2,19 +2,16 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  UntypedFormControl,
-  FormGroupDirective,
-  NgForm,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, output } from '@angular/core';
+import { FormBuilder, FormGroup, UntypedFormControl, FormGroupDirective, NgForm, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import {
   MAT_DIALOG_DATA as MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { CrucibleDialogComponent, CrucibleDialogContentDirective } from '@cmusei/crucible-common';
+import { MatFormField, MatLabel, MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class UserErrorStateMatcher implements ErrorStateMatcher {
@@ -31,17 +28,19 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
     selector: 'app-admin-action-edit-dialog',
     templateUrl: './admin-action-edit-dialog.component.html',
     styleUrls: ['./admin-action-edit-dialog.component.scss'],
-    standalone: false
+    imports: [CrucibleDialogComponent, CrucibleDialogContentDirective, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatSelect, MatOption]
 })
 
 export class AdminActionEditDialogComponent {
-  @Output() editComplete = new EventEmitter<any>();
+  data = inject(MAT_DIALOG_DATA);
+  private formBuilder = inject(FormBuilder);
+
+  readonly editComplete = output<any>();
   public form: FormGroup;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private formBuilder: FormBuilder
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.form = this.formBuilder.group({
       description: [data.action.description, Validators.required],
       moveNumber: [

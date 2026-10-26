@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -24,10 +24,11 @@ import { dialogRefStub } from '../../../test-utils/dialog-refs';
 import { matDialogStub } from '../../../test-utils/mat-dialog';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminTeamsComponent } from './admin-teams.component';
+import { AdminTeamMembershipsComponent } from 'src/app/components/admin/admin-team-memberships/admin-team-memberships/admin-team-memberships.component';
 
 @Component({ selector: 'app-admin-team-memberships', template: '' })
 class TeamMembershipsStubComponent {
-  @Input() teamId!: string;
+  readonly teamId = input.required<string>();
 }
 
 const TEAMS: Team[] = [
@@ -58,7 +59,6 @@ async function renderTeams(canEdit: boolean) {
   const editDialog = matDialogStub();
 
   const rendered = await renderComponent(AdminTeamsComponent, {
-    declarations: [AdminTeamsComponent],
     imports: [
       MatButtonModule,
       MatCardModule,
@@ -68,7 +68,12 @@ async function renderTeams(canEdit: boolean) {
       MatInputModule,
       MatProgressSpinnerModule,
       MatSortModule,
-      TeamMembershipsStubComponent,
+    ],
+    childStubs: [
+      {
+        replace: AdminTeamMembershipsComponent,
+        with: TeamMembershipsStubComponent,
+      },
     ],
     componentInputs: { evaluationId: 'e1', canEdit },
     providers: [
@@ -188,6 +193,6 @@ describe('AdminTeamsComponent', () => {
     const memberships = fixture.debugElement.query(
       By.directive(TeamMembershipsStubComponent),
     ).componentInstance as TeamMembershipsStubComponent;
-    expect(memberships.teamId).toBe('t2');
+    expect(memberships.teamId()).toBe('t2');
   });
 });

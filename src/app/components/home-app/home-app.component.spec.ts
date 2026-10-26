@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Component, EventEmitter, Input, NgZone, Output } from '@angular/core';
+import { Component, NgZone, input, output } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -47,36 +47,39 @@ import {
   flush,
 } from '../../test-utils/unhandled-rx-errors';
 import { HomeAppComponent } from './home-app.component';
+import { TopbarComponent } from 'src/app/components/shared/top-bar/topbar.component';
+import { EvaluationInfoComponent } from 'src/app/components/evaluation-info/evaluation-info.component';
+import { DashboardComponent } from 'src/app/components/dashboard/dashboard.component';
 
 @Component({ selector: 'app-topbar', template: '' })
 class TopbarStubComponent {
-  @Input() title?: string;
-  @Input() topbarView?: unknown;
-  @Input() imageFilePath?: string;
-  @Output() urlNavigate = new EventEmitter<string>();
+  readonly title = input<string>(undefined);
+  readonly topbarView = input<unknown>(undefined);
+  readonly imageFilePath = input<string>(undefined);
+  readonly urlNavigate = output<string>();
 }
 @Component({ selector: 'app-evaluation-info', template: '' })
 class EvaluationInfoStubComponent {
-  @Input() showAdminButton!: boolean;
-  @Input() showMoveArrows!: boolean;
-  @Input() teamList!: unknown;
-  @Input() myTeamId!: string;
-  @Input() evaluationList!: unknown;
-  @Input() moveList!: unknown;
-  @Input() scoresheetOnRight!: boolean;
-  @Input() noChanges!: boolean;
-  @Input() selectedSection!: unknown;
-  @Output() nextDisplayedMove = new EventEmitter<unknown>();
-  @Output() previousDisplayedMove = new EventEmitter<unknown>();
-  @Output() nextEvaluationMove = new EventEmitter<unknown>();
-  @Output() changeTeam = new EventEmitter<string>();
-  @Output() changeSection = new EventEmitter<unknown>();
+  readonly showAdminButton = input.required<boolean>();
+  readonly showMoveArrows = input.required<boolean>();
+  readonly teamList = input.required<unknown>();
+  readonly myTeamId = input.required<string>();
+  readonly evaluationList = input.required<unknown>();
+  readonly moveList = input.required<unknown>();
+  readonly scoresheetOnRight = input.required<boolean>();
+  readonly noChanges = input.required<boolean>();
+  readonly selectedSection = input.required<unknown>();
+  readonly nextDisplayedMove = output<unknown>();
+  readonly previousDisplayedMove = output<unknown>();
+  readonly nextEvaluationMove = output<unknown>();
+  readonly changeTeam = output<string>();
+  readonly changeSection = output<unknown>();
 }
 @Component({ selector: 'app-dashboard', template: '' })
 class DashboardStubComponent {
-  @Input() unreadArticles!: unknown;
-  @Input() myTeamId!: string;
-  @Input() noChanges!: boolean;
+  readonly unreadArticles = input.required<unknown>();
+  readonly myTeamId = input.required<string>();
+  readonly noChanges = input.required<boolean>();
 }
 
 const EVALUATION: Evaluation = {
@@ -173,7 +176,6 @@ async function renderHome(
   const { route } = activatedRouteStub(evaluation ? { evaluation } : {});
 
   const rendered = await renderComponent(HomeAppComponent, {
-    declarations: [HomeAppComponent],
     imports: [
       MatButtonModule,
       MatCardModule,
@@ -184,9 +186,11 @@ async function renderHome(
       MatProgressSpinnerModule,
       MatSortModule,
       MatTableModule,
-      TopbarStubComponent,
-      EvaluationInfoStubComponent,
-      DashboardStubComponent,
+    ],
+    childStubs: [
+      { replace: TopbarComponent, with: TopbarStubComponent },
+      { replace: EvaluationInfoComponent, with: EvaluationInfoStubComponent },
+      { replace: DashboardComponent, with: DashboardStubComponent },
     ],
     providers: [
       ...permissionDataProviders(grants),
@@ -209,7 +213,13 @@ async function renderHome(
     rendered.fixture.debugElement.query(
       By.directive(EvaluationInfoStubComponent),
     )?.componentInstance as EvaluationInfoStubComponent | undefined;
-  return { ...rendered, evaluationApi, signalR, gallerySignalR, evaluationInfo };
+  return {
+    ...rendered,
+    evaluationApi,
+    signalR,
+    gallerySignalR,
+    evaluationInfo,
+  };
 }
 
 const adminButton = () =>
@@ -297,10 +307,7 @@ describe('HomeAppComponent', () => {
     ])(
       "starts the Gallery hub $started time(s) with GalleryApiUrl '$url'",
       async ({ url, started }) => {
-        const { gallerySignalR } = await renderHome(
-          {},
-          { galleryApiUrl: url },
-        );
+        const { gallerySignalR } = await renderHome({}, { galleryApiUrl: url });
 
         expect(gallerySignalR.startConnection).toHaveBeenCalledTimes(started);
         expect(gallerySignalR.join).toHaveBeenCalledTimes(started);
@@ -402,7 +409,7 @@ describe('HomeAppComponent', () => {
           { evaluation: 'e1' },
         );
 
-        expect(evaluationInfo()?.showAdminButton).toBe(expected);
+        expect(evaluationInfo()?.showAdminButton()).toBe(expected);
       },
     );
   });

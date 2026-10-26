@@ -13,10 +13,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
         @if (showHeader) {
         <span class="view-buttons" role="group" aria-label="Displayed score">
           <button matButton="outlined" [class.selected]="displaying === 'user'"
-            [attr.aria-pressed]="displaying === 'user'" (click)="selectDisplayedSubmission.emit('user')" [disabled]="myTeamId !== activeTeamId"
+            [attr.aria-pressed]="displaying === 'user'" (click)="selectDisplayedSubmission.emit('user')" [disabled]="myTeamId() !== activeTeamId"
             matTooltip="Your personal score">
             @if (displaying === 'user') {
-            <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>
+            <mat-icon fontIcon="mdi-check" aria-hidden="true" />
             }
             User
           </button>
@@ -24,16 +24,16 @@ project root for license information or contact permission@sei.cmu.edu for full 
             [attr.aria-pressed]="displaying === 'team'" (click)="selectDisplayedSubmission.emit('team')"
             matTooltip="The team's score">
             @if (displaying === 'team') {
-            <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>
+            <mat-icon fontIcon="mdi-check" aria-hidden="true" />
             }
             Team
           </button>
-          @if (!rightSideDisplay) {
+          @if (!rightSideDisplay()) {
           <button matButton="outlined" [class.selected]="displaying === 'team-avg'"
-            [attr.aria-pressed]="displaying === 'team-avg'" (click)="selectDisplayedSubmission.emit('team-avg')" [disabled]="myTeamId !== activeTeamId"
+            [attr.aria-pressed]="displaying === 'team-avg'" (click)="selectDisplayedSubmission.emit('team-avg')" [disabled]="myTeamId() !== activeTeamId"
             matTooltip="The average of all user scores for your team">
             @if (displaying === 'team-avg') {
-            <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>
+            <mat-icon fontIcon="mdi-check" aria-hidden="true" />
             }
             Team Avg
           </button>
@@ -42,7 +42,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             [attr.aria-pressed]="displaying === 'group-avg'" (click)="selectDisplayedSubmission.emit('group-avg')"
             matTooltip="The average of all team scores for your group">
             @if (displaying === 'group-avg') {
-            <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>
+            <mat-icon fontIcon="mdi-check" aria-hidden="true" />
             }
             Group Avg
           </button>
@@ -52,7 +52,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             [attr.aria-pressed]="displaying === 'official'" (click)="selectDisplayedSubmission.emit('official')"
             matTooltip="The official score for this move">
             @if (displaying === 'official') {
-            <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>
+            <mat-icon fontIcon="mdi-check" aria-hidden="true" />
             }
             Official
           </button>
@@ -73,54 +73,54 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <div class="answered">
             <span class="answered-count">Answered {{ counts.answered }} of {{ counts.total }}</span>
             <mat-progress-bar class="answered-bar" mode="determinate" aria-hidden="true"
-              [value]="counts.total ? (100 * counts.answered) / counts.total : 0"></mat-progress-bar>
+              [value]="counts.total ? (100 * counts.answered) / counts.total : 0" />
           </div>
           }
           @if (displayedSubmission.scoreIsAnAverage) {
           <span class="status-chip">
-            <mat-icon fontIcon="mdi-account-multiple-outline" aria-hidden="true"></mat-icon>
+            <mat-icon fontIcon="mdi-account-multiple-outline" aria-hidden="true" />
             Average, read only
           </span>
           }
         </div>
         @if (selectedScoringModel.useSubmit) {
-        @if (myTeamId === activeTeamId) {
+        @if (myTeamId() === activeTeamId) {
         <span class="toolbar-buttons">
           @if (showReopenButton) {
           <span class="status-chip submitted">
-            <mat-icon fontIcon="mdi-check-circle-outline" aria-hidden="true"></mat-icon>
+            <mat-icon fontIcon="mdi-check-circle-outline" aria-hidden="true" />
             Submitted
           </span>
           }
           @if (showModifyControls) {
           <button matButton="outlined" (click)="presetSelections()" matTooltip="Preset selections to the previous move"
-            [disabled]="noChanges">
+            [disabled]="noChanges()">
             Preset
           </button>
           <button matButton="outlined" (click)="clearSelections()" matTooltip="Clear all selections"
-            [disabled]="noChanges">
+            [disabled]="noChanges()">
             Clear
           </button>
           }
           @if (showSubmitButton) {
           <button matButton="filled" (click)="completeSubmission()" matTooltip="Submit completed score"
-            [disabled]="noChanges">
+            [disabled]="noChanges()">
             Submit
           </button>
           }
           @if (showReopenButton) {
           <button matButton="outlined" (click)="activateSubmission()" matTooltip="Reopen to change score"
-            [disabled]="noChanges">
+            [disabled]="noChanges()">
             Reopen
           </button>
           }
         </span>
         }
-        @if (myTeamId !== activeTeamId && !displayedSubmission.scoreIsAnAverage) {
+        @if (myTeamId() !== activeTeamId && !displayedSubmission.scoreIsAnAverage) {
         <span class="toolbar-buttons">
           @let submitted = getSubmissionStatusText() === 'Submitted';
           <span class="status-chip" [class.submitted]="submitted">
-            <mat-icon aria-hidden="true" [fontIcon]="submitted ? 'mdi-check-circle-outline' : 'mdi-circle-outline'"></mat-icon>
+            <mat-icon aria-hidden="true" [fontIcon]="submitted ? 'mdi-check-circle-outline' : 'mdi-circle-outline'" />
             {{ getSubmissionStatusText() }}
           </span>
         </span>
@@ -128,7 +128,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         }
         } @else {
         <div class="empty-state">
-          <mat-icon class="empty-icon" fontIcon="mdi-clipboard-check-outline" aria-hidden="true"></mat-icon>
+          <mat-icon class="empty-icon" fontIcon="mdi-clipboard-check-outline" aria-hidden="true" />
           <h2>No responses required for this move.</h2>
           @if (getNextQuestionMove(); as nextQuestionMove) {
           <p>Questions open in {{ nextQuestionMove }}.</p>
@@ -140,7 +140,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <mat-cell *matCellDef="let scoringCategory" class="category-cell">
         @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
         @let showValues = canSelect && !selectedScoringModel.hideScoresOnScoreSheet;
-        @let canModify = showModifyControls && myTeamId === activeTeamId;
+        @let canModify = showModifyControls && myTeamId() === activeTeamId;
         <mat-card appearance="outlined" class="category-card">
           <div class="category-header">
             <h3 class="category-title">
@@ -166,7 +166,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               <div class="option-row">
                 @if (canSelect && !displayedSubmission.scoreIsAnAverage) {
                 <mat-checkbox class="option-checkbox" [aria-label]="scoringOption.description" [checked]="selected"
-                  [disabled]="noChanges || !showModifyControls || myTeamId !== activeTeamId"
+                  [disabled]="noChanges() || !showModifyControls || myTeamId() !== activeTeamId"
                   [matTooltip]="selectedBy(scoringCategory.id, scoringOption.id)"
                   (change)="toggleOption($event, scoringCategory.id, scoringOption.id)">
                   @if (selectedScoringModel.displayCommentTextBoxes) {
@@ -191,8 +191,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   @if (canModify && !selectedScoringModel.displayCommentTextBoxes) {
                   <button aria-label="Add Comment" mat-icon-button class="small-button"
                     (click)="addComment(addCommenttemplate, scoringOption)" matTooltip="Add Comment"
-                    [disabled]="noChanges">
-                    <mat-icon fontIcon="mdi-comment-plus-outline"></mat-icon>
+                    [disabled]="noChanges()">
+                    <mat-icon fontIcon="mdi-comment-plus-outline" />
                   </button>
                   }
                   @if (showValues) {
@@ -210,7 +210,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               <ul class="comment-list">
                 @for (comment of comments; track comment.id) {
                 <li class="comment">
-                  <mat-icon class="comment-icon" fontIcon="mdi-comment-text-outline" aria-hidden="true"></mat-icon>
+                  <mat-icon class="comment-icon" fontIcon="mdi-comment-text-outline" aria-hidden="true" />
                   <span class="comment-text">
                     {{ comment.comment }}
                     @if (displaying === 'team') {
@@ -220,12 +220,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   @if (canModify) {
                   <button aria-label="Edit Comment" mat-icon-button class="small-button"
                     (click)="editComment(addCommenttemplate, scoringOption, comment)" matTooltip="Edit Comment"
-                    [disabled]="noChanges">
-                    <mat-icon fontIcon="mdi-square-edit-outline"></mat-icon>
+                    [disabled]="noChanges()">
+                    <mat-icon fontIcon="mdi-square-edit-outline" />
                   </button>
                   <button aria-label="Delete Comment" mat-icon-button class="small-button"
-                    (click)="deleteComment(comment)" matTooltip="Delete Comment" [disabled]="noChanges">
-                    <mat-icon fontIcon="mdi-trash-can-outline"></mat-icon>
+                    (click)="deleteComment(comment)" matTooltip="Delete Comment" [disabled]="noChanges()">
+                    <mat-icon fontIcon="mdi-trash-can-outline" />
                   </button>
                   }
                 </li>
@@ -238,7 +238,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2"
                   [ngModel]="optionComments(scoringCategory.id, scoringOption.id)[0]?.comment"
                   (change)="changeComment(scoringCategory.id, scoringOption.id, $event)"
-                  [disabled]="noChanges || (selectedScoringModel.useSubmit && !showSubmitButton)"
+                  [disabled]="noChanges() || (selectedScoringModel.useSubmit && !showSubmitButton)"
                   [attr.aria-label]="scoringOption.description" placeholder="Type your answer"></textarea>
                 @switch (commentSaveStates[scoringOption.id]) {
                 @case ('saving') {
@@ -246,7 +246,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 }
                 @case ('saved') {
                 <mat-hint align="end" class="save-state">
-                  <mat-icon fontIcon="mdi-check" aria-hidden="true"></mat-icon>Saved
+                  <mat-icon fontIcon="mdi-check" aria-hidden="true" />Saved
                 </mat-hint>
                 }
                 @case ('failed') {
@@ -261,20 +261,20 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-card>
       </mat-cell>
     </ng-container>
-    <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']; sticky: true"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']"></mat-row>
+    <mat-header-row *matHeaderRowDef="['scoringCategoryDescription']; sticky: true" />
+    <mat-row *matRowDef="let row; columns: ['scoringCategoryDescription']" />
   </mat-table>
 
   @if (!selectedEvaluation.id || !selectedScoringModel) {
   <div class="empty-state">
-    <mat-icon class="empty-icon" fontIcon="mdi-alert-circle-outline" aria-hidden="true"></mat-icon>
+    <mat-icon class="empty-icon" fontIcon="mdi-alert-circle-outline" aria-hidden="true" />
     <h2>An evaluation has not been properly configured.</h2>
     <p>Please contact your administrator.</p>
   </div>
   }
   @if (selectedEvaluation.id && selectedScoringModel && !activeTeamId) {
   <div class="empty-state">
-    <mat-icon class="empty-icon" fontIcon="mdi-lock-outline" aria-hidden="true"></mat-icon>
+    <mat-icon class="empty-icon" fontIcon="mdi-lock-outline" aria-hidden="true" />
     <h2>You have not been given appropriate access to this application.</h2>
     <p>Please contact your administrator.</p>
   </div>
@@ -296,7 +296,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
     <div crucibleDialogActions>
       <button matButton="outlined" mat-dialog-close>Cancel</button>
-      <button matButton="filled" [mat-dialog-close]="true" [disabled]="noChanges">Save</button>
+      <button matButton="filled" [mat-dialog-close]="true" [disabled]="noChanges()">Save</button>
     </div>
   </crucible-dialog>
 </ng-template>

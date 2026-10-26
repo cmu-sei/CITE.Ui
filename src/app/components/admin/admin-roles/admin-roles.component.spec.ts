@@ -7,6 +7,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { screen } from '@testing-library/angular';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminRolesComponent } from './admin-roles.component';
+import { AdminSystemRolesComponent } from './admin-system-roles/admin-system-roles.component';
+import { AdminScoringModelRolesComponent } from './admin-scoring-model-roles/admin-scoring-model-roles.component';
+import { AdminEvaluationRolesComponent } from './admin-evaluation-roles/admin-evaluation-roles.component';
 
 describe('AdminRolesComponent', () => {
   /**
@@ -16,9 +19,20 @@ describe('AdminRolesComponent', () => {
    */
   it('renders with the default test providers', async () => {
     const { fixture } = await renderComponent(AdminRolesComponent, {
-      declarations: [AdminRolesComponent],
       imports: [MatTabsModule],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      // The component is standalone, so the role tables are left out of its
+      // own imports and allowed as unknown elements on the component itself.
+      configureTestBed: (testBed) =>
+        testBed.overrideComponent(AdminRolesComponent, {
+          remove: {
+            imports: [
+              AdminSystemRolesComponent,
+              AdminScoringModelRolesComponent,
+              AdminEvaluationRolesComponent,
+            ],
+          },
+          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] },
+        }),
     });
 
     expect(fixture.componentInstance).toBeInstanceOf(AdminRolesComponent);

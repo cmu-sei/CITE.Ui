@@ -8,7 +8,7 @@ import {
   EvaluationStore,
 } from './evaluation.store';
 import { Evaluation } from 'src/app/generated/cite.api';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
 
@@ -20,8 +20,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class EvaluationQuery extends QueryEntity<EvaluationState> {
-  constructor(protected store: EvaluationStore) {
+  protected store: EvaluationStore;
+
+  constructor() {
+    const store = inject(EvaluationStore);
+
     super(store);
+  
+    this.store = store;
   }
 
   selectById(id: string): Observable<Evaluation> {

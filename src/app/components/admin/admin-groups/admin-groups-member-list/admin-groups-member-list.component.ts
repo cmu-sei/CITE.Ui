@@ -6,41 +6,43 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 import {
   AfterViewInit,
   Component,
-  EventEmitter,
-  Input,
   OnChanges,
   OnInit,
-  Output,
-  ViewChild,
+  input,
+  output,
+  viewChild
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { GroupMembership, User } from 'src/app/generated/cite.api';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-  selector: 'app-admin-groups-member-list',
-  templateUrl: './admin-groups-member-list.component.html',
-  styleUrls: ['./admin-groups-member-list.component.scss'],
-  standalone: false
+    selector: 'app-admin-groups-member-list',
+    templateUrl: './admin-groups-member-list.component.html',
+    styleUrls: ['./admin-groups-member-list.component.scss'],
+    imports: [MatToolbar, MatToolbarRow, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatIcon, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
 })
 export class AdminGroupsMemberListComponent
   implements OnInit, OnChanges, AfterViewInit
 {
-  @Input()
-  memberships: GroupMembership[];
+  readonly memberships = input<GroupMembership[]>(undefined);
 
-  @Input()
-  users: User[];
+  readonly users = input<User[]>(undefined);
 
-  @Input()
-  canEdit: boolean;
+  readonly canEdit = input<boolean>(undefined);
 
-  @Output()
-  deleteMembership = new EventEmitter<string>();
+  readonly deleteMembership = output<string>();
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  readonly sort = viewChild(MatSort);
+  readonly paginator = viewChild(MatPaginator);
 
   viewColumns = ['name'];
   editColumns = ['actions'];
@@ -54,21 +56,21 @@ export class AdminGroupsMemberListComponent
   ngOnInit(): void {}
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator();
+    this.dataSource.sort = this.sort();
   }
 
   ngOnChanges() {
     this.buildModel();
     this.displayedColumns = this.viewColumns.concat(
-      this.canEdit ? this.editColumns : []
+      this.canEdit() ? this.editColumns : []
     );
   }
 
   buildModel() {
-    this.dataSource.data = this.memberships
+    this.dataSource.data = this.memberships()
       .map((x) => {
-        const user = this.users.find((u) => u.id == x.userId);
+        const user = this.users().find((u) => u.id == x.userId);
 
         return {
           membership: x,

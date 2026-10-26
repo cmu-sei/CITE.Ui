@@ -25,7 +25,7 @@ import { MoveStore } from '../../data/move/move.store';
 import { TeamStore } from '../../data/team/team.store';
 import { TeamMembershipDataService } from '../../data/team/team-membership-data.service';
 import { UserDataService } from '../../data/user/user-data.service';
-import { Section } from '../home-app/home-app.component';
+import { Section } from '../home-app/section';
 import {
   PermissionGrants,
   permissionDataProviders,

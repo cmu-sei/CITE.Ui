@@ -2,29 +2,30 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, inject, input } from '@angular/core';
 import { ScoringModel } from 'src/app/generated/cite.api';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-right-side-iframe',
     templateUrl: './right-side-iframe.component.html',
     styleUrls: ['./right-side-iframe.component.scss'],
-    standalone: false
+    imports: [NgClass]
 })
 export class RightSideIframeComponent implements OnDestroy {
-  @Input() hideTopbar: boolean;
+  private sanitizer = inject(DomSanitizer);
+  private scoringModelQuery = inject(ScoringModelQuery);
+
+  readonly hideTopbar = input<boolean>(undefined);
   safeUrl: SafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
   private unsubscribe$ = new Subject();
 
 
-  constructor(
-    private sanitizer: DomSanitizer,
-    private scoringModelQuery: ScoringModelQuery
-  ) {
+  constructor() {
     // observe active evaluation
     (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
       if (active) {
@@ -34,7 +35,7 @@ export class RightSideIframeComponent implements OnDestroy {
   }
 
   getTopClass() {
-    if (this.hideTopbar) {
+    if (this.hideTopbar()) {
       return 'top-level-container in-player'
     } else {
       return 'top-level-container out-of-player'

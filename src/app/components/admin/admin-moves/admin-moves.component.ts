@@ -2,27 +2,40 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, input } from '@angular/core';
 import { Move } from 'src/app/generated/cite.api/model/models';
 import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
-import { Sort } from '@angular/material/sort';
+import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminMoveEditDialogComponent } from '../admin-move-edit-dialog/admin-move-edit-dialog.component';
-import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIcon } from '@angular/material/icon';
+
+import { MatIconButton } from '@angular/material/button';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-admin-moves',
     templateUrl: './admin-moves.component.html',
     styleUrls: ['./admin-moves.component.scss'],
-    standalone: false
+    imports: [MatIcon, MatIconButton, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatAccordion, MatSort, MatSortHeader, MatExpansionPanel, MatExpansionPanelHeader, MatCard, MatProgressSpinner]
 })
 export class AdminMovesComponent implements OnInit, OnDestroy {
-  @Input() evaluationId: string;
-  @Input() canEdit: boolean;
+  private settingsService = inject(ComnSettingsService);
+  private moveDataService = inject(MoveDataService);
+  private moveQuery = inject(MoveQuery);
+  private dialogService = inject(CrucibleDialogService);
+  private dialog = inject(MatDialog);
+
+  readonly evaluationId = input<string>(undefined);
+  readonly canEdit = input<boolean>(undefined);
   filterControl: UntypedFormControl = this.moveDataService.filterControl;
   filterString = '';
   sort: Sort = {active: 'moveNumber', direction: 'asc'};
@@ -33,13 +46,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   topbarColor = '#ef3a47';
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private moveDataService: MoveDataService,
-    private moveQuery: MoveQuery,
-    private dialogService: CrucibleDialogService,
-    private dialog: MatDialog
-  ) {
+  constructor() {
     this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
       this.moveList = moves;
       this.sortedMoves = this.getSortedMoves(this.getFilteredMoves(this.moveList));
@@ -53,13 +60,13 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.moveDataService.loadByEvaluation(this.evaluationId);
+    this.moveDataService.loadByEvaluation(this.evaluationId());
   }
 
   addOrEditMove(move: Move) {
     if (!move) {
       move = {
-        evaluationId: this.evaluationId,
+        evaluationId: this.evaluationId(),
         description: '',
         moveNumber: this.moveList.length !== 0 ? this.moveList.length : 0,
         situationDescription: '',
@@ -74,7 +81,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
       minWidth: '900px',
       data: {
         move: move,
-        canEdit: this.canEdit
+        canEdit: this.canEdit()
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -116,7 +123,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
     let filteredMoves: Move[] = [];
     if (moves) {
       moves.forEach(se => {
-        if (se.evaluationId === this.evaluationId) {
+        if (se.evaluationId === this.evaluationId()) {
           filteredMoves.push({... se});
         }
       });

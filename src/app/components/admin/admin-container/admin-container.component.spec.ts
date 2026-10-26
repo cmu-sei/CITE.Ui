@@ -2,14 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  NgZone,
-  Output,
-  Type,
-} from '@angular/core';
+import { Component, NgZone, Type, input, output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -42,6 +35,14 @@ import { ApiStub, BodyOverload } from '../../../test-utils/api-stub';
 import { activatedRouteStub } from '../../../test-utils/activated-route';
 import { permissionDataProviders } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
+import { TopbarComponent } from 'src/app/components/shared/top-bar/topbar.component';
+import { AdminEvaluationsComponent } from 'src/app/components/admin/admin-evaluations/admin-evaluations.component';
+import { AdminScoringModelsComponent } from 'src/app/components/admin/admin-scoring-models/admin-scoring-models.component';
+import { AdminSubmissionsComponent } from 'src/app/components/admin/admin-submissions/admin-submissions.component';
+import { AdminTeamTypesComponent } from 'src/app/components/admin/admin-teamtypes/admin-teamtypes.component';
+import { AdminUsersComponent } from 'src/app/components/admin/admin-users/admin-users.component';
+import { AdminRolesComponent } from 'src/app/components/admin/admin-roles/admin-roles.component';
+import { AdminGroupsComponent } from 'src/app/components/admin/admin-groups/admin-groups.component';
 import {
   captureUnhandledRejections,
   captureUnhandledRxErrors,
@@ -50,15 +51,15 @@ import {
 
 @Component({ selector: 'app-topbar', template: '' })
 class TopbarStubComponent {
-  @Input() title?: string;
-  @Input() topbarView?: TopbarView;
-  @Input() sidenav?: unknown;
-  @Output() sidenavToggle = new EventEmitter<boolean>();
+  readonly title = input<string>(undefined);
+  readonly topbarView = input<TopbarView>(undefined);
+  readonly sidenav = input<unknown>(undefined);
+  readonly sidenavToggle = output<boolean>();
 }
 
 @Component({ selector: 'app-admin-evaluations', template: '' })
 class AdminEvaluationsStubComponent {
-  @Input() evaluationList!: Evaluation[];
+  readonly evaluationList = input.required<Evaluation[]>();
 }
 
 @Component({ selector: 'app-admin-scoring-models', template: '' })
@@ -113,21 +114,31 @@ async function renderAdminContainer(
   );
 
   const rendered = await renderComponent(AdminContainerComponent, {
-    declarations: [AdminContainerComponent],
     imports: [
       MatButtonModule,
       MatIconModule,
       MatListModule,
       MatSidenavModule,
       MatToolbarModule,
-      TopbarStubComponent,
-      AdminEvaluationsStubComponent,
-      AdminScoringModelsStubComponent,
-      AdminSubmissionsStubComponent,
-      AdminTeamTypesStubComponent,
-      AdminUsersStubComponent,
-      AdminRolesStubComponent,
-      AdminGroupsStubComponent,
+    ],
+    childStubs: [
+      { replace: TopbarComponent, with: TopbarStubComponent },
+      {
+        replace: AdminEvaluationsComponent,
+        with: AdminEvaluationsStubComponent,
+      },
+      {
+        replace: AdminScoringModelsComponent,
+        with: AdminScoringModelsStubComponent,
+      },
+      {
+        replace: AdminSubmissionsComponent,
+        with: AdminSubmissionsStubComponent,
+      },
+      { replace: AdminTeamTypesComponent, with: AdminTeamTypesStubComponent },
+      { replace: AdminUsersComponent, with: AdminUsersStubComponent },
+      { replace: AdminRolesComponent, with: AdminRolesStubComponent },
+      { replace: AdminGroupsComponent, with: AdminGroupsStubComponent },
     ],
     providers: [
       ...permissionDataProviders({ system: overrides.system ?? [] }),
@@ -263,7 +274,7 @@ describe('AdminContainerComponent', () => {
       expect(evaluationApi.getEvaluations).toHaveBeenCalled();
       expect(evaluationApi.getMyEvaluations).not.toHaveBeenCalled();
       expect(
-        evaluationsSection(fixture).evaluationList.map((e) => e.id),
+        evaluationsSection(fixture).evaluationList().map((e) => e.id),
       ).toEqual(['e-all']);
     });
 
@@ -279,7 +290,7 @@ describe('AdminContainerComponent', () => {
       await fixture.whenStable();
       expect(evaluationApi.getEvaluations).not.toHaveBeenCalled();
       expect(
-        evaluationsSection(fixture).evaluationList.map((e) => e.id),
+        evaluationsSection(fixture).evaluationList().map((e) => e.id),
       ).toEqual(['e-mine']);
     });
 
