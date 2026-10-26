@@ -302,6 +302,60 @@
   }
 }
 
+// how many teams or users selected an option, in the Aggregate Report
+.selected-count {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 22px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border: 1px solid var(--report-border);
+  border-radius: 11px;
+  color: var(--report-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+
+  .selected & {
+    border-color: var(--report-accent);
+    background-color: var(--report-accent);
+    color: var(--report-on-accent);
+    font-weight: 600;
+  }
+}
+
+// lines up with the option text, past the count badge
+.selected-by {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin: 4px 0 2px 34px;
+  font-size: 13px;
+}
+
+.selected-by-label {
+  color: var(--report-muted);
+}
+
+.name-chip {
+  padding: 0 8px;
+  border: 1px solid var(--report-border);
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .modifier-heading {
   margin: 6px 8px 0;
   padding-top: 8px;
@@ -403,7 +457,8 @@
   }
 
   .option-list,
-  .comment-list {
+  .comment-list,
+  .selected-by {
     margin-left: 0;
   }
 
@@ -465,7 +520,9 @@
     border-color: #000000;
   }
 
-  .selected .option-value {
+  .selected .option-value,
+  .selected .selected-count {
+    border-color: #000000;
     border-width: 2px;
     background-color: transparent;
     color: #000000;

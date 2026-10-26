@@ -167,6 +167,19 @@ export class AggregateComponent implements OnInit, OnDestroy {
     return [];
   }
 
+  // the team or user a submission belongs to, as named in the report
+  submissionName(submission: PopulatedSubmission) {
+    return this.displaying === 'team' ? this.getTeamShortName(submission.teamId) : this.getUserName(submission.userId);
+  }
+
+  // who selected an option, across all of the move's submissions
+  optionSelectors(submissions: PopulatedSubmission[], scoringCategoryId: string, scoringOptionId: string) {
+    return submissions
+      .filter(submission => this.isSelected(submission, scoringCategoryId, scoringOptionId))
+      .map(submission => this.submissionName(submission))
+      .sort((a, b) => a.localeCompare(b));
+  }
+
   // every comment on an option, across all of the move's submissions
   moveOptionComments(submissions: PopulatedSubmission[], scoringCategoryId: string, scoringOptionId: string) {
     return submissions.reduce<SubmissionComment[]>((comments, submission) =>

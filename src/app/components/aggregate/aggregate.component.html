@@ -48,6 +48,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </div>
     </div>
     @for (scoringCategory of getDisplayedScoringCategories(move.moveNumber) | displayOrder; track scoringCategory.id) {
+    @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
     @let showValues = !selectedScoringModel()?.hideScoresOnScoreSheet && scoringCategory.calculationMethodId != 0;
     <div class="category">
       <div class="category-header">
@@ -62,8 +63,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
         @if (scoringOption.isModifier && !scoringOptions[optionIndex - 1]?.isModifier) {
         <li class="modifier-heading">Modifiers</li>
         }
-        <li class="option">
+        @let selectors = canSelect ? optionSelectors(moveSubmissions, scoringCategory.id, scoringOption.id) : [];
+        <li class="option" [class.selected]="selectors.length > 0">
           <div class="option-row">
+            @if (canSelect) {
+            <span class="selected-count" aria-hidden="true">{{ selectors.length }}</span>
+            <span class="visually-hidden">{{ selectors.length }} of {{ moveSubmissions.length }} selected:</span>
+            }
             <span class="option-text">
               @if (selectedScoringModel().displayCommentTextBoxes) {
               <span class="question-number">{{ optionIndex + 1 }}.</span>
@@ -74,15 +80,21 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <span class="option-value">{{ scoringOption.value }}</span>
             }
           </div>
+          @if (selectors.length) {
+          <div class="selected-by">
+            <span class="selected-by-label">Selected by</span>
+            @for (name of selectors; track $index) {
+            <span class="name-chip">{{ name }}</span>
+            }
+          </div>
+          }
           @if (selectedScoringModel().displayCommentTextBoxes) {
           @if (moveSubmissions.length) {
           <ul class="response-list">
             @for (submission of moveSubmissions; track submission.id) {
             @let answer = optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment;
             <li class="response">
-              <span class="response-name">
-                {{ displaying === 'team' ? getTeamShortName(submission.teamId) : getUserName(submission.userId) }}
-              </span>
+              <span class="response-name">{{ submissionName(submission) }}</span>
               @if (answer) {
               <span class="response-text">{{ answer }}</span>
               } @else {

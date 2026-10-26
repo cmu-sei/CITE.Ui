@@ -178,6 +178,32 @@ describe('AggregateComponent', () => {
   });
 
   /**
+   * Verifies: each option shows how many users or teams selected it and who they were.
+   * Interacts with: the selected-count badge and Selected by names, the Team view button.
+   * Data: move 0 has no submissions; Alice's and team BLU's move 1 submissions both select Minimal.
+   */
+  it('shows who selected each option', async () => {
+    const { user } = await renderAggregate();
+    // one per move, in move order
+    const selections = () =>
+      screen
+        .getAllByText(/of \d+ selected/)
+        .map((el) => el.textContent?.trim());
+    const selectedBy = () =>
+      Array.from(document.querySelectorAll('.selected-by .name-chip')).map(
+        (chip) => chip.textContent?.trim(),
+      );
+
+    expect(selections()).toEqual(['0 of 0 selected:', '1 of 1 selected:']);
+    expect(selectedBy()).toEqual(['Alice']);
+
+    await user.click(viewButton('Team'));
+
+    expect(selections()).toEqual(['0 of 0 selected:', '1 of 1 selected:']);
+    expect(selectedBy()).toEqual(['BLU']);
+  });
+
+  /**
    * Verifies: the report opens on the saved Team view, so the choice made on the scoresheet (or before printing) is kept.
    * Interacts with: UIDataService.getSubmissionType, the selectDisplayedSubmission output.
    * Data: saved type team; the team submission's comment is Payroll offline.
