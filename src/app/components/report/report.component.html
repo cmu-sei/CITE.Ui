@@ -53,8 +53,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
     @for (scoringCategory of getDisplayedScoringCategories(submission.moveNumber) | displayOrder; track scoringCategory.id) {
     @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
-    @let showScores = !selectedScoringModel?.hideScoresOnScoreSheet && scoringCategory.isScored;
-    @let showValues = canSelect && showScores;
+    <!-- without selectable options a category scores nothing, even with an equation (new ones default to {max}) -->
+    @let showScores = canSelect && !selectedScoringModel?.hideScoresOnScoreSheet && scoringCategory.isScored;
     <div class="category">
       <div class="category-header">
         <h4 class="category-title">
@@ -78,9 +78,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <li class="option" [class.selected]="selected">
           <div class="option-row">
             @if (canSelect) {
+            <!-- focusable when it has a tooltip, so keyboard users can open it too -->
+            @let selectedByText = selectedBy(submission, scoringCategory.id, scoringOption.id);
             <span class="option-check" role="checkbox" aria-readonly="true" [attr.aria-checked]="selected"
               [attr.aria-label]="scoringOption.description"
-              [matTooltip]="selectedBy(submission, scoringCategory.id, scoringOption.id)">
+              [matTooltip]="selectedByText" [attr.tabindex]="selectedByText ? 0 : null">
               <mat-icon aria-hidden="true" [fontIcon]="selected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'" />
             </span>
             }
@@ -90,7 +92,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
               }
               {{ scoringOption.description }}
             </span>
-            @if (showValues && !scoringOption.isModifier) {
+            @if (showScores && !scoringOption.isModifier) {
             <span class="option-value">{{ scoringOption.value }}</span>
             }
           </div>

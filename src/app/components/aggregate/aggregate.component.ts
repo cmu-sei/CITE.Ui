@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnDestroy, OnInit, inject, input, output } from '@angular/core';
+import { Component, OnDestroy, OnInit, effect, inject, input, output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -94,13 +94,21 @@ export class AggregateComponent implements OnInit, OnDestroy {
       .subscribe(users => {
         this.userList = users;
       });
+    // observing another team, only the team submissions can be shown, whatever
+    // view was saved (Group Avg and Official are not switched to Team on the
+    // home page); the saved view is left alone
+    effect(() => {
+      if (this.observing() && this.displaying !== 'team') {
+        this.toggleDisplaying();
+      }
+    });
   }
 
   ngOnInit() {
     this.currentMoveNumber = this.selectedEvaluation().currentMoveNumber;
     const selectedEvaluation = this.selectedEvaluation();
-    this.displaying = this.uiDataService.getSubmissionType(selectedEvaluation.id)?.toLowerCase();
-    this.displaying = this.displaying && this.displaying === 'team' ? 'team' : 'user';
+    const savedType = this.uiDataService.getSubmissionType(selectedEvaluation.id)?.toLowerCase();
+    this.displaying = this.observing() || savedType === 'team' ? 'team' : 'user';
     this.teamList$ = this.teamService.getEvaluationTeams(selectedEvaluation.id);
     this.submissionList$ = this.submissionService.getByEvaluation(selectedEvaluation.id);
     // observe the vital information and process it when it is all present

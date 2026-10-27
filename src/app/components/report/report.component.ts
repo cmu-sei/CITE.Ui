@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, inject, input, output } from '@angular/core';
+import { Component, Input, OnDestroy, effect, inject, input, output } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -158,6 +158,14 @@ export class ReportComponent implements OnDestroy {
         );
         this.selectDisplayedSubmissions();
       });
+    // observing another team, only the team responses can be shown, whatever
+    // view was saved (Group Avg and Official are not switched to Team on the
+    // home page); the saved view is left alone
+    effect(() => {
+      if (this.observing() && this.displaying !== 'team') {
+        this.toggleDisplaying();
+      }
+    });
   }
 
   categoryScore(submission: PopulatedSubmission, scoringCategoryId: string) {

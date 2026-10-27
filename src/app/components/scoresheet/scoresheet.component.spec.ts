@@ -661,9 +661,9 @@ describe('ScoresheetComponent', () => {
 
   describe('category scores and option values', () => {
     /**
-     * Verifies: a scored category shows its score beside the title and its option values; an unscored one shows neither; with scores hidden on the scoresheet, neither shows on any category.
-     * Interacts with: categoryScore(), the category header's score badge, the showScores and showValues checks, ScoringCategory.isScored.
-     * Data: per row, hideScoresOnScoreSheet; category Scored (isScored, score 30) with options worth 10 and 20; category Unscored (not isScored) with an option worth 5.
+     * Verifies: a scored category shows its score beside the title and its option values; an unscored one shows neither, and nor does a discussion question (scored, but no selectable options); with scores hidden on the scoresheet, neither shows on any category.
+     * Interacts with: categoryScore(), the category header's score badge, the showScores check, ScoringCategory.isScored and scoringOptionSelection.
+     * Data: per row, hideScoresOnScoreSheet; category Scored (isScored, score 30) with options worth 10 and 20; category Unscored (not isScored) with an option worth 5; category Discussion (isScored, selection None) with an option worth 0.
      */
     it.each([
       { hideScores: false, scoredScore: 'Score 30', scoredValues: ['10', '20'] },
@@ -692,6 +692,14 @@ describe('ScoresheetComponent', () => {
                   { id: 'opt-3', scoringCategoryId: 'unscored', description: 'Notify legal', displayOrder: 1, value: 5 },
                 ],
               },
+              {
+                ...category('discussion', 0, 9, 3),
+                isScored: true,
+                scoringOptionSelection: ScoringOptionSelection.None,
+                scoringOptions: [
+                  { id: 'opt-4', scoringCategoryId: 'discussion', description: 'Discuss the situation report', displayOrder: 1, value: 0 },
+                ],
+              },
             ],
           },
           activeSubmission: {
@@ -712,8 +720,8 @@ describe('ScoresheetComponent', () => {
             ],
           },
         });
-  
-        const [scored, unscored] = Array.from(document.querySelectorAll('.category-card'));
+
+        const [scored, unscored, discussion] = Array.from(document.querySelectorAll('.category-card'));
         const score = (card: Element) =>
           card.querySelector('.category-score')?.textContent?.replace(/\s+/g, ' ').trim() ?? null;
         const values = (card: Element) =>
@@ -722,8 +730,47 @@ describe('ScoresheetComponent', () => {
         expect(values(scored)).toEqual(scoredValues);
         expect(score(unscored)).toBeNull();
         expect(values(unscored)).toEqual([]);
+        expect(score(discussion)).toBeNull();
+        expect(values(discussion)).toEqual([]);
       },
     );
+  });
+
+  describe('average view', () => {
+    /**
+     * Verifies: an average shows each option's selection count in a badge that keyboard users can focus to read its tooltip.
+     * Interacts with: selectedCount(), the selected-count badge and its MatTooltip description.
+     * Data: an averaged submission; one Multiple category whose option Isolate the host was selected twice.
+     */
+    it('shows a focusable selection count on each option', async () => {
+      await renderScoresheet({
+        model: {
+          scoringCategories: [
+            {
+              ...category('cat-1', 0, 9, 1),
+              scoringOptionSelection: ScoringOptionSelection.Multiple,
+              scoringOptions: [
+                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+              ],
+            },
+          ],
+        },
+        activeSubmission: {
+          scoreIsAnAverage: true,
+          submissionCategories: [
+            {
+              scoringCategoryId: 'cat-1',
+              submissionOptions: [{ id: 'so-1', scoringOptionId: 'opt-1', selectedCount: 2 }],
+            },
+          ],
+        },
+      });
+
+      const count = document.querySelector('.selected-count') as HTMLElement;
+      expect(count).toHaveTextContent('2');
+      expect(count).toHaveAttribute('tabindex', '0');
+      expect(count).toHaveAccessibleDescription('Number of selections');
+    });
   });
 
   describe('comment boxes', () => {

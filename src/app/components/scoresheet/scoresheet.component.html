@@ -139,8 +139,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <!-- one card per scoring category -->
       <mat-cell *matCellDef="let scoringCategory" class="category-cell">
         @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
-        @let showScores = !selectedScoringModel.hideScoresOnScoreSheet && scoringCategory.isScored;
-        @let showValues = canSelect && showScores;
+        <!-- without selectable options a category scores nothing, even with an equation (new ones default to {max}) -->
+        @let showScores = canSelect && !selectedScoringModel.hideScoresOnScoreSheet && scoringCategory.isScored;
         @let canModify = showModifyControls && myTeamId() === activeTeamId;
         <mat-card appearance="outlined" class="category-card">
           <div class="category-header">
@@ -182,8 +182,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 </mat-checkbox>
                 } @else if (canSelect) {
                 @let count = selectedCount(scoringCategory.id, scoringOption.id);
+                <!-- focusable so keyboard users can open the tooltip too -->
                 <span class="selected-count" [class.has-selections]="count > 0"
-                  matTooltip="Number of selections">{{ count }}</span>
+                  matTooltip="Number of selections" tabindex="0">{{ count }}</span>
                 <span class="option-text">{{ scoringOption.description }}</span>
                 } @else {
                 <span class="option-text">
@@ -201,7 +202,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                     <mat-icon fontIcon="mdi-comment-plus-outline" />
                   </button>
                   }
-                  @if (showValues) {
+                  @if (showScores) {
                   @if (scoringOption.isModifier) {
                   <span class="option-value spacer" aria-hidden="true"></span>
                   } @else {

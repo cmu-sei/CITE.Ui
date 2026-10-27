@@ -213,16 +213,30 @@ describe('AggregateComponent', () => {
   });
 
   /**
-   * Verifies: while observing another team, User is disabled as it is on the scoresheet.
-   * Interacts with: the observing input, the User view button.
-   * Data: observing true; the saved view is team, as the home page sets when observing.
+   * Verifies: while observing another team, User is disabled as it is on the scoresheet and the report opens on team submissions, whatever view was saved, without changing it.
+   * Interacts with: the observing input, the User and Team view buttons, the selectDisplayedSubmission output.
+   * Data: observing true; per row, the saved view (the home page switches only User and Team Avg to Team).
    */
-  it('disables User while observing another team', async () => {
-    await renderAggregate('team', { observing: true });
+  it.each(['team', 'group-avg', 'official', 'user'])(
+    'opens on Team with User disabled while observing another team (saved view: %s)',
+    async (savedType) => {
+      const { selectDisplayedSubmission } = await renderAggregate(savedType, {
+        observing: true,
+      });
 
-    expect(viewButton('User').closest('button')).toBeDisabled();
-    expect(viewButton('Team').closest('button')).toBeEnabled();
-  });
+      expect(
+        screen.getByText(/Submissions Report for Ransomware exercise/, {
+          selector: 'h2',
+        }),
+      ).toHaveTextContent('Team Submissions Report for Ransomware exercise');
+      expect(viewButton('Team').closest('button')).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      );
+      expect(viewButton('User').closest('button')).toBeDisabled();
+      expect(selectDisplayedSubmission).not.toHaveBeenCalled();
+    },
+  );
 
   /**
    * Verifies: option values show on a scored category, not on an unscored one, and not on a scored one that takes no selections, as on the scoresheet.

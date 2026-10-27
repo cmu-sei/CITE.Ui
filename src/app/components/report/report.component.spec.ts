@@ -75,6 +75,7 @@ const selecting = (
         {
           scoringOptionId: optionId,
           isSelected: true,
+          modifiedBy: 'u1',
           submissionComments: [comment],
         },
       ],
@@ -219,8 +220,8 @@ describe('ReportComponent', () => {
   });
 
   /**
-   * Verifies: a scored category shows its score and option values; an unscored one shows neither; a scored one that takes no selections shows its score but no values, as on the scoresheet.
-   * Interacts with: categoryScore(), the category header's Score chip, the showScores and showValues checks, ScoringCategory.isScored.
+   * Verifies: a scored category shows its score and option values; an unscored one shows neither; a scored one that takes no selections (a discussion question) shows neither, as on the scoresheet.
+   * Interacts with: categoryScore(), the category header's Score chip, the showScores check, ScoringCategory.isScored.
    * Data: per row, isScored and the selection on Functional impact; Alice's category score is 10; options worth 10 and 50.
    */
   it.each<{
@@ -234,7 +235,7 @@ describe('ReportComponent', () => {
     {
       isScored: true,
       selection: ScoringOptionSelection.None,
-      categoryScore: ['Score 10'],
+      categoryScore: [],
       values: [],
     },
   ])(
@@ -250,6 +251,24 @@ describe('ReportComponent', () => {
       expect(texts('.option-value')).toEqual(values);
     },
   );
+
+  /**
+   * Verifies: on the team responses each selection names who made it, in a tooltip keyboard users can open by focusing the checkbox; the user's own responses have no tooltip, so nothing extra to focus.
+   * Interacts with: selectedBy(), the read-only checkbox's tabindex and MatTooltip description, the Team view button.
+   * Data: Alice selected Minimal on her submission and Significant on the team's.
+   */
+  it('makes the Selected by tooltip reachable by keyboard on the team responses', async () => {
+    const { user } = await renderReport();
+
+    expect(screen.getByLabelText('Minimal')).not.toHaveAttribute('tabindex');
+
+    await user.click(viewButton('Team'));
+
+    const significant = screen.getByLabelText('Significant');
+    expect(significant).toHaveAttribute('tabindex', '0');
+    expect(significant).toHaveAccessibleDescription('Selected by Alice');
+    expect(screen.getByLabelText('Minimal')).not.toHaveAttribute('tabindex');
+  });
 
   /**
    * Verifies: team comments show their author; the user's own comments do not.
@@ -271,16 +290,25 @@ describe('ReportComponent', () => {
   });
 
   /**
-   * Verifies: while observing another team, User is disabled as it is on the scoresheet.
-   * Interacts with: the observing input, the User view button.
-   * Data: observing true; the saved view is team, as the home page sets when observing.
+   * Verifies: while observing another team, User is disabled as it is on the scoresheet and the report opens on the team's responses, whatever view was saved, without changing it.
+   * Interacts with: the observing input, the User and Team view buttons, the selectDisplayedSubmission output.
+   * Data: observing true; per row, the saved view (the home page switches only User and Team Avg to Team); the active team is BLU.
    */
-  it('disables User while observing another team', async () => {
-    await renderReport('team', { observing: true });
+  it.each(['team', 'group-avg', 'official', 'user'])(
+    'opens on Team with User disabled while observing another team (saved view: %s)',
+    async (savedType) => {
+      const { selectDisplayedSubmission } = await renderReport(savedType, {
+        observing: true,
+      });
 
-    expect(viewButton('User').closest('button')).toBeDisabled();
-    expect(viewButton('Team').closest('button')).toBeEnabled();
-  });
+      expect(
+        screen.getByText(/Responses for Ransomware exercise/, { selector: 'h2' }),
+      ).toHaveTextContent("BLU's Responses for Ransomware exercise");
+      expect(viewButton('Team').closest('button')).toHaveAttribute('aria-pressed', 'true');
+      expect(viewButton('User').closest('button')).toBeDisabled();
+      expect(selectDisplayedSubmission).not.toHaveBeenCalled();
+    },
+  );
 
   /**
    * Verifies: the report opens on the saved view, so Team chosen on the scoresheet (or before printing) is still shown.
