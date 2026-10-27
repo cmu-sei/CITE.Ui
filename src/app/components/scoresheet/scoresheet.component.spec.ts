@@ -695,6 +695,52 @@ describe('ScoresheetComponent', () => {
       });
       expect(submissionApi.removeSubmissionComment).not.toHaveBeenCalled();
     });
+
+    /**
+     * Verifies: the comment dialog is titled "Add Comment" from Add Comment and "Edit Comment" from Edit Comment.
+     * Interacts with: the Add/Edit Comment buttons by label, the real MatDialog opening the comment template.
+     * Data: EditTeamScore on t1; option 'Isolate the host' with comment c1 'Done at noon'; per row, the button clicked.
+     */
+    it.each(['Add Comment', 'Edit Comment'])(
+      'titles the comment dialog %s',
+      async (button) => {
+        const { user } = await renderScoresheet({
+          model: {
+            scoringCategories: [
+              {
+                ...category('cat-1', 0, 9, 1),
+                scoringOptionSelection: ScoringOptionSelection.Single,
+                scoringOptions: [
+                  { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+                ],
+              },
+            ],
+          },
+          activeSubmission: {
+            submissionCategories: [
+              {
+                scoringCategoryId: 'cat-1',
+                submissionOptions: [
+                  {
+                    id: 'so-1',
+                    scoringOptionId: 'opt-1',
+                    isSelected: false,
+                    submissionComments: [{ id: 'c1', comment: 'Done at noon' }],
+                  },
+                ],
+              },
+            ],
+          },
+          teamClaims: [{ teamId: 't1', permissions: [TeamPermission.EditTeamScore] }],
+        });
+
+        await user.click(screen.getAllByLabelText(button)[0]);
+
+        expect(
+          await screen.findByRole('heading', { name: button }),
+        ).toBeVisible();
+      },
+    );
   });
 
   describe('comment boxes', () => {

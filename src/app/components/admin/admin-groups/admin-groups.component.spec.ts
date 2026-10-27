@@ -166,8 +166,28 @@ describe('AdminGroupsComponent', () => {
       table().getByRole('button', { description: 'Add New Group' }),
     );
 
-    expect(nameDialog.componentInstance['title']).toBe('Create New Group?');
+    expect(nameDialog.componentInstance['title']).toBe('Add Group');
     expect(groupApi.createGroup).toHaveBeenCalledWith({ name: 'Coordinators' });
+  });
+
+  /**
+   * Verifies: Rename opens the name dialog titled with the type and saves the entered name.
+   * Interacts with: matDialogStub (afterClosed answers a name), GroupService.updateGroup stub.
+   * Data: system [ManageGroups]; Responders renamed to 'Coordinators'.
+   */
+  it('renames a group in the Rename Group dialog', async () => {
+    const { groupApi, nameDialog, row, user } = await renderGroups([
+      SystemPermission.ManageGroups,
+    ]);
+    await user.click(
+      within(row('Responders')).getByRole('button', { description: 'Rename' }),
+    );
+
+    expect(nameDialog.componentInstance['title']).toBe('Rename Group');
+    expect(groupApi.updateGroup).toHaveBeenCalledWith('g2', {
+      id: 'g2',
+      name: 'Coordinators',
+    });
   });
 
   /**
