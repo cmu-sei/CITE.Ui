@@ -170,6 +170,11 @@ describe('AdminTeamTypesComponent', () => {
     fixture.detectChanges();
 
     expect(confirm).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Team Type',
+      message: 'Are you sure that you want to delete Contractor?',
+      confirmText: 'Delete',
+    });
     expect(teamTypeApi.deleteTeamType).toHaveBeenCalledWith('tt2');
     expect(
       screen.queryByText('Contractor', { selector: 'td' }),

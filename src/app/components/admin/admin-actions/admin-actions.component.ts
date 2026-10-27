@@ -203,8 +203,9 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
   deleteActionRequest(action: Action) {
     this.dialogService
       .confirm({
-        title: 'Delete this action?',
-        message: 'Are you sure that you want to delete this action?',
+        title: 'Delete Action',
+        message: 'Are you sure that you want to delete ' + action.description + '?',
+        confirmText: 'Delete',
       })
       .afterClosed()
       .subscribe((confirmed) => {

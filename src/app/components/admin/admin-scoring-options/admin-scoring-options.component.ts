@@ -101,8 +101,9 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
   deleteScoringOptionRequest(scoringOption: ScoringOption) {
     this.dialogService
       .confirm({
-        title: 'Delete this scoringOption?',
+        title: 'Delete Scoring Option',
         message: 'Are you sure that you want to delete ' + scoringOption.description + '?',
+        confirmText: 'Delete',
       })
       .afterClosed()
       .subscribe((confirmed) => {

@@ -166,8 +166,9 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   deleteDutyRequest(duty: Duty) {
     this.dialogService
       .confirm({
-        title: 'Delete this duty?',
-        message: 'Are you sure that you want to delete this duty?',
+        title: 'Delete Duty',
+        message: 'Are you sure that you want to delete ' + duty.name + '?',
+        confirmText: 'Delete',
       })
       .afterClosed()
       .subscribe((confirmed) => {

@@ -233,8 +233,9 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   deleteScoringModelRequest(scoringModel: ScoringModel) {
     this.dialogService
       .confirm({
-        title: 'Delete this scoringModel?',
+        title: 'Delete Scoring Model',
         message: 'Are you sure that you want to delete ' + scoringModel.description + '?',
+        confirmText: 'Delete',
       })
       .afterClosed()
       .subscribe((confirmed) => {

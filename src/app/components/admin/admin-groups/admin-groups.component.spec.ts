@@ -186,6 +186,11 @@ describe('AdminGroupsComponent', () => {
     );
 
     expect(confirm).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Group',
+      message: 'Are you sure that you want to delete Responders?',
+      confirmText: 'Delete',
+    });
     expect(groupApi.deleteGroup).toHaveBeenCalledWith('g2');
   });
 });

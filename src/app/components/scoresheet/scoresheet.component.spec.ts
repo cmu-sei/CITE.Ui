@@ -648,6 +648,53 @@ describe('ScoresheetComponent', () => {
         }
       },
     );
+
+    /**
+     * Verifies: Delete Comment asks with the standard Crucible delete wording, quoting the comment; declining keeps the comment.
+     * Interacts with: the Delete Comment button by label, CrucibleDialogService.confirm stub (declined), SubmissionService.deleteSubmissionComment stub.
+     * Data: EditTeamScore on t1; option 'Isolate the host' with comment c1 'Done at noon'.
+     */
+    it('confirms deleting a comment with the standard wording', async () => {
+      const { user, confirm, submissionApi } = await renderScoresheet({
+        confirm: false,
+        model: {
+          scoringCategories: [
+            {
+              ...category('cat-1', 0, 9, 1),
+              scoringOptionSelection: ScoringOptionSelection.Single,
+              scoringOptions: [
+                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+              ],
+            },
+          ],
+        },
+        activeSubmission: {
+          submissionCategories: [
+            {
+              scoringCategoryId: 'cat-1',
+              submissionOptions: [
+                {
+                  id: 'so-1',
+                  scoringOptionId: 'opt-1',
+                  isSelected: false,
+                  submissionComments: [{ id: 'c1', comment: 'Done at noon' }],
+                },
+              ],
+            },
+          ],
+        },
+        teamClaims: [{ teamId: 't1', permissions: [TeamPermission.EditTeamScore] }],
+      });
+
+      await user.click(screen.getAllByLabelText('Delete Comment')[0]);
+
+      expect(confirm).toHaveBeenCalledWith({
+        title: 'Delete Comment',
+        message: 'Are you sure that you want to delete "Done at noon"?',
+        confirmText: 'Delete',
+      });
+      expect(submissionApi.removeSubmissionComment).not.toHaveBeenCalled();
+    });
   });
 
   describe('comment boxes', () => {

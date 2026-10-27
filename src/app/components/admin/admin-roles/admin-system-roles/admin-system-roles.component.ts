@@ -142,8 +142,8 @@ export class AdminSystemRolesComponent implements OnInit, OnDestroy {
   deleteRole(role: SystemRole) {
     this.confirmService
       .confirm({
-        title: 'Delete Role?',
-        message: `Are you sure you want to delete ${role.name}?`,
+        title: 'Delete Role',
+        message: `Are you sure that you want to delete ${role.name}?`,
         confirmText: 'Delete',
         cancelText: 'Cancel',
       })

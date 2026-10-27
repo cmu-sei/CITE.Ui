@@ -470,8 +470,9 @@ export class ScoresheetComponent implements OnDestroy {
   deleteComment(submissionComment: SubmissionComment) {
     this.dialogService
       .confirm({
-        title: 'Delete this comment?',
-        message: submissionComment.comment,
+        title: 'Delete Comment',
+        message: 'Are you sure that you want to delete "' + submissionComment.comment + '"?',
+        confirmText: 'Delete',
       })
       .afterClosed()
       .subscribe((confirmed) => {
