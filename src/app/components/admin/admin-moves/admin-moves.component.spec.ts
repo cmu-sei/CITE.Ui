@@ -159,6 +159,11 @@ describe('AdminMovesComponent', () => {
     fixture.detectChanges();
 
     expect(confirm).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Move',
+      message: 'Are you sure that you want to delete Detection?',
+      confirmText: 'Delete',
+    });
     expect(moveApi.deleteMove).toHaveBeenCalledWith('m0');
     expect(descriptions()).toEqual(['1 Escalation']);
   });

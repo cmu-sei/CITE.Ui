@@ -189,10 +189,28 @@ describe('AdminSystemRolesComponent', () => {
       within(header()).getByRole('button', { description: 'Add New Role' }),
     );
 
-    expect(nameDialog.componentInstance['title']).toBe('Create New Role?');
+    expect(nameDialog.componentInstance['title']).toBe('Add Role');
     expect(rolesApi.createSystemRole).toHaveBeenCalledWith({
       name: 'Observer',
     });
+  });
+
+  /**
+   * Verifies: Rename opens the name dialog titled "Rename Role" and saves the entered name.
+   * Interacts with: matDialogStub (afterClosed answers a name), SystemRolesService.updateSystemRole stub.
+   * Data: system [ManageRoles]; Content Developer renamed to 'Observer'.
+   */
+  it('renames a role in the Rename Role dialog', async () => {
+    const { header, nameDialog, rolesApi, user } = await renderSystemRoles([
+      SystemPermission.ManageRoles,
+    ]);
+    await user.click(within(header()).getByTitle('Rename Role'));
+
+    expect(nameDialog.componentInstance['title']).toBe('Rename Role');
+    expect(rolesApi.updateSystemRole).toHaveBeenCalledWith(
+      'r-dev',
+      expect.objectContaining({ name: 'Observer' }),
+    );
   });
 
   /**
@@ -207,6 +225,12 @@ describe('AdminSystemRolesComponent', () => {
     await user.click(within(header()).getByTitle('Delete Role'));
 
     expect(confirm).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Role',
+      message: 'Are you sure that you want to delete Content Developer?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+    });
     expect(rolesApi.deleteSystemRole).toHaveBeenCalledWith('r-dev');
   });
 });

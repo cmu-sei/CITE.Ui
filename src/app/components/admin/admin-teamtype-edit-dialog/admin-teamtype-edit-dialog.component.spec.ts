@@ -82,7 +82,7 @@ describe('AdminTeamTypeEditDialogComponent', () => {
       screen.getByRole('checkbox', { name: 'Official Score Contributor' }),
     ).toBeDisabled();
     expect(
-      screen.getByRole('checkbox', { name: 'Show TeamType Average' }),
+      screen.getByRole('checkbox', { name: 'Show Team Type Average' }),
     ).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
   });

@@ -242,7 +242,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 <ng-template #addCommenttemplate>
   <crucible-dialog
-    dialogTitle="Add a comment ..."
+    [dialogTitle]="commentDialogTitle"
     [hideDefaultActions]="true"
     [guardUnsavedWork]="true"
   >

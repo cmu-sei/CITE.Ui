@@ -198,6 +198,11 @@ describe('AdminActionsComponent', () => {
     fixture.detectChanges();
 
     expect(confirm).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Action',
+      message: 'Are you sure that you want to delete Notify legal?',
+      confirmText: 'Delete',
+    });
     expect(actionApi.deleteAction).toHaveBeenCalledWith('a2');
     expect(
       within(screen.getByRole('table')).queryByText('Notify legal'),

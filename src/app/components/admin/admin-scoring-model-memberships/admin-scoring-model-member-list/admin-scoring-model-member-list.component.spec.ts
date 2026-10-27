@@ -80,6 +80,8 @@ describe('AdminScoringModelMemberListComponent', () => {
   it('lists user and group members with their role', async () => {
     await renderMemberList(true);
 
+    expect(screen.getByText('Scoring Model Members')).toBeVisible();
+
     expect(row('Alice')).toHaveTextContent('User');
     expect(row('Alice')).toHaveTextContent('Member');
     expect(row('Analysts')).toHaveTextContent('Group');
