@@ -59,7 +59,9 @@ export class ReportComponent implements OnDestroy {
   @Input() selectedEvaluation: Evaluation;
   @Input() selectedScoringModel: ScoringModel;
   readonly moveList = input<Move[]>(undefined);
-  readonly selectDisplayedSubmission = output<string>();
+  // observing another team, so only the team responses can be shown
+  readonly observing = input(false);
+  readonly selectDisplayedSubmission = output<'user' | 'team'>();
   loggedInUserId = '';
   loggedInUserName = '';
   selectedTeam: Team = {};

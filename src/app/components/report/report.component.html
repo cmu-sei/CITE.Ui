@@ -20,7 +20,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="report-actions no-print">
       <span class="view-buttons" role="group" aria-label="Displayed responses">
         <button matButton="outlined" [class.selected]="displaying !== 'team'"
-          [attr.aria-pressed]="displaying !== 'team'" (click)="setDisplaying('user')">
+          [attr.aria-pressed]="displaying !== 'team'" (click)="setDisplaying('user')" [disabled]="observing()">
           User
         </button>
         <button matButton="outlined" [class.selected]="displaying === 'team'"
@@ -45,7 +45,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         }
         @if (!selectedScoringModel?.hideScoresOnScoreSheet) {
         <span class="chip">
-          <span class="chip-label">Score</span>
+          <span class="chip-label">Score</span>&ngsp;
           <strong>{{ submission.score | number: '1.2-2' }}</strong>
         </span>
         }
@@ -53,16 +53,17 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
     @for (scoringCategory of getDisplayedScoringCategories(submission.moveNumber) | displayOrder; track scoringCategory.id) {
     @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
-    @let showValues = !selectedScoringModel?.hideScoresOnScoreSheet && scoringCategory.calculationMethodId != 0;
+    @let showScores = !selectedScoringModel?.hideScoresOnScoreSheet && scoringCategory.isScored;
+    @let showValues = canSelect && showScores;
     <div class="category">
       <div class="category-header">
         <h4 class="category-title">
           <span class="category-number">{{ scoringCategory.displayOrder }}</span>
           <span class="category-text">{{ scoringCategory.description }}</span>
         </h4>
-        @if (scoringCategory.calculationMethodId > 0) {
+        @if (showScores) {
         <span class="chip">
-          <span class="chip-label">Score</span>
+          <span class="chip-label">Score</span>&ngsp;
           <strong>{{ categoryScore(submission, scoringCategory.id) | number: '1.0-0' }}</strong>
         </span>
         }
@@ -107,7 +108,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             @for (comment of comments; track comment.id) {
             <li class="comment">
               {{ comment.comment }}
-              @if (displaying === 'Team') {
+              @if (displaying === 'team') {
               <span> - {{ getUserName(comment.createdBy) }}</span>
               }
             </li>

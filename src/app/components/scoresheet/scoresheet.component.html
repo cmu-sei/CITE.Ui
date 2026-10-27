@@ -139,7 +139,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <!-- one card per scoring category -->
       <mat-cell *matCellDef="let scoringCategory" class="category-cell">
         @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
-        @let showValues = canSelect && !selectedScoringModel.hideScoresOnScoreSheet;
+        @let showScores = !selectedScoringModel.hideScoresOnScoreSheet && scoringCategory.isScored;
+        @let showValues = canSelect && showScores;
         @let canModify = showModifyControls && myTeamId() === activeTeamId;
         <mat-card appearance="outlined" class="category-card">
           <div class="category-header">
@@ -152,6 +153,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
             }
             @if (scoringCategory.scoringOptionSelection === 'Multiple') {
             <span class="selection-hint">Choose any</span>
+            }
+            @if (showScores) {
+            <span class="category-score">
+              <span class="category-score-label">Score</span>&ngsp;<strong>{{ categoryScore(scoringCategory.id) | number: '1.0-0' }}</strong>
+            </span>
             }
           </div>
           <div class="option-list">

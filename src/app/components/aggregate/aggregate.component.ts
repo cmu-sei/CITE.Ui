@@ -52,7 +52,9 @@ export class AggregateComponent implements OnInit, OnDestroy {
   readonly selectedEvaluation = input<Evaluation>(undefined);
   readonly selectedScoringModel = input<ScoringModel>(undefined);
   readonly moveList = input<Move[]>(undefined);
-  readonly selectDisplayedSubmission = output<string>();
+  // observing another team, so only the team submissions can be shown
+  readonly observing = input(false);
+  readonly selectDisplayedSubmission = output<'user' | 'team'>();
   loggedInUserId = '';
   userId = '';
   teamList$: Observable<Team[]>;

@@ -18,12 +18,14 @@ import {
   ScoringModel,
   ScoringOptionSelection,
   Submission,
+  SubmissionComment,
 } from '../../generated/cite.api';
 import { EvaluationStore } from '../../data/evaluation/evaluation.store';
 import { ScoringModelStore } from '../../data/scoring-model/scoring-model.store';
 import { SubmissionStore } from '../../data/submission/submission.store';
 import { TeamStore } from '../../data/team/team.store';
 import { UIDataService } from '../../data/ui/ui-data.service';
+import { UserStore } from '../../data/user/user.store';
 import { DisplayOrderPipe } from '../../utilities/sort-by-pipe';
 import { renderComponent } from '../../test-utils/render-component';
 import { ReportComponent } from './report.component';
@@ -58,19 +60,51 @@ const SCORING_MODEL: ScoringModel = {
     },
   ],
 };
-const selecting = (base: Submission, optionId: string): Submission => ({
+const selecting = (
+  base: Submission,
+  optionId: string,
+  comment: SubmissionComment,
+): Submission => ({
   ...base,
   status: ItemStatus.Active,
   submissionCategories: [
     {
       scoringCategoryId: 'c1',
-      submissionOptions: [{ scoringOptionId: optionId, isSelected: true }],
+      score: base.score,
+      submissionOptions: [
+        {
+          scoringOptionId: optionId,
+          isSelected: true,
+          submissionComments: [comment],
+        },
+      ],
     },
   ],
 });
 
 // savedType: the view saved from the scoresheet (or before a print reload).
-async function renderReport(savedType?: string) {
+// isScored: set on the category, as the API marks a category with an equation.
+// selection: replaces the category's option selection.
+async function renderReport(
+  savedType?: string,
+  {
+    observing,
+    isScored,
+    selection,
+  }: {
+    observing?: boolean;
+    isScored?: boolean;
+    selection?: ScoringOptionSelection;
+  } = {},
+) {
+  const model: ScoringModel = {
+    ...SCORING_MODEL,
+    scoringCategories: SCORING_MODEL.scoringCategories?.map((c) => ({
+      ...c,
+      isScored,
+      scoringOptionSelection: selection ?? c.scoringOptionSelection,
+    })),
+  };
   // UIDataService reads the submission type from localStorage when built.
   if (savedType) {
     new UIDataService().setSubmissionType('e1', savedType);
@@ -98,8 +132,9 @@ async function renderReport(savedType?: string) {
     imports: [MatButtonModule, MatIconModule, MatTooltipModule],
     componentInputs: {
       selectedEvaluation: EVALUATION,
-      selectedScoringModel: SCORING_MODEL,
+      selectedScoringModel: model,
       moveList: [{ id: 'm1', moveNumber: 1 }],
+      ...(observing === undefined ? {} : { observing }),
     },
     on: { selectDisplayedSubmission },
     providers: [{ provide: ComnAuthService, useValue: auth }],
@@ -110,7 +145,7 @@ async function renderReport(savedType?: string) {
       evaluations.set([EVALUATION]);
       evaluations.setActive('e1');
       const models = testBed.inject(ScoringModelStore);
-      models.set([SCORING_MODEL]);
+      models.set([model]);
       models.setActive('sm1');
       const teams = testBed.inject(TeamStore);
       teams.set([{ id: 't1', name: 'Blue Team', shortName: 'BLU' }]);
@@ -121,12 +156,16 @@ async function renderReport(savedType?: string) {
           selecting(
             { id: 's-user', moveNumber: 1, userId: 'u1', score: 10 },
             'o1',
+            { id: 'c-user', comment: 'Mail server down', createdBy: 'u1' },
           ),
           selecting(
             { id: 's-team', moveNumber: 1, teamId: 't1', score: 50 },
             'o2',
+            { id: 'c-team', comment: 'Payroll offline', createdBy: 'u1' },
           ),
         ]);
+      // comment authors are looked up among the evaluation's users
+      testBed.inject(UserStore).set([{ id: 'u1', name: 'Alice' }]);
     },
   });
   return {
@@ -177,6 +216,70 @@ describe('ReportComponent', () => {
     expect(viewButton('User').closest('button')).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByLabelText('Minimal')).toBeChecked();
     expect(selectDisplayedSubmission).toHaveBeenLastCalledWith('user');
+  });
+
+  /**
+   * Verifies: a scored category shows its score and option values; an unscored one shows neither; a scored one that takes no selections shows its score but no values, as on the scoresheet.
+   * Interacts with: categoryScore(), the category header's Score chip, the showScores and showValues checks, ScoringCategory.isScored.
+   * Data: per row, isScored and the selection on Functional impact; Alice's category score is 10; options worth 10 and 50.
+   */
+  it.each<{
+    isScored: boolean;
+    selection?: ScoringOptionSelection;
+    categoryScore: string[];
+    values: string[];
+  }>([
+    { isScored: true, categoryScore: ['Score 10'], values: ['10', '50'] },
+    { isScored: false, categoryScore: [], values: [] },
+    {
+      isScored: true,
+      selection: ScoringOptionSelection.None,
+      categoryScore: ['Score 10'],
+      values: [],
+    },
+  ])(
+    'shows category scores and values only when scored (isScored: $isScored, selection: $selection)',
+    async ({ isScored, selection, categoryScore, values }) => {
+      await renderReport(undefined, { isScored, selection });
+      const texts = (selector: string) =>
+        Array.from(document.querySelectorAll(selector)).map((el) =>
+          el.textContent?.replace(/\s+/g, ' ').trim(),
+        );
+
+      expect(texts('.category-header .chip')).toEqual(categoryScore);
+      expect(texts('.option-value')).toEqual(values);
+    },
+  );
+
+  /**
+   * Verifies: team comments show their author; the user's own comments do not.
+   * Interacts with: the comment list's displaying check, real UserQuery for the author's name.
+   * Data: Alice wrote Mail server down on her submission and Payroll offline on the team's.
+   */
+  it('shows comment authors on the team responses only', async () => {
+    const { user } = await renderReport();
+
+    expect(screen.getByText('Mail server down')).toHaveTextContent(
+      /^Mail server down$/,
+    );
+
+    await user.click(viewButton('Team'));
+
+    expect(screen.getByText('Payroll offline')).toHaveTextContent(
+      /^Payroll offline - Alice$/,
+    );
+  });
+
+  /**
+   * Verifies: while observing another team, User is disabled as it is on the scoresheet.
+   * Interacts with: the observing input, the User view button.
+   * Data: observing true; the saved view is team, as the home page sets when observing.
+   */
+  it('disables User while observing another team', async () => {
+    await renderReport('team', { observing: true });
+
+    expect(viewButton('User').closest('button')).toBeDisabled();
+    expect(viewButton('Team').closest('button')).toBeEnabled();
   });
 
   /**

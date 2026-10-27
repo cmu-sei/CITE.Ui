@@ -26,6 +26,10 @@ export interface ScoringCategory {
     displayOrder?: number;
     description?: string | null;
     calculationEquation?: string | null;
+    /**
+     * The category has a calculation equation, so it is scored. Read only: set from the equation before it is redacted, so callers who cannot see the equation can still tell scored categories apart.
+     */
+    isScored?: boolean;
     isModifierRequired?: boolean;
     scoringWeight?: number;
     moveNumberFirstDisplay?: number;

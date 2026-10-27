@@ -20,7 +20,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <div class="report-actions no-print">
       <span class="view-buttons" role="group" aria-label="Displayed submissions">
         <button matButton="outlined" [class.selected]="displaying !== 'team'"
-          [attr.aria-pressed]="displaying !== 'team'" (click)="setDisplaying('user')">
+          [attr.aria-pressed]="displaying !== 'team'" (click)="setDisplaying('user')" [disabled]="observing()">
           User
         </button>
         <button matButton="outlined" [class.selected]="displaying === 'team'"
@@ -49,7 +49,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </div>
     @for (scoringCategory of getDisplayedScoringCategories(move.moveNumber) | displayOrder; track scoringCategory.id) {
     @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
-    @let showValues = !selectedScoringModel()?.hideScoresOnScoreSheet && scoringCategory.calculationMethodId != 0;
+    @let showValues = canSelect && !selectedScoringModel()?.hideScoresOnScoreSheet && scoringCategory.isScored;
     <div class="category">
       <div class="category-header">
         <h4 class="category-title">
@@ -111,7 +111,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             @for (comment of comments; track comment.id) {
             <li class="comment">
               {{ comment.comment }}
-              @if (displaying === 'Team') {
+              @if (displaying === 'team') {
               <span> - {{ getUserName(comment.createdBy) }}</span>
               }
             </li>

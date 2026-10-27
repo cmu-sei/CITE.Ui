@@ -13,6 +13,7 @@ import {
   Evaluation,
   ItemStatus,
   ScoringModel,
+  ScoringOptionSelection,
   Submission,
   SubmissionService,
   TeamService,
@@ -73,7 +74,28 @@ const withComment = (
 });
 
 // savedType: the view saved from the scoresheet (or before a print reload).
-async function renderAggregate(savedType?: string) {
+// isScored: set on the category, as the API marks a category with an equation.
+// selection: replaces the category's option selection.
+async function renderAggregate(
+  savedType?: string,
+  {
+    observing,
+    isScored,
+    selection,
+  }: {
+    observing?: boolean;
+    isScored?: boolean;
+    selection?: ScoringOptionSelection;
+  } = {},
+) {
+  const model: ScoringModel = {
+    ...SCORING_MODEL,
+    scoringCategories: SCORING_MODEL.scoringCategories?.map((c) => ({
+      ...c,
+      isScored,
+      scoringOptionSelection: selection ?? c.scoringOptionSelection,
+    })),
+  };
   // UIDataService reads the submission type from localStorage when built.
   if (savedType) {
     new UIDataService().setSubmissionType('e1', savedType);
@@ -105,12 +127,13 @@ async function renderAggregate(savedType?: string) {
     imports: [MatButtonModule, MatIconModule],
     componentInputs: {
       selectedEvaluation: EVALUATION,
-      selectedScoringModel: SCORING_MODEL,
+      selectedScoringModel: model,
       moveList: [
         { id: 'm0', moveNumber: 0 },
         { id: 'm1', moveNumber: 1 },
         { id: 'm2', moveNumber: 2 },
       ],
+      ...(observing === undefined ? {} : { observing }),
     },
     on: { selectDisplayedSubmission },
     providers: [
@@ -157,11 +180,11 @@ describe('AggregateComponent', () => {
   });
 
   /**
-   * Verifies: the Team button switches the report to team submissions, whose comments show without their author (current behavior), and reports the change for the home page to save.
+   * Verifies: the Team button switches the report to team submissions, whose comments show their author, and reports the change for the home page to save.
    * Interacts with: the Team view button, the selectDisplayedSubmission output, the comment list's displaying check.
    * Data: the team submission's comment was written by Alice.
    */
-  it('switches to team submissions without comment authors', async () => {
+  it('switches to team submissions with comment authors', async () => {
     const { user, selectDisplayedSubmission } = await renderAggregate();
     await user.click(viewButton('Team'));
 
@@ -171,11 +194,61 @@ describe('AggregateComponent', () => {
       }),
     ).toHaveTextContent('Team Submissions Report for Ransomware exercise');
     expect(selectDisplayedSubmission).toHaveBeenCalledExactlyOnceWith('team');
-    // Current behavior; see agent-docs/ui-test-bugs/cite.ui.md.
     expect(screen.getByText('Payroll offline')).toHaveTextContent(
-      /^Payroll offline$/,
+      /^Payroll offline - Alice$/,
     );
   });
+
+  /**
+   * Verifies: the user view's comments show no author, since each row is already one user's.
+   * Interacts with: the comment list's displaying check.
+   * Data: Alice's own submission has the comment Mail server down.
+   */
+  it('shows user comments without an author', async () => {
+    await renderAggregate();
+
+    expect(screen.getByText('Mail server down')).toHaveTextContent(
+      /^Mail server down$/,
+    );
+  });
+
+  /**
+   * Verifies: while observing another team, User is disabled as it is on the scoresheet.
+   * Interacts with: the observing input, the User view button.
+   * Data: observing true; the saved view is team, as the home page sets when observing.
+   */
+  it('disables User while observing another team', async () => {
+    await renderAggregate('team', { observing: true });
+
+    expect(viewButton('User').closest('button')).toBeDisabled();
+    expect(viewButton('Team').closest('button')).toBeEnabled();
+  });
+
+  /**
+   * Verifies: option values show on a scored category, not on an unscored one, and not on a scored one that takes no selections, as on the scoresheet.
+   * Interacts with: the showValues check, ScoringCategory.isScored and scoringOptionSelection.
+   * Data: per row, isScored and the selection on Functional impact; its option is worth 10; moves 0 and 1 are listed.
+   */
+  it.each<{
+    isScored: boolean;
+    selection?: ScoringOptionSelection;
+    values: string[];
+  }>([
+    { isScored: true, values: ['10', '10'] },
+    { isScored: false, values: [] },
+    { isScored: true, selection: ScoringOptionSelection.None, values: [] },
+  ])(
+    'shows option values only when scored (isScored: $isScored, selection: $selection)',
+    async ({ isScored, selection, values }) => {
+      await renderAggregate(undefined, { isScored, selection });
+
+      expect(
+        Array.from(document.querySelectorAll('.option-value')).map((el) =>
+          el.textContent?.trim(),
+        ),
+      ).toEqual(values);
+    },
+  );
 
   /**
    * Verifies: each option shows how many users or teams selected it and who they were.

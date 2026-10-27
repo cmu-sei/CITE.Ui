@@ -659,6 +659,73 @@ describe('ScoresheetComponent', () => {
     );
   });
 
+  describe('category scores and option values', () => {
+    /**
+     * Verifies: a scored category shows its score beside the title and its option values; an unscored one shows neither; with scores hidden on the scoresheet, neither shows on any category.
+     * Interacts with: categoryScore(), the category header's score badge, the showScores and showValues checks, ScoringCategory.isScored.
+     * Data: per row, hideScoresOnScoreSheet; category Scored (isScored, score 30) with options worth 10 and 20; category Unscored (not isScored) with an option worth 5.
+     */
+    it.each([
+      { hideScores: false, scoredScore: 'Score 30', scoredValues: ['10', '20'] },
+      { hideScores: true, scoredScore: null, scoredValues: [] },
+    ])(
+      'shows the score and values only for scored categories (scores hidden: $hideScores)',
+      async ({ hideScores, scoredScore, scoredValues }) => {
+        await renderScoresheet({
+          model: {
+            hideScoresOnScoreSheet: hideScores,
+            scoringCategories: [
+              {
+                ...category('scored', 0, 9, 1),
+                isScored: true,
+                scoringOptionSelection: ScoringOptionSelection.Multiple,
+                scoringOptions: [
+                  { id: 'opt-1', scoringCategoryId: 'scored', description: 'Isolate the host', displayOrder: 1, value: 10 },
+                  { id: 'opt-2', scoringCategoryId: 'scored', description: 'Reset passwords', displayOrder: 2, value: 20 },
+                ],
+              },
+              {
+                ...category('unscored', 0, 9, 2),
+                isScored: false,
+                scoringOptionSelection: ScoringOptionSelection.Single,
+                scoringOptions: [
+                  { id: 'opt-3', scoringCategoryId: 'unscored', description: 'Notify legal', displayOrder: 1, value: 5 },
+                ],
+              },
+            ],
+          },
+          activeSubmission: {
+            submissionCategories: [
+              {
+                scoringCategoryId: 'scored',
+                score: 30,
+                submissionOptions: [
+                  { id: 'so-1', scoringOptionId: 'opt-1', isSelected: true },
+                  { id: 'so-2', scoringOptionId: 'opt-2', isSelected: true },
+                ],
+              },
+              {
+                scoringCategoryId: 'unscored',
+                score: 0,
+                submissionOptions: [{ id: 'so-3', scoringOptionId: 'opt-3', isSelected: false }],
+              },
+            ],
+          },
+        });
+  
+        const [scored, unscored] = Array.from(document.querySelectorAll('.category-card'));
+        const score = (card: Element) =>
+          card.querySelector('.category-score')?.textContent?.replace(/\s+/g, ' ').trim() ?? null;
+        const values = (card: Element) =>
+          Array.from(card.querySelectorAll('.option-value')).map((v) => v.textContent?.trim());
+        expect(score(scored)).toBe(scoredScore);
+        expect(values(scored)).toEqual(scoredValues);
+        expect(score(unscored)).toBeNull();
+        expect(values(unscored)).toEqual([]);
+      },
+    );
+  });
+
   describe('comment boxes', () => {
     const COMMENT_MODEL: Partial<ScoringModel> = {
       displayCommentTextBoxes: true,
