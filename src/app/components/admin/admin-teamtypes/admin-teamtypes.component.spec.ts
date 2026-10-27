@@ -113,7 +113,8 @@ describe('AdminTeamTypesComponent', () => {
   it('enables editing with ManageTeamTypes', async () => {
     await renderTeamTypes([SystemPermission.ManageTeamTypes]);
 
-    expect(screen.getByTitle('Add TeamType')).toBeEnabled();
+    expect(screen.getByRole('columnheader', { name: 'Team Type' })).toBeVisible();
+    expect(screen.getByTitle('Add Team Type')).toBeEnabled();
     const agency = row('Agency');
     expect(within(agency).getByTitle('Edit Team Type')).toBeEnabled();
     expect(within(agency).getByTitle('Delete Team Type')).toBeEnabled();
@@ -130,7 +131,7 @@ describe('AdminTeamTypesComponent', () => {
   it('is read-only with ViewTeamTypes only', async () => {
     await renderTeamTypes([SystemPermission.ViewTeamTypes]);
 
-    expect(screen.getByTitle('Add TeamType')).toBeDisabled();
+    expect(screen.getByTitle('Add Team Type')).toBeDisabled();
     const agency = row('Agency');
     expect(within(agency).getByTitle('Edit Team Type')).toBeDisabled();
     expect(within(agency).getByTitle('Delete Team Type')).toBeDisabled();
@@ -141,7 +142,7 @@ describe('AdminTeamTypesComponent', () => {
 
   /**
    * Verifies: ticking a flag checkbox updates the team type through the API.
-   * Interacts with: the Show TeamType Average checkbox, TeamTypeService.updateTeamType stub.
+   * Interacts with: the Show Team Type Average checkbox, TeamTypeService.updateTeamType stub.
    * Data: system [ManageTeamTypes]; Contractor's average turned on.
    */
   it('toggles a team type flag with ManageTeamTypes', async () => {
