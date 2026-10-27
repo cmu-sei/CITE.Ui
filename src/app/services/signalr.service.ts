@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
 import * as signalR from '@microsoft/signalr';
 import { Action, Evaluation, ItemStatus, Move, Duty, ScoringModel, Submission, Team, TeamMembership, User } from 'src/app/generated/cite.api';
@@ -27,6 +27,19 @@ export enum ApplicationArea {
   providedIn: 'root',
 })
 export class SignalRService implements OnDestroy {
+  private authService = inject(ComnAuthService);
+  private systemMessageService = inject(SystemMessageService);
+  private settingsService = inject(ComnSettingsService);
+  private actionDataService = inject(ActionDataService);
+  private evaluationDataService = inject(EvaluationDataService);
+  private moveDataService = inject(MoveDataService);
+  private dutyDataService = inject(DutyDataService);
+  private scoringModelDataService = inject(ScoringModelDataService);
+  private submissionDataService = inject(SubmissionDataService);
+  private teamDataService = inject(TeamDataService);
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private userDataService = inject(UserDataService);
+
   private hubConnection: signalR.HubConnection;
   private applicationArea: ApplicationArea;
   private connectionPromise: Promise<void>;
@@ -36,20 +49,7 @@ export class SignalRService implements OnDestroy {
   private unreachableReported = false;
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private authService: ComnAuthService,
-    private systemMessageService: SystemMessageService,
-    private settingsService: ComnSettingsService,
-    private actionDataService: ActionDataService,
-    private evaluationDataService: EvaluationDataService,
-    private moveDataService: MoveDataService,
-    private dutyDataService: DutyDataService,
-    private scoringModelDataService: ScoringModelDataService,
-    private submissionDataService: SubmissionDataService,
-    private teamDataService: TeamDataService,
-    private teamMembershipDataService: TeamMembershipDataService,
-    private userDataService: UserDataService
-  ) {
+  constructor() {
     this.authService.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       this.reconnect();
     });

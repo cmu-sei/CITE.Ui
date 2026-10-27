@@ -4,7 +4,7 @@
 
 import { ScoringOptionStore } from './scoring-option.store';
 import { ScoringOptionQuery } from './scoring-option.query';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -19,6 +19,12 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
   providedIn: 'root',
 })
 export class ScoringOptionDataService {
+  private scoringOptionStore = inject(ScoringOptionStore);
+  private scoringOptionQuery = inject(ScoringOptionQuery);
+  private scoringOptionService = inject(ScoringOptionService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+
   // private _requestedScoringOptionId: string;
   // private _requestedScoringOptionId$ = this.activatedRoute.queryParamMap.pipe(
   //   map((params) => params.get('scoringOptionId') || '')
@@ -34,13 +40,9 @@ export class ScoringOptionDataService {
   private pageSize: Observable<number>;
   private pageIndex: Observable<number>;
 
-  constructor(
-    private scoringOptionStore: ScoringOptionStore,
-    private scoringOptionQuery: ScoringOptionQuery,
-    private scoringOptionService: ScoringOptionService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {
+  constructor() {
+    const activatedRoute = this.activatedRoute;
+
     this.filterTerm = activatedRoute.queryParamMap.pipe(
       map((params) => params.get('scoringOptionmask') || '')
     );

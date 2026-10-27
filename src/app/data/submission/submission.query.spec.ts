@@ -2,6 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect } from 'vitest';
+import { Injector, runInInjectionContext } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Submission } from '../../generated/cite.api';
 import { SubmissionQuery } from './submission.query';
@@ -18,11 +19,16 @@ function setup() {
   const submissionStore = new SubmissionStore();
   const teamStore = new TeamStore();
   const userStore = new UserStore();
-  const query = new SubmissionQuery(
-    submissionStore,
-    new TeamQuery(teamStore),
-    new UserQuery(userStore),
-  );
+  const injector = Injector.create({
+    providers: [
+      { provide: SubmissionStore, useValue: submissionStore },
+      { provide: TeamStore, useValue: teamStore },
+      { provide: UserStore, useValue: userStore },
+      { provide: TeamQuery, deps: [], useFactory: () => new TeamQuery() },
+      { provide: UserQuery, deps: [], useFactory: () => new UserQuery() },
+    ],
+  });
+  const query = runInInjectionContext(injector, () => new SubmissionQuery());
   teamStore.set([
     { id: 't1', name: 'Red Team' },
     { id: 't2', name: 'blue team' },

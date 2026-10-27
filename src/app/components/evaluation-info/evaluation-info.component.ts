@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, inject, input, output } from '@angular/core';
 import { Evaluation, ItemStatus, Move, Team } from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -10,35 +10,51 @@ import { MoveQuery } from 'src/app/data/move/move.query';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
 import { Observable, Subject } from 'rxjs';
-import { Section } from 'src/app/components/home-app/home-app.component';
+import { Section } from 'src/app/components/home-app/section';
 import { takeUntil } from 'rxjs';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { CurrentUserQuery } from 'src/app/data/user/user.query';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { CrucibleDialogService } from '@cmusei/crucible-common';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgStyle } from '@angular/common';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-evaluation-info',
     templateUrl: './evaluation-info.component.html',
     styleUrls: ['./evaluation-info.component.scss'],
-    standalone: false
+    imports: [MatIconButton, MatIcon, NgStyle, MatButton, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink]
 })
 export class EvaluationInfoComponent implements OnDestroy {
-  @Input() showAdminButton: boolean;
-  @Input() showMoveArrows: boolean;
+  private evaluationQuery = inject(EvaluationQuery);
+  private moveQuery = inject(MoveQuery);
+  private teamQuery = inject(TeamQuery);
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private uiDataService = inject(UIDataService);
+  private evaluationDataService = inject(EvaluationDataService);
+  dialogService = inject(CrucibleDialogService);
+  private userDataService = inject(UserDataService);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private permissionDataService = inject(PermissionDataService);
+
+  readonly showAdminButton = input<boolean>(undefined);
+  readonly showMoveArrows = input<boolean>(undefined);
   @Input() teamList: Team[];
-  @Input() myTeamId: string;
-  @Input() evaluationList: Evaluation[];
-  @Input() moveList: Move[];
-  @Input() scoresheetOnRight: boolean;
-  @Input() noChanges: boolean;
+  readonly myTeamId = input<string>(undefined);
+  readonly evaluationList = input<Evaluation[]>(undefined);
+  readonly moveList = input<Move[]>(undefined);
+  readonly scoresheetOnRight = input<boolean>(undefined);
+  readonly noChanges = input<boolean>(undefined);
   @Input() selectedSection: Section;
-  @Output() nextDisplayedMove = new EventEmitter<Move>();
-  @Output() previousDisplayedMove = new EventEmitter<Move>();
-  @Output() nextEvaluationMove = new EventEmitter<number>();
-  @Output() changeTeam = new EventEmitter<string>();
-  @Output() changeSection = new EventEmitter<string>();
+  readonly nextDisplayedMove = output<Move>();
+  readonly previousDisplayedMove = output<Move>();
+  readonly nextEvaluationMove = output<number>();
+  readonly changeTeam = output<string>();
+  readonly changeSection = output<string>();
   selectedEvaluationId = '';
   dashboardSection = Section.dashboard;
   scoresheetSection = Section.scoresheet;
@@ -56,18 +72,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   showAdvanceMoveButton = false;
   evaluationShowAdvanceButton = false;
 
-  constructor(
-    private evaluationQuery: EvaluationQuery,
-    private moveQuery: MoveQuery,
-    private teamQuery: TeamQuery,
-    private teamMembershipDataService: TeamMembershipDataService,
-    private uiDataService: UIDataService,
-    private evaluationDataService: EvaluationDataService,
-    public dialogService: CrucibleDialogService,
-    private userDataService: UserDataService,
-    private currentUserQuery: CurrentUserQuery,
-    private permissionDataService: PermissionDataService
-  ) {
+  constructor() {
     // observe the active evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(e => {
       if (e) {
@@ -106,7 +111,8 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   sortedMoveList() {
-    return this.moveList ? this.moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1) : [];
+    const moveList = this.moveList();
+    return moveList ? moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1) : [];
   }
 
   getMinMoveNumber() {
@@ -114,7 +120,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   getMaxMoveNumber() {
-    return this.sortedMoveList().length > 0 ? this.sortedMoveList()[this.moveList.length - 1].moveNumber : +this.currentMoveNumber;
+    return this.sortedMoveList().length > 0 ? this.sortedMoveList()[this.moveList().length - 1].moveNumber : +this.currentMoveNumber;
   }
 
   getMoveStyle() {
@@ -122,12 +128,12 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   getMoveDescription() {
-    const move = this.moveList.find(m => m.moveNumber === this.displayedMoveNumber);
+    const move = this.moveList().find(m => m.moveNumber === this.displayedMoveNumber);
     return move ? move.description : 'Move not found in list (description)!';
   }
 
   getEvaluationDescriptionById(evaluationId: string): string {
-    const evaluation = this.evaluationList.find(e => e.id === evaluationId);
+    const evaluation = this.evaluationList().find(e => e.id === evaluationId);
     return evaluation ? evaluation.description : 'Evaluation not found';
   }
 
@@ -170,7 +176,7 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   getTeamShortName() {
-    const myTeam = this.teamList.find(t => t.id === this.myTeamId);
+    const myTeam = this.teamList.find(t => t.id === this.myTeamId());
     return myTeam ? myTeam.shortName : '';
   }
 
@@ -185,11 +191,11 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   activeEvaluations(): Evaluation[] {
-    return this.evaluationList.filter(e => e.status === ItemStatus.Active);
+    return this.evaluationList().filter(e => e.status === ItemStatus.Active);
   }
 
   hideScoresheet(): boolean {
-    let hideIt = this.scoresheetOnRight;
+    let hideIt = this.scoresheetOnRight();
     const selectedTeam = this.teamList?.find(t => t.id === this.selectedTeamId);
     if (!hideIt && selectedTeam) {
       hideIt = selectedTeam.hideScoresheet;

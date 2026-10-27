@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Injectable, Injector, ErrorHandler } from '@angular/core';
+import { Injectable, Injector, ErrorHandler, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SystemMessageService } from '../system-message/system-message.service';
 
@@ -10,7 +10,8 @@ import { SystemMessageService } from '../system-message/system-message.service';
   providedIn: 'root',
 })
 export class ErrorService implements ErrorHandler {
-  constructor(private injector: Injector) {}
+  private injector = inject(Injector);
+
 
   handleError(err: any) {
     // Http failure response for (unknown url): 0 Unknown Error

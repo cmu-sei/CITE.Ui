@@ -7,13 +7,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
 @if (!previewScoringModelId) {
 <div class="cssLayoutRowStartCenter">
   <div class="sp-icon">
-    <mat-icon class="mdi-24px" fontIcon="mdi-grid" [ngStyle]="{'color': 'var(--mat-sys-primary)'}"></mat-icon>
+    <mat-icon class="mdi-24px" fontIcon="mdi-grid" [style.color]="'var(--mat-sys-primary)'" />
   </div>
   <mat-form-field style="width: 300px; margin-left: 20px;">
     <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()" />
     @if (filterControl.value) {
     <button mat-icon-button matSuffix (click)="clearFilter()" title="Clear Search">
-      <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline"></mat-icon>
+      <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline" />
     </button>
     }
   </mat-form-field>
@@ -34,7 +34,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
   @if (!addingNewScoringModel) {
   <div>
     <mat-paginator #paginator [length]="filteredScoringModelList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)"></mat-paginator>
+      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)" />
   </div>
   }
 </div>
@@ -47,34 +47,34 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <th mat-header-cell *matHeaderCellDef>
         <button mat-icon-button (click)="addOrEditScoringModel(null); $event.stopPropagation()"
           title="Add Scoring Model" [disabled]="isBusy || !canCreateScoringModels">
-          <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle"></mat-icon>
+          <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle" />
         </button>
         <button mat-icon-button (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
           title="Upload Scoring Model" [disabled]="isBusy || !canCreateScoringModels">
-          <mat-icon class="mdi-18px" fontIcon="mdi-upload"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-upload" />
         </button>
       </th>
       <td mat-cell *matCellDef="let row">
         <button mat-icon-button (click)="previewScoringModel(row.id); $event.stopPropagation()"
           title="Preview {{ row.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-eye-outline"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-eye-outline" />
         </button>
         <button mat-icon-button (click)="addOrEditScoringModel(row); $event.stopPropagation()"
           title="Edit {{ row.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline" />
         </button>
         <button mat-icon-button (click)="copyScoringModel(row.id); $event.stopPropagation();"
           title="Copy {{ row.description }}" [disabled]="isBusy || !canCreateScoringModels">
-          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" />
         </button>
         <button mat-icon-button (click)="downloadScoringModel(row); $event.stopPropagation();"
           title="Download {{ row.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-download"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-download" />
         </button>
         <button mat-icon-button (click)="deleteScoringModelRequest(row); $event.stopPropagation()"
           title="Delete {{ row.description }}"
           [disabled]="isBusy || row.evaluationId || !canManage(row.id)">
-          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can-outline"></mat-icon>
+          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can-outline" />
         </button>
       </td>
     </ng-container>
@@ -112,11 +112,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
               <app-admin-scoring-categories [scoringModelId]="element.id" [editScoringCategoryId]="scoringCategoryId"
                 [displayScoringModelbyMoveNumber]="element.displayScoringModelByMoveNumber"
                 [canEdit]="canEdit(element.id)"
-                (scoringCategoryClick)="scoringCategoryId = $event.toString()"></app-admin-scoring-categories>
+                (scoringCategoryClick)="scoringCategoryId = $event.toString()" />
             </mat-expansion-panel>
             <mat-expansion-panel>
               <mat-expansion-panel-header>Memberships</mat-expansion-panel-header>
-              <app-admin-scoring-model-memberships [scoringModelId]="element.id"></app-admin-scoring-model-memberships>
+              <app-admin-scoring-model-memberships [scoringModelId]="element.id" />
             </mat-expansion-panel>
           </div>
           }
@@ -133,8 +133,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
 @if (isLoading) {
 <mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
-  <mat-progress-spinner color="primary" mode="indeterminate">
-  </mat-progress-spinner>
+  <mat-progress-spinner color="primary" mode="indeterminate" />
 </mat-card>
 }
 
@@ -143,5 +142,5 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <input hidden (change)="selectFile($event)" (cancel)="isBusy = false" #jsonInput type="file" accept=".json" />
 }
 @else {
-<app-admin-preview [scoringModelId]="previewScoringModelId" (closeMe)="previewScoringModel('')"></app-admin-preview>
+<app-admin-preview [scoringModelId]="previewScoringModelId" (closeMe)="previewScoringModel('')" />
 }

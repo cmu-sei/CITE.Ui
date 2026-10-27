@@ -2,13 +2,9 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   Evaluation,
   Submission,
@@ -21,21 +17,40 @@ import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import {
   PopulatedSubmission,
   SubmissionType,
 } from 'src/app/data/submission/submission.models';
 import { MatDialog } from '@angular/material/dialog';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { MatIcon } from '@angular/material/icon';
+import { DecimalPipe } from '@angular/common';
+import { MatFormField, MatLabel } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { FormsModule } from '@angular/forms';
+import { MatIconButton } from '@angular/material/button';
+import { ClipboardModule } from 'ngx-clipboard';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-admin-submissions',
     templateUrl: './admin-submissions.component.html',
     styleUrls: ['./admin-submissions.component.scss'],
-    standalone: false
+    imports: [MatIcon, MatFormField, MatLabel, MatSelect, MatOption, FormsModule, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatIconButton, ClipboardModule, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner, DecimalPipe]
 })
 export class AdminSubmissionsComponent implements OnInit, OnDestroy {
+  private settingsService = inject(ComnSettingsService);
+  private evaluationQuery = inject(EvaluationQuery);
+  private submissionDataService = inject(SubmissionDataService);
+  private submissionQuery = inject(SubmissionQuery);
+  private teamDataService = inject(TeamDataService);
+  private dialogService = inject(CrucibleDialogService);
+  matDialog = inject(MatDialog);
+  private permissionDataService = inject(PermissionDataService);
+
   sort: Sort = {
     active: 'name',
     direction: 'asc',
@@ -69,16 +84,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   ];
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private evaluationQuery: EvaluationQuery,
-    private submissionDataService: SubmissionDataService,
-    private submissionQuery: SubmissionQuery,
-    private teamDataService: TeamDataService,
-    private dialogService: CrucibleDialogService,
-    public matDialog: MatDialog,
-    private permissionDataService: PermissionDataService
-  ) {
+  constructor() {
 
     this.evaluationQuery
       .selectAll()

@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -39,6 +39,8 @@ import {
 } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminScoringModelsComponent } from './admin-scoring-models.component';
+import { AdminScoringCategoriesComponent } from 'src/app/components/admin/admin-scoring-categories/admin-scoring-categories.component';
+import { AdminScoringModelMembershipsComponent } from 'src/app/components/admin/admin-scoring-model-memberships/admin-scoring-model-memberships/admin-scoring-model-memberships.component';
 
 // The global stylesheets make every computed-style lookup slow in jsdom, and
 // user-event's pointer-events check looks one up per ancestor on each click
@@ -48,16 +50,16 @@ const FAST_POINTER = { pointerEventsCheck: PointerEventsCheckLevel.Never };
 
 @Component({ selector: 'app-admin-scoring-categories', template: '' })
 class ScoringCategoriesStubComponent {
-  @Input() scoringModelId!: string;
-  @Input() editScoringCategoryId!: string;
-  @Input() displayScoringModelbyMoveNumber!: boolean;
-  @Input() canEdit!: boolean;
-  @Output() scoringCategoryClick = new EventEmitter<string>();
+  readonly scoringModelId = input.required<string>();
+  readonly editScoringCategoryId = input.required<string>();
+  readonly displayScoringModelbyMoveNumber = input.required<boolean>();
+  readonly canEdit = input.required<boolean>();
+  readonly scoringCategoryClick = output<string>();
 }
 
 @Component({ selector: 'app-admin-scoring-model-memberships', template: '' })
 class ScoringModelMembershipsStubComponent {
-  @Input() scoringModelId!: string;
+  readonly scoringModelId = input.required<string>();
 }
 
 const MODELS: ScoringModel[] = [
@@ -92,7 +94,6 @@ async function renderScoringModels(grants: PermissionGrants) {
   const editDialog = matDialogStub();
 
   const rendered = await renderComponent(AdminScoringModelsComponent, {
-    declarations: [AdminScoringModelsComponent],
     imports: [
       MatButtonModule,
       MatCardModule,
@@ -106,8 +107,16 @@ async function renderScoringModels(grants: PermissionGrants) {
       MatSelectModule,
       MatSortModule,
       MatTableModule,
-      ScoringCategoriesStubComponent,
-      ScoringModelMembershipsStubComponent,
+    ],
+    childStubs: [
+      {
+        replace: AdminScoringCategoriesComponent,
+        with: ScoringCategoriesStubComponent,
+      },
+      {
+        replace: AdminScoringModelMembershipsComponent,
+        with: ScoringModelMembershipsStubComponent,
+      },
     ],
     providers: [
       ...permissionDataProviders(grants),
@@ -275,8 +284,8 @@ describe('AdminScoringModelsComponent', () => {
       );
 
       const categories = await expand('NCISS');
-      expect(categories.scoringModelId).toBe('sm1');
-      expect(categories.canEdit).toBe(true);
+      expect(categories.scoringModelId()).toBe('sm1');
+      expect(categories.canEdit()).toBe(true);
 
       await user.click(button('Edit NCISS'));
       expect(editDialog.config()?.data.canEdit).toBe(true);
@@ -293,8 +302,8 @@ describe('AdminScoringModelsComponent', () => {
       });
 
       const categories = await expand('Custom');
-      expect(categories.scoringModelId).toBe('sm2');
-      expect(categories.canEdit).toBe(true);
+      expect(categories.scoringModelId()).toBe('sm2');
+      expect(categories.canEdit()).toBe(true);
 
       await user.click(button('Edit Custom'));
       expect(editDialog.config()?.data.canEdit).toBe(true);
@@ -320,7 +329,7 @@ describe('AdminScoringModelsComponent', () => {
       });
 
       const categories = await expand('NCISS');
-      expect(categories.canEdit).toBe(false);
+      expect(categories.canEdit()).toBe(false);
 
       await user.click(button('Edit NCISS'));
       expect(editDialog.config()?.data.canEdit).toBe(false);

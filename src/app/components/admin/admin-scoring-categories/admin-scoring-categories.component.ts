@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, EventEmitter, Input, Output, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject, input, output } from '@angular/core';
 import { ScoringCategory, ItemStatus, ScoringOptionSelection, ScoringModel} from 'src/app/generated/cite.api/model/models';
 import { ScoringCategoryDataService } from 'src/app/data/scoring-category/scoring-category-data.service';
 import { ScoringCategoryQuery } from 'src/app/data/scoring-category/scoring-category.query';
@@ -13,19 +13,31 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   AdminScoringCategoryEditDialogComponent
 } from '../admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { AdminScoringOptionsComponent } from '../admin-scoring-options/admin-scoring-options.component';
+import { MatCard } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-admin-scoring-categories',
     templateUrl: './admin-scoring-categories.component.html',
     styleUrls: ['./admin-scoring-categories.component.scss'],
-    standalone: false
+    imports: [MatAccordion, MatIconButton, MatIcon, MatExpansionPanel, MatExpansionPanelHeader, AdminScoringOptionsComponent, MatCard, MatProgressSpinner]
 })
 export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
-  @Input() scoringModelId: string;
+  private settingsService = inject(ComnSettingsService);
+  private scoringCategoryDataService = inject(ScoringCategoryDataService);
+  private scoringCategoryQuery = inject(ScoringCategoryQuery);
+  private dialog = inject(MatDialog);
+  dialogService = inject(CrucibleDialogService);
+
+  readonly scoringModelId = input<string>(undefined);
   @Input() editScoringCategoryId: string;
-  @Input() canEdit: boolean;
-  @Output() scoringCategoryClick = new EventEmitter<string>();
-  @Input() displayScoringModelbyMoveNumber: boolean;
+  readonly canEdit = input<boolean>(undefined);
+  readonly scoringCategoryClick = output<string>();
+  readonly displayScoringModelbyMoveNumber = input<boolean>(undefined);
   newScoringCategory: ScoringCategory = { id: '', description: '' };
   scoringCategoryList: ScoringCategory[];
   isLoading = false;
@@ -47,13 +59,7 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   ];
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private settingsService: ComnSettingsService,
-    private scoringCategoryDataService: ScoringCategoryDataService,
-    private scoringCategoryQuery: ScoringCategoryQuery,
-    private dialog: MatDialog,
-    public dialogService: CrucibleDialogService
-  ) {
+  constructor() {
     this.scoringCategoryQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringCategories => {
       this.scoringCategoryList = [];
       scoringCategories.sort((a, b) => +a.displayOrder < +b.displayOrder ? -1 : 1).forEach(scoringCategory => {
@@ -63,13 +69,13 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.scoringCategoryDataService.loadByScoringModel(this.scoringModelId);
+    this.scoringCategoryDataService.loadByScoringModel(this.scoringModelId());
   }
 
   addOrEditScoringCategory(scoringCategory: ScoringCategory) {
     if (!scoringCategory) {
       scoringCategory = {
-        scoringModelId: this.scoringModelId,
+        scoringModelId: this.scoringModelId(),
         description: '',
         displayOrder: 0,
         calculationEquation: '{max}',
@@ -86,9 +92,9 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
       width: 'auto',
       data: {
         scoringCategory: scoringCategory,
-        displayScoringModelbyMoveNumber: this.displayScoringModelbyMoveNumber,
+        displayScoringModelbyMoveNumber: this.displayScoringModelbyMoveNumber(),
         scoringOptionSelections: this.scoringOptionSelections,
-        canEdit: this.canEdit
+        canEdit: this.canEdit()
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {

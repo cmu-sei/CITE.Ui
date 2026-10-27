@@ -6,51 +6,51 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
 import {
   AfterViewInit,
   Component,
-  EventEmitter,
-  Input,
   OnChanges,
   OnInit,
-  Output,
-  ViewChild,
+  input,
+  output,
+  viewChild
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSelectChange } from '@angular/material/select';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSelectChange, MatSelect } from '@angular/material/select';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import {
   Group,
   ScoringModelMembership,
   ScoringModelRole,
   User,
 } from 'src/app/generated/cite.api';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+
+import { MatIconButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-  selector: 'app-admin-scoring-model-member-list',
-  templateUrl: './admin-scoring-model-member-list.component.html',
-  styleUrls: ['./admin-scoring-model-member-list.component.scss'],
-  standalone: false
+    selector: 'app-admin-scoring-model-member-list',
+    templateUrl: './admin-scoring-model-member-list.component.html',
+    styleUrls: ['./admin-scoring-model-member-list.component.scss'],
+    imports: [MatToolbar, MatToolbarRow, MatIcon, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatSelect, MatOption, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
 })
 export class AdminScoringModelMemberListComponent implements OnInit, OnChanges {
-  @Input()
-  memberships: ScoringModelMembership[];
+  readonly memberships = input<ScoringModelMembership[]>(undefined);
 
-  @Input()
-  users: User[];
+  readonly users = input<User[]>(undefined);
 
-  @Input()
-  groups: Group[];
+  readonly groups = input<Group[]>(undefined);
 
-  @Input()
-  roles: ScoringModelRole[];
+  readonly roles = input<ScoringModelRole[]>(undefined);
 
-  @Input()
-  canEdit: boolean;
+  readonly canEdit = input<boolean>(undefined);
 
-  @Output()
-  deleteMembership = new EventEmitter<string>();
+  readonly deleteMembership = output<string>();
 
-  @Output()
-  editMembership = new EventEmitter<ScoringModelMembership>();
+  readonly editMembership = output<ScoringModelMembership>();
 
   viewColumns = ['name', 'type', 'role'];
   editColumns = ['actions'];
@@ -61,12 +61,12 @@ export class AdminScoringModelMemberListComponent implements OnInit, OnChanges {
 
   constructor() {}
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  readonly sort = viewChild(MatSort);
+  readonly paginator = viewChild(MatPaginator);
 
   ngOnInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator();
+    this.dataSource.sort = this.sort();
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'role':
@@ -89,16 +89,16 @@ export class AdminScoringModelMemberListComponent implements OnInit, OnChanges {
     this.buildModel();
 
     this.displayedColumns = this.viewColumns.concat(
-      this.canEdit ? this.editColumns : []
+      this.canEdit() ? this.editColumns : []
     );
   }
 
   buildModel() {
-    this.dataSource.data = this.memberships
+    this.dataSource.data = this.memberships()
       .map((x) => {
-        const user = this.users.find((u) => u.id === x.userId);
-        const group = this.groups.find((g) => g.id === x.groupId);
-        const role = this.roles.find((r) => r.id === x.roleId);
+        const user = this.users().find((u) => u.id === x.userId);
+        const group = this.groups().find((g) => g.id === x.groupId);
+        const role = this.roles().find((r) => r.id === x.roleId);
 
         const membership = {
           membership: x,

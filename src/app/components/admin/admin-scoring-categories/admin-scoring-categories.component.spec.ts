@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -23,11 +23,12 @@ import { dialogRefStub } from '../../../test-utils/dialog-refs';
 import { matDialogStub } from '../../../test-utils/mat-dialog';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminScoringCategoriesComponent } from './admin-scoring-categories.component';
+import { AdminScoringOptionsComponent } from 'src/app/components/admin/admin-scoring-options/admin-scoring-options.component';
 
 @Component({ selector: 'app-admin-scoring-options', template: '' })
 class ScoringOptionsStubComponent {
-  @Input() scoringCategoryId!: string;
-  @Input() canEdit!: boolean;
+  readonly scoringCategoryId = input.required<string>();
+  readonly canEdit = input.required<boolean>();
 }
 
 const CATEGORIES: ScoringCategory[] = [
@@ -65,14 +66,18 @@ async function renderCategories(canEdit: boolean) {
   const scoringCategoryClick = vi.fn();
 
   const rendered = await renderComponent(AdminScoringCategoriesComponent, {
-    declarations: [AdminScoringCategoriesComponent],
     imports: [
       MatButtonModule,
       MatCardModule,
       MatExpansionModule,
       MatIconModule,
       MatProgressSpinnerModule,
-      ScoringOptionsStubComponent,
+    ],
+    childStubs: [
+      {
+        replace: AdminScoringOptionsComponent,
+        with: ScoringOptionsStubComponent,
+      },
     ],
     componentInputs: {
       scoringModelId: 'sm1',
@@ -145,8 +150,8 @@ describe('AdminScoringCategoriesComponent', () => {
 
     await user.click(screen.getByText('Functional impact'));
     expect(scoringCategoryClick).toHaveBeenCalledWith('c1');
-    expect(optionsStub(fixture)?.scoringCategoryId).toBe('c1');
-    expect(optionsStub(fixture)?.canEdit).toBe(true);
+    expect(optionsStub(fixture)?.scoringCategoryId()).toBe('c1');
+    expect(optionsStub(fixture)?.canEdit()).toBe(true);
   });
 
   /**
@@ -167,7 +172,7 @@ describe('AdminScoringCategoriesComponent', () => {
     }
 
     await user.click(screen.getByText('Functional impact'));
-    expect(optionsStub(fixture)?.canEdit).toBe(false);
+    expect(optionsStub(fixture)?.canEdit()).toBe(false);
   });
 
   /**

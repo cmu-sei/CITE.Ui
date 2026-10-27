@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, inject, input } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -37,6 +37,16 @@ import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-com
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
+import { MatCard } from '@angular/material/card';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatIcon } from '@angular/material/icon';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatFormField, MatLabel } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 interface SituationMove {
   moveNumber?: number;
@@ -51,15 +61,36 @@ interface Situation extends SituationMove {
 }
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
-  standalone: false
+    selector: 'app-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss'],
+    imports: [MatCard, MatButton, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatIconButton, MatIcon, MatCheckbox, MatTooltip, MatSelect, MatOption, MatFormField, MatLabel, FormsModule]
 })
 export class DashboardComponent implements OnDestroy {
+  private actionDataService = inject(ActionDataService);
+  private actionQuery = inject(ActionQuery);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private evaluationQuery = inject(EvaluationQuery);
+  private moveQuery = inject(MoveQuery);
+  private dutyDataService = inject(DutyDataService);
+  private dutyQuery = inject(DutyQuery);
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private teamQuery = inject(TeamQuery);
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private teamRoleDataService = inject(TeamRoleDataService);
+  private unreadArticlesDataService = inject(UnreadArticlesDataService);
+  dialogService = inject(CrucibleDialogService);
+  matDialog = inject(MatDialog);
+  private titleService = inject(Title);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private permissionDataService = inject(PermissionDataService);
+  private settingsService = inject(ComnSettingsService);
+  private changeDetectorRef = inject(ChangeDetectorRef);
+
   @Input() unreadArticles: UnreadArticles;
-  @Input() myTeamId: string;
-  @Input() noChanges: boolean;
+  readonly myTeamId = input<string>(undefined);
+  readonly noChanges = input<boolean>(undefined);
   evaluationUsers: User[] = [];
   teamUsers: User[] = [];
   teamMemberships: TeamMembership[] = [];
@@ -89,28 +120,7 @@ export class DashboardComponent implements OnDestroy {
   canSubmitTeamScore = false;
   canContributeToTeamScore = false;
 
-  constructor(
-    private actionDataService: ActionDataService,
-    private actionQuery: ActionQuery,
-    private currentUserQuery: CurrentUserQuery,
-    private evaluationQuery: EvaluationQuery,
-    private moveQuery: MoveQuery,
-    private dutyDataService: DutyDataService,
-    private dutyQuery: DutyQuery,
-    private scoringModelQuery: ScoringModelQuery,
-    private teamQuery: TeamQuery,
-    private teamMembershipDataService: TeamMembershipDataService,
-    private teamRoleDataService: TeamRoleDataService,
-    private unreadArticlesDataService: UnreadArticlesDataService,
-    public dialogService: CrucibleDialogService,
-    public matDialog: MatDialog,
-    private titleService: Title,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private permissionDataService: PermissionDataService,
-    private settingsService: ComnSettingsService,
-    private changeDetectorRef: ChangeDetectorRef
-  ) {
+  constructor() {
     this.titleService.setTitle('CITE Dashboard');
     //observe the current user
     this.currentUserQuery
@@ -142,7 +152,7 @@ export class DashboardComponent implements OnDestroy {
             this.settingsService.settings.GalleryUiUrl +
             '?exhibit=' +
             active.galleryExhibitId +
-            '&section=archive';
+            '&section=wall';
           this.setCompleteSituationDescription();
           // load the team data
           this.loadTeamData();

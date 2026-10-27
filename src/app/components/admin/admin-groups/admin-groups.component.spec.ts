@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,11 +28,12 @@ import { matDialogStub } from '../../../test-utils/mat-dialog';
 import { permissionDataProviders } from '../../../test-utils/mock-permission-data.service';
 import { renderComponent } from '../../../test-utils/render-component';
 import { AdminGroupsComponent } from './admin-groups.component';
+import { AdminGroupsDetailComponent } from 'src/app/components/admin/admin-groups/admin-groups-detail/admin-groups-detail.component';
 
 @Component({ selector: 'app-admin-groups-detail', template: '' })
 class GroupsDetailStubComponent {
-  @Input() groupId!: string;
-  @Input() canEdit!: boolean;
+  readonly groupId = input.required<string>();
+  readonly canEdit = input.required<boolean>();
 }
 
 async function renderGroups(system: SystemPermission[]) {
@@ -55,7 +56,6 @@ async function renderGroups(system: SystemPermission[]) {
   const nameDialog = matDialogStub({ nameValue: 'Coordinators' });
 
   const rendered = await renderComponent(AdminGroupsComponent, {
-    declarations: [AdminGroupsComponent],
     imports: [
       MatButtonModule,
       MatFormFieldModule,
@@ -64,7 +64,9 @@ async function renderGroups(system: SystemPermission[]) {
       MatSortModule,
       MatTableModule,
       MatTooltipModule,
-      GroupsDetailStubComponent,
+    ],
+    childStubs: [
+      { replace: AdminGroupsDetailComponent, with: GroupsDetailStubComponent },
     ],
     providers: [
       ...permissionDataProviders({ system }),
@@ -119,8 +121,8 @@ describe('AdminGroupsComponent', () => {
     await user.click(
       within(row('Analysts')).getByRole('cell', { name: 'Analysts' }),
     );
-    expect(detail()?.groupId).toBe('g1');
-    expect(detail()?.canEdit).toBe(true);
+    expect(detail()?.groupId()).toBe('g1');
+    expect(detail()?.canEdit()).toBe(true);
   });
 
   /**
@@ -148,7 +150,7 @@ describe('AdminGroupsComponent', () => {
     await user.click(
       within(row('Analysts')).getByRole('cell', { name: 'Analysts' }),
     );
-    expect(detail()?.canEdit).toBe(false);
+    expect(detail()?.canEdit()).toBe(false);
   });
 
   /**

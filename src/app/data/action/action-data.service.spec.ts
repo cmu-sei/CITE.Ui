@@ -290,7 +290,7 @@ describe('ActionDataService', () => {
       expect(query.getValue().loading).toBe(true);
       expect(query.getAll()).toEqual([makeAction()]);
       // The escaped error reaches ErrorService, the app's ErrorHandler
-      // (app.module.ts), which shows it.
+      // (app.config.ts), which shows it.
       expect(errors).toEqual([failure]);
     });
 
@@ -307,7 +307,7 @@ describe('ActionDataService', () => {
       store.set([makeAction()]);
       service.delete('a1');
       await flush();
-      // delete() sets no loading flag; ErrorService (app.module.ts) shows the error.
+      // delete() sets no loading flag; ErrorService (app.config.ts) shows the error.
       expect(query.getAll()).toEqual([makeAction()]);
       expect(query.getValue().loading).toBe(false);
       expect(errors).toEqual([failure]);

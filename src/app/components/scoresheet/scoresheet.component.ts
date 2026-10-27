@@ -2,14 +2,8 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output,
-} from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, OnDestroy, inject, input, output } from '@angular/core';
+import { MatDialog, MatDialogClose } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -38,19 +32,71 @@ import {
 } from 'src/app/generated/cite.api/model/models';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
-import { CrucibleDialogService } from '@cmusei/crucible-common';
+import { CrucibleDialogService, CrucibleDialogComponent, CrucibleDialogContentDirective, CrucibleDialogActionsDirective } from '@cmusei/crucible-common';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { NgClass, DecimalPipe } from '@angular/common';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput, MatFormField, MatLabel } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
 @Component({
-  selector: 'app-scoresheet',
-  templateUrl: './scoresheet.component.html',
-  styleUrls: ['./scoresheet.component.scss'],
-  standalone: false,
+    selector: 'app-scoresheet',
+    templateUrl: './scoresheet.component.html',
+    styleUrls: ['./scoresheet.component.scss'],
+    imports: [
+        MatTable,
+        MatColumnDef,
+        MatHeaderCellDef,
+        MatHeaderCell,
+        MatButton,
+        NgClass,
+        MatCellDef,
+        MatCell,
+        MatCheckbox,
+        MatTooltip,
+        MatIconButton,
+        MatIcon,
+        MatInput,
+        FormsModule,
+        MatRowDef,
+        MatRow,
+        MatHeaderRowDef,
+        MatHeaderRow,
+        CrucibleDialogComponent,
+        CrucibleDialogContentDirective,
+        MatFormField,
+        MatLabel,
+        CrucibleDialogActionsDirective,
+        MatDialogClose,
+        DecimalPipe,
+        DisplayOrderPipe,
+    ],
 })
 export class ScoresheetComponent implements OnDestroy {
-  @Input() myTeamId: string;
-  @Input() rightSideDisplay: boolean;
-  @Input() noChanges: boolean;
-  @Output() selectDisplayedSubmission = new EventEmitter<string>();
+  private permissionDataService = inject(PermissionDataService);
+  private scoringModelQuery = inject(ScoringModelQuery);
+  private submissionDataService = inject(SubmissionDataService);
+  private submissionQuery = inject(SubmissionQuery);
+  private evaluationQuery = inject(EvaluationQuery);
+  private moveQuery = inject(MoveQuery);
+  private userDataService = inject(UserDataService);
+  private userQuery = inject(UserQuery);
+  private currentUserQuery = inject(CurrentUserQuery);
+  private teamQuery = inject(TeamQuery);
+  private teamMembershipDataService = inject(TeamMembershipDataService);
+  private dialogService = inject(CrucibleDialogService);
+  matDialog = inject(MatDialog);
+  private titleService = inject(Title);
+  private uiDataService = inject(UIDataService);
+
+  readonly myTeamId = input<string>(undefined);
+  readonly rightSideDisplay = input<boolean>(undefined);
+  readonly noChanges = input<boolean>(undefined);
+  readonly selectDisplayedSubmission = output<string>();
   loggedInUserId = '';
   userId = '';
   activeTeamId = '';
@@ -83,23 +129,7 @@ export class ScoresheetComponent implements OnDestroy {
   commentSaveStates: { [scoringOptionId: string]: 'saving' | 'saved' | 'failed' } = {};
   private unsubscribe$ = new Subject();
 
-  constructor(
-    private permissionDataService: PermissionDataService,
-    private scoringModelQuery: ScoringModelQuery,
-    private submissionDataService: SubmissionDataService,
-    private submissionQuery: SubmissionQuery,
-    private evaluationQuery: EvaluationQuery,
-    private moveQuery: MoveQuery,
-    private userDataService: UserDataService,
-    private userQuery: UserQuery,
-    private currentUserQuery: CurrentUserQuery,
-    private teamQuery: TeamQuery,
-    private teamMembershipDataService: TeamMembershipDataService,
-    private dialogService: CrucibleDialogService,
-    public matDialog: MatDialog,
-    private titleService: Title,
-    private uiDataService: UIDataService
-  ) {
+  constructor() {
     this.titleService.setTitle('CITE Scoresheet');
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>)

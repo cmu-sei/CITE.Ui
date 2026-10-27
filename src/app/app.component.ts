@@ -2,27 +2,29 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, HostListener, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnDestroy, inject } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ComnAuthQuery,
-  ComnAuthService,
-  CrucibleThemeService,
-  Theme,
-} from '@cmusei/crucible-common';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { ComnAuthQuery, ComnAuthService, CrucibleThemeService, Theme, ComnHeaderBarModule } from '@cmusei/crucible-common';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UIDataService } from './data/ui/ui-data.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: false,
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    imports: [ComnHeaderBarModule, RouterOutlet],
 })
 export class AppComponent implements OnDestroy {
+  private authQuery = inject(ComnAuthQuery);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authService = inject(ComnAuthService);
+  private themeService = inject(CrucibleThemeService);
+  private uiDataService = inject(UIDataService);
+
   @HostListener('document:keydown.backspace', ['$event'])
   onKeyDown(evt: KeyboardEvent) {
     let doPrevent = true;
@@ -74,16 +76,10 @@ export class AppComponent implements OnDestroy {
   private paramTheme;
   unsubscribe$: Subject<null> = new Subject<null>();
 
-  constructor(
-    iconRegistry: MatIconRegistry,
-    sanitizer: DomSanitizer,
-    private authQuery: ComnAuthQuery,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private authService: ComnAuthService,
-    private themeService: CrucibleThemeService,
-    private uiDataService: UIDataService,
-  ) {
+  constructor() {
+    const iconRegistry = inject(MatIconRegistry);
+    const sanitizer = inject(DomSanitizer);
+
     this.registerIcons(iconRegistry, sanitizer);
     this.theme$.pipe(takeUntil(this.unsubscribe$)).subscribe((theme) => {
       if (this.paramTheme && this.paramTheme !== theme) {
