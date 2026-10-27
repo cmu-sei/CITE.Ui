@@ -460,7 +460,7 @@ describe('DashboardComponent', () => {
 
   describe('Gallery card', () => {
     /**
-     * Verifies: with unread articles the card counts them and links to the evaluation's exhibit archive in Gallery.
+     * Verifies: with unread articles the card counts them and links to the evaluation's exhibit wall in Gallery.
      * Interacts with: the unreadArticles input, the evaluation's galleryExhibitId, ComnSettingsService GalleryUiUrl.
      * Data: exhibit ex1; 3 unread; GalleryUiUrl https://gallery.test/.
      */
@@ -473,7 +473,7 @@ describe('DashboardComponent', () => {
       expect(screen.getByText('3 unread in Gallery')).toBeVisible();
       expect(screen.getByRole('link', { name: 'Open Gallery' })).toHaveAttribute(
         'href',
-        'https://gallery.test/?exhibit=ex1&section=archive',
+        'https://gallery.test/?exhibit=ex1&section=wall',
       );
     });
 
