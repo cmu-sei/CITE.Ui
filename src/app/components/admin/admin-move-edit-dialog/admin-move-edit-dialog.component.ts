@@ -49,7 +49,8 @@ export class AdminMoveEditDialogComponent {
     this.form = this.formBuilder.group({
       moveNumber: [data.move.moveNumber],
       description: [data.move.description, Validators.required],
-      situationTime: [data.move.situationTime || ''],
+      // the API requires a situation time, and an empty one fails the save
+      situationTime: [data.move.situationTime || new Date()],
       situationDescription: [data.move.situationDescription],
     });
   }
