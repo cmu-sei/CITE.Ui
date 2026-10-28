@@ -7,6 +7,7 @@ import { tap } from 'rxjs/operators';
 import {
   EvaluationMembership,
   EvaluationMembershipsService,
+  UpdateEvaluationMembershipRequest,
 } from 'src/app/generated/cite.api';
 
 @Injectable({
@@ -40,7 +41,7 @@ export class EvaluationMembershipDataService {
     return this.evaluationMembershipsService
       .updateEvaluationMembership(evaluationMembership.id, {
         roleId: evaluationMembership.roleId,
-      })
+      } satisfies Required<UpdateEvaluationMembershipRequest>)
       .pipe(
         tap((x) => {
           this.upsert(evaluationMembership.id, x);

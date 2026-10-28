@@ -11,7 +11,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   Evaluation,
   EvaluationService,
-  ItemStatus
+  ItemStatus,
+  UpdateEvaluationRequest
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest, Subject } from 'rxjs';
@@ -247,7 +248,7 @@ export class EvaluationDataService {
         situationDescription: evaluation.situationDescription,
         galleryExhibitId: evaluation.galleryExhibitId,
         showAdvanceButton: evaluation.showAdvanceButton,
-      })
+      } satisfies Required<UpdateEvaluationRequest>)
       .pipe(
         tap(() => {
           this.evaluationStore.setLoading(false);

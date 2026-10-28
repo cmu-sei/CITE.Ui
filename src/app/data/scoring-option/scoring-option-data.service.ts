@@ -10,7 +10,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   ScoringOption,
-  ScoringOptionService
+  ScoringOptionService,
+  UpdateScoringOptionRequest
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -192,7 +193,7 @@ export class ScoringOptionDataService {
         description: scoringOption.description,
         isModifier: scoringOption.isModifier,
         value: scoringOption.value,
-      })
+      } satisfies Required<UpdateScoringOptionRequest>)
       .pipe(
         tap(() => {
           this.scoringOptionStore.setLoading(false);

@@ -286,7 +286,7 @@ describe('SubmissionDataService', () => {
             comment: 'Edited',
           }),
         endpoint: (api) => api.changeSubmissionComment,
-        args: ['s1', 'c1', { id: 'c1', comment: 'Edited' }],
+        args: ['s1', 'c1', { comment: 'Edited' }],
         score: 2,
       },
       {

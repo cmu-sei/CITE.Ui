@@ -11,7 +11,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   Move,
   MoveService,
-  ItemStatus
+  ItemStatus,
+  UpdateMoveRequest
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -188,7 +189,7 @@ export class MoveDataService {
         moveNumber: move.moveNumber,
         situationTime: move.situationTime,
         situationDescription: move.situationDescription,
-      })
+      } satisfies Required<UpdateMoveRequest>)
       .pipe(
         tap(() => {
           this.moveStore.setLoading(false);

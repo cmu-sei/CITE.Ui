@@ -11,6 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   Action,
   ActionService,
+  UpdateActionRequest,
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -257,7 +258,7 @@ export class ActionDataService {
         injectNumber: action.injectNumber,
         actionNumber: action.actionNumber,
         description: action.description,
-      })
+      } satisfies Required<UpdateActionRequest>)
       .pipe(
         tap(() => {
           this.actionStore.setLoading(false);

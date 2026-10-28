@@ -10,7 +10,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   ScoringCategory,
-  ScoringCategoryService
+  ScoringCategoryService,
+  UpdateScoringCategoryRequest
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -196,7 +197,7 @@ export class ScoringCategoryDataService {
         moveNumberFirstDisplay: scoringCategory.moveNumberFirstDisplay,
         moveNumberLastDisplay: scoringCategory.moveNumberLastDisplay,
         scoringOptionSelection: scoringCategory.scoringOptionSelection,
-      })
+      } satisfies Required<UpdateScoringCategoryRequest>)
       .pipe(
         tap(() => {
           this.scoringCategoryStore.setLoading(false);

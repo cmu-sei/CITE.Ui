@@ -753,7 +753,7 @@ describe('ScoresheetComponent', () => {
         label: 'edited',
         text: 'No',
         endpoint: 'changeSubmissionComment',
-        args: ['s1', 'c1', { id: 'c1', comment: 'No' }],
+        args: ['s1', 'c1', { comment: 'No' }],
       },
       {
         label: 'emptied',
