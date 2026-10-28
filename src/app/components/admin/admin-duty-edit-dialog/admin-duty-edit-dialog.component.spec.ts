@@ -19,9 +19,9 @@ const TEAMS: Team[] = [
   { id: 't2', name: 'Red' },
 ];
 
-async function renderDutyDialog(canEdit: boolean) {
+async function renderDutyDialog(canEdit: boolean, existing = true) {
   const duty: Duty = {
-    id: 'd1',
+    id: existing ? 'd1' : undefined,
     evaluationId: 'e1',
     teamId: 't1',
     name: 'Scribe',
@@ -89,6 +89,34 @@ describe('AdminDutyEditDialogComponent', () => {
       'true',
     );
     expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+  });
+
+  /**
+   * Verifies: Team is locked on an existing duty, since the API cannot move it to another team.
+   * Interacts with: the Team select.
+   * Data: canEdit true; duty d1.
+   */
+  it('locks Team on an existing duty', async () => {
+    await renderDutyDialog(true);
+
+    expect(screen.getByRole('combobox', { name: 'Team' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+  });
+
+  /**
+   * Verifies: Team stays selectable when adding a duty.
+   * Interacts with: the Team select.
+   * Data: canEdit true; a duty without an id.
+   */
+  it('leaves Team selectable on a new duty', async () => {
+    await renderDutyDialog(true, false);
+
+    expect(screen.getByRole('combobox', { name: 'Team' })).toHaveAttribute(
+      'aria-disabled',
+      'false',
+    );
   });
 
   /**

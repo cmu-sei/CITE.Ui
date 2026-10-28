@@ -101,4 +101,37 @@ describe('AdminActionEditDialogComponent', () => {
       },
     });
   });
+
+  /**
+   * Verifies: Team is locked on an existing action, since the API cannot move it to another team.
+   * Interacts with: the Team select.
+   * Data: action a1 on team t1.
+   */
+  it('locks Team on an existing action', async () => {
+    await renderActionDialog({
+      id: 'a1',
+      description: 'Isolate the mail server',
+      moveNumber: 1,
+      teamId: 't1',
+    });
+
+    expect(screen.getByRole('combobox', { name: 'Team' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+  });
+
+  /**
+   * Verifies: Team stays selectable when adding an action.
+   * Interacts with: the Team select.
+   * Data: an action without an id.
+   */
+  it('leaves Team selectable on a new action', async () => {
+    await renderActionDialog({ description: '', moveNumber: -999, teamId: '' });
+
+    expect(screen.getByRole('combobox', { name: 'Team' })).toHaveAttribute(
+      'aria-disabled',
+      'false',
+    );
+  });
 });

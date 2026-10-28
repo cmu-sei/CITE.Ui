@@ -46,7 +46,8 @@ export class AdminActionEditDialogComponent {
       moveNumber: [
         data.action.moveNumber == null ? '' : data.action.moveNumber.toString(),
       ],
-      teamId: [data.action.teamId],
+      // The API cannot move an existing action to another team.
+      teamId: [{ value: data.action.teamId, disabled: !!data.action.id }],
     });
   }
 

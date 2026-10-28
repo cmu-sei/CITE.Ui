@@ -41,7 +41,8 @@ export class AdminDutyEditDialogComponent {
 
     this.form = this.formBuilder.group({
       name: [{ value: data.duty.name, disabled: !data.canEdit }, Validators.required],
-      teamId: [{ value: data.duty.teamId, disabled: !data.canEdit }],
+      // The API cannot move an existing duty to another team.
+      teamId: [{ value: data.duty.teamId, disabled: !data.canEdit || !!data.duty.id }],
     });
   }
 
