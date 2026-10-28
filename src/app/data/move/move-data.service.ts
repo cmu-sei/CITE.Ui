@@ -183,7 +183,12 @@ export class MoveDataService {
   updateMove(move: Move) {
     this.moveStore.setLoading(true);
     this.moveService
-      .updateMove(move.id, move)
+      .updateMove(move.id, {
+        description: move.description,
+        moveNumber: move.moveNumber,
+        situationTime: move.situationTime,
+        situationDescription: move.situationDescription,
+      })
       .pipe(
         tap(() => {
           this.moveStore.setLoading(false);

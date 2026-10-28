@@ -42,7 +42,7 @@ function setup(overrides: { api?: MoveApi; queryParams?: Params } = {}) {
     getByEvaluation: vi.fn(() => of([makeMove()])),
     getMove: vi.fn((id: string) => of(makeMove({ id }))),
     createMove: vi.fn((move?: Move) => of({ ...move, id: 'new' })),
-    updateMove: vi.fn((_id: string, move?: Move) => of({ ...move })),
+    updateMove: vi.fn((id: string, move?: Move) => of({ ...move, id })),
     deleteMove: vi.fn(() => of(null)),
     ...overrides.api,
   } satisfies MoveApi;
@@ -218,7 +218,7 @@ describe('MoveDataService', () => {
     });
 
     /**
-     * Verifies: updateMove() sends the move and replaces the stored copy with the API's response.
+     * Verifies: updateMove() sends only the fields the API edits and replaces the stored copy with the API's response.
      * Interacts with: MoveService.updateMove stub, MoveQuery.
      * Data: store holds m1 'Move one'; update renames it.
      */
@@ -228,7 +228,11 @@ describe('MoveDataService', () => {
       service.updateMove(makeMove({ description: 'Renamed' }));
       expect(api.updateMove).toHaveBeenCalledWith(
         'm1',
-        expect.objectContaining({ description: 'Renamed' }),
+        {
+          description: 'Renamed',
+          moveNumber: 1,
+          situationTime: iso('2026-01-03T00:00:00Z'),
+        },
       );
       expect(query.getEntity('m1')?.description).toBe('Renamed');
     });

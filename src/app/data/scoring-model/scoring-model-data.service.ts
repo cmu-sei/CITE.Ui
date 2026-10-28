@@ -201,7 +201,24 @@ export class ScoringModelDataService {
   updateScoringModel(scoringModel: ScoringModel) {
     this.scoringModelStore.setLoading(true);
     this.scoringModelService
-      .updateScoringModel(scoringModel.id, scoringModel)
+      .updateScoringModel(scoringModel.id, {
+        description: scoringModel.description,
+        calculationEquation: scoringModel.calculationEquation,
+        status: scoringModel.status,
+        hideScoresOnScoreSheet: scoringModel.hideScoresOnScoreSheet,
+        displayCommentTextBoxes: scoringModel.displayCommentTextBoxes,
+        displayScoringModelByMoveNumber: scoringModel.displayScoringModelByMoveNumber,
+        showPastSituationDescriptions: scoringModel.showPastSituationDescriptions,
+        useSubmit: scoringModel.useSubmit,
+        useUserScore: scoringModel.useUserScore,
+        useTeamScore: scoringModel.useTeamScore,
+        useTeamAverageScore: scoringModel.useTeamAverageScore,
+        useTypeAverageScore: scoringModel.useTypeAverageScore,
+        useOfficialScore: scoringModel.useOfficialScore,
+        rightSideDisplay: scoringModel.rightSideDisplay,
+        rightSideHtmlBlock: scoringModel.rightSideHtmlBlock,
+        rightSideEmbeddedUrl: scoringModel.rightSideEmbeddedUrl,
+      })
       .pipe(
         tap(() => {
           this.scoringModelStore.setLoading(false);

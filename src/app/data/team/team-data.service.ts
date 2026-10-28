@@ -219,7 +219,12 @@ export class TeamDataService {
   updateTeam(team: Team) {
     this.teamStore.setLoading(true);
     this.teamService
-      .updateTeam(team.id, team)
+      .updateTeam(team.id, {
+        name: team.name,
+        shortName: team.shortName,
+        teamTypeId: team.teamTypeId,
+        hideScoresheet: team.hideScoresheet,
+      })
       .pipe(
         tap(() => {
           this.teamStore.setLoading(false);

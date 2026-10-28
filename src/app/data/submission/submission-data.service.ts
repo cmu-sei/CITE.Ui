@@ -9,6 +9,7 @@ import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
+  ItemStatus,
   Submission,
   SubmissionService,
   SubmissionOptionService,
@@ -207,10 +208,10 @@ export class SubmissionDataService {
       });
   }
 
-  updateSubmission(submission: Submission) {
+  updateSubmissionStatus(id: string, status: ItemStatus) {
     this.submissionStore.setLoading(true);
     this.submissionService
-      .updateSubmission(submission.id, { status: submission.status })
+      .updateSubmission(id, { status })
       .pipe(
         tap(() => {
           this.submissionStore.setLoading(false);

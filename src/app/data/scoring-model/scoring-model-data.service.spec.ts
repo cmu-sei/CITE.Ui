@@ -51,7 +51,7 @@ function setup(
     copyScoringModel: vi.fn((id: string) =>
       of(makeModel({ id: `${id}-copy` })),
     ),
-    updateScoringModel: vi.fn((_id: string, m?: ScoringModel) => of({ ...m })),
+    updateScoringModel: vi.fn((id: string, m?: ScoringModel) => of({ ...m, id })),
     deleteScoringModel: vi.fn(() => of(null)),
     uploadJsonFiles: vi.fn(() => of()),
     ...overrides.api,
@@ -172,14 +172,18 @@ describe('ScoringModelDataService', () => {
   });
 
   /**
-   * Verifies: updateScoringModel() stores the API's response.
+   * Verifies: updateScoringModel() sends only the fields the API edits and stores the API's response.
    * Interacts with: ScoringModelService.updateScoringModel stub, ScoringModelQuery.
    * Data: sm1 renamed.
    */
   it('updateScoringModel() stores the updated model', () => {
-    const { service, query, store } = setup();
+    const { service, query, store, api } = setup();
     store.set([makeModel()]);
     service.updateScoringModel(makeModel({ description: 'Renamed' }));
+    expect(api.updateScoringModel).toHaveBeenCalledWith('sm1', {
+      description: 'Renamed',
+      status: ItemStatus.Active,
+    });
     expect(query.getEntity('sm1')?.description).toBe('Renamed');
   });
 

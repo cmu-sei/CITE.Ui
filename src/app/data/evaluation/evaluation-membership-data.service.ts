@@ -38,7 +38,9 @@ export class EvaluationMembershipDataService {
 
   editMembership(evaluationMembership: EvaluationMembership) {
     return this.evaluationMembershipsService
-      .updateEvaluationMembership(evaluationMembership.id, evaluationMembership)
+      .updateEvaluationMembership(evaluationMembership.id, {
+        roleId: evaluationMembership.roleId,
+      })
       .pipe(
         tap((x) => {
           this.upsert(evaluationMembership.id, x);

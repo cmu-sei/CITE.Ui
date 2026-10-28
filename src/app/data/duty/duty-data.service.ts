@@ -206,7 +206,7 @@ export class DutyDataService {
   updateDuty(duty: Duty) {
     this.dutyStore.setLoading(true);
     this.dutyService
-      .updateDuty(duty.id, duty)
+      .updateDuty(duty.id, { name: duty.name })
       .pipe(
         tap(() => {
           this.dutyStore.setLoading(false);

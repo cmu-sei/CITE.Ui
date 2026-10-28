@@ -86,7 +86,6 @@ describe('EvaluationMembershipDataService', () => {
       service.editMembership({ id: 'em1', roleId: 'owner' }),
     );
     expect(api.updateEvaluationMembership).toHaveBeenCalledWith('em1', {
-      id: 'em1',
       roleId: 'owner',
     });
     const list = await firstValueFrom(service.evaluationMemberships$);

@@ -187,7 +187,12 @@ export class ScoringOptionDataService {
   updateScoringOption(scoringOption: ScoringOption) {
     this.scoringOptionStore.setLoading(true);
     this.scoringOptionService
-      .updateScoringOption(scoringOption.id, scoringOption)
+      .updateScoringOption(scoringOption.id, {
+        displayOrder: scoringOption.displayOrder,
+        description: scoringOption.description,
+        isModifier: scoringOption.isModifier,
+        value: scoringOption.value,
+      })
       .pipe(
         tap(() => {
           this.scoringOptionStore.setLoading(false);

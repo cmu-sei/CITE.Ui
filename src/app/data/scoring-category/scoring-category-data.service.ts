@@ -187,7 +187,16 @@ export class ScoringCategoryDataService {
   updateScoringCategory(scoringCategory: ScoringCategory) {
     this.scoringCategoryStore.setLoading(true);
     this.scoringCategoryService
-      .updateScoringCategory(scoringCategory.id, scoringCategory)
+      .updateScoringCategory(scoringCategory.id, {
+        displayOrder: scoringCategory.displayOrder,
+        description: scoringCategory.description,
+        calculationEquation: scoringCategory.calculationEquation,
+        isModifierRequired: scoringCategory.isModifierRequired,
+        scoringWeight: scoringCategory.scoringWeight,
+        moveNumberFirstDisplay: scoringCategory.moveNumberFirstDisplay,
+        moveNumberLastDisplay: scoringCategory.moveNumberLastDisplay,
+        scoringOptionSelection: scoringCategory.scoringOptionSelection,
+      })
       .pipe(
         tap(() => {
           this.scoringCategoryStore.setLoading(false);

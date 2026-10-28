@@ -252,7 +252,12 @@ export class ActionDataService {
   updateAction(action: Action) {
     this.actionStore.setLoading(true);
     this.actionService
-      .updateAction(action.id, action)
+      .updateAction(action.id, {
+        moveNumber: action.moveNumber,
+        injectNumber: action.injectNumber,
+        actionNumber: action.actionNumber,
+        description: action.description,
+      })
       .pipe(
         tap(() => {
           this.actionStore.setLoading(false);
