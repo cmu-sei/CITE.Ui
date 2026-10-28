@@ -73,7 +73,7 @@ describe('AdminActionEditDialogComponent', () => {
   });
 
   /**
-   * Verifies: Save emits the action with the edited description, keeping the move as a string.
+   * Verifies: Save emits the action with the edited description and the move as a number, as the API takes it.
    * Interacts with: the crucible-dialog Save button, the editComplete output.
    * Data: action a1 on move 1, team t1, description changed.
    */
@@ -96,7 +96,7 @@ describe('AdminActionEditDialogComponent', () => {
       action: {
         id: 'a1',
         description: 'Isolate every server',
-        moveNumber: '1',
+        moveNumber: 1,
         teamId: 't1',
       },
     });
