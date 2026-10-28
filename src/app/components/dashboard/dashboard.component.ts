@@ -152,7 +152,7 @@ export class DashboardComponent implements OnDestroy {
             this.settingsService.settings.GalleryUiUrl +
             '?exhibit=' +
             active.galleryExhibitId +
-            '&section=archive';
+            '&section=wall';
           this.setCompleteSituationDescription();
           // load the team data
           this.loadTeamData();
