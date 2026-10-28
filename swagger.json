@@ -11948,6 +11948,9 @@
         "description": "The only field editable on an existing submission comment. It has no SubmissionOptionId, so a\nrequest cannot move the comment to another option or submission."
       },
       "UpdateSubmissionOptionRequest": {
+        "required": [
+          "isSelected"
+        ],
         "type": "object",
         "properties": {
           "isSelected": {
@@ -11955,7 +11958,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "The only field editable on an existing submission option. It is applied as a selection, so the category's exclusivity and the submission's score are kept."
+        "description": "The only field editable on an existing submission option. It is applied as a selection, so the category's exclusivity and the submission's score are kept, and is required, so a request that leaves it out cannot clear the category."
       },
       "UpdateSubmissionRequest": {
         "required": [
