@@ -104,12 +104,13 @@ describe('TeamMembershipDataService', () => {
   });
 
   /**
-   * Verifies: updateStore() (TeamMembershipCreated/Updated) adds a pushed membership, then updates it in place.
+   * Verifies: updateStore() (TeamMembershipCreated/Updated) adds a pushed membership of the loaded team, then updates it in place.
    * Interacts with: TeamMembershipDataService.updateStore, teamMemberships$.
-   * Data: empty list; tm9 pushed, then pushed again with a role.
+   * Data: no memberships loaded for t1; tm9 pushed, then pushed again with a role.
    */
   it('updateStore() upserts a pushed membership', async () => {
-    const { service } = setup();
+    const { service } = setup({ getAllTeamMemberships: vi.fn(() => of([])) });
+    await firstValueFrom(service.loadMemberships('t1'));
     service.updateStore({ id: 'tm9', teamId: 't1', userId: 'u9' });
     service.updateStore({
       id: 'tm9',
@@ -120,6 +121,20 @@ describe('TeamMembershipDataService', () => {
     expect(await firstValueFrom(service.teamMemberships$)).toEqual([
       { id: 'tm9', teamId: 't1', userId: 'u9', roleId: 'r1' },
     ]);
+  });
+
+  /**
+   * Verifies: updateStore() ignores a membership of another team, which the admin data group is also sent,
+   * so the admin team member list doesn't show another team's members.
+   * Interacts with: TeamMembershipDataService.updateStore, teamMemberships$.
+   * Data: two loaded memberships of t1; tm8 of t2 pushed.
+   */
+  it('updateStore() ignores a membership of another team', async () => {
+    const { service } = setup();
+    await firstValueFrom(service.loadMemberships('t1'));
+    service.updateStore({ id: 'tm8', teamId: 't2', userId: 'u1' });
+    const memberships = await firstValueFrom(service.teamMemberships$);
+    expect(memberships.map((m) => m.id)).toEqual(['tm1', 'tm2']);
   });
 
   /**
