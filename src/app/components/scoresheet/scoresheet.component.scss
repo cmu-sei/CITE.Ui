@@ -99,7 +99,9 @@
   align-items: baseline;
   gap: 8px;
   padding: 4px 16px;
-  border: 1px solid transparent;
+  // colored by the scoring model's severity level; the border keeps white and
+  // black badges visible
+  border: 1px solid #6b6b6b;
   border-radius: 20px;
   white-space: nowrap;
 }
@@ -115,41 +117,6 @@
   font-size: 22px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-}
-
-// score levels, lowest to highest, set by displayedScoreClass
-.score-badge {
-  &.white {
-    background-color: var(--mat-sys-surface-container-high);
-    border-color: var(--mat-sys-outline-variant);
-    color: var(--mat-sys-on-surface);
-  }
-
-  &.green {
-    background-color: #81c784;
-    color: #000000;
-  }
-
-  &.yellow {
-    background-color: #ffe45c;
-    color: #000000;
-  }
-
-  &.orange {
-    background-color: #fb8c00;
-    color: #000000;
-  }
-
-  &.red {
-    background-color: #b71c1c;
-    color: #ffffff;
-  }
-
-  &.black {
-    background-color: #000000;
-    border-color: var(--mat-sys-outline);
-    color: #ffffff;
-  }
 }
 
 .answered {

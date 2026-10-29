@@ -30,6 +30,7 @@ import { MatIcon } from '@angular/material/icon';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
+import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/app/utilities/severity-levels';
 
 @Component({
     selector: 'app-report',
@@ -73,8 +74,6 @@ export class ReportComponent implements OnDestroy {
   submissionList: PopulatedSubmission[] = [];
   teamSubmissionList: PopulatedSubmission[] = [];
   userSubmissionList: PopulatedSubmission[] = [];
-  displayedScoreClass = 'white';
-  displayedScoreHover = 'Level 0 - Baseline';
   displaying = '';
   displayedScoringCategories: ScoringCategory[] = [];
   isLoading = false;
@@ -388,6 +387,11 @@ export class ReportComponent implements OnDestroy {
       // the home page saves the choice and shows the same submission on the scoresheet
       this.selectDisplayedSubmission.emit(displaying);
     }
+  }
+
+  // e.g. "Level 4 - Severe", from the scoring model's severity levels
+  scoreLevelLabel(score: number) {
+    return severityLevelLabel(severityLevelForScore(severityLevels(this.selectedScoringModel), score));
   }
 
   printpage() {

@@ -44,7 +44,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
         <span class="chip">{{ getSubmissionStatusText(submission) }}</span>
         }
         @if (!selectedScoringModel?.hideScoresOnScoreSheet) {
-        <span class="chip">
+        <span class="chip" [matTooltip]="scoreLevelLabel(submission.score)">
           <span class="chip-label">Score</span>&ngsp;
           <strong>{{ submission.score | number: '1.2-2' }}</strong>
         </span>

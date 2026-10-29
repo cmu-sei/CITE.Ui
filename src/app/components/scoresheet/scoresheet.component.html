@@ -62,10 +62,12 @@ project root for license information or contact permission@sei.cmu.edu for full 
         }
         <div class="toolbar-summary">
           @if (!selectedScoringModel.hideScoresOnScoreSheet) {
-          <span class="score-badge" [ngClass]="displayedScoreClass" [matTooltip]="displayedScoreHover">
+          @let scoreLevel = displayedSeverityLevel();
+          <span class="score-badge" [style.background-color]="scoreLevel?.color"
+            [style.color]="scoreLevel?.textColor" [matTooltip]="severityLevelLabel(scoreLevel)">
             <span class="score-label">Score</span>
             <span class="score-value">{{ displayedSubmission.score | number: '1.2-2' }}</span>
-            <span class="visually-hidden">, {{ displayedScoreHover }}</span>
+            <span class="visually-hidden">, {{ severityLevelLabel(scoreLevel) }}</span>
           </span>
           }
           @if (!displayedSubmission.scoreIsAnAverage) {

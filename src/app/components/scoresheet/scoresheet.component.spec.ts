@@ -1116,6 +1116,41 @@ describe('ScoresheetComponent', () => {
     });
   });
 
+  describe('score level', () => {
+    /**
+     * Verifies: the displayed score is colored and labelled by the default levels when the model has none.
+     * Interacts with: real ScoringModel/Submission stores.
+     * Data: the active submission scores 77; scores shown; the model has no severity levels.
+     */
+    it('uses the default severity levels', async () => {
+      await renderScoresheet({ activeSubmission: { score: 77 }, model: { hideScoresOnScoreSheet: false } });
+
+      const score = screen.getByText(', Level 4 - Severe').closest('.score-badge');
+      expect(score).toHaveTextContent('77.00');
+      expect(score).toHaveStyle({ backgroundColor: '#8B0000', color: '#FFFFFF' });
+    });
+
+    /**
+     * Verifies: the displayed score is colored and labelled by the scoring model's own levels.
+     * Interacts with: real ScoringModel/Submission stores.
+     * Data: the active submission scores 77; scores shown; levels Calm from 0 and Storm from 80.
+     */
+    it("uses the scoring model's severity levels", async () => {
+      await renderScoresheet({
+        activeSubmission: { score: 77 },
+        model: {
+          hideScoresOnScoreSheet: false,
+          severityLevels: [
+            { name: 'Calm', minimumScore: 0, color: '#90EE90' },
+            { name: 'Storm', minimumScore: 80, color: '#000000' },
+          ],
+        },
+      });
+
+      expect(screen.getByText(', Level 0 - Calm').closest('.score-badge')).toHaveStyle({ backgroundColor: '#90EE90', color: '#000000' });
+    });
+  });
+
   /**
    * Verifies: a move with no questions lists no categories and names the next move that has questions, by its description.
    * Interacts with: getDisplayedScoringCategories(), getNextQuestionMove(), real MoveStore.
