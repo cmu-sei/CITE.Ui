@@ -1,7 +1,7 @@
 // Copyright 2026 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Component, NgZone, input, output } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
@@ -90,6 +90,17 @@ const EVALUATION: Evaluation = {
   scoringModelId: 'sm1',
   dateCreated: new Date('2026-01-02T10:00:00Z'),
 };
+
+// The test DOM never loads images, so tests fire load or error themselves.
+class FakeImage {
+  static last: FakeImage | undefined;
+  onload: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  src = '';
+  constructor() {
+    FakeImage.last = this;
+  }
+}
 
 async function renderHome(
   grants: PermissionGrants,
@@ -298,47 +309,85 @@ describe('HomeAppComponent', () => {
     ).toBeInTheDocument();
   });
 
-  /**
-   * Verifies: the evaluation list shows the background image named in settings, and none without the setting.
-   * Interacts with: ComnSettingsService.settings (stub), HomeAppComponent template.
-   * Data: AppLandingBackgroundImage set to a relative asset URL, or unset; no evaluation in the route.
-   */
-  it.each([
-    {
-      label: 'with',
-      background: '/assets/local/landing-background.jpg',
-      expected: 'url("/assets/local/landing-background.jpg")',
-    },
-    { label: 'without', background: undefined, expected: '' },
-  ])(
-    'shows the landing background $label the setting',
-    async ({ background, expected }) => {
-      const { container } = await renderHome({}, { background });
+  describe('landing background', () => {
+    beforeEach(() => vi.stubGlobal('Image', FakeImage));
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      FakeImage.last = undefined;
+    });
 
-      const page = container.querySelector(
-        '.app-events-container',
-      ) as HTMLElement;
-      expect(page.style.getPropertyValue('--landing-background')).toBe(
-        expected,
+    /**
+     * Verifies: the evaluation list shows the background image named in settings once it loads.
+     * Interacts with: ComnSettingsService.settings (stub), a stubbed Image, HomeAppComponent template.
+     * Data: AppLandingBackgroundImage set to a relative asset URL; the image load event fires; no evaluation in the route.
+     */
+    it('shows the landing background once the image loads', async () => {
+      const { fixture, container } = await renderHome(
+        {},
+        { background: '/assets/local/landing-background.jpg' },
       );
-      expect(page.classList.contains('has-background')).toBe(!!background);
-    },
-  );
 
-  /**
-   * Verifies: an open evaluation hides the landing background even with the setting.
-   * Interacts with: the route's evaluation parameter, HomeAppComponent template.
-   * Data: ?evaluation=e1; AppLandingBackgroundImage set to a relative asset URL.
-   */
-  it('hides the landing background inside an evaluation', async () => {
-    const { container } = await renderHome(
-      {},
-      { evaluation: 'e1', background: '/assets/local/landing-background.jpg' },
-    );
+      expect(FakeImage.last?.src).toBe('/assets/local/landing-background.jpg');
+      FakeImage.last!.onload!();
+      fixture.detectChanges();
 
-    const page = container.querySelector('.app-events-container') as HTMLElement;
-    expect(page.style.getPropertyValue('--landing-background')).toBe('');
-    expect(page.classList.contains('has-background')).toBe(false);
+      const page = container.querySelector('.app-events-container') as HTMLElement;
+      expect(page.style.getPropertyValue('--landing-background')).toBe(
+        'url("/assets/local/landing-background.jpg")',
+      );
+      expect(page.classList.contains('has-background')).toBe(true);
+    });
+
+    /**
+     * Verifies: an image that fails to load leaves the normal page background, as if unset.
+     * Interacts with: ComnSettingsService.settings (stub), a stubbed Image, HomeAppComponent template.
+     * Data: AppLandingBackgroundImage set to a missing image; the image error event fires.
+     */
+    it('keeps the normal background when the image fails to load', async () => {
+      const { fixture, container } = await renderHome(
+        {},
+        { background: '/assets/local/missing.jpg' },
+      );
+
+      FakeImage.last!.onerror?.();
+      fixture.detectChanges();
+
+      const page = container.querySelector('.app-events-container') as HTMLElement;
+      expect(page.style.getPropertyValue('--landing-background')).toBe('');
+      expect(page.classList.contains('has-background')).toBe(false);
+    });
+
+    /**
+     * Verifies: without the setting, no image is requested and the normal page background is kept.
+     * Interacts with: ComnSettingsService.settings (stub), a stubbed Image, HomeAppComponent template.
+     * Data: AppLandingBackgroundImage unset.
+     */
+    it('keeps the normal background without the setting', async () => {
+      const { container } = await renderHome({});
+
+      expect(FakeImage.last).toBeUndefined();
+      const page = container.querySelector('.app-events-container') as HTMLElement;
+      expect(page.classList.contains('has-background')).toBe(false);
+    });
+
+    /**
+     * Verifies: an open evaluation hides the landing background even once the image loads.
+     * Interacts with: the route's evaluation parameter, a stubbed Image, HomeAppComponent template.
+     * Data: ?evaluation=e1; AppLandingBackgroundImage set to a relative asset URL; the image load event fires.
+     */
+    it('hides the landing background inside an evaluation', async () => {
+      const { fixture, container } = await renderHome(
+        {},
+        { evaluation: 'e1', background: '/assets/local/landing-background.jpg' },
+      );
+
+      FakeImage.last!.onload!();
+      fixture.detectChanges();
+
+      const page = container.querySelector('.app-events-container') as HTMLElement;
+      expect(page.style.getPropertyValue('--landing-background')).toBe('');
+      expect(page.classList.contains('has-background')).toBe(false);
+    });
   });
 
   describe('hubs', () => {

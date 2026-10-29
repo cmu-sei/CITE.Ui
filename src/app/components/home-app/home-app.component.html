@@ -4,8 +4,8 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="app-events-container" [class.has-background]="backgroundImage && !selectedEvaluationId"
-  [style.--landing-background]="selectedEvaluationId ? null : backgroundImage">
+<div class="app-events-container" [class.has-background]="backgroundImage() && !selectedEvaluationId"
+  [style.--landing-background]="selectedEvaluationId ? null : backgroundImage()">
   @if (!hideTopbar) {
   <app-topbar [title]="topbarText" [topbarView]="TopbarView.CITE_HOME" [imageFilePath]="topbarImage"
     (urlNavigate)="topBarNavigate($event)" />

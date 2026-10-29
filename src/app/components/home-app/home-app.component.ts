@@ -3,7 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { DOCUMENT, AsyncPipe, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild, inject, viewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject, signal, viewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -164,10 +164,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   hideTopbar = false;
   topbarImage = this.settingsService.settings.AppTopBarImage;
   // An optional image URL from settings, so a site can brand the evaluation
-  // list without shipping the image in this repo.
-  backgroundImage = this.settingsService.settings.AppLandingBackgroundImage
-    ? `url("${this.settingsService.settings.AppLandingBackgroundImage}")`
-    : null;
+  // list without shipping the image in this repo. Applied only once the
+  // image loads, so a missing image leaves the normal page background.
+  readonly backgroundImage = signal<string | null>(null);
   TopbarView = TopbarView;
   theme$: Observable<Theme>;
   selectedEvaluationId = '';
@@ -228,6 +227,12 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
+    const url = this.settingsService.settings.AppLandingBackgroundImage;
+    if (url) {
+      const image = new Image();
+      image.onload = () => this.backgroundImage.set(`url("${url}")`);
+      image.src = url;
+    }
     // load system permissions
     this.permissionDataService
       .load()
