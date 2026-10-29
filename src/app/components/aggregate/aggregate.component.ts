@@ -64,8 +64,6 @@ export class AggregateComponent implements OnInit, OnDestroy {
   submissionList: PopulatedSubmission[] = [];
   teamSubmissionList: PopulatedSubmission[] = [];
   userSubmissionList: PopulatedSubmission[] = [];
-  displayedScoreClass = 'white';
-  displayedScoreHover = 'Level 0 - Baseline';
   displaying = '';
   displayedScoringCategories: ScoringCategory[] = [];
   isLoading = false;

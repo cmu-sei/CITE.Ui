@@ -2,19 +2,24 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnDestroy, inject, input } from '@angular/core';
+import { Component, OnDestroy, computed, inject, input } from '@angular/core';
 import { ScoringModel, Submission } from 'src/app/generated/cite.api/model/models';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
-import { NgClass } from '@angular/common';
+import {
+  DisplayedSeverityLevel,
+  roundScore,
+  severityLevelForScore,
+  severityLevelRange,
+  severityLevels,
+} from 'src/app/utilities/severity-levels';
 
 @Component({
     selector: 'app-score-summary',
     templateUrl: './score-summary.component.html',
     styleUrls: ['./score-summary.component.scss'],
-    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow]
+    imports: []
 })
 export class ScoreSummaryComponent implements OnDestroy {
   private submissionQuery = inject(SubmissionQuery);
@@ -23,26 +28,9 @@ export class ScoreSummaryComponent implements OnDestroy {
   readonly selectedScoringModel = input<ScoringModel>(undefined);
   submissionList: Submission[];
   activeSubmission: Submission = {};
-  levels = [
-    {
-      scoremin: '90', scoremax: '100', level: 5, name: 'Emergency', color: 'black',
-      definition: 'Poses an imminent threat to the provision of wide-scale critical infrastructure services, national goverment stability, or to the lives of U.S. persons'},
-    {
-      scoremin: '75', scoremax: '89.99', level: 4, name: 'Severe', color: 'red',
-      definition: 'Likely to result in a significant impact to public health or safety, national security, economic security, foreign relations, or civil liberties.'},
-    {
-      scoremin: '65', scoremax: '74.99', level: 3, name: 'High', color: 'orange',
-      definition: 'Likely to result in a demonstrable impact to public health or safety, national security, economic security, foreign relations, civil liberties, or public confidence'},
-    {
-      scoremin: '50', scoremax: '64.99', level: 2, name: 'Medium', color: 'yellow',
-      definition: 'May impact public health or safety, national security, economic security, foreign relations, civil liberties, or public confidence.'},
-    {
-      scoremin: '35', scoremax: '49.99', level: 1, name: 'Low', color: 'green',
-      definition: 'Unlikely to impact public health or safety, national security, economic security, foreign relations, civil liberties, or public confidence'},
-    {
-      scoremin: '0', scoremax: '34.99', level: 0, name: 'Baseline', color: 'white', definition: 'Unsubstantiated or inconsequential event'}
-  ];
-  columnsToDisplay = ['score', 'scoremin', 'name'];
+  // the scoring model's levels, or the default CISA levels, highest first
+  readonly levels = computed(() => severityLevels(this.selectedScoringModel()));
+  readonly levelRange = severityLevelRange;
   private unsubscribe$ = new Subject();
 
 
@@ -67,27 +55,37 @@ export class ScoreSummaryComponent implements OnDestroy {
     }
   }
 
-  showScore(level, submission) {
-    let displayText = '';
-    const score = (Math.round((submission.score + Number.EPSILON) * 100) / 100);
-    if (score >= +level.scoremin && score <= +level.scoremax) {
-      if (submission.userId != null) {
-        displayText = ' (user)';
-      } else if (submission.teamId != null) {
-        if (submission.scoreIsAnAverage) {
-          displayText = ' (team-avg)';
-        } else {
-          displayText = ' (team)';
-        }
-      } else if (submission.groupId != null) {
-        displayText = ' (group-avg)';
-      } else {
-        displayText = ' (official)';
-      }
-      return score + displayText;
-    }
+  // the active move's scores that fall in a level, highest first
+  scoresInLevel(level: DisplayedSeverityLevel) {
+    return this.currentSubmissions()
+      .filter(submission => this.levelFor(submission) === level)
+      .map(submission => ({
+        id: submission.id,
+        score: roundScore(submission.score),
+        type: this.submissionType(submission),
+        isActive: submission.id === this.activeSubmission.id,
+      }));
+  }
 
-    return '';
+  // the level holding the score shown on the scoresheet
+  isCurrentLevel(level: DisplayedSeverityLevel) {
+    return !!this.activeSubmission.id && this.levelFor(this.activeSubmission) === level;
+  }
+
+  // named as on the scoresheet's view buttons
+  submissionType(submission: Submission) {
+    if (submission.userId != null) {
+      return 'User';
+    } else if (submission.teamId != null) {
+      return submission.scoreIsAnAverage ? 'Team Avg' : 'Team';
+    } else if (submission.groupId != null) {
+      return 'Group Avg';
+    }
+    return 'Official';
+  }
+
+  private levelFor(submission: Submission) {
+    return severityLevelForScore(this.levels(), submission.score);
   }
 
   ngOnDestroy() {

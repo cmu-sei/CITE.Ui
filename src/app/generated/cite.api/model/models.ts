@@ -60,6 +60,7 @@ export * from './scoringModelRole';
 export * from './scoringOption';
 export * from './scoringOptionSelection';
 export * from './securityRuleSet';
+export * from './severityLevel';
 export * from './structLayoutAttribute';
 export * from './submission';
 export * from './submissionCategory';
