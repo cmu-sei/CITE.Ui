@@ -71,11 +71,16 @@ export function severityLevelLabel(level: DisplayedSeverityLevel | undefined): s
   return level ? `Level ${level.level} - ${level.name}` : '';
 }
 
-// e.g. "75-89.99", or "90+" for the highest level
+// e.g. "75-89.99"; "90+" for the highest level and "<35" for the lowest, which
+// also holds every score below its own minimum
 export function severityLevelRange(level: DisplayedSeverityLevel): string {
   const minimum = level.minimumScore ?? 0;
+  const lowest = level.level === 0;
   if (level.nextMinimumScore == null) {
-    return `${minimum}+`;
+    return lowest ? 'Any score' : `${minimum}+`;
+  }
+  if (lowest) {
+    return `<${level.nextMinimumScore}`;
   }
   return `${minimum}-${roundScore(level.nextMinimumScore - 0.01)}`;
 }

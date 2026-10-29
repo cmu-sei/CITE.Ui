@@ -136,7 +136,7 @@ describe('ScoreSummaryComponent', () => {
       screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
     ).toEqual(['Level 1 - Storm', 'Level 0 - Calm']);
     expect(screen.getByText('60+')).toBeInTheDocument();
-    expect(screen.getByText('0-59.99')).toBeInTheDocument();
+    expect(screen.getByText('<60')).toBeInTheDocument();
     expect(screen.getByText('Nothing happening')).toBeInTheDocument();
     const storm = screen.getByRole('heading', { name: 'Level 1 - Storm' }).closest('li') as HTMLElement;
     expect(storm).toHaveClass('current');

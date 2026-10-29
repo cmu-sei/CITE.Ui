@@ -218,7 +218,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <div class="field-row">
         <h3 class="section-title">Severity Levels</h3>
         <button mat-icon-button type="button" class="info-button" tabindex="-1"
-          matTooltip="The levels the Score Summary and scoresheet place scores in. A score falls in the level with the highest Minimum Score at or below it. Without levels of its own, a scoring model uses the default CISA levels."
+          matTooltip="The levels the Score Summary and scoresheet place scores in. A score falls in the level with the highest Minimum Score at or below it; a score below every minimum falls in the lowest level. Without levels of its own, a scoring model uses the default CISA levels."
           #levelsTip="matTooltip" (click)="levelsTip.toggle()">
           <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
         </button>

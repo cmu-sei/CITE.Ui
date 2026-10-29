@@ -26,7 +26,7 @@ describe('severity levels', () => {
       'Level 1 - Low',
       'Level 0 - Baseline',
     ]);
-    expect(levels.map(severityLevelRange)).toEqual(['90+', '75-89.99', '65-74.99', '50-64.99', '35-49.99', '0-34.99']);
+    expect(levels.map(severityLevelRange)).toEqual(['90+', '75-89.99', '65-74.99', '50-64.99', '35-49.99', '<35']);
   });
 
   /**
@@ -63,6 +63,19 @@ describe('severity levels', () => {
       ],
     });
     expect(severityLevelForScore(raised, 3).name).toBe('Some');
+    // the lowest level's range says it holds every score below the next level, including 3
+    expect(raised.map(severityLevelRange)).toEqual(['50+', '<50']);
+  });
+
+  /**
+   * Verifies: a scoring model with a single level shows it as holding any score.
+   * Data: one level starting at 20.
+   */
+  it('labels a single level as any score', () => {
+    const only = severityLevels({ severityLevels: [{ name: 'Only', minimumScore: 20, color: '#FFFFFF' }] });
+
+    expect(only.map(severityLevelRange)).toEqual(['Any score']);
+    expect(severityLevelForScore(only, -5).name).toBe('Only');
   });
 
   /**
