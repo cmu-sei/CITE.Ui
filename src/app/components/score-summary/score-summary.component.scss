@@ -62,8 +62,8 @@
   }
 }
 
-// the CISA severity colors live on the badge only, so every row stays
-// readable in both themes
+// the level's color lives on the badge only, so every row stays readable in
+// both themes; the border keeps white and black badges visible
 .level-swatch {
   display: flex;
   flex: 0 0 auto;
@@ -71,42 +71,10 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  border: 1px solid transparent;
+  border: 1px solid #6b6b6b;
   border-radius: 8px;
   font-size: 18px;
   font-weight: 700;
-
-  &.black {
-    border-color: #6b6b6b;
-    background-color: black;
-    color: white;
-  }
-
-  &.red {
-    background-color: darkred;
-    color: white;
-  }
-
-  &.orange {
-    background-color: darkorange;
-    color: black;
-  }
-
-  &.yellow {
-    background-color: yellow;
-    color: black;
-  }
-
-  &.green {
-    background-color: lightgreen;
-    color: black;
-  }
-
-  &.white {
-    border-color: #6b6b6b;
-    background-color: white;
-    color: black;
-  }
 }
 
 .level-body {

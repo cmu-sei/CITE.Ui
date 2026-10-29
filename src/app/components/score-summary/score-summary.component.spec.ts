@@ -109,4 +109,37 @@ describe('ScoreSummaryComponent', () => {
     ]);
     expect(chips[1]).toHaveTextContent('Group Avg');
   });
+
+  /**
+   * Verifies: the scoring model's own severity levels replace the defaults, with their colors and ranges.
+   * Interacts with: the selectedScoringModel input; real SubmissionStore/SubmissionQuery.
+   * Data: levels Calm from 0 and Storm from 60; a team score of 72 is active.
+   */
+  it('shows the scoring models own severity levels', async () => {
+    const { fixture } = await renderComponent(ScoreSummaryComponent, {
+      declarations: [ScoreSummaryComponent],
+      inputs: {
+        selectedScoringModel: {
+          severityLevels: [
+            { name: 'Calm', minimumScore: 0, color: '#FFFFFF', description: 'Nothing happening' },
+            { name: 'Storm', minimumScore: 60, color: '#8B0000', description: '' },
+          ],
+        },
+      },
+    });
+    const store = TestBed.inject(SubmissionStore);
+    store.set([{ id: 't', moveNumber: 1, score: 72, teamId: 't1' }]);
+    store.setActive('t');
+    fixture.detectChanges();
+
+    expect(
+      screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
+    ).toEqual(['Level 1 - Storm', 'Level 0 - Calm']);
+    expect(screen.getByText('60+')).toBeInTheDocument();
+    expect(screen.getByText('<60')).toBeInTheDocument();
+    expect(screen.getByText('Nothing happening')).toBeInTheDocument();
+    const storm = screen.getByRole('heading', { name: 'Level 1 - Storm' }).closest('li') as HTMLElement;
+    expect(storm).toHaveClass('current');
+    expect(storm.querySelector('.level-swatch')).toHaveStyle({ backgroundColor: '#8B0000', color: '#FFFFFF' });
+  });
 });
