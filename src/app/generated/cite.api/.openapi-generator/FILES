@@ -93,6 +93,7 @@ model/scoringModelRole.ts
 model/scoringOption.ts
 model/scoringOptionSelection.ts
 model/securityRuleSet.ts
+model/severityLevel.ts
 model/structLayoutAttribute.ts
 model/submission.ts
 model/submissionCategory.ts

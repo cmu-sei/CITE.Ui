@@ -14,6 +14,7 @@
  * Do not edit the class manually.
  */
 import { ItemStatus } from './itemStatus';
+import { SeverityLevel } from './severityLevel';
 import { RightSideDisplay } from './rightSideDisplay';
 
 
@@ -34,6 +35,7 @@ export interface UpdateScoringModelRequest {
     rightSideDisplay?: RightSideDisplay;
     rightSideHtmlBlock?: string | null;
     rightSideEmbeddedUrl?: string | null;
+    severityLevels?: Array<SeverityLevel> | null;
 }
 export namespace UpdateScoringModelRequest {
 }

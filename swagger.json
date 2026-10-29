@@ -8807,6 +8807,13 @@
             "type": "string",
             "nullable": true
           },
+          "severityLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SeverityLevel"
+            },
+            "nullable": true
+          },
           "id": {
             "type": "string",
             "format": "uuid"
@@ -10398,6 +10405,13 @@
               "$ref": "#/components/schemas/ScoringModelPermission"
             },
             "nullable": true
+          },
+          "severityLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SeverityLevel"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -10541,6 +10555,33 @@
           "Level2"
         ],
         "type": "string"
+      },
+      "SeverityLevel": {
+        "required": [
+          "color",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minimumScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "color": {
+            "minLength": 1,
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "StructLayoutAttribute": {
         "type": "object",
@@ -11904,6 +11945,13 @@
           },
           "rightSideEmbeddedUrl": {
             "type": "string",
+            "nullable": true
+          },
+          "severityLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SeverityLevel"
+            },
             "nullable": true
           }
         },

@@ -187,6 +187,7 @@ export class ScoringModelDataService {
         rightSideDisplay: scoringModel.rightSideDisplay,
         rightSideHtmlBlock: scoringModel.rightSideHtmlBlock,
         rightSideEmbeddedUrl: scoringModel.rightSideEmbeddedUrl,
+        severityLevels: scoringModel.severityLevels,
       } satisfies Required<CreateScoringModelRequest>)
       .pipe(
         tap(() => {
@@ -238,6 +239,7 @@ export class ScoringModelDataService {
         rightSideDisplay: scoringModel.rightSideDisplay,
         rightSideHtmlBlock: scoringModel.rightSideHtmlBlock,
         rightSideEmbeddedUrl: scoringModel.rightSideEmbeddedUrl,
+        severityLevels: scoringModel.severityLevels,
       } satisfies Required<UpdateScoringModelRequest>)
       .pipe(
         tap(() => {

@@ -188,6 +188,29 @@ describe('ScoringModelDataService', () => {
   });
 
   /**
+   * Verifies: add() and updateScoringModel() send the severity levels the edit dialog sets.
+   * Interacts with: ScoringModelService.createScoringModel / updateScoringModel stubs.
+   * Data: sm1 with two severity levels.
+   */
+  it('add() and updateScoringModel() send the severity levels', () => {
+    const { service, store, api } = setup();
+    store.set([makeModel()]);
+    const severityLevels = [
+      { name: 'Low', minimumScore: 0, color: '#00ff00', description: 'Minor' },
+      { name: 'High', minimumScore: 50, color: '#ff0000', description: 'Severe' },
+    ];
+    service.add(makeModel({ id: undefined, severityLevels }));
+    service.updateScoringModel(makeModel({ severityLevels }));
+    expect(api.createScoringModel).toHaveBeenCalledWith(
+      expect.objectContaining({ severityLevels }),
+    );
+    expect(api.updateScoringModel).toHaveBeenCalledWith(
+      'sm1',
+      expect.objectContaining({ severityLevels }),
+    );
+  });
+
+  /**
    * Verifies: delete() removes the model and clears the active one.
    * Interacts with: ScoringModelService.deleteScoringModel stub, ScoringModelQuery.
    * Data: sm1 active; sm1 deleted.
