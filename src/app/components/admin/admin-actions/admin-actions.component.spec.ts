@@ -2,6 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -23,6 +24,9 @@ import {
   MoveService,
   TeamService,
 } from '../../../generated/cite.api';
+import { ActionDataService } from '../../../data/action/action-data.service';
+import { MoveDataService } from '../../../data/move/move-data.service';
+import { TeamDataService } from '../../../data/team/team-data.service';
 import { ApiStub } from '../../../test-utils/api-stub';
 import { dialogRefStub } from '../../../test-utils/dialog-refs';
 import { matDialogStub } from '../../../test-utils/mat-dialog';
@@ -50,8 +54,14 @@ async function renderActions(
   canEdit: boolean,
   { firstPassChecked = false } = {},
 ) {
+  // the component reuses one action object across its creates, so each call is recorded as a copy
+  const created: Action[] = [];
   const actionApi = {
     getActionsByEvaluation: vi.fn(() => of(structuredClone(ACTIONS))),
+    createAction: vi.fn((action?: Action) => {
+      created.push({ ...action });
+      return of({ ...action, id: `new-${created.length}` });
+    }),
     updateAction: vi.fn((id: string, action?: Action) => of({ ...action, id })),
     deleteAction: vi.fn(() => of(null)),
   } satisfies ApiStub<ActionService>;
@@ -110,6 +120,7 @@ async function renderActions(
   return {
     ...rendered,
     actionApi,
+    created,
     confirm,
     editDialog,
     user: userEvent.setup(),
@@ -202,6 +213,35 @@ describe('AdminActionsComponent', () => {
     expect(
       within(screen.getByRole('table')).queryByText('Notify legal'),
     ).not.toBeInTheDocument();
+  });
+
+  /**
+   * Verifies: another evaluation's team, move and action that reach the stores live are left out of the panel,
+   * so adding to all teams and all moves creates actions for this evaluation's teams and moves only.
+   * Interacts with: the stores the SignalR handlers update, matDialogStub (editComplete), ActionService.createAction stub.
+   * Data: canEdit true; team t9, move m9 and action a9 of e2 upserted; an action added for all moves and all teams.
+   */
+  it('keeps other evaluations out of the panel and out of an add to all teams and moves', async () => {
+    const { created, editDialog, fixture, user } = await renderActions(true);
+    TestBed.inject(TeamDataService).updateStore({ id: 't9', evaluationId: 'e2', name: 'Green', shortName: 'G' });
+    TestBed.inject(MoveDataService).updateStore({ id: 'm9', evaluationId: 'e2', moveNumber: 5 });
+    TestBed.inject(ActionDataService).updateStore({
+      id: 'a9', evaluationId: 'e2', teamId: 't9', moveNumber: 5, description: 'Other evaluation action',
+    });
+    fixture.detectChanges();
+
+    expect(within(screen.getByRole('table')).queryByText('Other evaluation action')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Add Action' }));
+    expect(editDialog.config()?.data.teamList.map((t: { id: string }) => t.id)).toEqual(['t1', 't2']);
+    editDialog.complete({
+      saveChanges: true,
+      action: { evaluationId: 'e1', description: 'Brief the board', moveNumber: -999, teamId: '' },
+    });
+
+    expect(created.map((a) => [a.moveNumber, a.teamId])).toEqual([
+      [0, 't1'], [0, 't2'], [1, 't1'], [1, 't2'],
+    ]);
   });
 
   /**
