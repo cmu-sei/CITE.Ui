@@ -35,11 +35,14 @@ import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { CrucibleDialogService, CrucibleDialogComponent, CrucibleDialogContentDirective, CrucibleDialogActionsDirective } from '@cmusei/crucible-common';
 import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { NgClass, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput, MatFormField, MatLabel } from '@angular/material/input';
+import { MatInput, MatFormField, MatLabel, MatHint } from '@angular/material/input';
+import { MatCard } from '@angular/material/card';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { FormsModule } from '@angular/forms';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/app/utilities/severity-levels';
@@ -54,7 +57,6 @@ import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/a
         MatHeaderCellDef,
         MatHeaderCell,
         MatButton,
-        NgClass,
         MatCellDef,
         MatCell,
         MatCheckbox,
@@ -62,6 +64,10 @@ import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/a
         MatIconButton,
         MatIcon,
         MatInput,
+        CdkTextareaAutosize,
+        MatHint,
+        MatCard,
+        MatProgressBar,
         FormsModule,
         MatRowDef,
         MatRow,
@@ -122,7 +128,6 @@ export class ScoresheetComponent implements OnDestroy {
   showModifyControls = false;
   commentOptionDescription = 'this is the description';
   currentComment = 'current comment';
-  tableClass = '';
   showHeader = false;
   // save state of each answer box, keyed by scoring option id
   commentSaveStates: { [scoringOptionId: string]: 'saving' | 'saved' | 'failed' } = {};
@@ -268,10 +273,10 @@ export class ScoresheetComponent implements OnDestroy {
         const so = sc.submissionOptions.find(
           (subOpt) => subOpt.scoringOptionId === scoringOptionId
         );
-        selectedCount = so ? so.selectedCount : 0;
+        selectedCount = so?.selectedCount ?? 0;
       }
     }
-    return selectedCount > 0 ? selectedCount.toString() : '   ';
+    return selectedCount;
   }
 
   toggleOption(event: any, scoringCategoryId: string, scoringOptionId: string) {
@@ -672,7 +677,6 @@ export class ScoresheetComponent implements OnDestroy {
       canModify &&
       !this.displayedSubmission.scoreIsAnAverage &&
       this.displayedSubmission.status === ItemStatus.Active;
-    // this.tableClass = this.displaying + '-background';
   }
 
   private getResolvedDisplayedMoveNumber(): number | null {

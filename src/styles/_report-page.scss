@@ -1,0 +1,539 @@
+// Copyright 2026 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+// Layout shared by the Submission Review and the Aggregate Report. Both are
+// read-only documents that get printed, so every color goes through the
+// --report-* properties: the theme's colors on screen, black on white on paper
+// whichever theme is in use.
+
+// the report sits beside other panes, so narrow layouts follow its own width
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
+.report {
+  --report-text: var(--mat-sys-on-surface);
+  --report-muted: var(--mat-sys-on-surface-variant);
+  --report-border: var(--mat-sys-outline-variant);
+  --report-accent: var(--mat-sys-primary);
+  --report-on-accent: var(--mat-sys-on-primary);
+  --report-band: var(--mat-sys-surface-container);
+  --report-selected: var(--mat-sys-surface-container-high);
+  --report-chip: var(--mat-sys-surface-container-highest);
+  --report-badge: var(--mat-sys-primary-container);
+  --report-on-badge: var(--mat-sys-on-primary-container);
+
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 24px 32px;
+  color: var(--report-text);
+  font-size: 15px;
+  line-height: 1.45;
+  text-align: left;
+}
+
+// title block
+
+.report-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--report-text);
+}
+
+.report-heading {
+  display: flex;
+  flex-flow: column;
+  gap: 2px;
+  min-width: 0;
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+}
+
+.report-kind {
+  color: var(--report-accent);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.report-generated {
+  color: var(--report-muted);
+  font-size: 13px;
+}
+
+.report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+// User and Team as one segmented control
+.view-buttons {
+  display: inline-flex;
+
+  .mat-mdc-button-base {
+    --mat-button-outlined-container-shape: 0;
+    --mat-button-outlined-container-height: 36px;
+    --mat-button-outlined-horizontal-padding: 16px;
+    --mat-button-outlined-label-text-color: var(--mat-sys-on-surface);
+    --mat-button-outlined-outline-color: var(--mat-sys-outline);
+    margin-left: -1px;
+
+    &:first-child {
+      --mat-button-outlined-container-shape: 18px 0 0 18px;
+      margin-left: 0;
+    }
+
+    &:last-child {
+      --mat-button-outlined-container-shape: 0 18px 18px 0;
+    }
+
+    &.selected {
+      --mat-button-outlined-label-text-color: var(--mat-sys-on-primary);
+      --mat-button-outlined-outline-color: var(--mat-sys-primary);
+      background-color: var(--mat-sys-primary);
+      z-index: 1;
+    }
+  }
+}
+
+// moves
+
+.report-move {
+  margin-top: 24px;
+  border: 1px solid var(--report-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.move-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--report-border);
+  background-color: var(--report-band);
+}
+
+.move-title {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.move-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 2px 10px;
+  border: 1px solid var(--report-border);
+  border-radius: 12px;
+  color: var(--report-muted);
+  font-size: 13px;
+  white-space: nowrap;
+
+  strong {
+    color: var(--report-text);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.chip-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+// categories
+
+.category {
+  padding: 16px 20px;
+
+  & + & {
+    border-top: 1px solid var(--report-border);
+  }
+}
+
+.category-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+
+.category-title {
+  flex: 1 1 240px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.category-number {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  background-color: var(--report-badge);
+  color: var(--report-on-badge);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.category-text {
+  min-width: 0;
+  padding-top: 1px;
+  overflow-wrap: anywhere;
+}
+
+// options, indented to line up with the category title
+
+.option-list {
+  display: flex;
+  flex-flow: column;
+  gap: 2px;
+  margin: 8px 0 0 30px;
+  padding: 0;
+  list-style: none;
+}
+
+.option {
+  padding: 4px 8px;
+  border-radius: 6px;
+  break-inside: avoid;
+
+  &.selected {
+    background-color: var(--report-selected);
+  }
+}
+
+.option-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.option-check {
+  flex: none;
+  display: inline-flex;
+  color: var(--report-muted);
+
+  .mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
+  }
+
+  .selected & {
+    color: var(--report-accent);
+  }
+}
+
+.option-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+
+  .selected & {
+    font-weight: 600;
+  }
+}
+
+.question-number {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.option-value {
+  flex: none;
+  min-width: 40px;
+  padding: 1px 8px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background-color: var(--report-chip);
+  color: var(--report-muted);
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+
+  .selected & {
+    background-color: var(--report-accent);
+    color: var(--report-on-accent);
+  }
+}
+
+// how many teams or users selected an option, in the Aggregate Report
+.selected-count {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 22px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border: 1px solid var(--report-border);
+  border-radius: 11px;
+  color: var(--report-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+
+  .selected & {
+    border-color: var(--report-accent);
+    background-color: var(--report-accent);
+    color: var(--report-on-accent);
+    font-weight: 600;
+  }
+}
+
+// lines up with the option text, past the count badge
+.selected-by {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin: 4px 0 2px 34px;
+  font-size: 13px;
+}
+
+.selected-by-label {
+  color: var(--report-muted);
+}
+
+.name-chip {
+  padding: 0 8px;
+  border: 1px solid var(--report-border);
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.modifier-heading {
+  margin: 6px 8px 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--report-border);
+  color: var(--report-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+// comments and written answers, indented under the option text
+
+.comment-list {
+  display: flex;
+  flex-flow: column;
+  gap: 4px;
+  margin: 4px 0 4px 30px;
+  padding: 0;
+  list-style: none;
+}
+
+.comment {
+  padding: 2px 0 2px 10px;
+  border-left: 3px solid var(--report-border);
+  color: var(--report-muted);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+// written answers keep the line breaks they were typed with
+.answer {
+  margin: 6px 0 4px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--report-accent);
+  border-radius: 0 6px 6px 0;
+  background-color: var(--report-band);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.no-response {
+  color: var(--report-muted);
+  font-style: italic;
+
+  &.answer {
+    border-left-color: var(--report-border);
+  }
+}
+
+// one row per team or user in the Aggregate Report
+.response-list {
+  display: flex;
+  flex-flow: column;
+  margin: 6px 0 4px;
+  padding: 0;
+  list-style: none;
+}
+
+.response {
+  display: grid;
+  grid-template-columns: minmax(120px, 200px) 1fr;
+  gap: 2px 16px;
+  padding: 6px 0;
+  break-inside: avoid;
+
+  & + & {
+    border-top: 1px dashed var(--report-border);
+  }
+}
+
+.response-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.response-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.empty-state {
+  margin-top: 24px;
+  padding: 40px 24px;
+  border: 1px dashed var(--report-border);
+  border-radius: 12px;
+  color: var(--report-muted);
+  text-align: center;
+}
+
+@container (max-width: 560px) {
+  .report {
+    padding: 16px 12px 24px;
+  }
+
+  .category {
+    padding: 12px;
+  }
+
+  .option-list,
+  .comment-list,
+  .selected-by {
+    margin-left: 0;
+  }
+
+  .response {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  .report {
+    --report-text: #000000;
+    --report-muted: #3d3d3d;
+    --report-border: #b0b0b0;
+    --report-accent: #000000;
+    --report-band: transparent;
+    --report-selected: transparent;
+    --report-chip: transparent;
+    --report-badge: transparent;
+    --report-on-badge: #000000;
+
+    max-width: none;
+    padding: 0;
+    color-scheme: light;
+    font-size: 11pt;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .report-move {
+    margin-top: 18pt;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .move-header {
+    padding: 0 0 4pt;
+    border-bottom: 1.5pt solid #000000;
+    break-after: avoid;
+  }
+
+  .category {
+    padding: 10pt 0 6pt;
+
+    & + & {
+      border-top: none;
+    }
+  }
+
+  .category-header {
+    break-after: avoid;
+  }
+
+  // backgrounds are not printed, so badges and chips get an outline instead
+  .category-number,
+  .option-value {
+    border-color: #000000;
+  }
+
+  .selected .option-value,
+  .selected .selected-count {
+    border-color: #000000;
+    border-width: 2px;
+    background-color: transparent;
+    color: #000000;
+    font-weight: 700;
+  }
+
+  .option {
+    padding: 2pt 0;
+  }
+
+  .answer {
+    padding: 2pt 0 2pt 8pt;
+  }
+}

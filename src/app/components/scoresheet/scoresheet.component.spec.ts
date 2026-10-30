@@ -8,10 +8,12 @@ import { Observable, Subject, of } from 'rxjs';
 import { screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CrucibleDialogService } from '@cmusei/crucible-common';
@@ -175,10 +177,12 @@ async function renderScoresheet(
     declarations: [ScoresheetComponent, DisplayOrderPipe],
     imports: [
       MatButtonModule,
+      MatCardModule,
       MatCheckboxModule,
       MatFormFieldModule,
       MatIconModule,
       MatInputModule,
+      MatProgressBarModule,
       MatTableModule,
       MatTooltipModule,
     ],
@@ -234,8 +238,13 @@ const toolbarButton = (name: string): HTMLButtonElement | null =>
     .queryAllByRole('button')
     .find((b) => b.textContent?.trim() === name) as HTMLButtonElement) ?? null;
 
+// Each category heading holds its number badge and its description.
 const shownCategories = () =>
-  screen.queryAllByText(/^\d+\. Category /).map((el) => el.textContent?.trim());
+  Array.from(document.querySelectorAll('.category-title')).map(
+    (el) =>
+      `${el.querySelector('.category-number')?.textContent?.trim()}. ` +
+      el.querySelector('.category-text')?.textContent?.trim(),
+  );
 
 describe('ScoresheetComponent', () => {
   beforeEach(() => {
@@ -534,28 +543,28 @@ describe('ScoresheetComponent', () => {
 
   describe('view buttons', () => {
     /**
-     * Verifies: the saved view's button is filled and the others outlined; with no saved view the shown submission's kind is filled.
-     * Interacts with: the toolbar's User and Team buttons (matButton appearance), UIDataService saved type.
+     * Verifies: the saved view's button is pressed and the others not; with no saved view the shown submission's kind is pressed.
+     * Interacts with: the toolbar's User and Team toggle buttons (aria-pressed), UIDataService saved type.
      * Data: per row, the saved type (or none) and the shown submission (team, or user u1).
      */
     it.each<{
       label: string;
       displaying: 'user' | 'team' | null;
       userId?: string;
-      filled: string;
-      outlined: string;
+      pressed: string;
+      unpressed: string;
     }>([
-      { label: 'saved Team', displaying: 'team', userId: 'u1', filled: 'Team', outlined: 'User' },
-      { label: 'saved User', displaying: 'user', filled: 'User', outlined: 'Team' },
-      { label: 'no saved view and a team submission', displaying: null, filled: 'Team', outlined: 'User' },
-      { label: 'no saved view and a user submission', displaying: null, userId: 'u1', filled: 'User', outlined: 'Team' },
+      { label: 'saved Team', displaying: 'team', userId: 'u1', pressed: 'Team', unpressed: 'User' },
+      { label: 'saved User', displaying: 'user', pressed: 'User', unpressed: 'Team' },
+      { label: 'no saved view and a team submission', displaying: null, pressed: 'Team', unpressed: 'User' },
+      { label: 'no saved view and a user submission', displaying: null, userId: 'u1', pressed: 'User', unpressed: 'Team' },
     ])(
-      'fills $filled for $label',
-      async ({ displaying, userId, filled, outlined }) => {
+      'presses $pressed for $label',
+      async ({ displaying, userId, pressed, unpressed }) => {
         await renderScoresheet({ displaying, activeSubmission: { userId } });
 
-        expect(toolbarButton(filled)).toHaveClass('mat-mdc-unelevated-button');
-        expect(toolbarButton(outlined)).toHaveClass('mat-mdc-outlined-button');
+        expect(toolbarButton(pressed)).toHaveAttribute('aria-pressed', 'true');
+        expect(toolbarButton(unpressed)).toHaveAttribute('aria-pressed', 'false');
       },
     );
 
@@ -647,6 +656,120 @@ describe('ScoresheetComponent', () => {
         }
       },
     );
+  });
+
+  describe('category scores and option values', () => {
+    /**
+     * Verifies: a scored category shows its score beside the title and its option values; an unscored one shows neither, and nor does a discussion question (scored, but no selectable options); with scores hidden on the scoresheet, neither shows on any category.
+     * Interacts with: categoryScore(), the category header's score badge, the showScores check, ScoringCategory.isScored and scoringOptionSelection.
+     * Data: per row, hideScoresOnScoreSheet; category Scored (isScored, score 30) with options worth 10 and 20; category Unscored (not isScored) with an option worth 5; category Discussion (isScored, selection None) with an option worth 0.
+     */
+    it.each([
+      { hideScores: false, scoredScore: 'Score 30', scoredValues: ['10', '20'] },
+      { hideScores: true, scoredScore: null, scoredValues: [] },
+    ])(
+      'shows the score and values only for scored categories (scores hidden: $hideScores)',
+      async ({ hideScores, scoredScore, scoredValues }) => {
+        await renderScoresheet({
+          model: {
+            hideScoresOnScoreSheet: hideScores,
+            scoringCategories: [
+              {
+                ...category('scored', 0, 9, 1),
+                isScored: true,
+                scoringOptionSelection: ScoringOptionSelection.Multiple,
+                scoringOptions: [
+                  { id: 'opt-1', scoringCategoryId: 'scored', description: 'Isolate the host', displayOrder: 1, value: 10 },
+                  { id: 'opt-2', scoringCategoryId: 'scored', description: 'Reset passwords', displayOrder: 2, value: 20 },
+                ],
+              },
+              {
+                ...category('unscored', 0, 9, 2),
+                isScored: false,
+                scoringOptionSelection: ScoringOptionSelection.Single,
+                scoringOptions: [
+                  { id: 'opt-3', scoringCategoryId: 'unscored', description: 'Notify legal', displayOrder: 1, value: 5 },
+                ],
+              },
+              {
+                ...category('discussion', 0, 9, 3),
+                isScored: true,
+                scoringOptionSelection: ScoringOptionSelection.None,
+                scoringOptions: [
+                  { id: 'opt-4', scoringCategoryId: 'discussion', description: 'Discuss the situation report', displayOrder: 1, value: 0 },
+                ],
+              },
+            ],
+          },
+          activeSubmission: {
+            submissionCategories: [
+              {
+                scoringCategoryId: 'scored',
+                score: 30,
+                submissionOptions: [
+                  { id: 'so-1', scoringOptionId: 'opt-1', isSelected: true },
+                  { id: 'so-2', scoringOptionId: 'opt-2', isSelected: true },
+                ],
+              },
+              {
+                scoringCategoryId: 'unscored',
+                score: 0,
+                submissionOptions: [{ id: 'so-3', scoringOptionId: 'opt-3', isSelected: false }],
+              },
+            ],
+          },
+        });
+
+        const [scored, unscored, discussion] = Array.from(document.querySelectorAll('.category-card'));
+        const score = (card: Element) =>
+          card.querySelector('.category-score')?.textContent?.replace(/\s+/g, ' ').trim() ?? null;
+        const values = (card: Element) =>
+          Array.from(card.querySelectorAll('.option-value')).map((v) => v.textContent?.trim());
+        expect(score(scored)).toBe(scoredScore);
+        expect(values(scored)).toEqual(scoredValues);
+        expect(score(unscored)).toBeNull();
+        expect(values(unscored)).toEqual([]);
+        expect(score(discussion)).toBeNull();
+        expect(values(discussion)).toEqual([]);
+      },
+    );
+  });
+
+  describe('average view', () => {
+    /**
+     * Verifies: an average shows each option's selection count in a badge that keyboard users can focus to read its tooltip.
+     * Interacts with: selectedCount(), the selected-count badge and its MatTooltip description.
+     * Data: an averaged submission; one Multiple category whose option Isolate the host was selected twice.
+     */
+    it('shows a focusable selection count on each option', async () => {
+      await renderScoresheet({
+        model: {
+          scoringCategories: [
+            {
+              ...category('cat-1', 0, 9, 1),
+              scoringOptionSelection: ScoringOptionSelection.Multiple,
+              scoringOptions: [
+                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+              ],
+            },
+          ],
+        },
+        activeSubmission: {
+          scoreIsAnAverage: true,
+          submissionCategories: [
+            {
+              scoringCategoryId: 'cat-1',
+              submissionOptions: [{ id: 'so-1', scoringOptionId: 'opt-1', selectedCount: 2 }],
+            },
+          ],
+        },
+      });
+
+      const count = document.querySelector('.selected-count') as HTMLElement;
+      expect(count).toHaveTextContent('2');
+      expect(count).toHaveAttribute('tabindex', '0');
+      expect(count).toHaveAccessibleDescription('Number of selections');
+    });
   });
 
   describe('comment boxes', () => {
@@ -1001,7 +1124,7 @@ describe('ScoresheetComponent', () => {
     it('uses the default severity levels', async () => {
       await renderScoresheet({ activeSubmission: { score: 77 }, model: { hideScoresOnScoreSheet: false } });
 
-      const score = screen.getByTitle('Level 4 - Severe');
+      const score = screen.getByText(', Level 4 - Severe').closest('.score-badge');
       expect(score).toHaveTextContent('77.00');
       expect(score).toHaveStyle({ backgroundColor: '#8B0000', color: '#FFFFFF' });
     });
@@ -1023,7 +1146,7 @@ describe('ScoresheetComponent', () => {
         },
       });
 
-      expect(screen.getByTitle('Level 0 - Calm')).toHaveStyle({ backgroundColor: '#90EE90', color: '#000000' });
+      expect(screen.getByText(', Level 0 - Calm').closest('.score-badge')).toHaveStyle({ backgroundColor: '#90EE90', color: '#000000' });
     });
   });
 

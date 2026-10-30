@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
+import { Component, OnDestroy, OnInit, effect, inject, input, output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -18,6 +18,7 @@ import { ItemStatus,
   ScoringCategory,
   ScoringModel,
   Submission,
+  SubmissionComment,
   Team,
   User
 } from 'src/app/generated/cite.api/model/models';
@@ -26,17 +27,16 @@ import { TeamService } from 'src/app/generated/cite.api';
 import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
-import { NgClass } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
 @Component({
     selector: 'app-aggregate',
     templateUrl: './aggregate.component.html',
     styleUrls: ['./aggregate.component.scss'],
-    imports: [MatIconButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow, DisplayOrderPipe]
+    imports: [MatButton, MatIcon, DatePipe, DisplayOrderPipe]
 })
 export class AggregateComponent implements OnInit, OnDestroy {
   private submissionService = inject(SubmissionService);
@@ -52,6 +52,9 @@ export class AggregateComponent implements OnInit, OnDestroy {
   readonly selectedEvaluation = input<Evaluation>(undefined);
   readonly selectedScoringModel = input<ScoringModel>(undefined);
   readonly moveList = input<Move[]>(undefined);
+  // observing another team, so only the team submissions can be shown
+  readonly observing = input(false);
+  readonly selectDisplayedSubmission = output<'user' | 'team'>();
   loggedInUserId = '';
   userId = '';
   teamList$: Observable<Team[]>;
@@ -67,8 +70,8 @@ export class AggregateComponent implements OnInit, OnDestroy {
   displaying = '';
   displayedScoringCategories: ScoringCategory[] = [];
   isLoading = false;
-  tableClass = 'user-text';
   buttonClass = 'mat-user';
+  generatedOn = new Date();
   private unsubscribe$ = new Subject();
 
   constructor() {
@@ -89,13 +92,21 @@ export class AggregateComponent implements OnInit, OnDestroy {
       .subscribe(users => {
         this.userList = users;
       });
+    // observing another team, only the team submissions can be shown, whatever
+    // view was saved (Group Avg and Official are not switched to Team on the
+    // home page); the saved view is left alone
+    effect(() => {
+      if (this.observing() && this.displaying !== 'team') {
+        this.toggleDisplaying();
+      }
+    });
   }
 
   ngOnInit() {
     this.currentMoveNumber = this.selectedEvaluation().currentMoveNumber;
     const selectedEvaluation = this.selectedEvaluation();
-    this.displaying = this.uiDataService.getSubmissionType(selectedEvaluation.id)?.toLowerCase();
-    this.displaying = this.displaying && this.displaying === 'team' ? 'team' : 'user';
+    const savedType = this.uiDataService.getSubmissionType(selectedEvaluation.id)?.toLowerCase();
+    this.displaying = this.observing() || savedType === 'team' ? 'team' : 'user';
     this.teamList$ = this.teamService.getEvaluationTeams(selectedEvaluation.id);
     this.submissionList$ = this.submissionService.getByEvaluation(selectedEvaluation.id);
     // observe the vital information and process it when it is all present
@@ -162,6 +173,25 @@ export class AggregateComponent implements OnInit, OnDestroy {
       }
     }
     return [];
+  }
+
+  // the team or user a submission belongs to, as named in the report
+  submissionName(submission: PopulatedSubmission) {
+    return this.displaying === 'team' ? this.getTeamShortName(submission.teamId) : this.getUserName(submission.userId);
+  }
+
+  // who selected an option, across all of the move's submissions
+  optionSelectors(submissions: PopulatedSubmission[], scoringCategoryId: string, scoringOptionId: string) {
+    return submissions
+      .filter(submission => this.isSelected(submission, scoringCategoryId, scoringOptionId))
+      .map(submission => this.submissionName(submission))
+      .sort((a, b) => a.localeCompare(b));
+  }
+
+  // every comment on an option, across all of the move's submissions
+  moveOptionComments(submissions: PopulatedSubmission[], scoringCategoryId: string, scoringOptionId: string) {
+    return submissions.reduce<SubmissionComment[]>((comments, submission) =>
+      comments.concat(this.optionComments(submission, scoringCategoryId, scoringOptionId) ?? []), []);
   }
 
   selectedBy(submission: PopulatedSubmission, scoringCategoryId: string, scoringOptionId: string) {
@@ -302,12 +332,22 @@ export class AggregateComponent implements OnInit, OnDestroy {
     }
   }
 
-  printpage()
-  {
-     var printContents= document.getElementById('printable-area').innerHTML;
-     document.body.innerHTML = printContents;
-     window.print();
-     location.reload();
+  setDisplaying(displaying: 'user' | 'team') {
+    if (this.displaying !== displaying) {
+      this.toggleDisplaying();
+      // the home page saves the choice and shows the same submission on the scoresheet
+      this.selectDisplayedSubmission.emit(displaying);
+    }
+  }
+
+  printpage() {
+    // Print the report alone, keeping its root element so its print styles
+    // apply, and in the light theme so a dark background never reaches the
+    // page. The reload restores the app.
+    document.body.innerHTML = document.getElementById('printable-area').outerHTML;
+    document.body.classList.remove('darkMode');
+    window.print();
+    location.reload();
   }
 
   getMoveSubmissions(move: Move): PopulatedSubmission[] {
