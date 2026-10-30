@@ -66,17 +66,19 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   readonly sort = viewChild(MatSort);
 
   constructor() {
+    // the admin data group sends every evaluation's teams and duties into the stores, so keep this
+    // evaluation's; adding to all teams would otherwise add to other evaluations' too
     this.teamQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((teams) => {
-        this.teamList = teams;
+        this.teamList = teams.filter((t) => t.evaluationId === this.selectedEvaluationId);
       });
     this.dutyQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((duties) => {
-        this.dutyList = duties;
+        this.dutyList = duties.filter((d) => d.evaluationId === this.selectedEvaluationId);
         this.criteriaChanged();
       });
     this.filterControl.valueChanges

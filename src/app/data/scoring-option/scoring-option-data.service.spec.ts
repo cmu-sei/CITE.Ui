@@ -39,8 +39,8 @@ function setup(
     getScoringOptionsByScoringCategoryId: vi.fn(() => of([makeOption()])),
     getScoringOption: vi.fn((id: string) => of(makeOption({ id }))),
     createScoringOption: vi.fn((o?: ScoringOption) => of({ ...o, id: 'new' })),
-    updateScoringOption: vi.fn((_id: string, o?: ScoringOption) =>
-      of({ ...o }),
+    updateScoringOption: vi.fn((id: string, o?: ScoringOption) =>
+      of({ ...o, id }),
     ),
     deleteScoringOption: vi.fn(() => of(null)),
     ...overrides.api,
@@ -117,14 +117,19 @@ describe('ScoringOptionDataService', () => {
   });
 
   /**
-   * Verifies: updateScoringOption() stores the API's response.
+   * Verifies: updateScoringOption() sends only the fields the API edits and stores the API's response.
    * Interacts with: ScoringOptionService.updateScoringOption stub, ScoringOptionQuery.
    * Data: so1 revalued to 3.
    */
   it('updateScoringOption() stores the updated option', () => {
-    const { service, query, store } = setup();
+    const { service, query, store, api } = setup();
     store.set([makeOption()]);
     service.updateScoringOption(makeOption({ value: 3 }));
+    expect(api.updateScoringOption).toHaveBeenCalledWith('so1', {
+      displayOrder: 1,
+      description: 'No impact',
+      value: 3,
+    });
     expect(query.getEntity('so1')?.value).toBe(3);
   });
 

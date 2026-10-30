@@ -26,6 +26,8 @@ import { Observable }                                        from 'rxjs';
 import { ProblemDetails } from '../model/problemDetails';
 // @ts-ignore
 import { ScoringOption } from '../model/scoringOption';
+// @ts-ignore
+import { UpdateScoringOptionRequest } from '../model/updateScoringOptionRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -356,14 +358,14 @@ export class ScoringOptionService extends BaseService {
      * Updates a  ScoringOption
      * Updates a ScoringOption with the attributes specified. The ID from the route MUST MATCH the ID contained in the scoringOption parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the ScoringOption to update
-     * @param scoringOption The updated ScoringOption values
+     * @param updateScoringOptionRequest The updated ScoringOption values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateScoringOption(id: string, scoringOption?: ScoringOption, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<ScoringOption>;
-    public updateScoringOption(id: string, scoringOption?: ScoringOption, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ScoringOption>>;
-    public updateScoringOption(id: string, scoringOption?: ScoringOption, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ScoringOption>>;
-    public updateScoringOption(id: string, scoringOption?: ScoringOption, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateScoringOption(id: string, updateScoringOptionRequest?: UpdateScoringOptionRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<ScoringOption>;
+    public updateScoringOption(id: string, updateScoringOptionRequest?: UpdateScoringOptionRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ScoringOption>>;
+    public updateScoringOption(id: string, updateScoringOptionRequest?: UpdateScoringOptionRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ScoringOption>>;
+    public updateScoringOption(id: string, updateScoringOptionRequest?: UpdateScoringOptionRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateScoringOption.');
         }
@@ -414,7 +416,7 @@ export class ScoringOptionService extends BaseService {
         return this.httpClient.request<ScoringOption>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: scoringOption,
+                body: updateScoringOptionRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

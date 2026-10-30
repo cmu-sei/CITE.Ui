@@ -294,14 +294,14 @@ export class SubmissionCategoryService extends BaseService {
      * Updates a  SubmissionCategory
      * Updates a SubmissionCategory with the attributes specified. The ID from the route MUST MATCH the ID contained in the submissionCategory parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the SubmissionCategory to update
-     * @param submissionCategory The updated SubmissionCategory values
+     * @param body The updated SubmissionCategory values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateSubmissionCategory(id: string, submissionCategory?: SubmissionCategory, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<SubmissionCategory>;
-    public updateSubmissionCategory(id: string, submissionCategory?: SubmissionCategory, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SubmissionCategory>>;
-    public updateSubmissionCategory(id: string, submissionCategory?: SubmissionCategory, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SubmissionCategory>>;
-    public updateSubmissionCategory(id: string, submissionCategory?: SubmissionCategory, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateSubmissionCategory(id: string, body?: object, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<SubmissionCategory>;
+    public updateSubmissionCategory(id: string, body?: object, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SubmissionCategory>>;
+    public updateSubmissionCategory(id: string, body?: object, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SubmissionCategory>>;
+    public updateSubmissionCategory(id: string, body?: object, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateSubmissionCategory.');
         }
@@ -352,7 +352,7 @@ export class SubmissionCategoryService extends BaseService {
         return this.httpClient.request<SubmissionCategory>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: submissionCategory,
+                body: body,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

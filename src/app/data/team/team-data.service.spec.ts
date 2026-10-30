@@ -39,7 +39,7 @@ function setup(overrides: { api?: TeamApi; queryParams?: Params } = {}) {
     getMyEvaluationTeams: vi.fn(() => of([makeTeam({ id: 'mine' })])),
     getEvaluationTeams: vi.fn(() => of([makeTeam()])),
     createTeam: vi.fn((team?: Team) => of({ ...team, id: 'new' })),
-    updateTeam: vi.fn((_id: string, team?: Team) => of({ ...team })),
+    updateTeam: vi.fn((id: string, team?: Team) => of({ ...team, id })),
     deleteTeam: vi.fn(() => of(null)),
     ...overrides.api,
   } satisfies TeamApi;
@@ -176,7 +176,7 @@ describe('TeamDataService', () => {
     });
 
     /**
-     * Verifies: updateTeam() stores the API's response for the team.
+     * Verifies: updateTeam() sends only the fields the API edits and stores the API's response for the team.
      * Interacts with: TeamService.updateTeam stub, TeamQuery.
      * Data: t1 is renamed.
      */
@@ -186,7 +186,7 @@ describe('TeamDataService', () => {
       service.updateTeam(makeTeam({ name: 'Renamed' }));
       expect(api.updateTeam).toHaveBeenCalledWith(
         't1',
-        expect.objectContaining({ name: 'Renamed' }),
+        { name: 'Renamed', shortName: 'RED', teamTypeId: 'tt1' },
       );
       expect(query.getEntity('t1')?.name).toBe('Renamed');
     });

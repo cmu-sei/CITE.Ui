@@ -14,9 +14,9 @@
  * Do not edit the class manually.
  */
 import { ItemStatus } from './itemStatus';
+import { SeverityLevel } from './severityLevel';
 import { ScoringCategory } from './scoringCategory';
 import { ScoringModelPermission } from './scoringModelPermission';
-import { SeverityLevel } from './severityLevel';
 import { RightSideDisplay } from './rightSideDisplay';
 
 

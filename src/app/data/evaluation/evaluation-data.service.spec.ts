@@ -57,7 +57,7 @@ function setup(overrides: { api?: EvaluationApi; queryParams?: Params } = {}) {
     copyEvaluation: vi.fn((id: string) =>
       of(makeEvaluation({ id: `${id}-copy` })),
     ),
-    updateEvaluation: vi.fn((_id: string, e?: Evaluation) => of({ ...e })),
+    updateEvaluation: vi.fn((id: string, e?: Evaluation) => of({ ...e, id })),
     setEvaluationCurrentMove: vi.fn((id: string, move: number) =>
       of(makeEvaluation({ id, currentMoveNumber: move })),
     ),
@@ -262,7 +262,7 @@ describe('EvaluationDataService', () => {
     });
 
     /**
-     * Verifies: updateEvaluation() replaces the stored evaluation with the API's response.
+     * Verifies: updateEvaluation() sends only the fields the API edits and stores the API's response.
      * Interacts with: EvaluationService.updateEvaluation stub, EvaluationQuery.
      * Data: e1 gets a new description.
      */
@@ -272,7 +272,12 @@ describe('EvaluationDataService', () => {
       service.updateEvaluation(makeEvaluation({ description: 'Renamed' }));
       expect(api.updateEvaluation).toHaveBeenCalledWith(
         'e1',
-        expect.objectContaining({ description: 'Renamed' }),
+        {
+          description: 'Renamed',
+          status: ItemStatus.Active,
+          currentMoveNumber: 1,
+          situationTime: iso('2026-01-03T00:00:00Z'),
+        },
       );
       expect(query.getEntity('e1')?.description).toBe('Renamed');
     });

@@ -11,6 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   Duty,
   DutyService,
+  UpdateDutyRequest,
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -206,7 +207,7 @@ export class DutyDataService {
   updateDuty(duty: Duty) {
     this.dutyStore.setLoading(true);
     this.dutyService
-      .updateDuty(duty.id, duty)
+      .updateDuty(duty.id, { name: duty.name } satisfies Required<UpdateDutyRequest>)
       .pipe(
         tap(() => {
           this.dutyStore.setLoading(false);

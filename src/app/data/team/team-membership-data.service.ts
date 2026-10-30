@@ -20,11 +20,14 @@ export class TeamMembershipDataService {
   >([]);
   public teamMemberships$ = this.teamMembershipsSubject.asObservable();
   public teamMemberships: TeamMembership[] = [];
+  // the team whose memberships are held; live updates arrive for other teams too
+  private teamId: string;
 
   loadMemberships(teamId: string): Observable<TeamMembership[]> {
     return this.teamMembershipsService
       .getAllTeamMemberships(teamId)
       .pipe(tap((x) => {
+        this.teamId = teamId;
         this.teamMemberships = x;
         this.teamMembershipsSubject.next(x);
       }));
@@ -81,7 +84,10 @@ export class TeamMembershipDataService {
   }
 
   updateStore(teamMembership: TeamMembership) {
-    this.upsert(teamMembership.id, teamMembership);
+    // the admin data group is sent every team's memberships, so keep only the held team's
+    if (teamMembership.teamId === this.teamId) {
+      this.upsert(teamMembership.id, teamMembership);
+    }
   }
 
   deleteFromStore(id: string) {

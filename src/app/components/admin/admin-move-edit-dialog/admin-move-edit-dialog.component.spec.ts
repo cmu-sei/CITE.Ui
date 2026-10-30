@@ -112,6 +112,23 @@ describe('AdminMoveEditDialogComponent', () => {
   });
 
   /**
+   * Verifies: a move without a situation time saves with a date, since the API refuses an empty one.
+   * Interacts with: the crucible-dialog Save button, the editComplete output.
+   * Data: canEdit true; situationTime missing.
+   */
+  it('saves a date for a move without a situation time', async () => {
+    const { editComplete, user } = await renderMoveDialog(true, null);
+
+    await user.type(screen.getByLabelText('Move Description'), ' changed');
+    await user.click(save());
+
+    expect(editComplete).toHaveBeenCalledWith({
+      saveChanges: true,
+      move: expect.objectContaining({ situationTime: expect.any(Date) }),
+    });
+  });
+
+  /**
    * Verifies: without canEdit Save stays disabled after an edit and the date picker toggle is disabled.
    * Interacts with: the crucible-dialog Save button, the datepicker toggle.
    * Data: canEdit false; the description edited anyway.

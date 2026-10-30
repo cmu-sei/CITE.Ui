@@ -12,7 +12,9 @@ import {
   Team,
   TeamService,
   TeamType,
-  TeamTypeService
+  TeamTypeService,
+  UpdateTeamRequest,
+  CreateTeamRequest
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -203,7 +205,14 @@ export class TeamDataService {
   add(team: Team) {
     this.teamStore.setLoading(true);
     this.teamService
-      .createTeam(team)
+      .createTeam({
+        id: team.id,
+        evaluationId: team.evaluationId,
+        name: team.name,
+        shortName: team.shortName,
+        teamTypeId: team.teamTypeId,
+        hideScoresheet: team.hideScoresheet,
+      } satisfies Required<CreateTeamRequest>)
       .pipe(
         tap(() => {
           this.teamStore.setLoading(false);
@@ -219,7 +228,12 @@ export class TeamDataService {
   updateTeam(team: Team) {
     this.teamStore.setLoading(true);
     this.teamService
-      .updateTeam(team.id, team)
+      .updateTeam(team.id, {
+        name: team.name,
+        shortName: team.shortName,
+        teamTypeId: team.teamTypeId,
+        hideScoresheet: team.hideScoresheet,
+      } satisfies Required<UpdateTeamRequest>)
       .pipe(
         tap(() => {
           this.teamStore.setLoading(false);

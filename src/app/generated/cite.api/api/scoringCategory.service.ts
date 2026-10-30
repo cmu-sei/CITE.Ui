@@ -26,6 +26,8 @@ import { Observable }                                        from 'rxjs';
 import { ProblemDetails } from '../model/problemDetails';
 // @ts-ignore
 import { ScoringCategory } from '../model/scoringCategory';
+// @ts-ignore
+import { UpdateScoringCategoryRequest } from '../model/updateScoringCategoryRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -356,14 +358,14 @@ export class ScoringCategoryService extends BaseService {
      * Updates a  ScoringCategory
      * Updates a ScoringCategory with the attributes specified. The ID from the route MUST MATCH the ID contained in the scoringCategory parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the ScoringCategory to update
-     * @param scoringCategory The updated ScoringCategory values
+     * @param updateScoringCategoryRequest The updated ScoringCategory values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateScoringCategory(id: string, scoringCategory?: ScoringCategory, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<ScoringCategory>;
-    public updateScoringCategory(id: string, scoringCategory?: ScoringCategory, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ScoringCategory>>;
-    public updateScoringCategory(id: string, scoringCategory?: ScoringCategory, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ScoringCategory>>;
-    public updateScoringCategory(id: string, scoringCategory?: ScoringCategory, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateScoringCategory(id: string, updateScoringCategoryRequest?: UpdateScoringCategoryRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<ScoringCategory>;
+    public updateScoringCategory(id: string, updateScoringCategoryRequest?: UpdateScoringCategoryRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ScoringCategory>>;
+    public updateScoringCategory(id: string, updateScoringCategoryRequest?: UpdateScoringCategoryRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ScoringCategory>>;
+    public updateScoringCategory(id: string, updateScoringCategoryRequest?: UpdateScoringCategoryRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateScoringCategory.');
         }
@@ -414,7 +416,7 @@ export class ScoringCategoryService extends BaseService {
         return this.httpClient.request<ScoringCategory>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: scoringCategory,
+                body: updateScoringCategoryRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

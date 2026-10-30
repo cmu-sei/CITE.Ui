@@ -53,7 +53,7 @@ function setup(overrides: { api?: ActionApi; queryParams?: Params } = {}) {
     ),
     getAction: vi.fn((id: string) => of(makeAction({ id }))),
     createAction: vi.fn((a?: Action) => of({ ...a, id: 'new' })),
-    updateAction: vi.fn((_id: string, a?: Action) => of({ ...a })),
+    updateAction: vi.fn((id: string, a?: Action) => of({ ...a, id })),
     checkAction: vi.fn((id: string) => of(makeAction({ id, isChecked: true }))),
     uncheckAction: vi.fn((id: string) =>
       of(makeAction({ id, isChecked: false })),
@@ -197,7 +197,7 @@ describe('ActionDataService', () => {
   });
 
   /**
-   * Verifies: updateAction() replaces the stored action with the API's response.
+   * Verifies: updateAction() sends only the fields the API edits and stores the API's response.
    * Interacts with: ActionService.updateAction stub, ActionQuery.
    * Data: store holds a1; a1 is renamed.
    */
@@ -207,7 +207,7 @@ describe('ActionDataService', () => {
     service.updateAction(makeAction({ description: 'Renamed' }));
     expect(api.updateAction).toHaveBeenCalledWith(
       'a1',
-      expect.objectContaining({ description: 'Renamed' }),
+      { moveNumber: 1, actionNumber: 1, description: 'Renamed' },
     );
     expect(query.getEntity('a1')?.description).toBe('Renamed');
   });

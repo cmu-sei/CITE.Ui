@@ -433,10 +433,9 @@ describe('ScoresheetComponent', () => {
         ],
       });
       await user.click(toolbarButton('Reopen')!);
-      expect(submissionApi.updateSubmission).toHaveBeenCalledWith(
-        's1',
-        expect.objectContaining({ id: 's1', status: ItemStatus.Active }),
-      );
+      expect(submissionApi.updateSubmission).toHaveBeenCalledWith('s1', {
+        status: ItemStatus.Active,
+      });
     });
 
     /**
@@ -754,7 +753,7 @@ describe('ScoresheetComponent', () => {
         label: 'edited',
         text: 'No',
         endpoint: 'changeSubmissionComment',
-        args: ['s1', 'c1', { id: 'c1', comment: 'No' }],
+        args: ['s1', 'c1', { comment: 'No' }],
       },
       {
         label: 'emptied',

@@ -9,11 +9,14 @@ import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
+  ItemStatus,
   Submission,
   SubmissionService,
   SubmissionOptionService,
   SubmissionComment,
-  SubmissionCommentService
+  SubmissionCommentService,
+  UpdateSubmissionRequest,
+  UpdateSubmissionCommentRequest
 } from 'src/app/generated/cite.api';
 import { map, share, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -207,10 +210,10 @@ export class SubmissionDataService {
       });
   }
 
-  updateSubmission(submission: Submission) {
+  updateSubmissionStatus(id: string, status: ItemStatus) {
     this.submissionStore.setLoading(true);
     this.submissionService
-      .updateSubmission(submission.id, submission)
+      .updateSubmission(id, { status } satisfies Required<UpdateSubmissionRequest>)
       .pipe(
         tap(() => {
           this.submissionStore.setLoading(false);
@@ -284,7 +287,11 @@ export class SubmissionDataService {
   }
 
   changeSubmissionComment(submissionId: string, submissionComment: SubmissionComment): Observable<Submission> {
-    const request$ = this.submissionService.changeSubmissionComment(submissionId, submissionComment.id, submissionComment).pipe(take(1), share());
+    const request$ = this.submissionService.changeSubmissionComment(
+      submissionId,
+      submissionComment.id,
+      { comment: submissionComment.comment } satisfies Required<UpdateSubmissionCommentRequest>,
+    ).pipe(take(1), share());
     request$.subscribe(s => {
       this.submissionStore.upsert(s.id, { ...s });
     });

@@ -2,6 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -17,6 +18,8 @@ import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
 import { CrucibleDialogService } from '@cmusei/crucible-common';
 import { Duty, DutyService, TeamService } from '../../../generated/cite.api';
+import { DutyDataService } from '../../../data/duty/duty-data.service';
+import { TeamDataService } from '../../../data/team/team-data.service';
 import { ApiStub } from '../../../test-utils/api-stub';
 import { dialogRefStub } from '../../../test-utils/dialog-refs';
 import { matDialogStub } from '../../../test-utils/mat-dialog';
@@ -38,8 +41,14 @@ async function renderDuties(
   canEdit: boolean,
   { firstPassChecked = false } = {},
 ) {
+  // the component reuses one duty object across its creates, so each call is recorded as a copy
+  const created: Duty[] = [];
   const dutyApi = {
     getDutiesByEvaluation: vi.fn(() => of(structuredClone(DUTIES))),
+    createDuty: vi.fn((duty?: Duty) => {
+      created.push({ ...duty });
+      return of({ ...duty, id: `new-${created.length}` });
+    }),
     updateDuty: vi.fn((id: string, duty?: Duty) => of({ ...duty, id })),
     deleteDuty: vi.fn(() => of(null)),
   } satisfies ApiStub<DutyService>;
@@ -88,6 +97,7 @@ async function renderDuties(
   return {
     ...rendered,
     dutyApi,
+    created,
     confirm,
     editDialog,
     user: userEvent.setup(),
@@ -176,6 +186,26 @@ describe('AdminDutiesComponent', () => {
     expect(
       within(screen.getByRole('table')).queryByText('Liaison'),
     ).not.toBeInTheDocument();
+  });
+
+  /**
+   * Verifies: another evaluation's team and duty that reach the stores live are left out of the panel,
+   * so adding a duty to all teams creates it for this evaluation's teams only.
+   * Interacts with: the stores the SignalR handlers update, matDialogStub (editComplete), DutyService.createDuty stub.
+   * Data: canEdit true; team t9 and duty d9 of e2 upserted; a duty added without a team.
+   */
+  it('keeps other evaluations out of the panel and out of an add to all teams', async () => {
+    const { created, editDialog, fixture, user } = await renderDuties(true);
+    TestBed.inject(TeamDataService).updateStore({ id: 't9', evaluationId: 'e2', name: 'Green', shortName: 'G' });
+    TestBed.inject(DutyDataService).updateStore({ id: 'd9', evaluationId: 'e2', teamId: 't9', name: 'Other evaluation duty', users: [] });
+    fixture.detectChanges();
+
+    expect(within(screen.getByRole('table')).queryByText('Other evaluation duty')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Add Duty' }));
+    editDialog.complete({ saveChanges: true, duty: { evaluationId: 'e1', name: 'Timekeeper', teamId: '' } });
+
+    expect(created.map((d) => d.teamId)).toEqual(['t1', 't2']);
   });
 
   /**

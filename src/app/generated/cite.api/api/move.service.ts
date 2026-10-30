@@ -26,6 +26,8 @@ import { Observable }                                        from 'rxjs';
 import { Move } from '../model/move';
 // @ts-ignore
 import { ProblemDetails } from '../model/problemDetails';
+// @ts-ignore
+import { UpdateMoveRequest } from '../model/updateMoveRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -294,14 +296,14 @@ export class MoveService extends BaseService {
      * Updates a  Move
      * Updates a Move with the attributes specified. The ID from the route MUST MATCH the ID contained in the move parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the Move to update
-     * @param move The updated Move values
+     * @param updateMoveRequest The updated Move values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateMove(id: string, move?: Move, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Move>;
-    public updateMove(id: string, move?: Move, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Move>>;
-    public updateMove(id: string, move?: Move, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Move>>;
-    public updateMove(id: string, move?: Move, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateMove(id: string, updateMoveRequest?: UpdateMoveRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Move>;
+    public updateMove(id: string, updateMoveRequest?: UpdateMoveRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Move>>;
+    public updateMove(id: string, updateMoveRequest?: UpdateMoveRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Move>>;
+    public updateMove(id: string, updateMoveRequest?: UpdateMoveRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateMove.');
         }
@@ -352,7 +354,7 @@ export class MoveService extends BaseService {
         return this.httpClient.request<Move>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: move,
+                body: updateMoveRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

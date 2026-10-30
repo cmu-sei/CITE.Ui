@@ -572,9 +572,10 @@ export class ScoresheetComponent implements OnDestroy {
   }
 
   submit() {
-    const submission = { ...this.displayedSubmission };
-    submission.status = ItemStatus.Complete;
-    this.submissionDataService.updateSubmission(submission);
+    this.submissionDataService.updateSubmissionStatus(
+      this.displayedSubmission.id,
+      ItemStatus.Complete,
+    );
   }
 
   verifySubmission() {
@@ -637,9 +638,10 @@ export class ScoresheetComponent implements OnDestroy {
   }
 
   activateSubmission() {
-    const submission = { ...this.displayedSubmission };
-    submission.status = ItemStatus.Active;
-    this.submissionDataService.updateSubmission(submission);
+    this.submissionDataService.updateSubmissionStatus(
+      this.displayedSubmission.id,
+      ItemStatus.Active,
+    );
   }
 
   setFormatting() {

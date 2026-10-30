@@ -26,6 +26,8 @@ import { Observable }                                        from 'rxjs';
 import { Duty } from '../model/duty';
 // @ts-ignore
 import { ProblemDetails } from '../model/problemDetails';
+// @ts-ignore
+import { UpdateDutyRequest } from '../model/updateDutyRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -486,14 +488,14 @@ export class DutyService extends BaseService {
      * Updates a Duty
      * Updates a Duty with the attributes specified &lt;para /&gt; Accessible only to a SuperUser or a User on an Admin Team within the specified Duty
      * @param id The Id of the Duty to update
-     * @param duty The updated Duty values
+     * @param updateDutyRequest The updated Duty values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateDuty(id: string, duty?: Duty, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Duty>;
-    public updateDuty(id: string, duty?: Duty, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Duty>>;
-    public updateDuty(id: string, duty?: Duty, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Duty>>;
-    public updateDuty(id: string, duty?: Duty, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateDuty(id: string, updateDutyRequest?: UpdateDutyRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Duty>;
+    public updateDuty(id: string, updateDutyRequest?: UpdateDutyRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Duty>>;
+    public updateDuty(id: string, updateDutyRequest?: UpdateDutyRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Duty>>;
+    public updateDuty(id: string, updateDutyRequest?: UpdateDutyRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateDuty.');
         }
@@ -544,7 +546,7 @@ export class DutyService extends BaseService {
         return this.httpClient.request<Duty>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: duty,
+                body: updateDutyRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
