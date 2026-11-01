@@ -151,6 +151,22 @@ describe('AdminScoringModelEditDialogComponent', () => {
   });
 
   /**
+   * Verifies: the Hide Option Values On Scoresheet help says the computed scores are hidden too, not only the option values.
+   * Interacts with: the checkbox's info button tooltip.
+   * Data: canEdit true.
+   */
+  it('explains that hiding option values also hides the computed scores', async () => {
+    await renderModelDialog(true);
+
+    const infoButton = checkbox('Hide Option Values On Scoresheet')
+      .closest('.field-row')!
+      .querySelector('button.info-button')!;
+    expect(infoButton.getAttribute('matTooltip')).toBe(
+      'When enabled, participants see neither the value of each scoring option nor the computed scores.',
+    );
+  });
+
+  /**
    * Verifies: a model without severity levels says it uses the defaults, and saving it keeps none.
    * Interacts with: the Severity Levels section and the crucible-dialog Save button.
    * Data: canEdit true; no severity levels; the description is edited so Save is enabled.
