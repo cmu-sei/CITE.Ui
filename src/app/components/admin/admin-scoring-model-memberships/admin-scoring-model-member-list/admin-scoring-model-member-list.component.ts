@@ -127,7 +127,7 @@ export class AdminScoringModelMemberListComponent implements OnInit, OnChanges {
   updateRole(id: string, event: MatSelectChange) {
     this.editMembership.emit({
       id: id,
-      roleId: event.value === '' ? null : event.value,
+      roleId: event.value,
     });
   }
 

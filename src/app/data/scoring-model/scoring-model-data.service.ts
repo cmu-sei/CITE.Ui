@@ -10,7 +10,9 @@ import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   ScoringModel,
-  ScoringModelService
+  ScoringModelService,
+  UpdateScoringModelRequest,
+  CreateScoringModelRequest
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest, Subject } from 'rxjs';
@@ -167,7 +169,26 @@ export class ScoringModelDataService {
   add(scoringModel: ScoringModel) {
     this.scoringModelStore.setLoading(true);
     this.scoringModelService
-      .createScoringModel(scoringModel)
+      .createScoringModel({
+        id: scoringModel.id,
+        description: scoringModel.description,
+        calculationEquation: scoringModel.calculationEquation,
+        status: scoringModel.status,
+        hideScoresOnScoreSheet: scoringModel.hideScoresOnScoreSheet,
+        displayCommentTextBoxes: scoringModel.displayCommentTextBoxes,
+        displayScoringModelByMoveNumber: scoringModel.displayScoringModelByMoveNumber,
+        showPastSituationDescriptions: scoringModel.showPastSituationDescriptions,
+        useSubmit: scoringModel.useSubmit,
+        useUserScore: scoringModel.useUserScore,
+        useTeamScore: scoringModel.useTeamScore,
+        useTeamAverageScore: scoringModel.useTeamAverageScore,
+        useTypeAverageScore: scoringModel.useTypeAverageScore,
+        useOfficialScore: scoringModel.useOfficialScore,
+        rightSideDisplay: scoringModel.rightSideDisplay,
+        rightSideHtmlBlock: scoringModel.rightSideHtmlBlock,
+        rightSideEmbeddedUrl: scoringModel.rightSideEmbeddedUrl,
+        severityLevels: scoringModel.severityLevels,
+      } satisfies Required<CreateScoringModelRequest>)
       .pipe(
         tap(() => {
           this.scoringModelStore.setLoading(false);
@@ -201,7 +222,25 @@ export class ScoringModelDataService {
   updateScoringModel(scoringModel: ScoringModel) {
     this.scoringModelStore.setLoading(true);
     this.scoringModelService
-      .updateScoringModel(scoringModel.id, scoringModel)
+      .updateScoringModel(scoringModel.id, {
+        description: scoringModel.description,
+        calculationEquation: scoringModel.calculationEquation,
+        status: scoringModel.status,
+        hideScoresOnScoreSheet: scoringModel.hideScoresOnScoreSheet,
+        displayCommentTextBoxes: scoringModel.displayCommentTextBoxes,
+        displayScoringModelByMoveNumber: scoringModel.displayScoringModelByMoveNumber,
+        showPastSituationDescriptions: scoringModel.showPastSituationDescriptions,
+        useSubmit: scoringModel.useSubmit,
+        useUserScore: scoringModel.useUserScore,
+        useTeamScore: scoringModel.useTeamScore,
+        useTeamAverageScore: scoringModel.useTeamAverageScore,
+        useTypeAverageScore: scoringModel.useTypeAverageScore,
+        useOfficialScore: scoringModel.useOfficialScore,
+        rightSideDisplay: scoringModel.rightSideDisplay,
+        rightSideHtmlBlock: scoringModel.rightSideHtmlBlock,
+        rightSideEmbeddedUrl: scoringModel.rightSideEmbeddedUrl,
+        severityLevels: scoringModel.severityLevels,
+      } satisfies Required<UpdateScoringModelRequest>)
       .pipe(
         tap(() => {
           this.scoringModelStore.setLoading(false);

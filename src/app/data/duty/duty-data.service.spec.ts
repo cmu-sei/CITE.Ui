@@ -43,7 +43,7 @@ function setup(overrides: { api?: DutyApi; queryParams?: Params } = {}) {
     getDutiesByEvaluationTeam: vi.fn(() => of([makeDuty({ id: 'by-team' })])),
     getDuty: vi.fn((id: string) => of(makeDuty({ id }))),
     createDuty: vi.fn((d?: Duty) => of({ ...d, id: 'new' })),
-    updateDuty: vi.fn((_id: string, d?: Duty) => of({ ...d })),
+    updateDuty: vi.fn((id: string, d?: Duty) => of({ ...d, id })),
     addUserToDuty: vi.fn((dutyId: string, userId: string) =>
       of(makeDuty({ id: dutyId, users: [{ id: userId }] })),
     ),
@@ -161,14 +161,15 @@ describe('DutyDataService', () => {
   });
 
   /**
-   * Verifies: updateDuty() replaces the stored duty with the API's response.
+   * Verifies: updateDuty() sends only the name and stores the API's response.
    * Interacts with: DutyService.updateDuty stub, DutyQuery.
    * Data: store holds d1; d1 renamed to Lead.
    */
   it('updateDuty() stores the updated duty', () => {
-    const { service, query, store } = setup();
+    const { service, query, store, api } = setup();
     store.set([makeDuty()]);
     service.updateDuty(makeDuty({ name: 'Lead' }));
+    expect(api.updateDuty).toHaveBeenCalledWith('d1', { name: 'Lead' });
     expect(query.getEntity('d1')?.name).toBe('Lead');
   });
 

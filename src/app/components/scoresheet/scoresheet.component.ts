@@ -35,13 +35,17 @@ import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { CrucibleDialogService, CrucibleDialogComponent, CrucibleDialogContentDirective, CrucibleDialogActionsDirective } from '@cmusei/crucible-common';
 import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { NgClass, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput, MatFormField, MatLabel } from '@angular/material/input';
+import { MatInput, MatFormField, MatLabel, MatHint } from '@angular/material/input';
+import { MatCard } from '@angular/material/card';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { FormsModule } from '@angular/forms';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
+import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/app/utilities/severity-levels';
 
 @Component({
     selector: 'app-scoresheet',
@@ -53,7 +57,6 @@ import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
         MatHeaderCellDef,
         MatHeaderCell,
         MatButton,
-        NgClass,
         MatCellDef,
         MatCell,
         MatCheckbox,
@@ -61,6 +64,10 @@ import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
         MatIconButton,
         MatIcon,
         MatInput,
+        CdkTextareaAutosize,
+        MatHint,
+        MatCard,
+        MatProgressBar,
         FormsModule,
         MatRowDef,
         MatRow,
@@ -108,8 +115,6 @@ export class ScoresheetComponent implements OnDestroy {
   selectedScoringModel: ScoringModel = {};
   displayedSubmission: Submission = {};
   submissionList: Submission[] = [];
-  displayedScoreClass = 'white';
-  displayedScoreHover = 'Level 0 - Baseline';
   displaying = 'user';
   haveSomeScoringCategories = false;
   hasCanModifyPermission = false;
@@ -124,7 +129,6 @@ export class ScoresheetComponent implements OnDestroy {
   commentOptionDescription = 'this is the description';
   commentDialogTitle = 'Add Comment';
   currentComment = 'current comment';
-  tableClass = '';
   showHeader = false;
   // save state of each answer box, keyed by scoring option id
   commentSaveStates: { [scoringOptionId: string]: 'saving' | 'saved' | 'failed' } = {};
@@ -157,25 +161,6 @@ export class ScoresheetComponent implements OnDestroy {
           this.displayedSubmission = active;
           this.displayedMoveNumber = +active.moveNumber;
           this.updateDisplayedSubmissionFlags();
-          if (+active.score < 35) {
-            this.displayedScoreClass = 'white';
-            this.displayedScoreHover = 'Level 0 - Baseline';
-          } else if (+active.score < 50) {
-            this.displayedScoreClass = 'green';
-            this.displayedScoreHover = 'Level 1 - Low';
-          } else if (+active.score < 65) {
-            this.displayedScoreClass = 'yellow';
-            this.displayedScoreHover = 'Level 2 - Medium';
-          } else if (+active.score < 75) {
-            this.displayedScoreClass = 'orange';
-            this.displayedScoreHover = 'Level 3 - High';
-          } else if (+active.score < 90) {
-            this.displayedScoreClass = 'red';
-            this.displayedScoreHover = 'Level 4 - Severe';
-          } else {
-            this.displayedScoreClass = 'black';
-            this.displayedScoreHover = 'Level 5 - Emergency';
-          }
           this.userId = active.userId;
           this.setFormatting();
         }
@@ -289,10 +274,10 @@ export class ScoresheetComponent implements OnDestroy {
         const so = sc.submissionOptions.find(
           (subOpt) => subOpt.scoringOptionId === scoringOptionId
         );
-        selectedCount = so ? so.selectedCount : 0;
+        selectedCount = so?.selectedCount ?? 0;
       }
     }
-    return selectedCount > 0 ? selectedCount.toString() : '   ';
+    return selectedCount;
   }
 
   toggleOption(event: any, scoringCategoryId: string, scoringOptionId: string) {
@@ -596,9 +581,10 @@ export class ScoresheetComponent implements OnDestroy {
   }
 
   submit() {
-    const submission = { ...this.displayedSubmission };
-    submission.status = ItemStatus.Complete;
-    this.submissionDataService.updateSubmission(submission);
+    this.submissionDataService.updateSubmissionStatus(
+      this.displayedSubmission.id,
+      ItemStatus.Complete,
+    );
   }
 
   verifySubmission() {
@@ -661,9 +647,10 @@ export class ScoresheetComponent implements OnDestroy {
   }
 
   activateSubmission() {
-    const submission = { ...this.displayedSubmission };
-    submission.status = ItemStatus.Active;
-    this.submissionDataService.updateSubmission(submission);
+    this.submissionDataService.updateSubmissionStatus(
+      this.displayedSubmission.id,
+      ItemStatus.Active,
+    );
   }
 
   setFormatting() {
@@ -694,7 +681,6 @@ export class ScoresheetComponent implements OnDestroy {
       canModify &&
       !this.displayedSubmission.scoreIsAnAverage &&
       this.displayedSubmission.status === ItemStatus.Active;
-    // this.tableClass = this.displaying + '-background';
   }
 
   private getResolvedDisplayedMoveNumber(): number | null {
@@ -754,6 +740,13 @@ export class ScoresheetComponent implements OnDestroy {
     });
     this.haveSomeScoringCategories = displayedScoringCategories.length > 0;
     return displayedScoringCategories;
+  }
+
+  readonly severityLevelLabel = severityLevelLabel;
+
+  // the severity level of the displayed score, from the scoring model's levels
+  displayedSeverityLevel() {
+    return severityLevelForScore(severityLevels(this.selectedScoringModel), this.displayedSubmission.score);
   }
 
   ngOnDestroy() {

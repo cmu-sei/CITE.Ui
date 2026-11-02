@@ -91,23 +91,25 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
           this.criteriaChanged();
         }
       });
+    // the admin data group sends every evaluation's teams, moves and actions into the stores, so keep this
+    // evaluation's; adding to all teams or all moves would otherwise add to other evaluations' too
     this.moveQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((moves) => {
-        this.moveList = moves;
+        this.moveList = moves.filter((m) => m.evaluationId === this.selectedEvaluationId);
       });
     this.teamQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((teams) => {
-        this.teamList = teams;
+        this.teamList = teams.filter((t) => t.evaluationId === this.selectedEvaluationId);
       });
     this.actionQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((actions) => {
-        this.actionList = actions;
+        this.actionList = actions.filter((a) => a.evaluationId === this.selectedEvaluationId);
         this.criteriaChanged();
       });
     this.filterControl.valueChanges

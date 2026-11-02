@@ -73,7 +73,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 @if (!scoringModel?.hideScoresOnScoreSheet) {
                   <div class="value-div">
                     {{
-                    scoringCategory.calculationMethodId == 0 ||
+                    !scoringCategory.isScored ||
                     scoringOption.isModifier
                     ? ' '
                     : scoringOption.value

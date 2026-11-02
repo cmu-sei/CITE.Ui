@@ -80,7 +80,8 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
       status: [{ value: evaluation.status, disabled }],
       galleryExhibitId: [{ value: evaluation.galleryExhibitId, disabled }],
       currentMoveNumber: [{ value: evaluation.currentMoveNumber, disabled }],
-      situationTime: [{ value: evaluation.situationTime || '', disabled }],
+      // the API requires a situation time, and an empty one fails the save
+      situationTime: [{ value: evaluation.situationTime || new Date(), disabled }],
       situationDescription: [{ value: evaluation.situationDescription, disabled }],
       showAdvanceButton: [{ value: evaluation.showAdvanceButton, disabled }],
     });

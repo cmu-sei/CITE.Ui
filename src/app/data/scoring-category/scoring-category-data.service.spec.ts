@@ -45,8 +45,8 @@ function setup(
     createScoringCategory: vi.fn((c?: ScoringCategory) =>
       of({ ...c, id: 'new' }),
     ),
-    updateScoringCategory: vi.fn((_id: string, c?: ScoringCategory) =>
-      of({ ...c }),
+    updateScoringCategory: vi.fn((id: string, c?: ScoringCategory) =>
+      of({ ...c, id }),
     ),
     deleteScoringCategory: vi.fn(() => of(null)),
     ...overrides.api,
@@ -154,14 +154,18 @@ describe('ScoringCategoryDataService', () => {
   });
 
   /**
-   * Verifies: updateScoringCategory() stores the API's response.
+   * Verifies: updateScoringCategory() sends only the fields the API edits and stores the API's response.
    * Interacts with: ScoringCategoryService.updateScoringCategory stub, ScoringCategoryQuery.
    * Data: sc1 gets displayOrder 5.
    */
   it('updateScoringCategory() stores the updated category', () => {
-    const { service, query, store } = setup();
+    const { service, query, store, api } = setup();
     store.set([makeCategory()]);
     service.updateScoringCategory(makeCategory({ displayOrder: 5 }));
+    expect(api.updateScoringCategory).toHaveBeenCalledWith('sc1', {
+      displayOrder: 5,
+      description: 'Functional impact',
+    });
     expect(query.getEntity('sc1')?.displayOrder).toBe(5);
   });
 

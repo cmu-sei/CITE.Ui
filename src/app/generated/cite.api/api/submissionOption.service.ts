@@ -28,6 +28,8 @@ import { ProblemDetails } from '../model/problemDetails';
 import { Submission } from '../model/submission';
 // @ts-ignore
 import { SubmissionOption } from '../model/submissionOption';
+// @ts-ignore
+import { UpdateSubmissionOptionRequest } from '../model/updateSubmissionOptionRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -416,14 +418,14 @@ export class SubmissionOptionService extends BaseService {
      * Updates a  SubmissionOption
      * Updates a SubmissionOption with the attributes specified. The ID from the route MUST MATCH the ID contained in the submissionOption parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the SubmissionOption to update
-     * @param submissionOption The updated SubmissionOption values
+     * @param updateSubmissionOptionRequest The updated SubmissionOption values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateSubmissionOption(id: string, submissionOption?: SubmissionOption, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<SubmissionOption>;
-    public updateSubmissionOption(id: string, submissionOption?: SubmissionOption, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SubmissionOption>>;
-    public updateSubmissionOption(id: string, submissionOption?: SubmissionOption, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SubmissionOption>>;
-    public updateSubmissionOption(id: string, submissionOption?: SubmissionOption, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateSubmissionOption(id: string, updateSubmissionOptionRequest?: UpdateSubmissionOptionRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<SubmissionOption>;
+    public updateSubmissionOption(id: string, updateSubmissionOptionRequest?: UpdateSubmissionOptionRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SubmissionOption>>;
+    public updateSubmissionOption(id: string, updateSubmissionOptionRequest?: UpdateSubmissionOptionRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SubmissionOption>>;
+    public updateSubmissionOption(id: string, updateSubmissionOptionRequest?: UpdateSubmissionOptionRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateSubmissionOption.');
         }
@@ -474,7 +476,7 @@ export class SubmissionOptionService extends BaseService {
         return this.httpClient.request<SubmissionOption>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: submissionOption,
+                body: updateSubmissionOptionRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

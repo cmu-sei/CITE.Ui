@@ -3,7 +3,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { firstValueFrom, Subject } from 'rxjs';
+import { firstValueFrom, of, Subject } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
 import { ApplicationArea, SignalRService } from './signalr.service';
@@ -24,6 +24,7 @@ import { TeamQuery } from '../data/team/team.query';
 import { UserDataService } from '../data/user/user-data.service';
 import { UserQuery } from '../data/user/user.query';
 import { SystemMessageService } from './system-message/system-message.service';
+import { TeamMembershipsService } from '../generated/cite.api';
 import { getDefaultProviders } from '../test-utils/default-test-providers';
 import {
   mockHubConnectionBuilder,
@@ -73,6 +74,10 @@ function setup(overrides: { token?: () => string } = {}) {
           settings: { ApiUrl: API_URL },
         } satisfies Pick<ComnSettingsService, 'settings'>,
       },
+      {
+        provide: TeamMembershipsService,
+        useValue: { getAllTeamMemberships: () => of([]) },
+      },
       ActionDataService,
       DutyDataService,
       EvaluationDataService,
@@ -95,6 +100,11 @@ function recordWarnings() {
     warnings.push(args);
   });
   return warnings;
+}
+
+// The membership store holds one team's memberships and keeps only that team's pushed ones.
+async function holdTeamMemberships(teamId: string) {
+  await firstValueFrom(TestBed.inject(TeamMembershipDataService).loadMemberships(teamId));
 }
 
 async function connect(area: ApplicationArea = ApplicationArea.home) {
@@ -667,6 +677,7 @@ describe('SignalRService', () => {
       '$name: Updated changes the stored entity',
       async ({ name, created, updated, modified, read, expected }) => {
         const { hub } = await connect();
+        await holdTeamMemberships('t1');
         hub.trigger(`${name}Created`, created, null);
         hub.trigger(`${name}Updated`, updated, modified);
         expect(await read()).toBe(expected);
@@ -693,10 +704,11 @@ describe('SignalRService', () => {
     /**
      * Verifies: TeamMembershipCreated adds the pushed membership.
      * Interacts with: FakeHubConnection.trigger, real TeamMembershipDataService.teamMemberships$.
-     * Data: membership tm1 pushed as (viewModel, null).
+     * Data: team t1's memberships held; tm1 of t1 pushed as (viewModel, null).
      */
     it('TeamMembershipCreated adds the membership', async () => {
       const { hub } = await connect();
+      await holdTeamMemberships('t1');
       hub.trigger(
         'TeamMembershipCreated',
         { id: 'tm1', teamId: 't1', userId: 'u1', roleId: 'r1' },
@@ -711,10 +723,11 @@ describe('SignalRService', () => {
     /**
      * Verifies: TeamMembershipDeleted with the payload cite.api sends (the whole entity) removes nothing.
      * Interacts with: FakeHubConnection.trigger, real TeamMembershipDataService.teamMemberships$.
-     * Data: membership tm1 created through the hub, then deleted with the entity object as payload.
+     * Data: team t1's memberships held; tm1 created through the hub, then deleted with the entity object as payload.
      */
     it('TeamMembershipDeleted with the API payload leaves the membership', async () => {
       const { hub } = await connect();
+      await holdTeamMemberships('t1');
       const membership = {
         id: 'tm1',
         teamId: 't1',

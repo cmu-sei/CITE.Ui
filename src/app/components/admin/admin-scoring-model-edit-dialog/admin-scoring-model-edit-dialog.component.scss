@@ -74,3 +74,43 @@
   margin-left: 10px;
   margin-right: 0;
 }
+
+.section-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.default-levels {
+  flex: 1;
+}
+
+.severity-level {
+  margin-bottom: 8px;
+  padding: 8px 12px 0;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+}
+
+.level-color {
+  display: flex;
+  flex-flow: column;
+  gap: 2px;
+  margin-bottom: 20px;
+  font-size: 12px;
+
+  input {
+    width: 48px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid var(--mat-sys-outline);
+    border-radius: 4px;
+    background: none;
+    cursor: pointer;
+  }
+}
+
+.level-error {
+  margin-bottom: 8px;
+  color: var(--mat-sys-error);
+}

@@ -46,7 +46,8 @@ export class AdminActionEditDialogComponent {
       moveNumber: [
         data.action.moveNumber == null ? '' : data.action.moveNumber.toString(),
       ],
-      teamId: [data.action.teamId],
+      // The API cannot move an existing action to another team.
+      teamId: [{ value: data.action.teamId, disabled: !!data.action.id }],
     });
   }
 
@@ -62,7 +63,12 @@ export class AdminActionEditDialogComponent {
       this.editComplete.emit({ saveChanges: false, action: null });
     } else {
       if (this.errorFree()) {
-        Object.assign(this.data.action, this.form.getRawValue());
+        const value = this.form.getRawValue();
+        // the move select works in strings; the action and the API take a number
+        Object.assign(this.data.action, {
+          ...value,
+          moveNumber: value.moveNumber === '' ? null : +value.moveNumber,
+        });
         this.editComplete.emit({
           saveChanges: saveChanges,
           action: this.data.action,

@@ -51,7 +51,7 @@ function setup(
     copyScoringModel: vi.fn((id: string) =>
       of(makeModel({ id: `${id}-copy` })),
     ),
-    updateScoringModel: vi.fn((_id: string, m?: ScoringModel) => of({ ...m })),
+    updateScoringModel: vi.fn((id: string, m?: ScoringModel) => of({ ...m, id })),
     deleteScoringModel: vi.fn(() => of(null)),
     uploadJsonFiles: vi.fn(() => of()),
     ...overrides.api,
@@ -172,15 +172,42 @@ describe('ScoringModelDataService', () => {
   });
 
   /**
-   * Verifies: updateScoringModel() stores the API's response.
+   * Verifies: updateScoringModel() sends only the fields the API edits and stores the API's response.
    * Interacts with: ScoringModelService.updateScoringModel stub, ScoringModelQuery.
    * Data: sm1 renamed.
    */
   it('updateScoringModel() stores the updated model', () => {
-    const { service, query, store } = setup();
+    const { service, query, store, api } = setup();
     store.set([makeModel()]);
     service.updateScoringModel(makeModel({ description: 'Renamed' }));
+    expect(api.updateScoringModel).toHaveBeenCalledWith('sm1', {
+      description: 'Renamed',
+      status: ItemStatus.Active,
+    });
     expect(query.getEntity('sm1')?.description).toBe('Renamed');
+  });
+
+  /**
+   * Verifies: add() and updateScoringModel() send the severity levels the edit dialog sets.
+   * Interacts with: ScoringModelService.createScoringModel / updateScoringModel stubs.
+   * Data: sm1 with two severity levels.
+   */
+  it('add() and updateScoringModel() send the severity levels', () => {
+    const { service, store, api } = setup();
+    store.set([makeModel()]);
+    const severityLevels = [
+      { name: 'Low', minimumScore: 0, color: '#00ff00', description: 'Minor' },
+      { name: 'High', minimumScore: 50, color: '#ff0000', description: 'Severe' },
+    ];
+    service.add(makeModel({ id: undefined, severityLevels }));
+    service.updateScoringModel(makeModel({ severityLevels }));
+    expect(api.createScoringModel).toHaveBeenCalledWith(
+      expect.objectContaining({ severityLevels }),
+    );
+    expect(api.updateScoringModel).toHaveBeenCalledWith(
+      'sm1',
+      expect.objectContaining({ severityLevels }),
+    );
   });
 
   /**

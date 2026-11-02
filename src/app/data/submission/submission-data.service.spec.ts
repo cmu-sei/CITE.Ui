@@ -7,6 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Observable, Subject, defer, firstValueFrom, of, throwError } from 'rxjs';
 import {
+  ItemStatus,
   Submission,
   SubmissionOptionService,
   SubmissionService,
@@ -240,18 +241,20 @@ describe('SubmissionDataService', () => {
     });
 
     /**
-     * Verifies: updateSubmission() sends the submission and stores the API's copy.
+     * Verifies: updateSubmissionStatus() sends only the status, the one field the API edits, and stores the API's copy.
      * Interacts with: SubmissionService.updateSubmission stub, SubmissionQuery.
-     * Data: s1 at score 0, updated to 7.
+     * Data: s1 at score 0 and Active; set to Complete, and the API answers with score 7.
      */
-    it('updateSubmission() stores the updated submission', () => {
-      const { service, query, store, api } = setup();
+    it('updateSubmissionStatus() sends the status and stores the updated submission', () => {
+      const updateSubmission = vi.fn<
+        BodyOverload<SubmissionService['updateSubmission']>
+      >(() => of(makeSubmission({ score: 7, status: ItemStatus.Complete })));
+      const { service, query, store } = setup({ api: { updateSubmission } });
       store.set([makeSubmission()]);
-      service.updateSubmission(makeSubmission({ score: 7 }));
-      expect(api.updateSubmission).toHaveBeenCalledWith(
-        's1',
-        expect.objectContaining({ score: 7 }),
-      );
+      service.updateSubmissionStatus('s1', ItemStatus.Complete);
+      expect(updateSubmission).toHaveBeenCalledWith('s1', {
+        status: ItemStatus.Complete,
+      });
       expect(query.getEntity('s1')?.score).toBe(7);
     });
 
@@ -283,7 +286,7 @@ describe('SubmissionDataService', () => {
             comment: 'Edited',
           }),
         endpoint: (api) => api.changeSubmissionComment,
-        args: ['s1', 'c1', { id: 'c1', comment: 'Edited' }],
+        args: ['s1', 'c1', { comment: 'Edited' }],
         score: 2,
       },
       {
@@ -428,7 +431,7 @@ describe('SubmissionDataService', () => {
     const failing = () => vi.fn(() => throwError(() => failure));
 
     /**
-     * Verifies: when loadById, add, updateSubmission, clearSubmission or presetSubmission fails, loading stays true, the store keeps s1 unchanged, and the error escapes.
+     * Verifies: when loadById, add, updateSubmissionStatus, clearSubmission or presetSubmission fails, loading stays true, the store keeps s1 unchanged, and the error escapes.
      * Interacts with: the failing SubmissionService endpoint for each method, SubmissionQuery, captureUnhandledRxErrors.
      * Data: per row, store holds s1 and that endpoint answers 500.
      */
@@ -448,10 +451,10 @@ describe('SubmissionDataService', () => {
         run: (service) => service.add(makeSubmission({ id: undefined })),
       },
       {
-        method: 'updateSubmission',
+        method: 'updateSubmissionStatus',
         api: () => ({ updateSubmission: failing() }),
         run: (service) =>
-          service.updateSubmission(makeSubmission({ score: 7 })),
+          service.updateSubmissionStatus('s1', ItemStatus.Complete),
       },
       {
         method: 'clearSubmission',

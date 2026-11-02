@@ -766,6 +766,21 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
   }
 
+  // A report's User or Team choice. selectDisplayedSubmission shows the
+  // matching submission on the scoresheet, but saves the choice only when the
+  // displayed move has one, so it is saved here as well: the next page opens
+  // on whatever was picked last.
+  selectReportView(selection: 'user' | 'team') {
+    this.selectDisplayedSubmission(selection);
+    this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
+  }
+
+  // observing another team: as on the scoresheet, only the team views apply
+  get observingAnotherTeam(): boolean {
+    const activeTeamId = this.teamQuery.getActiveId();
+    return !!this.myTeamId && !!activeTeamId && activeTeamId !== this.myTeamId;
+  }
+
   logout() {
     this.authService.logout();
   }

@@ -28,6 +28,10 @@ import { ProblemDetails } from '../model/problemDetails';
 import { Submission } from '../model/submission';
 // @ts-ignore
 import { SubmissionComment } from '../model/submissionComment';
+// @ts-ignore
+import { UpdateSubmissionCommentRequest } from '../model/updateSubmissionCommentRequest';
+// @ts-ignore
+import { UpdateSubmissionRequest } from '../model/updateSubmissionRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -123,14 +127,14 @@ export class SubmissionService extends BaseService {
      * Updates a SubmissionComment with the attributes specified. The ID from the route MUST MATCH the ID contained in the submissionComment parameter
      * @param submissionId The Id of the SubmissionComment to update
      * @param submissionCommentId The Id of the SubmissionComment to update
-     * @param submissionComment The updated SubmissionComment values
+     * @param updateSubmissionCommentRequest The updated SubmissionComment values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public changeSubmissionComment(submissionId: string, submissionCommentId: string, submissionComment?: SubmissionComment, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Submission>;
-    public changeSubmissionComment(submissionId: string, submissionCommentId: string, submissionComment?: SubmissionComment, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Submission>>;
-    public changeSubmissionComment(submissionId: string, submissionCommentId: string, submissionComment?: SubmissionComment, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Submission>>;
-    public changeSubmissionComment(submissionId: string, submissionCommentId: string, submissionComment?: SubmissionComment, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public changeSubmissionComment(submissionId: string, submissionCommentId: string, updateSubmissionCommentRequest?: UpdateSubmissionCommentRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Submission>;
+    public changeSubmissionComment(submissionId: string, submissionCommentId: string, updateSubmissionCommentRequest?: UpdateSubmissionCommentRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Submission>>;
+    public changeSubmissionComment(submissionId: string, submissionCommentId: string, updateSubmissionCommentRequest?: UpdateSubmissionCommentRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Submission>>;
+    public changeSubmissionComment(submissionId: string, submissionCommentId: string, updateSubmissionCommentRequest?: UpdateSubmissionCommentRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (submissionId === null || submissionId === undefined) {
             throw new Error('Required parameter submissionId was null or undefined when calling changeSubmissionComment.');
         }
@@ -184,7 +188,7 @@ export class SubmissionService extends BaseService {
         return this.httpClient.request<Submission>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: submissionComment,
+                body: updateSubmissionCommentRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -825,14 +829,14 @@ export class SubmissionService extends BaseService {
      * Updates a  Submission
      * Updates a Submission with the attributes specified. The ID from the route MUST MATCH the ID contained in the submission parameter &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param id The Id of the Submission to update
-     * @param submission The updated Submission values
+     * @param updateSubmissionRequest The updated Submission values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateSubmission(id: string, submission?: Submission, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Submission>;
-    public updateSubmission(id: string, submission?: Submission, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Submission>>;
-    public updateSubmission(id: string, submission?: Submission, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Submission>>;
-    public updateSubmission(id: string, submission?: Submission, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateSubmission(id: string, updateSubmissionRequest?: UpdateSubmissionRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Submission>;
+    public updateSubmission(id: string, updateSubmissionRequest?: UpdateSubmissionRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Submission>>;
+    public updateSubmission(id: string, updateSubmissionRequest?: UpdateSubmissionRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Submission>>;
+    public updateSubmission(id: string, updateSubmissionRequest?: UpdateSubmissionRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateSubmission.');
         }
@@ -883,7 +887,7 @@ export class SubmissionService extends BaseService {
         return this.httpClient.request<Submission>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: submission,
+                body: updateSubmissionRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

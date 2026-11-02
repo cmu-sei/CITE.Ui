@@ -32,6 +32,8 @@ import {
   TeamService,
   UserService,
 } from '../../generated/cite.api';
+import { TeamStore } from '../../data/team/team.store';
+import { UIDataService } from '../../data/ui/ui-data.service';
 import { GallerySignalRService } from '../../services/gallery-signalr.service';
 import { SignalRService } from '../../services/signalr.service';
 import { activatedRouteStub } from '../../test-utils/activated-route';
@@ -410,6 +412,52 @@ describe('HomeAppComponent', () => {
         );
 
         expect(evaluationInfo()?.showAdminButton()).toBe(expected);
+      },
+    );
+  });
+
+  describe('report views', () => {
+    /**
+     * Verifies: a report's User or Team choice is saved even when the displayed move has no matching submission, so the next page opens on it.
+     * Interacts with: selectReportView(), selectDisplayedSubmission()'s submission lookup, real UIDataService.
+     * Data: ?evaluation=e1 with no submissions loaded; the report picks team, then user.
+     */
+    it('saves the choice without a matching submission', async () => {
+      const { fixture } = await renderHome({}, { evaluation: 'e1' });
+      const home = fixture.componentInstance;
+      const uiData = TestBed.inject(UIDataService);
+
+      home.selectReportView('team');
+      expect(uiData.getSubmissionType(home.selectedEvaluationId)).toBe('team');
+
+      home.selectReportView('user');
+      expect(uiData.getSubmissionType(home.selectedEvaluationId)).toBe('user');
+    });
+
+    /**
+     * Verifies: the reports are told they are observing only when the active team is known and is not the user's own.
+     * Interacts with: observingAnotherTeam, real TeamStore active team.
+     * Data: per row, the user's team and the active team ('' for none).
+     */
+    it.each([
+      { myTeamId: 't1', activeTeamId: 't2', observing: true },
+      { myTeamId: 't1', activeTeamId: 't1', observing: false },
+      { myTeamId: '', activeTeamId: 't2', observing: false },
+      { myTeamId: 't1', activeTeamId: '', observing: false },
+    ])(
+      'observingAnotherTeam is $observing for my team "$myTeamId" and active team "$activeTeamId"',
+      async ({ myTeamId, activeTeamId, observing }) => {
+        const { fixture } = await renderHome({});
+        const teams = TestBed.inject(TeamStore);
+        // the home page reads every team's memberships to find the user's own
+        teams.set([
+          { id: 't1', memberships: [] },
+          { id: 't2', memberships: [] },
+        ]);
+        teams.setActive(activeTeamId || null);
+        fixture.componentInstance.myTeamId = myTeamId;
+
+        expect(fixture.componentInstance.observingAnotherTeam).toBe(observing);
       },
     );
   });

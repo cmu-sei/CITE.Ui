@@ -14,6 +14,7 @@
  * Do not edit the class manually.
  */
 import { ItemStatus } from './itemStatus';
+import { SeverityLevel } from './severityLevel';
 import { ScoringCategory } from './scoringCategory';
 import { ScoringModelPermission } from './scoringModelPermission';
 import { RightSideDisplay } from './rightSideDisplay';
@@ -44,6 +45,7 @@ export interface ScoringModel {
     rightSideEmbeddedUrl?: string | null;
     evaluationId?: string | null;
     scoringModelPermissions?: Array<ScoringModelPermission> | null;
+    severityLevels?: Array<SeverityLevel> | null;
 }
 export namespace ScoringModel {
 }

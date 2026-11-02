@@ -187,7 +187,7 @@ describe('AdminEvaluationMembershipsComponent', () => {
   });
 
   /**
-   * Verifies: a role change from the member list is sent to the API.
+   * Verifies: a role change from the member list sends only the role to the API.
    * Interacts with: MemberList stub editMembership output, EvaluationMembershipsService.updateEvaluationMembership stub.
    * Data: em1 given role r2.
    */
@@ -198,7 +198,7 @@ describe('AdminEvaluationMembershipsComponent', () => {
 
     expect(membershipApi.updateEvaluationMembership).toHaveBeenCalledWith(
       'em1',
-      { id: 'em1', roleId: 'r2' },
+      { roleId: 'r2' },
     );
   });
 

@@ -23,9 +23,13 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
+import { CreateTeamRequest } from '../model/createTeamRequest';
+// @ts-ignore
 import { ProblemDetails } from '../model/problemDetails';
 // @ts-ignore
 import { Team } from '../model/team';
+// @ts-ignore
+import { UpdateTeamRequest } from '../model/updateTeamRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -46,14 +50,14 @@ export class TeamService extends BaseService {
     /**
      * Creates a new Team
      * Creates a new Team with the attributes specified &lt;para /&gt; Accessible only to a SuperUser or an Administrator
-     * @param team The data to create the Team with
+     * @param createTeamRequest The data to create the Team with
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createTeam(team?: Team, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
-    public createTeam(team?: Team, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
-    public createTeam(team?: Team, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
-    public createTeam(team?: Team, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public createTeam(createTeamRequest?: CreateTeamRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
+    public createTeam(createTeamRequest?: CreateTeamRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
+    public createTeam(createTeamRequest?: CreateTeamRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
+    public createTeam(createTeamRequest?: CreateTeamRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -101,7 +105,7 @@ export class TeamService extends BaseService {
         return this.httpClient.request<Team>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: team,
+                body: createTeamRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -354,14 +358,14 @@ export class TeamService extends BaseService {
      * Updates a Team
      * Updates a Team with the attributes specified &lt;para /&gt; Accessible only to a SuperUser or a User on an Admin Team within the specified Team
      * @param id The Id of the Exericse to update
-     * @param team The updated Team values
+     * @param updateTeamRequest The updated Team values
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateTeam(id: string, team?: Team, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
-    public updateTeam(id: string, team?: Team, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
-    public updateTeam(id: string, team?: Team, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
-    public updateTeam(id: string, team?: Team, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateTeam(id: string, updateTeamRequest?: UpdateTeamRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
+    public updateTeam(id: string, updateTeamRequest?: UpdateTeamRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
+    public updateTeam(id: string, updateTeamRequest?: UpdateTeamRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
+    public updateTeam(id: string, updateTeamRequest?: UpdateTeamRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateTeam.');
         }
@@ -412,7 +416,7 @@ export class TeamService extends BaseService {
         return this.httpClient.request<Team>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: team,
+                body: updateTeamRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
