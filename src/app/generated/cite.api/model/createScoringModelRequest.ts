@@ -15,6 +15,7 @@
  */
 import { ItemStatus } from './itemStatus';
 import { SeverityLevel } from './severityLevel';
+import { CreateScoringCategoryRequest } from './createScoringCategoryRequest';
 import { RightSideDisplay } from './rightSideDisplay';
 
 
@@ -37,6 +38,10 @@ export interface CreateScoringModelRequest {
     rightSideEmbeddedUrl?: string | null;
     severityLevels?: Array<SeverityLevel> | null;
     id?: string;
+    /**
+     * New categories of the new model, each with its new options. They name no IDs and no parents, so a create can only add rows to the model it creates.
+     */
+    scoringCategories?: Array<CreateScoringCategoryRequest> | null;
 }
 export namespace CreateScoringModelRequest {
 }

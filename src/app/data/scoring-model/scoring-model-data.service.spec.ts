@@ -211,6 +211,19 @@ describe('ScoringModelDataService', () => {
   });
 
   /**
+   * Verifies: add() creates the model with no categories, even from a model that has some, since a create's categories are new rows of it and the edit dialog adds them through their own endpoint.
+   * Interacts with: ScoringModelService.createScoringModel stub.
+   * Data: a new model carrying one category of sm1's.
+   */
+  it('add() sends no categories', () => {
+    const { service, api } = setup();
+
+    service.add(makeModel({ id: undefined, scoringCategories: [{ id: 'cat-1', description: 'Impact', scoringModelId: 'sm1' }] }));
+
+    expect(api.createScoringModel).toHaveBeenCalledWith(expect.objectContaining({ scoringCategories: [] }));
+  });
+
+  /**
    * Verifies: delete() removes the model and clears the active one.
    * Interacts with: ScoringModelService.deleteScoringModel stub, ScoringModelQuery.
    * Data: sm1 active; sm1 deleted.

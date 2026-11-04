@@ -3581,7 +3581,7 @@
           "ScoringModel"
         ],
         "summary": "Creates a new ScoringModel",
-        "description": "Creates a new ScoringModel with the attributes specified\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
+        "description": "Creates a new ScoringModel with the attributes specified, and the categories and options sent with it as new rows of it\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createScoringModel",
         "requestBody": {
           "description": "The data used to create the ScoringModel",
@@ -8752,6 +8752,50 @@
         },
         "additionalProperties": false
       },
+      "CreateScoringCategoryRequest": {
+        "type": "object",
+        "properties": {
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "calculationEquation": {
+            "type": "string",
+            "nullable": true
+          },
+          "isModifierRequired": {
+            "type": "boolean"
+          },
+          "scoringWeight": {
+            "type": "number",
+            "format": "double"
+          },
+          "moveNumberFirstDisplay": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "moveNumberLastDisplay": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scoringOptionSelection": {
+            "$ref": "#/components/schemas/ScoringOptionSelection"
+          },
+          "scoringOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateScoringOptionRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A category created with its scoring model. It has no ID and no ScoringModelId: it is a new row of the model\nit is sent in, and the server gives it its ID."
+      },
       "CreateScoringModelRequest": {
         "type": "object",
         "properties": {
@@ -8817,9 +8861,39 @@
           "id": {
             "type": "string",
             "format": "uuid"
+          },
+          "scoringCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateScoringCategoryRequest"
+            },
+            "description": "New categories of the new model, each with its new options. They name no IDs and no parents, so a\ncreate can only add rows to the model it creates.",
+            "nullable": true
           }
         },
         "additionalProperties": false
+      },
+      "CreateScoringOptionRequest": {
+        "type": "object",
+        "properties": {
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "isModifier": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "An option created with its category. It has no ID and no ScoringCategoryId: it is a new row of the category\nit is sent in, and the server gives it its ID."
       },
       "CreateTeamRequest": {
         "type": "object",
@@ -10277,6 +10351,10 @@
           "calculationEquation": {
             "type": "string",
             "nullable": true
+          },
+          "isScored": {
+            "type": "boolean",
+            "description": "The category has a calculation equation, so it is scored. Read only: set from the equation\nbefore it is redacted, so callers who cannot see the equation can still tell scored categories apart."
           },
           "isModifierRequired": {
             "type": "boolean"

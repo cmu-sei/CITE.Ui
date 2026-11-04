@@ -109,7 +109,7 @@ export class ScoringModelService extends BaseService {
 
     /**
      * Creates a new ScoringModel
-     * Creates a new ScoringModel with the attributes specified &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
+     * Creates a new ScoringModel with the attributes specified, and the categories and options sent with it as new rows of it &lt;para /&gt; Accessible only to a ContentDeveloper or an Administrator
      * @param createScoringModelRequest The data used to create the ScoringModel
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

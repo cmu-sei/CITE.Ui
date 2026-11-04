@@ -40,7 +40,9 @@ model/action.ts
 model/assembly.ts
 model/callingConventions.ts
 model/constructorInfo.ts
+model/createScoringCategoryRequest.ts
 model/createScoringModelRequest.ts
+model/createScoringOptionRequest.ts
 model/createTeamRequest.ts
 model/customAttributeData.ts
 model/customAttributeNamedArgument.ts
