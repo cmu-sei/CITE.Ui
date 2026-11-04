@@ -188,6 +188,8 @@ export class ScoringModelDataService {
         rightSideHtmlBlock: scoringModel.rightSideHtmlBlock,
         rightSideEmbeddedUrl: scoringModel.rightSideEmbeddedUrl,
         severityLevels: scoringModel.severityLevels,
+        // a model made here starts empty; its categories are added through their own endpoint
+        scoringCategories: [],
       } satisfies Required<CreateScoringModelRequest>)
       .pipe(
         tap(() => {
