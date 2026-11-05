@@ -223,7 +223,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
                   <span class="comment-text">
                     {{ comment.comment }}
                     @if (displaying === 'team') {
-                    <span class="comment-author">- {{ getUserName(comment.createdBy) }}</span>
+                    <span class="comment-author">- {{ getCommentAuthor(comment.createdBy) }}</span>
                     }
                   </span>
                   @if (canModify) {

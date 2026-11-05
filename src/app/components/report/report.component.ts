@@ -30,6 +30,7 @@ import { MatIcon } from '@angular/material/icon';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
+import { commentAuthor } from 'src/app/utilities/comment-author';
 import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/app/utilities/severity-levels';
 
 @Component({
@@ -286,6 +287,11 @@ export class ReportComponent implements OnDestroy {
       }
     }
     return;
+  }
+
+  /** The comment's author, or "Team member" when the API left the author out. */
+  getCommentAuthor(createdBy: string) {
+    return commentAuthor(createdBy, (id) => this.getUserName(id));
   }
 
   getUserName(id) {

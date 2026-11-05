@@ -31,6 +31,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
+import { commentAuthor } from 'src/app/utilities/comment-author';
 
 @Component({
     selector: 'app-aggregate',
@@ -220,6 +221,11 @@ export class AggregateComponent implements OnInit, OnDestroy {
   getTeamShortName(id: string) {
     const theTeam = this.teamList?.find(tu => tu.id === id);
     return theTeam ? theTeam.shortName : '';
+  }
+
+  /** The comment's author, or "Team member" when the API left the author out. */
+  getCommentAuthor(createdBy: string) {
+    return commentAuthor(createdBy, (id) => this.getUserName(id));
   }
 
   getUserName(id: string) {

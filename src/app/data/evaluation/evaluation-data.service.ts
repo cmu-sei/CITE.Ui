@@ -248,6 +248,7 @@ export class EvaluationDataService {
         situationDescription: evaluation.situationDescription,
         galleryExhibitId: evaluation.galleryExhibitId,
         showAdvanceButton: evaluation.showAdvanceButton,
+        hideNamesFromObservers: evaluation.hideNamesFromObservers,
       } satisfies Required<UpdateEvaluationRequest>)
       .pipe(
         tap(() => {
