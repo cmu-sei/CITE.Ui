@@ -35,6 +35,10 @@ export interface Evaluation {
     scoringModel?: ScoringModel;
     galleryExhibitId?: string | null;
     showAdvanceButton?: boolean;
+    /**
+     * Leaves out who answered or commented when someone who is not on a team observes it: they see the team\'s responses but not its members\' own submissions or the author of a comment. The evaluation\'s owners, anyone who can view every evaluation, and the team\'s own members still see the names.
+     */
+    hideNamesFromObservers?: boolean;
     teams?: Array<Team> | null;
     moves?: Array<Move> | null;
     submissions?: Array<Submission> | null;

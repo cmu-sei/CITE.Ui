@@ -27,6 +27,7 @@ export interface UpdateEvaluationRequest {
     situationDescription?: string | null;
     galleryExhibitId?: string | null;
     showAdvanceButton?: boolean;
+    hideNamesFromObservers?: boolean;
 }
 export namespace UpdateEvaluationRequest {
 }
