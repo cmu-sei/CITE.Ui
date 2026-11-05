@@ -64,6 +64,7 @@ const selecting = (
   base: Submission,
   optionId: string,
   comment: SubmissionComment,
+  modifiedBy: string | null = 'u1',
 ): Submission => ({
   ...base,
   status: ItemStatus.Active,
@@ -75,7 +76,7 @@ const selecting = (
         {
           scoringOptionId: optionId,
           isSelected: true,
-          modifiedBy: 'u1',
+          modifiedBy,
           submissionComments: [comment],
         },
       ],
@@ -86,16 +87,20 @@ const selecting = (
 // savedType: the view saved from the scoresheet (or before a print reload).
 // isScored: set on the category, as the API marks a category with an equation.
 // selection: replaces the category's option selection.
+// namesHidden: the team's submission as the API sends it to an observer of an
+// evaluation that hides names (an empty comment author, no option modifier).
 async function renderReport(
   savedType?: string,
   {
     observing,
     isScored,
     selection,
+    namesHidden,
   }: {
     observing?: boolean;
     isScored?: boolean;
     selection?: ScoringOptionSelection;
+    namesHidden?: boolean;
   } = {},
 ) {
   const model: ScoringModel = {
@@ -162,7 +167,14 @@ async function renderReport(
           selecting(
             { id: 's-team', moveNumber: 1, teamId: 't1', score: 50 },
             'o2',
-            { id: 'c-team', comment: 'Payroll offline', createdBy: 'u1' },
+            {
+              id: 'c-team',
+              comment: 'Payroll offline',
+              createdBy: namesHidden
+                ? '00000000-0000-0000-0000-000000000000'
+                : 'u1',
+            },
+            namesHidden ? null : 'u1',
           ),
         ]);
       // comment authors are looked up among the evaluation's users
@@ -287,6 +299,23 @@ describe('ReportComponent', () => {
     expect(screen.getByText('Payroll offline')).toHaveTextContent(
       /^Payroll offline - Alice$/,
     );
+  });
+
+  /**
+   * Verifies: a team comment whose author the API left out is signed "Team member", and a selection with no modifier has no Selected by tooltip.
+   * Interacts with: getCommentAuthor(), selectedBy(), the Team view button.
+   * Data: the team's comment has the empty author id and its option no modifiedBy, as an observer of an evaluation that hides names gets them.
+   */
+  it('signs a team comment without an author as Team member', async () => {
+    const { user } = await renderReport(undefined, { namesHidden: true });
+
+    await user.click(viewButton('Team'));
+
+    expect(screen.getByText('Payroll offline')).toHaveTextContent(
+      /^Payroll offline - Team member$/,
+    );
+    expect(screen.getByLabelText('Significant')).not.toHaveAttribute('tabindex');
+    expect(screen.queryByText(/Alice/, { selector: '.comment *' })).toBeNull();
   });
 
   /**
