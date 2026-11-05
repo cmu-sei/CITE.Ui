@@ -285,8 +285,9 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   deleteEvaluationRequest(evaluation: Evaluation) {
     this.dialogService
       .confirm({
-        title: 'Delete this evaluation?',
+        title: 'Delete Evaluation',
         message: 'Are you sure that you want to delete ' + evaluation.description + '?',
+        confirmText: 'Delete',
       })
       .afterClosed()
       .subscribe((confirmed) => {

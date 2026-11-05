@@ -220,6 +220,11 @@ describe('AdminScoringModelsComponent', () => {
       expect(button('Delete Custom')).toBeDisabled();
       await user.click(button('Delete NCISS'));
       expect(confirm).toHaveBeenCalledOnce();
+      expect(confirm).toHaveBeenCalledWith({
+        title: 'Delete Scoring Model',
+        message: 'Are you sure that you want to delete NCISS?',
+        confirmText: 'Delete',
+      });
       expect(scoringModelApi.deleteScoringModel).toHaveBeenCalledWith('sm1');
     });
 
@@ -238,6 +243,11 @@ describe('AdminScoringModelsComponent', () => {
       expect(button('Delete Custom')).toBeEnabled();
       await user.click(button('Delete Custom'));
       expect(confirm).toHaveBeenCalledOnce();
+      expect(confirm).toHaveBeenCalledWith({
+        title: 'Delete Scoring Model',
+        message: 'Are you sure that you want to delete Custom?',
+        confirmText: 'Delete',
+      });
       expect(scoringModelApi.deleteScoringModel).toHaveBeenCalledWith('sm2');
       expect(
         screen.queryByText('Custom', { selector: 'td' }),

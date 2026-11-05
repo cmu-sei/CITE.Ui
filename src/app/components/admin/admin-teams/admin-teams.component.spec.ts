@@ -155,6 +155,11 @@ describe('AdminTeamsComponent', () => {
     await user.click(screen.getByRole('button', { name: 'Delete Red Team' }));
 
     expect(confirm).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Team',
+      message: 'Are you sure that you want to delete Red Team?',
+      confirmText: 'Delete',
+    });
     expect(teamApi.deleteTeam).toHaveBeenCalledWith('t2');
   });
 

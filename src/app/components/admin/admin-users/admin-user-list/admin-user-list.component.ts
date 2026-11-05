@@ -96,8 +96,8 @@ export class AdminUserListComponent implements OnInit, OnChanges {
   deleteUser(user: User) {
     this.confirmService
       .confirm({
-        title: 'Delete ' + user.name + '?',
-        message: user.id,
+        title: 'Delete User',
+        message: 'Are you sure that you want to delete ' + user.name + '?',
         confirmText: 'Delete',
       })
       .afterClosed()

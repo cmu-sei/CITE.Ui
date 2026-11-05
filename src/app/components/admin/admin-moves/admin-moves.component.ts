@@ -99,8 +99,9 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   deleteMoveRequest(move: Move) {
     this.dialogService
       .confirm({
-        title: 'Delete this move?',
+        title: 'Delete Move',
         message: 'Are you sure that you want to delete ' + move.description + '?',
+        confirmText: 'Delete',
       })
       .afterClosed()
       .subscribe((confirmed) => {

@@ -126,6 +126,7 @@ async function renderDashboard(
         },
       ]),
     ),
+    deleteDuty: vi.fn(() => of({})),
   } satisfies ApiStub<DutyService>;
   const membershipApi = {
     getAllTeamMemberships: vi.fn(() =>
@@ -248,6 +249,8 @@ async function renderDashboard(
   return {
     ...rendered,
     actionApi,
+    confirm,
+    dutyApi,
     membershipApi,
     editDialog,
     user,
@@ -637,6 +640,27 @@ describe('DashboardComponent', () => {
     await user.click(within(duties.element).getByTitle('Edit Duty'));
 
     expect(editDialog.config()?.data.canEdit).toBe(true);
+  });
+
+  /**
+   * Verifies: Delete Duty asks with the standard Crucible delete wording, naming the duty, before deleting it.
+   * Interacts with: the opened Duties panel in edit mode, CrucibleDialogService.confirm stub (answers true), DutyService.deleteDuty stub.
+   * Data: SubmitTeamScore on t1; duty Scribe deleted.
+   */
+  it('confirms deleting a duty by name', async () => {
+    const { confirm, dutyApi, expand, user } = await renderDashboard(
+      onTeam('t1', TeamPermission.SubmitTeamScore),
+    );
+    const duties = await expand('Duties');
+    await user.click(within(duties.element).getByTitle('Edit Duties'));
+    await user.click(within(duties.element).getByTitle('Delete Duty'));
+
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Duty',
+      message: 'Are you sure that you want to delete Scribe?',
+      confirmText: 'Delete',
+    });
+    expect(dutyApi.deleteDuty).toHaveBeenCalledWith('d1');
   });
 
   /**
