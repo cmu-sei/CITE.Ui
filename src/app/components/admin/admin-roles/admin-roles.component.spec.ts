@@ -10,6 +10,7 @@ import { AdminRolesComponent } from './admin-roles.component';
 import { AdminSystemRolesComponent } from './admin-system-roles/admin-system-roles.component';
 import { AdminScoringModelRolesComponent } from './admin-scoring-model-roles/admin-scoring-model-roles.component';
 import { AdminEvaluationRolesComponent } from './admin-evaluation-roles/admin-evaluation-roles.component';
+import { AdminTeamRolesComponent } from './admin-team-roles/admin-team-roles.component';
 
 describe('AdminRolesComponent', () => {
   /**
@@ -29,6 +30,7 @@ describe('AdminRolesComponent', () => {
               AdminSystemRolesComponent,
               AdminScoringModelRolesComponent,
               AdminEvaluationRolesComponent,
+              AdminTeamRolesComponent,
             ],
           },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] },
@@ -38,6 +40,6 @@ describe('AdminRolesComponent', () => {
     expect(fixture.componentInstance).toBeInstanceOf(AdminRolesComponent);
     expect(
       screen.getAllByRole('tab').map((tab) => tab.textContent?.trim()),
-    ).toEqual(['Roles', 'Scoring Model Roles', 'Evaluation Roles']);
+    ).toEqual(['Roles', 'Scoring Model Roles', 'Evaluation Roles', 'Team Roles']);
   });
 });
