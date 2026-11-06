@@ -30,6 +30,12 @@
   overflow: hidden;
 }
 
+// While the landing background (crucibleLandingBackground) shows, the list
+// panel keeps the surface color so it stays readable over the image.
+.app-events-container.crucible-landing-background .evaluation-list-container {
+  background-color: var(--mat-sys-surface);
+}
+
 .main-area {
   display: flex;
   flex-direction: column;

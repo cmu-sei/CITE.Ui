@@ -12,6 +12,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import {
   ComnAuthService,
   ComnSettingsService,
+  CrucibleLandingBackgroundDirective,
   Theme,
   ComnAuthQuery,
 } from '@cmusei/crucible-common';
@@ -113,6 +114,7 @@ import { Section } from './section';
         RightSideIframeComponent,
         AsyncPipe,
         DatePipe,
+        CrucibleLandingBackgroundDirective,
     ],
 })
 export class HomeAppComponent implements OnDestroy, OnInit {
