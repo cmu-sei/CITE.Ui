@@ -586,6 +586,10 @@ export class ScoresheetComponent implements OnDestroy {
   verifySubmission() {
     const noCategoryOption = [];
     const noCategoryModifier = [];
+    const moveNumber = +this.displayedSubmission.moveNumber;
+    // as getDisplayedScoringCategories(): a model not split by move shows
+    // every category, whatever its move range
+    const byMove = this.selectedScoringModel.displayScoringModelByMoveNumber;
     this.displayedSubmission.submissionCategories.forEach((sc) => {
       const scoringCategory = this.selectedScoringModel.scoringCategories.find(
         (x) => x.id === sc.scoringCategoryId
@@ -593,10 +597,9 @@ export class ScoresheetComponent implements OnDestroy {
       if (
         scoringCategory.scoringOptionSelection !==
           ScoringOptionSelection.None &&
-        +scoringCategory.moveNumberFirstDisplay <=
-          +this.displayedSubmission.moveNumber &&
-        +scoringCategory.moveNumberLastDisplay >=
-          +this.displayedSubmission.moveNumber
+        (!byMove ||
+          (+scoringCategory.moveNumberFirstDisplay <= moveNumber &&
+            +scoringCategory.moveNumberLastDisplay >= moveNumber))
       ) {
         const scoringOptions = scoringCategory.scoringOptions;
         const optionIds = scoringOptions
