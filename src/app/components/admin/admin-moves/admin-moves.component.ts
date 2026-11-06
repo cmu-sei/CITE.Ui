@@ -65,10 +65,14 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
 
   addOrEditMove(move: Move) {
     if (!move) {
+      // The store also holds moves SignalR broadcasts for other evaluations, so number from this one's own
+      const moveNumbers = this.moveList
+        .filter(m => m.evaluationId === this.evaluationId())
+        .map(m => +m.moveNumber);
       move = {
         evaluationId: this.evaluationId(),
         description: '',
-        moveNumber: this.moveList.length !== 0 ? this.moveList.length : 0,
+        moveNumber: moveNumbers.length !== 0 ? Math.max(...moveNumbers) + 1 : 0,
         situationDescription: '',
         situationTime: new Date()
       };
