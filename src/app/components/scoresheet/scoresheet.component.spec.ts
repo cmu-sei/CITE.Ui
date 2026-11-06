@@ -312,6 +312,102 @@ describe('ScoresheetComponent', () => {
     });
   });
 
+  describe('submission checks', () => {
+    // One unanswered Single category with two modifiers, none selected, so
+    // Submit's check finds both a missing option and a missing modifier.
+    function unansweredModel(
+      byMove: boolean,
+      first: number,
+      last: number,
+    ): Partial<ScoringModel> {
+      return {
+        displayScoringModelByMoveNumber: byMove,
+        scoringCategories: [
+          {
+            ...category('q', first, last, 1),
+            scoringOptionSelection: ScoringOptionSelection.Single,
+            scoringOptions: [
+              { id: 'opt', scoringCategoryId: 'q', description: 'Isolate the host', displayOrder: 1, value: 1 },
+              { id: 'mod-1', scoringCategoryId: 'q', description: 'Low', displayOrder: 2, value: 1, isModifier: true },
+              { id: 'mod-2', scoringCategoryId: 'q', description: 'High', displayOrder: 3, value: 2, isModifier: true },
+            ],
+          },
+        ],
+      };
+    }
+    const unansweredSubmission: Partial<Submission> = {
+      submissionCategories: [
+        {
+          scoringCategoryId: 'q',
+          submissionOptions: [
+            { id: 'so-1', scoringOptionId: 'opt', isSelected: false },
+            { id: 'so-2', scoringOptionId: 'mod-1', isSelected: false },
+            { id: 'so-3', scoringOptionId: 'mod-2', isSelected: false },
+          ],
+        },
+      ],
+    };
+
+    /**
+     * Verifies: with the model not split by move, Submit warns about an unanswered category whatever its move range, and submits nothing when the warning is declined.
+     * Interacts with: verifyAndSubmit()/verifySubmission(), CrucibleDialogService.confirm stub (declined), SubmissionService.updateSubmission stub.
+     * Data: displayScoringModelByMoveNumber false; submission on move 2 (the current move); per row, a range that leaves out move 2, backwards (3 to 1, which CITE.Api#128 accepts when the setting is off) or forwards (1 to 1).
+     * Why: verifySubmission() read the range regardless of the setting, so a category shown on every move skipped its checks and an unanswered sheet submitted without the warning.
+     */
+    it.each([
+      { label: 'backwards', first: 3, last: 1 },
+      { label: 'forwards', first: 1, last: 1 },
+    ])(
+      'warns about an unanswered category with a $label range outside the move when the model is not split by move',
+      async ({ first, last }) => {
+        const { user, submissionApi, confirm } = await renderScoresheet({
+          displaying: 'user',
+          confirm: false,
+          model: unansweredModel(false, first, last),
+          activeSubmission: unansweredSubmission,
+        });
+        expect(shownCategories()).toEqual(['1. Category q']);
+
+        await user.click(toolbarButton('Submit')!);
+
+        expect(confirm).toHaveBeenCalledWith({
+          title: 'Submit this response?',
+          message:
+            'No options selected for categories (1).    ' +
+            'No modifier selected for categories (1).    ' +
+            '    Are you sure that you want to submit this response?',
+        });
+        expect(submissionApi.updateSubmission).not.toHaveBeenCalled();
+      },
+    );
+
+    /**
+     * Verifies: with the model split by move, Submit still ignores a category outside the move and submits without asking.
+     * Interacts with: verifyAndSubmit()/verifySubmission(), CrucibleDialogService.confirm stub, SubmissionService.updateSubmission stub.
+     * Data: displayScoringModelByMoveNumber true; the unanswered category's range is move 1, the submission's move 2; a second category on move 2 with no options to answer keeps the toolbar shown.
+     * Why: the near miss for the rows above; the range must still count when the setting is on.
+     */
+    it('skips a category outside the move when the model is split by move', async () => {
+      const model = unansweredModel(true, 1, 1);
+      const { user, submissionApi, confirm } = await renderScoresheet({
+        displaying: 'user',
+        model: {
+          ...model,
+          scoringCategories: [...model.scoringCategories!, category('now', 2, 2, 2)],
+        },
+        activeSubmission: unansweredSubmission,
+      });
+      expect(shownCategories()).toEqual(['2. Category now']);
+
+      await user.click(toolbarButton('Submit')!);
+
+      expect(confirm).not.toHaveBeenCalled();
+      expect(submissionApi.updateSubmission).toHaveBeenCalledWith('s1', {
+        status: ItemStatus.Complete,
+      });
+    });
+  });
+
   describe('team score permission gates', () => {
     /**
      * Verifies: with SubmitTeamScore on the active team, the team score can be submitted.
