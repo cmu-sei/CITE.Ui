@@ -657,13 +657,27 @@ export class ScoresheetComponent implements OnDestroy {
     this.displaying =
       this.uiDataService.getSubmissionType(this.selectedEvaluation.id) ||
       (this.displayedSubmission?.userId ? 'user' : 'team');
-    // set proper permissions for this selection
+    // set proper permissions for this selection. The official submission
+    // belongs to the evaluation, so EditOfficialScore on any of the user's
+    // teams in it scores and submits it, as the API decides; the team score
+    // permissions do not.
+    const canEditOfficial =
+      this.displaying === 'official' &&
+      this.teamQuery
+        .getAll()
+        .some((team) =>
+          this.permissionDataService.hasTeamPermission(team.id, TeamPermission.EditOfficialScore),
+        );
     const canModify =
       this.displaying === 'user' ||
-      this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.EditTeamScore);
+      canEditOfficial ||
+      (this.displaying !== 'official' &&
+        this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.EditTeamScore));
     const canSubmit =
       this.displaying === 'user' ||
-      this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.SubmitTeamScore);
+      canEditOfficial ||
+      (this.displaying !== 'official' &&
+        this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.SubmitTeamScore));
     this.showReopenButton =
       this.displayedSubmission &&
       canSubmit &&
