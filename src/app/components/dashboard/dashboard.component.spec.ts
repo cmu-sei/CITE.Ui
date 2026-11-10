@@ -624,6 +624,40 @@ describe('DashboardComponent', () => {
   });
 
   /**
+   * Verifies: a checked action names who checked it in its tooltip, and an action whose checker the API left out has no tooltip.
+   * Interacts with: changedBy(), the Actions panel's checkboxes and their MatTooltip description, real UserQuery for the name.
+   * Data: two checked actions on t1, one checked by u1 (Alice), one with no changedBy, as an observer of an evaluation that hides names gets it.
+   */
+  it('names who checked an action unless the API left it out', async () => {
+    const { expand, fixture } = await renderDashboard(
+      onTeam('t1', TeamPermission.EditTeamScore),
+      {
+        actions: [
+          { ...ACTION, isChecked: true, changedBy: 'u1' },
+          {
+            ...ACTION,
+            id: 'a2',
+            actionNumber: 2,
+            description: 'Reset passwords',
+            isChecked: true,
+            changedBy: null,
+          },
+        ],
+      },
+    );
+    const actions = await expand('Actions');
+    // MatTooltip registers its description a microtask after its message is set.
+    await fixture.whenStable();
+    const checkbox = (text: string) =>
+      within(actions.element).getByText(text).closest('mat-checkbox');
+
+    expect(checkbox('Isolate the mail server')).toHaveAccessibleDescription(
+      'Selected by Alice',
+    );
+    expect(checkbox('Reset passwords')).not.toHaveAttribute('aria-describedby');
+  });
+
+  /**
    * Verifies: SubmitTeamScore enables Edit Duties, and a duty opened from edit mode gets canEdit true.
    * Interacts with: the opened Duties panel, matDialogStub (dialog data).
    * Data: SubmitTeamScore on t1.

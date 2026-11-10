@@ -130,6 +130,54 @@ describe('AdminEvaluationEditDialogComponent', () => {
   });
 
   /**
+   * Verifies: Hide individual names from observers can be turned on for an evaluation that has started, says in its tooltip what observers and owners see, and Save sends it.
+   * Interacts with: the Hide individual names from observers checkbox and its title, the crucible-dialog Save button, the editComplete output.
+   * Data: canEdit true, an existing Active evaluation without the setting.
+   */
+  it('saves Hide individual names from observers on an active evaluation', async () => {
+    const { editComplete, user } = await renderEvaluationDialog(true);
+    const checkbox = screen.getByLabelText('Hide individual names from observers');
+    expect(checkbox).toBeEnabled();
+    expect(checkbox).not.toBeChecked();
+    expect(checkbox.closest('mat-checkbox')).toHaveAttribute(
+      'title',
+      "This evaluation's Observers and Facilitators see a team they are not on without who answered, commented or checked an action. The team's members, the evaluation's owners, and system roles that can view all evaluations (including the default system Observer role) still see the names.",
+    );
+
+    await user.click(checkbox);
+    await user.click(save());
+
+    expect(editComplete).toHaveBeenCalledWith({
+      saveChanges: true,
+      evaluation: expect.objectContaining({
+        id: 'e1',
+        status: ItemStatus.Active,
+        hideNamesFromObservers: true,
+      }),
+    });
+  });
+
+  /**
+   * Verifies: a new evaluation starts with names shown, and saves that as false rather than leaving it unset.
+   * Interacts with: the Hide individual names from observers checkbox, the crucible-dialog Save button (enabled once the form changes).
+   * Data: canEdit true, isExisting false; the evaluation has no hideNamesFromObservers. The description is edited so Save is enabled.
+   */
+  it('leaves Hide individual names from observers off for a new evaluation', async () => {
+    const { editComplete, user } = await renderEvaluationDialog(true, false);
+    expect(
+      screen.getByLabelText('Hide individual names from observers'),
+    ).not.toBeChecked();
+
+    await user.type(screen.getByLabelText('Evaluation Description'), ' 2');
+    await user.click(save());
+
+    expect(editComplete).toHaveBeenCalledWith({
+      saveChanges: true,
+      evaluation: expect.objectContaining({ hideNamesFromObservers: false }),
+    });
+  });
+
+  /**
    * Verifies: a new evaluation lets the user pick its scoring model.
    * Interacts with: the scoring model select.
    * Data: canEdit true, isExisting false.
@@ -157,6 +205,9 @@ describe('AdminEvaluationEditDialogComponent', () => {
       'true',
     );
     expect(screen.getByLabelText('Show Advance Button')).toBeDisabled();
+    expect(
+      screen.getByLabelText('Hide individual names from observers'),
+    ).toBeDisabled();
     expect(screen.getByLabelText('Open calendar')).toBeDisabled();
     expect(save()).toBeDisabled();
   });

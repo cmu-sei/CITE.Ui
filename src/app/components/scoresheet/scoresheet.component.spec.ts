@@ -37,6 +37,7 @@ import { MoveStore } from '../../data/move/move.store';
 import { ScoringModelStore } from '../../data/scoring-model/scoring-model.store';
 import { SubmissionStore } from '../../data/submission/submission.store';
 import { TeamStore } from '../../data/team/team.store';
+import { UserStore } from '../../data/user/user.store';
 import { UIDataService } from '../../data/ui/ui-data.service';
 import { SubmissionDataService } from '../../data/submission/submission-data.service';
 import { TeamMembershipDataService } from '../../data/team/team-membership-data.service';
@@ -111,6 +112,8 @@ async function renderScoresheet(
     displaying?: 'user' | 'team' | null;
     myTeamId?: string;
     activeTeam?: boolean;
+    // the evaluation's users, whom comment authors are looked up among
+    users?: { id: string; name: string }[];
     moves?: Move[];
     confirm?: boolean;
     addSubmissionComment?: (
@@ -199,6 +202,7 @@ async function renderScoresheet(
         s.setActive('sm1');
       }),
       seededStore(MoveStore, (s) => s.set(overrides.moves ?? [])),
+      seededStore(UserStore, (s) => s.set(overrides.users ?? [])),
       seededStore(TeamStore, (s) => {
         s.set([{ id: 't1', name: 'Red', memberships: [] }]);
         if (overrides.activeTeam !== false) s.setActive('t1');
@@ -752,6 +756,53 @@ describe('ScoresheetComponent', () => {
         }
       },
     );
+  });
+
+  describe('comment authors', () => {
+    /**
+     * Verifies: a comment on the team's responses is signed with its author's name, and with "Team member" when the API left the author out.
+     * Interacts with: getCommentAuthor(), the comment list's comment-author span, real UserQuery for the author's name.
+     * Data: displaying 'team'; option 'Isolate the host' has Alice's comment and one with the empty author id an observer of an evaluation that hides names gets.
+     */
+    it('signs a comment without an author as Team member', async () => {
+      await renderScoresheet({
+        users: [{ id: 'u1', name: 'Alice' }],
+        model: {
+          scoringCategories: [
+            {
+              ...category('cat-1', 0, 9, 1),
+              scoringOptionSelection: ScoringOptionSelection.Single,
+              scoringOptions: [
+                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+              ],
+            },
+          ],
+        },
+        activeSubmission: {
+          submissionCategories: [
+            {
+              scoringCategoryId: 'cat-1',
+              submissionOptions: [
+                {
+                  id: 'so-1',
+                  scoringOptionId: 'opt-1',
+                  isSelected: false,
+                  submissionComments: [
+                    { id: 'c1', comment: 'Done at noon', createdBy: 'u1' },
+                    { id: 'c2', comment: 'Host reimaged', createdBy: '00000000-0000-0000-0000-000000000000' },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      });
+
+      const authors = Array.from(document.querySelectorAll('.comment-author')).map(
+        (el) => el.textContent?.trim(),
+      );
+      expect(authors).toEqual(['- Alice', '- Team member']);
+    });
   });
 
   describe('category scores and option values', () => {

@@ -45,6 +45,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { FormsModule } from '@angular/forms';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
+import { commentAuthor } from 'src/app/utilities/comment-author';
 import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/app/utilities/severity-levels';
 
 @Component({
@@ -518,6 +519,11 @@ export class ScoresheetComponent implements OnDestroy {
       }
     }
     return;
+  }
+
+  /** The comment's author, or "Team member" when the API left the author out. */
+  getCommentAuthor(createdBy: string) {
+    return commentAuthor(createdBy, (id) => this.getUserName(id));
   }
 
   getUserName(id) {

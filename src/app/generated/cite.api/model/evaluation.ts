@@ -35,6 +35,10 @@ export interface Evaluation {
     scoringModel?: ScoringModel;
     galleryExhibitId?: string | null;
     showAdvanceButton?: boolean;
+    /**
+     * Leaves out who answered, commented or checked an action when someone who is not on a team observes it: they see the team\'s responses but not its members\' own submissions, the author of a comment, or who checked an action. The team\'s own members still see the names, and so do the evaluation\'s owners and anyone with the system ViewEvaluations or ManageEvaluations permission, which includes the default system Observer, Content Developer and Administrator roles. It hides the names from the evaluation\'s Observer and Facilitator roles. Left out or null when creating an evaluation, it is false.
+     */
+    hideNamesFromObservers?: boolean | null;
     teams?: Array<Team> | null;
     moves?: Array<Move> | null;
     submissions?: Array<Submission> | null;
