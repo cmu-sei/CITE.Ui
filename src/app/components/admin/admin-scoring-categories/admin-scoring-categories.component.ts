@@ -122,8 +122,10 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   deleteScoringCategoryRequest(scoringCategory: ScoringCategory) {
     this.dialogService
       .confirm({
-        title: 'Delete this scoringCategory?',
+        title: 'Delete Scoring Category',
         message: 'Are you sure that you want to delete ' + scoringCategory.description + '?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

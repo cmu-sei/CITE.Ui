@@ -119,8 +119,10 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   deleteTeamTypeRequest(teamType: TeamType) {
     this.dialogService
       .confirm({
-        title: 'Delete TeamType',
+        title: 'Delete Team Type',
         message: 'Are you sure that you want to delete ' + teamType.name + '?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

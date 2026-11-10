@@ -182,6 +182,12 @@ describe('AdminDutiesComponent', () => {
     fixture.detectChanges();
 
     expect(confirm).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Duty',
+      message: 'Are you sure that you want to delete Liaison?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+    });
     expect(dutyApi.deleteDuty).toHaveBeenCalledWith('d2');
     expect(
       within(screen.getByRole('table')).queryByText('Liaison'),

@@ -128,6 +128,7 @@ export class ScoresheetComponent implements OnDestroy {
   showReopenButton = false;
   showModifyControls = false;
   commentOptionDescription = 'this is the description';
+  commentDialogTitle = 'Add Comment';
   currentComment = 'current comment';
   showHeader = false;
   // save state of each answer box, keyed by scoring option id
@@ -321,6 +322,7 @@ export class ScoresheetComponent implements OnDestroy {
       .submissionOptions.find((so) => so.scoringOptionId === scoringOption.id);
     this.currentComment = '';
     this.commentOptionDescription = scoringOption.description;
+    this.commentDialogTitle = 'Add Comment';
     const dialogRef = this.matDialog.open(templateRef, {
       maxWidth: '90vw',
       width: '600px',
@@ -345,6 +347,7 @@ export class ScoresheetComponent implements OnDestroy {
   ) {
     this.currentComment = submissionComment.comment;
     this.commentOptionDescription = scoringOption.description;
+    this.commentDialogTitle = 'Edit Comment';
     const dialogRef = this.matDialog.open(templateRef, {
       maxWidth: '90vw',
       width: '600px',
@@ -456,8 +459,10 @@ export class ScoresheetComponent implements OnDestroy {
   deleteComment(submissionComment: SubmissionComment) {
     this.dialogService
       .confirm({
-        title: 'Delete this comment?',
-        message: submissionComment.comment,
+        title: 'Delete Comment',
+        message: 'Are you sure that you want to delete "' + submissionComment.comment + '"?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

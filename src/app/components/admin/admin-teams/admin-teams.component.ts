@@ -142,6 +142,8 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
       .confirm({
         title: 'Delete Team',
         message: 'Are you sure that you want to delete ' + team.name + '?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

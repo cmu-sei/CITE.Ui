@@ -175,6 +175,12 @@ describe('AdminScoringOptionsComponent', () => {
     );
 
     expect(confirm).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Scoring Option',
+      message: 'Are you sure that you want to delete Minimal?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+    });
     expect(optionApi.deleteScoringOption).toHaveBeenCalledWith('o1');
   });
 });
