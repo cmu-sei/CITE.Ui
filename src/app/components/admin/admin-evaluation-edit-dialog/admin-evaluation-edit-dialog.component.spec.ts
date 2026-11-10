@@ -141,7 +141,7 @@ describe('AdminEvaluationEditDialogComponent', () => {
     expect(checkbox).not.toBeChecked();
     expect(checkbox.closest('mat-checkbox')).toHaveAttribute(
       'title',
-      'Observers see only the team on each response. Evaluation owners still see the names.',
+      "This evaluation's Observers and Facilitators see a team they are not on without who answered, commented or checked an action. The team's members, the evaluation's owners, and system roles that can view all evaluations (including the default system Observer role) still see the names.",
     );
 
     await user.click(checkbox);
