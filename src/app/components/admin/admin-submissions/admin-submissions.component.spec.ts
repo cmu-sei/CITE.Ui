@@ -225,6 +225,7 @@ describe('AdminSubmissionsComponent', () => {
       title: 'Delete Submission',
       message: 'Are you sure that you want to delete this submission?',
       confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
     expect(submissionApi.deleteSubmission).toHaveBeenCalledWith('s-team');
   });

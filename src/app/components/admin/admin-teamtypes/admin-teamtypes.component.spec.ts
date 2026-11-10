@@ -175,6 +175,7 @@ describe('AdminTeamTypesComponent', () => {
       title: 'Delete Team Type',
       message: 'Are you sure that you want to delete Contractor?',
       confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
     expect(teamTypeApi.deleteTeamType).toHaveBeenCalledWith('tt2');
     expect(

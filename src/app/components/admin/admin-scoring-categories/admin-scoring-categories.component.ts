@@ -125,6 +125,7 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
         title: 'Delete Scoring Category',
         message: 'Are you sure that you want to delete ' + scoringCategory.description + '?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

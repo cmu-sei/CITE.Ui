@@ -99,6 +99,7 @@ export class AdminUserListComponent implements OnInit, OnChanges {
         title: 'Delete User',
         message: 'Are you sure that you want to delete ' + user.name + '?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

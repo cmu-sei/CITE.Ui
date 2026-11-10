@@ -210,6 +210,7 @@ describe('AdminGroupsComponent', () => {
       title: 'Delete Group',
       message: 'Are you sure that you want to delete Responders?',
       confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
     expect(groupApi.deleteGroup).toHaveBeenCalledWith('g2');
   });

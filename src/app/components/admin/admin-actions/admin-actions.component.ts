@@ -208,6 +208,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit {
         title: 'Delete Action',
         message: 'Are you sure that you want to delete ' + action.description + '?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

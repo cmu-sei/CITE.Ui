@@ -213,6 +213,7 @@ describe('AdminActionsComponent', () => {
       title: 'Delete Action',
       message: 'Are you sure that you want to delete Notify legal?',
       confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
     expect(actionApi.deleteAction).toHaveBeenCalledWith('a2');
     expect(

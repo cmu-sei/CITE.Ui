@@ -461,6 +461,7 @@ export class ScoresheetComponent implements OnDestroy {
         title: 'Delete Comment',
         message: 'Are you sure that you want to delete "' + submissionComment.comment + '"?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

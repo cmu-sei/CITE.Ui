@@ -121,6 +121,7 @@ describe('AdminUserListComponent', () => {
       title: 'Delete User',
       message: 'Are you sure that you want to delete Bob?',
       confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
     expect(deleteUser).toHaveBeenCalledWith('u2');
   });

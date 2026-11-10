@@ -163,6 +163,7 @@ describe('AdminMovesComponent', () => {
       title: 'Delete Move',
       message: 'Are you sure that you want to delete Detection?',
       confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
     expect(moveApi.deleteMove).toHaveBeenCalledWith('m0');
     expect(descriptions()).toEqual(['1 Escalation']);

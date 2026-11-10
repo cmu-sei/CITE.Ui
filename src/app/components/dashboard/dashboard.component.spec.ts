@@ -659,6 +659,7 @@ describe('DashboardComponent', () => {
       title: 'Delete Duty',
       message: 'Are you sure that you want to delete Scribe?',
       confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
     expect(dutyApi.deleteDuty).toHaveBeenCalledWith('d1');
   });

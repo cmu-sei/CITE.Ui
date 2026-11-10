@@ -700,6 +700,7 @@ describe('ScoresheetComponent', () => {
         title: 'Delete Comment',
         message: 'Are you sure that you want to delete "Done at noon"?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       });
       expect(submissionApi.removeSubmissionComment).not.toHaveBeenCalled();
     });

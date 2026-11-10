@@ -224,6 +224,7 @@ describe('AdminScoringModelsComponent', () => {
         title: 'Delete Scoring Model',
         message: 'Are you sure that you want to delete NCISS?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       });
       expect(scoringModelApi.deleteScoringModel).toHaveBeenCalledWith('sm1');
     });
@@ -247,6 +248,7 @@ describe('AdminScoringModelsComponent', () => {
         title: 'Delete Scoring Model',
         message: 'Are you sure that you want to delete Custom?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       });
       expect(scoringModelApi.deleteScoringModel).toHaveBeenCalledWith('sm2');
       expect(

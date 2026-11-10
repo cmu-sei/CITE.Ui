@@ -363,6 +363,7 @@ export class DashboardComponent implements OnDestroy {
         title: 'Delete Action',
         message: 'Are you sure that you want to delete ' + action.description + '?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {
@@ -449,6 +450,7 @@ export class DashboardComponent implements OnDestroy {
         title: 'Delete Duty',
         message: 'Are you sure that you want to delete ' + duty.name + '?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

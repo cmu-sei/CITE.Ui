@@ -124,6 +124,7 @@ export class AdminGroupsComponent implements OnInit, AfterViewInit {
         title: 'Delete Group',
         message: 'Are you sure that you want to delete ' + group.name + '?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

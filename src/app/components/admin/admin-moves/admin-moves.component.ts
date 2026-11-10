@@ -102,6 +102,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
         title: 'Delete Move',
         message: 'Are you sure that you want to delete ' + move.description + '?',
         confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {
