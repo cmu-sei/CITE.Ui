@@ -668,13 +668,32 @@ export class ScoresheetComponent implements OnDestroy {
     this.displaying =
       this.uiDataService.getSubmissionType(this.selectedEvaluation.id) ||
       (this.displayedSubmission?.userId ? 'user' : 'team');
-    // set proper permissions for this selection
-    const canModify =
-      this.displaying === 'user' ||
-      this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.EditTeamScore);
-    const canSubmit =
-      this.displaying === 'user' ||
-      this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.SubmitTeamScore);
+    // set proper permissions for this selection. The official submission is
+    // the one with no user, team or group, as the API decides; the saved view
+    // can still say 'official' when a move without a visible official score
+    // shows another submission instead. The official submission belongs to
+    // the evaluation, so EditOfficialScore on any of the user's teams in it
+    // scores and submits it; the team score permissions do not.
+    const isOfficial =
+      !!this.displayedSubmission &&
+      !this.displayedSubmission.userId &&
+      !this.displayedSubmission.teamId &&
+      !this.displayedSubmission.groupId;
+    const canEditOfficial =
+      isOfficial &&
+      this.teamQuery
+        .getAll()
+        .some((team) =>
+          this.permissionDataService.hasTeamPermission(team.id, TeamPermission.EditOfficialScore),
+        );
+    const canModify = isOfficial
+      ? canEditOfficial
+      : this.displaying === 'user' ||
+        this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.EditTeamScore);
+    const canSubmit = isOfficial
+      ? canEditOfficial
+      : this.displaying === 'user' ||
+        this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.SubmitTeamScore);
     this.showReopenButton =
       this.displayedSubmission &&
       canSubmit &&
