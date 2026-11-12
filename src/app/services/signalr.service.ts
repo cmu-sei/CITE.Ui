@@ -48,6 +48,8 @@ export class SignalRService implements OnDestroy {
   private token = '';
   private unreachableReported = false;
   private unsubscribe$ = new Subject();
+  /** Emits after an automatic reconnect, when hub messages may have been missed. */
+  readonly reconnected$ = new Subject<void>();
 
   constructor() {
     this.authService.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
@@ -70,6 +72,7 @@ export class SignalRService implements OnDestroy {
 
     this.hubConnection.onreconnected(() => {
       this.onConnected();
+      this.reconnected$.next();
     });
 
     this.addHandlers();

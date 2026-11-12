@@ -232,6 +232,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   private loadedEvaluationId = '';
   private loadedTeamId = '';
   private currentMoveChanged$ = new Subject<void>();
+  // set by a hub reconnect: the next refetch reloads the evaluation first
+  private catchUpPending = false;
   private teamChanged$ = new Subject<void>();
   private evaluationIdsWithUsers = new Set<string>();
 
@@ -460,7 +462,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
             switchMap(() =>
               timer(this.moveChangeJitter()).pipe(
-                switchMap(() => this.refreshSubmissions()),
+                switchMap(() =>
+                  this.catchUpPending
+                    ? this.catchUpAfterReconnect()
+                    : this.refreshSubmissions(),
+                ),
               ),
             ),
           ),
@@ -468,6 +474,14 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         takeUntil(this.unsubscribe$),
       )
       .subscribe(() => this.reselectDisplayedSubmission());
+    // catch up after a hub reconnect, spread out like a move change, since
+    // every page reconnects at once after an API restart
+    this.signalRService.reconnected$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.catchUpPending = true;
+        this.currentMoveChanged$.next();
+      });
     // observe the evaluations
     this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
       this.evaluationList = evaluations
@@ -793,6 +807,35 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.moveDataService.setActive(activeMove.id);
       }
     }
+  }
+
+  // A reconnect may have missed a move change, so reload the evaluation and
+  // its moves. A changed move refetches the submissions through the move
+  // change; otherwise they are refetched here.
+  private catchUpAfterReconnect(): Observable<unknown> {
+    this.catchUpPending = false;
+    const evaluationId = this.selectedEvaluationId;
+    if (!evaluationId) {
+      return EMPTY;
+    }
+    const moveNumber = (
+      this.evaluationQuery.getEntity(evaluationId) as Evaluation
+    )?.currentMoveNumber;
+    return this.evaluationDataService.refreshById(evaluationId).pipe(
+      switchMap((evaluation) => {
+        this.moveDataService.loadByEvaluation(evaluationId);
+        return +evaluation.currentMoveNumber === +moveNumber
+          ? this.refreshSubmissions()
+          : EMPTY;
+      }),
+      catchError((err) => {
+        console.warn(
+          'CITE could not catch up after reconnecting: ' +
+            (err?.message ?? err),
+        );
+        return of(null);
+      }),
+    );
   }
 
   private refreshSubmissions(): Observable<Submission[]> {

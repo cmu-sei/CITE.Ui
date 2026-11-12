@@ -16,7 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { screen, waitFor } from '@testing-library/angular';
-import { of, throwError } from 'rxjs';
+import { Subject, asyncScheduler, of, throwError } from 'rxjs';
 import {
   ComnAuthService,
   ComnSettingsService,
@@ -43,7 +43,8 @@ import {
   UserService,
 } from '../../generated/cite.api';
 import { EvaluationStore } from '../../data/evaluation/evaluation.store';
-import { MoveStore } from '../../data/move/move.store';
+import { EvaluationDataService } from '../../data/evaluation/evaluation-data.service';
+import { MoveDataService } from '../../data/move/move-data.service';
 import { SubmissionQuery } from '../../data/submission/submission.query';
 import { TeamDataService } from '../../data/team/team-data.service';
 import { TeamStore } from '../../data/team/team.store';
@@ -179,6 +180,7 @@ async function renderHome(
 ) {
   const evaluationApi = {
     getMyEvaluations: vi.fn(() => of([structuredClone(EVALUATION)])),
+    getEvaluation: vi.fn(() => of(structuredClone(EVALUATION))),
   } satisfies ApiStub<EvaluationService>;
   const userApi = {
     getEvaluationUsers: vi.fn(() => of([{ id: 'u1', name: 'Alice' }])),
@@ -218,12 +220,13 @@ async function renderHome(
   } satisfies ApiStub<SubmissionService>;
   const signalR: Pick<
     SignalRService,
-    'startConnection' | 'join' | 'leave' | 'switchTeam'
+    'startConnection' | 'join' | 'leave' | 'switchTeam' | 'reconnected$'
   > = {
     startConnection: vi.fn(hubStart),
     join: vi.fn(),
     leave: vi.fn(),
     switchTeam: vi.fn(),
+    reconnected$: new Subject<void>(),
   };
   // The page starts the Gallery hub only when GalleryApiUrl is set (empty in
   // the default settings).
@@ -318,6 +321,7 @@ async function renderHome(
   return {
     ...rendered,
     evaluationApi,
+    moveApi,
     userApi,
     submissionApi,
     signalR,
@@ -687,19 +691,16 @@ describe('HomeAppComponent', () => {
     afterEach(() => vi.useRealTimers());
 
     // What the hub sends every page when the current move changes: the
-    // evaluation, then each of its moves, within milliseconds. They go
-    // straight into the stores: the data services' updateStore makes dates
-    // under the fake clock, and the store then freezes the fake Date class
-    // with them, which breaks the next test's fake timers.
+    // evaluation, then each of its moves, within milliseconds.
     const updateEvaluation = (changes: Partial<Evaluation>) =>
-      TestBed.inject(EvaluationStore).upsert('e1', {
+      TestBed.inject(EvaluationDataService).updateStore({
         ...structuredClone(EVALUATION),
         ...changes,
       });
     const changeCurrentMove = (moveNumber: number) => {
       updateEvaluation({ currentMoveNumber: moveNumber });
-      const moves = TestBed.inject(MoveStore);
-      MOVES.forEach((m) => moves.upsert(m.id, structuredClone(m)));
+      const moves = TestBed.inject(MoveDataService);
+      MOVES.forEach((m) => moves.updateStore(structuredClone(m)));
     };
 
     const renderTeamPage = async () => {
@@ -716,7 +717,22 @@ describe('HomeAppComponent', () => {
           ],
         },
       );
-      vi.useFakeTimers();
+      // Date stays real: the stores freeze the dates they hold, and a date
+      // made by the fake Date class names the real Date as its constructor,
+      // so freezing it breaks every later fake clock. rxjs reads the time
+      // from its scheduler, pointed at the fake performance clock instead.
+      vi.useFakeTimers({
+        toFake: [
+          'setTimeout',
+          'clearTimeout',
+          'setInterval',
+          'clearInterval',
+          'performance',
+        ],
+      });
+      vi.spyOn(asyncScheduler, 'now').mockImplementation(() =>
+        performance.now(),
+      );
       return page;
     };
 
@@ -816,6 +832,53 @@ describe('HomeAppComponent', () => {
         ['e1', 't1'],
         ['e1', 't2'],
       ]);
+    });
+
+    /**
+     * Verifies: after a hub reconnect the page reloads the evaluation and its moves and refetches the submissions, after the debounce and the jitter.
+     * Interacts with: SignalRService.reconnected$ (stub Subject), EvaluationService.getEvaluation, MoveService.getByEvaluation and SubmissionService stubs, fake timers.
+     * Data: ?evaluation=e1 on move 0; Alice on t1; the hub reconnects and the evaluation is still on move 0.
+     */
+    it('catches up after a reconnect', async () => {
+      const { signalR, evaluationApi, moveApi, submissionApi } =
+        await renderTeamPage();
+      const moveLoads = moveApi.getByEvaluation.mock.calls.length;
+
+      signalR.reconnected$.next();
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS + JITTER_MS - 1);
+      expect(evaluationApi.getEvaluation).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(1);
+      expect(evaluationApi.getEvaluation).toHaveBeenCalledExactlyOnceWith('e1');
+      expect(moveApi.getByEvaluation).toHaveBeenCalledTimes(moveLoads + 1);
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+
+      vi.runAllTimers();
+      expect(evaluationApi.getEvaluation).toHaveBeenCalledOnce();
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+    });
+
+    /**
+     * Verifies: a move change missed while the hub was down is picked up after the reconnect, with one submissions refetch through the move change.
+     * Interacts with: SignalRService.reconnected$ (stub Subject), EvaluationService.getEvaluation stub (now on move 1), SubmissionService stubs, fake timers.
+     * Data: ?evaluation=e1 on move 0; Alice on t1; the hub reconnects and the evaluation is on move 1.
+     */
+    it('picks up a missed move change after a reconnect', async () => {
+      const { signalR, evaluationApi, submissionApi } = await renderTeamPage();
+      evaluationApi.getEvaluation.mockReturnValue(
+        of({ ...structuredClone(EVALUATION), currentMoveNumber: 1 }),
+      );
+
+      signalR.reconnected$.next();
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS + JITTER_MS);
+      expect(evaluationApi.getEvaluation).toHaveBeenCalledOnce();
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledOnce();
+
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS + JITTER_MS);
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+      vi.runAllTimers();
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+      expect(evaluationApi.getEvaluation).toHaveBeenCalledOnce();
     });
 
     /**

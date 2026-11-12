@@ -221,6 +221,22 @@ describe('SignalRService', () => {
     });
 
     /**
+     * Verifies: an automatic reconnect is announced on reconnected$, so the page can catch up on missed messages; the first start is not.
+     * Interacts with: FakeHubConnection.reconnectedCallbacks, SignalRService.reconnected$.
+     * Data: a connected home-area hub that reconnects once.
+     */
+    it('announces an automatic reconnect', async () => {
+      const { service, hub } = await connect();
+      const reconnected = vi.fn();
+      service.reconnected$.subscribe(reconnected);
+      await flush();
+      expect(reconnected).not.toHaveBeenCalled();
+
+      hub.reconnectedCallbacks.forEach((cb) => cb());
+      expect(reconnected).toHaveBeenCalledOnce();
+    });
+
+    /**
      * Verifies: a new OIDC user (token refresh) restarts the hub with a URL carrying the new token, then rejoins.
      * Interacts with: ComnAuthService.user$ (Subject), FakeHubConnection.stop/start/baseUrl/invoke.
      * Data: token changes from 'tok-1' to 'tok-2' before the user$ emission.
