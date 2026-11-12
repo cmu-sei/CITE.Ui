@@ -30,12 +30,15 @@ import {
   ItemStatus,
   MoveService,
   ScoringModelService,
+  Submission,
+  SubmissionService,
   SystemPermission,
   TeamPermission,
   TeamRolesService,
   TeamService,
   UserService,
 } from '../../generated/cite.api';
+import { SubmissionStore } from '../../data/submission/submission.store';
 import { TeamStore } from '../../data/team/team.store';
 import { UIDataService } from '../../data/ui/ui-data.service';
 import { GallerySignalRService } from '../../services/gallery-signalr.service';
@@ -150,6 +153,10 @@ async function renderHome(
   const teamApi = {
     getMyEvaluationTeams: vi.fn(() => of([])),
   } satisfies ApiStub<TeamService>;
+  // making a submission active loads it; the store keeps the seeded fields
+  const submissionApi = {
+    getSubmission: vi.fn((id: string) => of({ id })),
+  } satisfies ApiStub<SubmissionService>;
   const signalR: Pick<SignalRService, 'startConnection' | 'join' | 'leave'> = {
     startConnection: vi.fn(hubStart),
     join: vi.fn(),
@@ -222,6 +229,7 @@ async function renderHome(
       { provide: ScoringModelService, useValue: scoringModelApi },
       { provide: MoveService, useValue: moveApi },
       { provide: TeamService, useValue: teamApi },
+      { provide: SubmissionService, useValue: submissionApi },
       { provide: SignalRService, useValue: signalR },
       { provide: GallerySignalRService, useValue: gallerySignalR },
       { provide: ComnSettingsService, useValue: settings },
@@ -538,6 +546,59 @@ describe('HomeAppComponent', () => {
         );
 
         expect(evaluationInfo()?.showAdminButton()).toBe(expected);
+      },
+    );
+  });
+
+  describe('move navigation', () => {
+    /**
+     * Verifies: moving to a move without the shown kind of submission shows the default one and saves its view, so the scoresheet's view buttons and controls follow it.
+     * Interacts with: nextDisplayedMove()'s fallback, real SubmissionStore and TeamStore, real UIDataService.
+     * Data: saved view Official on move 1's official submission; move 2 has no official submission the user can see, only u1's and t1's. Per row, the user's team and the active team.
+     * Why: regression for the saved view staying Official over the user's own submission, which highlighted Official, hid Submit, and left the User button doing nothing.
+     */
+    it.each([
+      { label: 'on their own team', myTeamId: 't1', activeTeamId: 't1', shown: 's2-user', view: 'user' },
+      { label: 'observing another team', myTeamId: 't2', activeTeamId: 't1', shown: 's2-team', view: 'team' },
+    ])(
+      'shows the $view submission and saves the $view view $label',
+      async ({ myTeamId, activeTeamId, shown, view }) => {
+        const { fixture } = await renderHome({}, { evaluation: 'e1' });
+        const home = fixture.componentInstance;
+        const uiData = TestBed.inject(UIDataService);
+        const teams = TestBed.inject(TeamStore);
+        teams.set([
+          { id: 't1', memberships: [] },
+          { id: 't2', memberships: [] },
+        ]);
+        teams.setActive(activeTeamId);
+        home.myTeamId = myTeamId;
+        home.sortedMoveList = [
+          { id: 'm1', evaluationId: 'e1', moveNumber: 1 },
+          { id: 'm2', evaluationId: 'e1', moveNumber: 2 },
+        ];
+        const submission = (s: Partial<Submission>): Submission => ({
+          userId: null,
+          teamId: null,
+          groupId: null,
+          scoreIsAnAverage: false,
+          evaluationId: 'e1',
+          submissionCategories: [{ id: `${s.id}-c` }],
+          ...s,
+        });
+        const submissions = TestBed.inject(SubmissionStore);
+        submissions.set([
+          submission({ id: 's1-official', moveNumber: 1 }),
+          submission({ id: 's2-user', moveNumber: 2, userId: 'u1', teamId: 't1' }),
+          submission({ id: 's2-team', moveNumber: 2, teamId: 't1' }),
+        ]);
+        submissions.setActive('s1-official');
+        uiData.setSubmissionType(home.selectedEvaluationId, 'official');
+
+        home.nextDisplayedMove({ id: 'm2', evaluationId: 'e1', moveNumber: 2 });
+
+        expect(TestBed.inject(SubmissionStore).getValue().active).toBe(shown);
+        expect(uiData.getSubmissionType(home.selectedEvaluationId)).toBe(view);
       },
     );
   });

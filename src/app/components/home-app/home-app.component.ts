@@ -488,7 +488,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.setActiveSubmission(newSubmission);
     } else {
       // the new submission would not be allowed, so select the default submission
-      if (this.myTeamId === (this.teamQuery.getActive() as Team).id) {
+      const showUserScore = this.myTeamId === (this.teamQuery.getActive() as Team).id;
+      if (showUserScore) {
         // select the user score
         newSubmission = submissions.find(
           (s) =>
@@ -510,6 +511,14 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         );
       }
       if (newSubmission) {
+        // save the view shown, so the scoresheet's view buttons and controls
+        // follow this submission rather than the one picked on the last move.
+        // It is saved first, because making the submission active reformats
+        // the scoresheet.
+        this.uiDataService.setSubmissionType(
+          this.selectedEvaluationId,
+          showUserScore ? 'user' : 'team'
+        );
         this.setActiveSubmission(newSubmission);
       }
     }
