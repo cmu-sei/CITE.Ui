@@ -252,6 +252,7 @@ async function renderDashboard(
     confirm,
     dutyApi,
     membershipApi,
+    galleryApi,
     editDialog,
     user,
     loader,
@@ -285,6 +286,73 @@ describe('DashboardComponent', () => {
     expect(
       within(actions.element).getByText('Isolate the mail server'),
     ).toBeVisible();
+  });
+
+  /**
+   * Verifies: the team data and the Gallery unread count load once per evaluation and team, not again on the evaluation and team updates a move change brings.
+   * Interacts with: real Evaluation/Team stores, Action/Duty/TeamMemberships/Gallery service stubs.
+   * Data: evaluation e1 on move 1, team t1; the hub moves e1 to move 2, edits its situation and renames t1.
+   */
+  it('loads the team data once on evaluation and team updates', async () => {
+    const { actionApi, dutyApi, membershipApi, galleryApi, fixture } =
+      await renderDashboard(onTeam('t1', TeamPermission.EditTeamScore));
+    const injector = fixture.debugElement.injector;
+    const loads = () => [
+      actionApi.getActionsByEvaluationTeam.mock.calls.length,
+      dutyApi.getDutiesByEvaluationTeam.mock.calls.length,
+      membershipApi.getAllTeamMemberships.mock.calls.length,
+      galleryApi.getEvaluationUnreadArticleCount.mock.calls.length,
+    ];
+    expect(loads()).toEqual([1, 1, 1, 1]);
+
+    const evaluations = injector.get(EvaluationStore);
+    evaluations.upsert('e1', { currentMoveNumber: 2 });
+    evaluations.upsert('e1', {
+      situationDescription: '<p>Demand received</p>',
+    });
+    injector.get(TeamStore).upsert('t1', { name: 'Blue Team (Ops)' });
+    fixture.detectChanges();
+
+    expect(loads()).toEqual([1, 1, 1, 1]);
+  });
+
+  /**
+   * Verifies: switching team loads that team's data, and switching evaluation loads its data and its unread count.
+   * Interacts with: real Evaluation/Team stores, Action/Duty/TeamMemberships/Gallery service stubs.
+   * Data: evaluation e1, team t1; the page switches to team t2, then to evaluation e2.
+   */
+  it('loads the data of a new team or evaluation', async () => {
+    const { actionApi, dutyApi, membershipApi, galleryApi, fixture } =
+      await renderDashboard(onTeam('t1', TeamPermission.EditTeamScore));
+    const injector = fixture.debugElement.injector;
+
+    const teams = injector.get(TeamStore);
+    teams.add({ id: 't2', name: 'Red Team' });
+    teams.setActive('t2');
+    fixture.detectChanges();
+    expect(actionApi.getActionsByEvaluationTeam).toHaveBeenLastCalledWith(
+      'e1',
+      't2',
+    );
+    expect(dutyApi.getDutiesByEvaluationTeam).toHaveBeenLastCalledWith(
+      'e1',
+      't2',
+    );
+    expect(membershipApi.getAllTeamMemberships).toHaveBeenLastCalledWith('t2');
+    expect(galleryApi.getEvaluationUnreadArticleCount).toHaveBeenCalledOnce();
+
+    const evaluations = injector.get(EvaluationStore);
+    evaluations.add({ id: 'e2', currentMoveNumber: 0 });
+    evaluations.setActive('e2');
+    fixture.detectChanges();
+    expect(actionApi.getActionsByEvaluationTeam).toHaveBeenLastCalledWith(
+      'e2',
+      't2',
+    );
+    expect(galleryApi.getEvaluationUnreadArticleCount).toHaveBeenCalledTimes(2);
+    expect(galleryApi.getEvaluationUnreadArticleCount).toHaveBeenLastCalledWith(
+      'e2',
+    );
   });
 
   /**

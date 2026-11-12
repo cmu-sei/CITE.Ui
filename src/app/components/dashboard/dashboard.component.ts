@@ -119,6 +119,8 @@ export class DashboardComponent implements OnDestroy {
   canManageTeam = false;
   canSubmitTeamScore = false;
   canContributeToTeamScore = false;
+  // the evaluation and team whose actions, duties and memberships are loaded
+  private teamDataLoadedFor = '';
 
   constructor() {
     this.titleService.setTitle('CITE Dashboard');
@@ -143,9 +145,12 @@ export class DashboardComponent implements OnDestroy {
         const activeId = this.evaluationQuery.getActiveId();
         active = active ? active : ({ id: '' } as Evaluation);
         if (active.id === activeId) {
+          // every evaluation update lands here; Gallery pushes the unread
+          // count after the first load
+          const evaluationChanged = active.id !== this.selectedEvaluation?.id;
           this.selectedEvaluation = active;
           this.currentMoveNumber = active.currentMoveNumber;
-          if (activeId) {
+          if (activeId && evaluationChanged) {
             this.unreadArticlesDataService.loadById(activeId);
           }
           this.galleryUrl =
@@ -294,8 +299,15 @@ export class DashboardComponent implements OnDestroy {
   }
 
   loadTeamData() {
-    // load the team data for this team
-    if (this.activeTeamId && this.selectedEvaluation.id) {
+    // load the team data for this team, once per evaluation and team: every
+    // evaluation and team update lands here, and the hub keeps the data current
+    const teamDataFor = this.selectedEvaluation.id + '/' + this.activeTeamId;
+    if (
+      this.activeTeamId &&
+      this.selectedEvaluation.id &&
+      teamDataFor !== this.teamDataLoadedFor
+    ) {
+      this.teamDataLoadedFor = teamDataFor;
       this.actionDataService.loadByEvaluationTeam(
         this.selectedEvaluation.id,
         this.activeTeamId
