@@ -38,6 +38,7 @@ import { MoveStore } from '../../data/move/move.store';
 import { ScoringModelStore } from '../../data/scoring-model/scoring-model.store';
 import { SubmissionStore } from '../../data/submission/submission.store';
 import { TeamStore } from '../../data/team/team.store';
+import { UserStore } from '../../data/user/user.store';
 import { UIDataService } from '../../data/ui/ui-data.service';
 import { SubmissionDataService } from '../../data/submission/submission-data.service';
 import { TeamMembershipDataService } from '../../data/team/team-membership-data.service';
@@ -114,6 +115,8 @@ async function renderScoresheet(
     otherTeams?: Team[];
     myTeamId?: string;
     activeTeam?: boolean;
+    // the evaluation's users, whom comment authors are looked up among
+    users?: { id: string; name: string }[];
     moves?: Move[];
     confirm?: boolean;
     addSubmissionComment?: (
@@ -202,6 +205,7 @@ async function renderScoresheet(
         s.setActive('sm1');
       }),
       seededStore(MoveStore, (s) => s.set(overrides.moves ?? [])),
+      seededStore(UserStore, (s) => s.set(overrides.users ?? [])),
       seededStore(TeamStore, (s) => {
         s.set([
           { id: 't1', name: 'Red', memberships: [] },
@@ -315,6 +319,102 @@ describe('ScoresheetComponent', () => {
         screen.getByText('No responses required for this move.'),
       ).toBeInTheDocument();
       expect(toolbarButton('Submit')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('submission checks', () => {
+    // One unanswered Single category with two modifiers, none selected, so
+    // Submit's check finds both a missing option and a missing modifier.
+    function unansweredModel(
+      byMove: boolean,
+      first: number,
+      last: number,
+    ): Partial<ScoringModel> {
+      return {
+        displayScoringModelByMoveNumber: byMove,
+        scoringCategories: [
+          {
+            ...category('q', first, last, 1),
+            scoringOptionSelection: ScoringOptionSelection.Single,
+            scoringOptions: [
+              { id: 'opt', scoringCategoryId: 'q', description: 'Isolate the host', displayOrder: 1, value: 1 },
+              { id: 'mod-1', scoringCategoryId: 'q', description: 'Low', displayOrder: 2, value: 1, isModifier: true },
+              { id: 'mod-2', scoringCategoryId: 'q', description: 'High', displayOrder: 3, value: 2, isModifier: true },
+            ],
+          },
+        ],
+      };
+    }
+    const unansweredSubmission: Partial<Submission> = {
+      submissionCategories: [
+        {
+          scoringCategoryId: 'q',
+          submissionOptions: [
+            { id: 'so-1', scoringOptionId: 'opt', isSelected: false },
+            { id: 'so-2', scoringOptionId: 'mod-1', isSelected: false },
+            { id: 'so-3', scoringOptionId: 'mod-2', isSelected: false },
+          ],
+        },
+      ],
+    };
+
+    /**
+     * Verifies: with the model not split by move, Submit warns about an unanswered category whatever its move range, and submits nothing when the warning is declined.
+     * Interacts with: verifyAndSubmit()/verifySubmission(), CrucibleDialogService.confirm stub (declined), SubmissionService.updateSubmission stub.
+     * Data: displayScoringModelByMoveNumber false; submission on move 2 (the current move); per row, a range that leaves out move 2, backwards (3 to 1, which CITE.Api#128 accepts when the setting is off) or forwards (1 to 1).
+     * Why: verifySubmission() read the range regardless of the setting, so a category shown on every move skipped its checks and an unanswered sheet submitted without the warning.
+     */
+    it.each([
+      { label: 'backwards', first: 3, last: 1 },
+      { label: 'forwards', first: 1, last: 1 },
+    ])(
+      'warns about an unanswered category with a $label range outside the move when the model is not split by move',
+      async ({ first, last }) => {
+        const { user, submissionApi, confirm } = await renderScoresheet({
+          displaying: 'user',
+          confirm: false,
+          model: unansweredModel(false, first, last),
+          activeSubmission: unansweredSubmission,
+        });
+        expect(shownCategories()).toEqual(['1. Category q']);
+
+        await user.click(toolbarButton('Submit')!);
+
+        expect(confirm).toHaveBeenCalledWith({
+          title: 'Submit this response?',
+          message:
+            'No options selected for categories (1).    ' +
+            'No modifier selected for categories (1).    ' +
+            '    Are you sure that you want to submit this response?',
+        });
+        expect(submissionApi.updateSubmission).not.toHaveBeenCalled();
+      },
+    );
+
+    /**
+     * Verifies: with the model split by move, Submit still ignores a category outside the move and submits without asking.
+     * Interacts with: verifyAndSubmit()/verifySubmission(), CrucibleDialogService.confirm stub, SubmissionService.updateSubmission stub.
+     * Data: displayScoringModelByMoveNumber true; the unanswered category's range is move 1, the submission's move 2; a second category on move 2 with no options to answer keeps the toolbar shown.
+     * Why: the near miss for the rows above; the range must still count when the setting is on.
+     */
+    it('skips a category outside the move when the model is split by move', async () => {
+      const model = unansweredModel(true, 1, 1);
+      const { user, submissionApi, confirm } = await renderScoresheet({
+        displaying: 'user',
+        model: {
+          ...model,
+          scoringCategories: [...model.scoringCategories!, category('now', 2, 2, 2)],
+        },
+        activeSubmission: unansweredSubmission,
+      });
+      expect(shownCategories()).toEqual(['2. Category now']);
+
+      await user.click(toolbarButton('Submit')!);
+
+      expect(confirm).not.toHaveBeenCalled();
+      expect(submissionApi.updateSubmission).toHaveBeenCalledWith('s1', {
+        status: ItemStatus.Complete,
+      });
     });
   });
 
@@ -731,6 +831,147 @@ describe('ScoresheetComponent', () => {
         }
       },
     );
+
+    /**
+     * Verifies: Delete Comment asks with the standard Crucible delete wording, quoting the comment; declining keeps the comment.
+     * Interacts with: the Delete Comment button by label, CrucibleDialogService.confirm stub (declined), SubmissionService.deleteSubmissionComment stub.
+     * Data: EditTeamScore on t1; option 'Isolate the host' with comment c1 'Done at noon'.
+     */
+    it('confirms deleting a comment with the standard wording', async () => {
+      const { user, confirm, submissionApi } = await renderScoresheet({
+        confirm: false,
+        model: {
+          scoringCategories: [
+            {
+              ...category('cat-1', 0, 9, 1),
+              scoringOptionSelection: ScoringOptionSelection.Single,
+              scoringOptions: [
+                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+              ],
+            },
+          ],
+        },
+        activeSubmission: {
+          submissionCategories: [
+            {
+              scoringCategoryId: 'cat-1',
+              submissionOptions: [
+                {
+                  id: 'so-1',
+                  scoringOptionId: 'opt-1',
+                  isSelected: false,
+                  submissionComments: [{ id: 'c1', comment: 'Done at noon' }],
+                },
+              ],
+            },
+          ],
+        },
+        teamClaims: [{ teamId: 't1', permissions: [TeamPermission.EditTeamScore] }],
+      });
+
+      await user.click(screen.getAllByLabelText('Delete Comment')[0]);
+
+      expect(confirm).toHaveBeenCalledWith({
+        title: 'Delete Comment',
+        message: 'Are you sure that you want to delete "Done at noon"?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+      });
+      expect(submissionApi.removeSubmissionComment).not.toHaveBeenCalled();
+    });
+
+    /**
+     * Verifies: the comment dialog is titled "Add Comment" from Add Comment and "Edit Comment" from Edit Comment.
+     * Interacts with: the Add/Edit Comment buttons by label, the real MatDialog opening the comment template.
+     * Data: EditTeamScore on t1; option 'Isolate the host' with comment c1 'Done at noon'; per row, the button clicked.
+     */
+    it.each(['Add Comment', 'Edit Comment'])(
+      'titles the comment dialog %s',
+      async (button) => {
+        const { user } = await renderScoresheet({
+          model: {
+            scoringCategories: [
+              {
+                ...category('cat-1', 0, 9, 1),
+                scoringOptionSelection: ScoringOptionSelection.Single,
+                scoringOptions: [
+                  { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+                ],
+              },
+            ],
+          },
+          activeSubmission: {
+            submissionCategories: [
+              {
+                scoringCategoryId: 'cat-1',
+                submissionOptions: [
+                  {
+                    id: 'so-1',
+                    scoringOptionId: 'opt-1',
+                    isSelected: false,
+                    submissionComments: [{ id: 'c1', comment: 'Done at noon' }],
+                  },
+                ],
+              },
+            ],
+          },
+          teamClaims: [{ teamId: 't1', permissions: [TeamPermission.EditTeamScore] }],
+        });
+
+        await user.click(screen.getAllByLabelText(button)[0]);
+
+        expect(
+          await screen.findByRole('heading', { name: button }),
+        ).toBeVisible();
+      },
+    );
+  });
+
+  describe('comment authors', () => {
+    /**
+     * Verifies: a comment on the team's responses is signed with its author's name, and with "Team member" when the API left the author out.
+     * Interacts with: getCommentAuthor(), the comment list's comment-author span, real UserQuery for the author's name.
+     * Data: displaying 'team'; option 'Isolate the host' has Alice's comment and one with the empty author id an observer of an evaluation that hides names gets.
+     */
+    it('signs a comment without an author as Team member', async () => {
+      await renderScoresheet({
+        users: [{ id: 'u1', name: 'Alice' }],
+        model: {
+          scoringCategories: [
+            {
+              ...category('cat-1', 0, 9, 1),
+              scoringOptionSelection: ScoringOptionSelection.Single,
+              scoringOptions: [
+                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+              ],
+            },
+          ],
+        },
+        activeSubmission: {
+          submissionCategories: [
+            {
+              scoringCategoryId: 'cat-1',
+              submissionOptions: [
+                {
+                  id: 'so-1',
+                  scoringOptionId: 'opt-1',
+                  isSelected: false,
+                  submissionComments: [
+                    { id: 'c1', comment: 'Done at noon', createdBy: 'u1' },
+                    { id: 'c2', comment: 'Host reimaged', createdBy: '00000000-0000-0000-0000-000000000000' },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      });
+
+      const authors = Array.from(document.querySelectorAll('.comment-author')).map(
+        (el) => el.textContent?.trim(),
+      );
+      expect(authors).toEqual(['- Alice', '- Team member']);
+    });
   });
 
   describe('category scores and option values', () => {

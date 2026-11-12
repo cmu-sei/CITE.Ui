@@ -398,7 +398,7 @@ describe('EvaluationInfoComponent', () => {
       });
 
       expect(
-        screen.getByRole('button', { name: 'SubmissionReview' }),
+        screen.getByRole('button', { name: 'Submission Review' }),
       ).toBeInTheDocument();
       expect(administrationButton()).not.toBeInTheDocument();
       expect(aggregateReportButton()).not.toBeInTheDocument();

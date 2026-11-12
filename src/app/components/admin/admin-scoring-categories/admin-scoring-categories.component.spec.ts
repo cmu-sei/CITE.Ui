@@ -216,6 +216,12 @@ describe('AdminScoringCategoriesComponent', () => {
     );
 
     expect(confirm).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Scoring Category',
+      message: 'Are you sure that you want to delete Information impact?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+    });
     expect(categoryApi.deleteScoringCategory).toHaveBeenCalledWith('c2');
   });
 });

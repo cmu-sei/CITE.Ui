@@ -126,6 +126,7 @@ async function renderDashboard(
         },
       ]),
     ),
+    deleteDuty: vi.fn(() => of({})),
   } satisfies ApiStub<DutyService>;
   const membershipApi = {
     getAllTeamMemberships: vi.fn(() =>
@@ -248,6 +249,8 @@ async function renderDashboard(
   return {
     ...rendered,
     actionApi,
+    confirm,
+    dutyApi,
     membershipApi,
     editDialog,
     user,
@@ -624,6 +627,40 @@ describe('DashboardComponent', () => {
   });
 
   /**
+   * Verifies: a checked action names who checked it in its tooltip, and an action whose checker the API left out has no tooltip.
+   * Interacts with: changedBy(), the Actions panel's checkboxes and their MatTooltip description, real UserQuery for the name.
+   * Data: two checked actions on t1, one checked by u1 (Alice), one with no changedBy, as an observer of an evaluation that hides names gets it.
+   */
+  it('names who checked an action unless the API left it out', async () => {
+    const { expand, fixture } = await renderDashboard(
+      onTeam('t1', TeamPermission.EditTeamScore),
+      {
+        actions: [
+          { ...ACTION, isChecked: true, changedBy: 'u1' },
+          {
+            ...ACTION,
+            id: 'a2',
+            actionNumber: 2,
+            description: 'Reset passwords',
+            isChecked: true,
+            changedBy: null,
+          },
+        ],
+      },
+    );
+    const actions = await expand('Actions');
+    // MatTooltip registers its description a microtask after its message is set.
+    await fixture.whenStable();
+    const checkbox = (text: string) =>
+      within(actions.element).getByText(text).closest('mat-checkbox');
+
+    expect(checkbox('Isolate the mail server')).toHaveAccessibleDescription(
+      'Selected by Alice',
+    );
+    expect(checkbox('Reset passwords')).not.toHaveAttribute('aria-describedby');
+  });
+
+  /**
    * Verifies: SubmitTeamScore enables Edit Duties, and a duty opened from edit mode gets canEdit true.
    * Interacts with: the opened Duties panel, matDialogStub (dialog data).
    * Data: SubmitTeamScore on t1.
@@ -637,6 +674,28 @@ describe('DashboardComponent', () => {
     await user.click(within(duties.element).getByTitle('Edit Duty'));
 
     expect(editDialog.config()?.data.canEdit).toBe(true);
+  });
+
+  /**
+   * Verifies: Delete Duty asks with the standard Crucible delete wording, naming the duty, before deleting it.
+   * Interacts with: the opened Duties panel in edit mode, CrucibleDialogService.confirm stub (answers true), DutyService.deleteDuty stub.
+   * Data: SubmitTeamScore on t1; duty Scribe deleted.
+   */
+  it('confirms deleting a duty by name', async () => {
+    const { confirm, dutyApi, expand, user } = await renderDashboard(
+      onTeam('t1', TeamPermission.SubmitTeamScore),
+    );
+    const duties = await expand('Duties');
+    await user.click(within(duties.element).getByTitle('Edit Duties'));
+    await user.click(within(duties.element).getByTitle('Delete Duty'));
+
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Duty',
+      message: 'Are you sure that you want to delete Scribe?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+    });
+    expect(dutyApi.deleteDuty).toHaveBeenCalledWith('d1');
   });
 
   /**

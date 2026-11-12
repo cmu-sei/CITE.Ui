@@ -84,6 +84,8 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
       situationTime: [{ value: evaluation.situationTime || new Date(), disabled }],
       situationDescription: [{ value: evaluation.situationDescription, disabled }],
       showAdvanceButton: [{ value: evaluation.showAdvanceButton, disabled }],
+      // off unless set; a new evaluation has no value, and the API needs a boolean
+      hideNamesFromObservers: [{ value: !!evaluation.hideNamesFromObservers, disabled }],
     });
   }
 

@@ -134,8 +134,10 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   deleteSubmissionRequest(submission: Submission) {
     this.dialogService
       .confirm({
-        title: 'Delete this submission?',
+        title: 'Delete Submission',
         message: 'Are you sure that you want to delete this submission?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {

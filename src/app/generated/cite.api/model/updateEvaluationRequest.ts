@@ -27,6 +27,10 @@ export interface UpdateEvaluationRequest {
     situationDescription?: string | null;
     galleryExhibitId?: string | null;
     showAdvanceButton?: boolean;
+    /**
+     * Sets the evaluation\'s HideNamesFromObservers. Left out or null, the setting stays as it is, so a client that does not know about it does not turn it off.
+     */
+    hideNamesFromObservers?: boolean | null;
 }
 export namespace UpdateEvaluationRequest {
 }

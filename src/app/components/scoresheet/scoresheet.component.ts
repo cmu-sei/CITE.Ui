@@ -45,6 +45,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { FormsModule } from '@angular/forms';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
+import { commentAuthor } from 'src/app/utilities/comment-author';
 import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/app/utilities/severity-levels';
 
 @Component({
@@ -127,6 +128,7 @@ export class ScoresheetComponent implements OnDestroy {
   showReopenButton = false;
   showModifyControls = false;
   commentOptionDescription = 'this is the description';
+  commentDialogTitle = 'Add Comment';
   currentComment = 'current comment';
   showHeader = false;
   // save state of each answer box, keyed by scoring option id
@@ -320,6 +322,7 @@ export class ScoresheetComponent implements OnDestroy {
       .submissionOptions.find((so) => so.scoringOptionId === scoringOption.id);
     this.currentComment = '';
     this.commentOptionDescription = scoringOption.description;
+    this.commentDialogTitle = 'Add Comment';
     const dialogRef = this.matDialog.open(templateRef, {
       maxWidth: '90vw',
       width: '600px',
@@ -344,6 +347,7 @@ export class ScoresheetComponent implements OnDestroy {
   ) {
     this.currentComment = submissionComment.comment;
     this.commentOptionDescription = scoringOption.description;
+    this.commentDialogTitle = 'Edit Comment';
     const dialogRef = this.matDialog.open(templateRef, {
       maxWidth: '90vw',
       width: '600px',
@@ -455,8 +459,10 @@ export class ScoresheetComponent implements OnDestroy {
   deleteComment(submissionComment: SubmissionComment) {
     this.dialogService
       .confirm({
-        title: 'Delete this comment?',
-        message: submissionComment.comment,
+        title: 'Delete Comment',
+        message: 'Are you sure that you want to delete "' + submissionComment.comment + '"?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
       })
       .afterClosed()
       .subscribe((confirmed) => {
@@ -518,6 +524,11 @@ export class ScoresheetComponent implements OnDestroy {
       }
     }
     return;
+  }
+
+  /** The comment's author, or "Team member" when the API left the author out. */
+  getCommentAuthor(createdBy: string) {
+    return commentAuthor(createdBy, (id) => this.getUserName(id));
   }
 
   getUserName(id) {
@@ -586,6 +597,10 @@ export class ScoresheetComponent implements OnDestroy {
   verifySubmission() {
     const noCategoryOption = [];
     const noCategoryModifier = [];
+    const moveNumber = +this.displayedSubmission.moveNumber;
+    // as getDisplayedScoringCategories(): a model not split by move shows
+    // every category, whatever its move range
+    const byMove = this.selectedScoringModel.displayScoringModelByMoveNumber;
     this.displayedSubmission.submissionCategories.forEach((sc) => {
       const scoringCategory = this.selectedScoringModel.scoringCategories.find(
         (x) => x.id === sc.scoringCategoryId
@@ -593,10 +608,9 @@ export class ScoresheetComponent implements OnDestroy {
       if (
         scoringCategory.scoringOptionSelection !==
           ScoringOptionSelection.None &&
-        +scoringCategory.moveNumberFirstDisplay <=
-          +this.displayedSubmission.moveNumber &&
-        +scoringCategory.moveNumberLastDisplay >=
-          +this.displayedSubmission.moveNumber
+        (!byMove ||
+          (+scoringCategory.moveNumberFirstDisplay <= moveNumber &&
+            +scoringCategory.moveNumberLastDisplay >= moveNumber))
       ) {
         const scoringOptions = scoringCategory.scoringOptions;
         const optionIds = scoringOptions

@@ -2,6 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { describe, it, expect, vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -20,6 +21,7 @@ import { ApiStub } from '../../../test-utils/api-stub';
 import { dialogRefStub } from '../../../test-utils/dialog-refs';
 import { matDialogStub } from '../../../test-utils/mat-dialog';
 import { renderComponent } from '../../../test-utils/render-component';
+import { MoveDataService } from '../../../data/move/move-data.service';
 import { AdminMovesComponent } from './admin-moves.component';
 
 const MOVES: Move[] = [
@@ -149,6 +151,29 @@ describe('AdminMovesComponent', () => {
   });
 
   /**
+   * Verifies: Add numbers the new move from this evaluation's moves only, ignoring moves of
+   * other evaluations that SignalR pushes into the shared store.
+   * Interacts with: real MoveDataService.updateStore (the MoveCreated handler), matDialogStub.
+   * Data: canEdit true; moves 0 and 1 on e1, plus a move broadcast for e2.
+   */
+  it('numbers a new move after the highest move of this evaluation', async () => {
+    const { editDialog, user } = await renderMoves(true);
+    TestBed.inject(MoveDataService).updateStore({
+      id: 'other',
+      evaluationId: 'e2',
+      moveNumber: 5,
+      description: 'Elsewhere',
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Add Move' }));
+
+    expect(editDialog.config()?.data.move).toEqual(
+      expect.objectContaining({ evaluationId: 'e1', moveNumber: 2 }),
+    );
+    expect(descriptions()).toEqual(['0 Detection', '1 Escalation']);
+  });
+
+  /**
    * Verifies: a confirmed Delete removes the move through the API and from the list.
    * Interacts with: CrucibleDialogService.confirm stub (answers true), MoveService.deleteMove stub.
    * Data: canEdit true; move 0 deleted.
@@ -159,6 +184,12 @@ describe('AdminMovesComponent', () => {
     fixture.detectChanges();
 
     expect(confirm).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledWith({
+      title: 'Delete Move',
+      message: 'Are you sure that you want to delete Detection?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+    });
     expect(moveApi.deleteMove).toHaveBeenCalledWith('m0');
     expect(descriptions()).toEqual(['1 Escalation']);
   });

@@ -27,7 +27,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
 
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef class="actions-header">
-        <button mat-icon-button (click)="addOrEditTeamType(null)" title="Add TeamType" [disabled]="!canEdit">
+        <button mat-icon-button (click)="addOrEditTeamType(null)" title="Add Team Type" [disabled]="!canEdit">
           <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle" />
         </button>
       </th>
@@ -44,7 +44,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     </ng-container>
 
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>TeamType</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Team Type</th>
       <td mat-cell *matCellDef="let row">{{ row.name }}</td>
     </ng-container>
 
@@ -62,7 +62,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <ng-container matColumnDef="showTeamTypeAverage">
       <th mat-header-cell *matHeaderCellDef mat-sort-header
         title="When enabled, the average score for this team type will be displayed">
-        Show TeamType Average
+        Show Team Type Average
       </th>
       <td mat-cell *matCellDef="let row">
         <mat-checkbox [checked]="row.showTeamTypeAverage" [disabled]="!canEdit"

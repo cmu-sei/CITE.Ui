@@ -112,7 +112,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
             <li class="comment">
               {{ comment.comment }}
               @if (displaying === 'team') {
-              <span> - {{ getUserName(comment.createdBy) }}</span>
+              <span> - {{ getCommentAuthor(comment.createdBy) }}</span>
               }
             </li>
             }

@@ -4,7 +4,7 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<div class="app-events-container">
+<div class="app-events-container" [crucibleLandingBackground]="!selectedEvaluationId">
   @if (!hideTopbar) {
   <app-topbar [title]="topbarText" [topbarView]="TopbarView.CITE_HOME" [imageFilePath]="topbarImage"
     (urlNavigate)="topBarNavigate($event)" />
