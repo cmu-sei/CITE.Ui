@@ -29,7 +29,7 @@ updates:
       # outranks every wildcard, so minor-and-patch needs its own "*" to let
       # "@angular*" win.
       angular:
-        patterns: ["@angular*", "zone.js"]
+        patterns: ["@angular*", "angular-eslint", "zone.js"]
         update-types: [minor, patch]
       minor-and-patch:
         patterns: ["*"]
@@ -37,6 +37,8 @@ updates:
     ignore:
       # Angular and TypeScript majors need `ng update` migrations; do them by hand.
       - dependency-name: "@angular*"
+        update-types: [version-update:semver-major]
+      - dependency-name: angular-eslint
         update-types: [version-update:semver-major]
       - dependency-name: typescript
         update-types: [version-update:semver-major]
