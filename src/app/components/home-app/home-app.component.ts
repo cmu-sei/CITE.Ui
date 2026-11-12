@@ -468,6 +468,18 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   }
 
   nextDisplayedMove(move: Move) {
+    this.displayMove(move);
+  }
+
+  previousDisplayedMove(move: Move) {
+    this.displayMove(move);
+  }
+
+  // Shows the displayed move's submission of the shown kind. A move can lack
+  // it, for example an official score the user cannot see or a group average
+  // that was not computed, so the default submission is shown instead: the
+  // user's own on their team, otherwise the team's.
+  private displayMove(move: Move) {
     this.moveDataService.setActive(move.id);
     this.uiDataService.setMoveNumber(
       this.selectedEvaluationId,
@@ -476,74 +488,49 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.displayedMoveNumber = move.moveNumber;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
     const submissions = this.submissionQuery.getAll();
-    let newSubmission = submissions.find(
+    const sameKind = submissions.find(
       (s) =>
         +s.moveNumber === +move.moveNumber &&
-        s.userId === displayedSubmission.userId &&
-        s.teamId === displayedSubmission.teamId &&
-        s.groupId === displayedSubmission.groupId &&
-        s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
+        s.userId === displayedSubmission?.userId &&
+        s.teamId === displayedSubmission?.teamId &&
+        s.groupId === displayedSubmission?.groupId &&
+        s.scoreIsAnAverage === displayedSubmission?.scoreIsAnAverage
     );
-    if (newSubmission) {
-      this.setActiveSubmission(newSubmission);
-    } else {
-      // the new submission would not be allowed, so select the default submission
-      const showUserScore = this.myTeamId === (this.teamQuery.getActive() as Team).id;
-      if (showUserScore) {
-        // select the user score
-        newSubmission = submissions.find(
+    if (sameKind) {
+      this.setActiveSubmission(sameKind);
+      return;
+    }
+    const userSubmission =
+      this.myTeamId === (this.teamQuery.getActive() as Team)?.id
+        ? submissions.find(
           (s) =>
             +s.moveNumber === +move.moveNumber &&
             s.userId &&
             s.teamId &&
             !s.groupId &&
             !s.scoreIsAnAverage
-        );
-      } else {
-        // select the team score
-        newSubmission = submissions.find(
-          (s) =>
-            +s.moveNumber === +move.moveNumber &&
-            !s.userId &&
-            s.teamId &&
-            !s.groupId &&
-            !s.scoreIsAnAverage
-        );
-      }
-      if (newSubmission) {
-        // save the view shown, so the scoresheet's view buttons and controls
-        // follow this submission rather than the one picked on the last move.
-        // It is saved first, because making the submission active reformats
-        // the scoresheet.
-        this.uiDataService.setSubmissionType(
-          this.selectedEvaluationId,
-          showUserScore ? 'user' : 'team'
-        );
-        this.setActiveSubmission(newSubmission);
-      }
-    }
-  }
-
-  previousDisplayedMove(move: Move) {
-    this.moveDataService.setActive(move.id);
-    this.uiDataService.setMoveNumber(
-      this.selectedEvaluationId,
-      move.moveNumber
-    );
-    this.displayedMoveNumber = move.moveNumber;
-    const displayedSubmission = this.submissionQuery.getActive() as Submission;
-    const newSubmission = this.submissionQuery
-      .getAll()
-      .find(
+        )
+        : undefined;
+    const fallback =
+      userSubmission ??
+      submissions.find(
         (s) =>
           +s.moveNumber === +move.moveNumber &&
-          s.userId === displayedSubmission.userId &&
-          s.teamId === displayedSubmission.teamId &&
-          s.groupId === displayedSubmission.groupId &&
-          s.scoreIsAnAverage === displayedSubmission.scoreIsAnAverage
+          !s.userId &&
+          s.teamId &&
+          !s.groupId &&
+          !s.scoreIsAnAverage
       );
-    if (newSubmission) {
-      this.setActiveSubmission(newSubmission);
+    if (fallback) {
+      // save the view shown, so the scoresheet's view buttons and controls
+      // follow this submission rather than the one picked on the last move.
+      // It is saved first, because making the submission active reformats
+      // the scoresheet.
+      this.uiDataService.setSubmissionType(
+        this.selectedEvaluationId,
+        userSubmission ? 'user' : 'team'
+      );
+      this.setActiveSubmission(fallback);
     }
   }
 

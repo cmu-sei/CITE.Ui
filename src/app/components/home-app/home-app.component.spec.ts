@@ -551,18 +551,32 @@ describe('HomeAppComponent', () => {
   });
 
   describe('move navigation', () => {
+    const submission = (s: Partial<Submission>): Submission => ({
+      userId: null,
+      teamId: null,
+      groupId: null,
+      scoreIsAnAverage: false,
+      evaluationId: 'e1',
+      submissionCategories: [{ id: `${s.id}-c` }],
+      ...s,
+    });
+
     /**
-     * Verifies: moving to a move without the shown kind of submission shows the default one and saves its view, so the scoresheet's view buttons and controls follow it.
-     * Interacts with: nextDisplayedMove()'s fallback, real SubmissionStore and TeamStore, real UIDataService.
-     * Data: saved view Official on move 1's official submission; move 2 has no official submission the user can see, only u1's and t1's. Per row, the user's team and the active team.
-     * Why: regression for the saved view staying Official over the user's own submission, which highlighted Official, hid Submit, and left the User button doing nothing.
+     * Verifies: moving to a move without the shown kind of submission, in either direction, shows the default one and saves its view, so the scoresheet's view buttons and controls follow it: the user's own on their team, otherwise the team's.
+     * Interacts with: nextDisplayedMove() and previousDisplayedMove(), real SubmissionStore and TeamStore, real UIDataService.
+     * Data: saved view Official on move 1's official submission, the only official one, and a move 0 and move 2 with t1's submission and, unless the row says not, u1's. Per row, the direction, the user's team and the active team.
+     * Why: regression for the saved view staying Official over another submission, which highlighted Official, hid Submit on the user's own submission and left the User button doing nothing, and for moving back keeping the last move's submission.
      */
     it.each([
-      { label: 'on their own team', myTeamId: 't1', activeTeamId: 't1', shown: 's2-user', view: 'user' },
-      { label: 'observing another team', myTeamId: 't2', activeTeamId: 't1', shown: 's2-team', view: 'team' },
-    ])(
-      'shows the $view submission and saves the $view view $label',
-      async ({ myTeamId, activeTeamId, shown, view }) => {
+      { direction: 'next', label: 'on their own team', myTeamId: 't1', userScore: true, moveNumber: 2, view: 'user' },
+      { direction: 'next', label: 'observing another team', myTeamId: 't2', userScore: true, moveNumber: 2, view: 'team' },
+      { direction: 'next', label: 'on their own team without a user score', myTeamId: 't1', userScore: false, moveNumber: 2, view: 'team' },
+      { direction: 'previous', label: 'on their own team', myTeamId: 't1', userScore: true, moveNumber: 0, view: 'user' },
+      { direction: 'previous', label: 'observing another team', myTeamId: 't2', userScore: true, moveNumber: 0, view: 'team' },
+      { direction: 'previous', label: 'on their own team without a user score', myTeamId: 't1', userScore: false, moveNumber: 0, view: 'team' },
+    ] as const)(
+      'moving $direction $label shows and saves the $view view',
+      async ({ direction, myTeamId, userScore, moveNumber, view }) => {
         const { fixture } = await renderHome({}, { evaluation: 'e1' });
         const home = fixture.componentInstance;
         const uiData = TestBed.inject(UIDataService);
@@ -571,34 +585,68 @@ describe('HomeAppComponent', () => {
           { id: 't1', memberships: [] },
           { id: 't2', memberships: [] },
         ]);
-        teams.setActive(activeTeamId);
+        teams.setActive('t1');
         home.myTeamId = myTeamId;
-        home.sortedMoveList = [
-          { id: 'm1', evaluationId: 'e1', moveNumber: 1 },
-          { id: 'm2', evaluationId: 'e1', moveNumber: 2 },
-        ];
-        const submission = (s: Partial<Submission>): Submission => ({
-          userId: null,
-          teamId: null,
-          groupId: null,
-          scoreIsAnAverage: false,
-          evaluationId: 'e1',
-          submissionCategories: [{ id: `${s.id}-c` }],
-          ...s,
-        });
+        home.sortedMoveList = [0, 1, 2].map((n) => ({ id: `m${n}`, evaluationId: 'e1', moveNumber: n }));
         const submissions = TestBed.inject(SubmissionStore);
         submissions.set([
           submission({ id: 's1-official', moveNumber: 1 }),
-          submission({ id: 's2-user', moveNumber: 2, userId: 'u1', teamId: 't1' }),
-          submission({ id: 's2-team', moveNumber: 2, teamId: 't1' }),
+          ...[0, 2].flatMap((n) => [
+            submission({ id: `s${n}-team`, moveNumber: n, teamId: 't1' }),
+            ...(userScore ? [submission({ id: `s${n}-user`, moveNumber: n, userId: 'u1', teamId: 't1' })] : []),
+          ]),
         ]);
         submissions.setActive('s1-official');
         uiData.setSubmissionType(home.selectedEvaluationId, 'official');
 
-        home.nextDisplayedMove({ id: 'm2', evaluationId: 'e1', moveNumber: 2 });
+        const move = { id: `m${moveNumber}`, evaluationId: 'e1', moveNumber };
+        if (direction === 'next') {
+          home.nextDisplayedMove(move);
+        } else {
+          home.previousDisplayedMove(move);
+        }
 
-        expect(TestBed.inject(SubmissionStore).getValue().active).toBe(shown);
+        expect(submissions.getValue().active).toBe(`s${moveNumber}-${view}`);
         expect(uiData.getSubmissionType(home.selectedEvaluationId)).toBe(view);
+      },
+    );
+
+    /**
+     * Verifies: moving to a move with the shown kind of submission shows it and keeps the saved view.
+     * Interacts with: nextDisplayedMove() and previousDisplayedMove(), real SubmissionStore, real UIDataService.
+     * Data: saved view Official on move 1's official submission; moves 0 and 2 each have an official submission and u1's.
+     */
+    it.each(['next', 'previous'] as const)(
+      'moving %s to a move with the shown kind keeps the view',
+      async (direction) => {
+        const { fixture } = await renderHome({}, { evaluation: 'e1' });
+        const home = fixture.componentInstance;
+        const uiData = TestBed.inject(UIDataService);
+        const teams = TestBed.inject(TeamStore);
+        teams.set([{ id: 't1', memberships: [] }]);
+        teams.setActive('t1');
+        home.myTeamId = 't1';
+        home.sortedMoveList = [0, 1, 2].map((n) => ({ id: `m${n}`, evaluationId: 'e1', moveNumber: n }));
+        const submissions = TestBed.inject(SubmissionStore);
+        submissions.set(
+          [0, 1, 2].flatMap((n) => [
+            submission({ id: `s${n}-official`, moveNumber: n }),
+            submission({ id: `s${n}-user`, moveNumber: n, userId: 'u1', teamId: 't1' }),
+          ]),
+        );
+        submissions.setActive('s1-official');
+        uiData.setSubmissionType(home.selectedEvaluationId, 'official');
+
+        const moveNumber = direction === 'next' ? 2 : 0;
+        const move = { id: `m${moveNumber}`, evaluationId: 'e1', moveNumber };
+        if (direction === 'next') {
+          home.nextDisplayedMove(move);
+        } else {
+          home.previousDisplayedMove(move);
+        }
+
+        expect(submissions.getValue().active).toBe(`s${moveNumber}-official`);
+        expect(uiData.getSubmissionType(home.selectedEvaluationId)).toBe('official');
       },
     );
   });
