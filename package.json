@@ -8,7 +8,7 @@
     "test": "ng test --watch=false",
     "test:watch": "ng test",
     "test:coverage": "ng test --watch=false --configuration coverage",
-    "lint": "eslint -c .eslintrc.js --ext .ts src/",
+    "lint": "ng lint",
     "e2e": "ng e2e",
     "swagger:gen": "curl --insecure http://localhost:4720/swagger/v1/swagger.json --output swagger.json && node_modules/@openapitools/openapi-generator-cli/bin/openapi-generator generate -i ./swagger.json -g typescript-angular -o src/app/generated/cite.api --additional-properties ngVersion=21 --additional-properties useRxJS6=true --additional-properties modelPropertyNaming=original --type-mappings=DateTime=Date --skip-validate-spec",
     "swagger:gen-docker": "cross-env-shell docker run --rm -v $INIT_CWD:/local openapitools/openapi-generator-cli:v7.15.0 generate -i http://host.docker.internal:4720/swagger/v1/swagger.json -g typescript-angular -o /local/src/app/generated/cite.api --additional-properties ngVersion=21 --additional-properties useRxJS6=true --additional-properties modelPropertyNaming=original --type-mappings=DateTime=Date --skip-validate-spec",
@@ -68,6 +68,7 @@
     "@angular/cli": "^21.2.10",
     "@angular/compiler-cli": "^21.2.10",
     "@angular/language-service": "^21.2.10",
+    "@eslint/js": "^9.39.5",
     "@openapitools/openapi-generator-cli": "1.0.18-3.2.0",
     "@testing-library/angular": "^19.1.0",
     "@testing-library/dom": "^10.4.1",
@@ -78,6 +79,7 @@
     "@typescript-eslint/eslint-plugin": "^8.41.0",
     "@typescript-eslint/parser": "^8.41.0",
     "@vitest/coverage-v8": "^4.1.5",
+    "angular-eslint": "21.3.0",
     "cross-env": "^10.1.0",
     "eslint": "^9.34.0",
     "eslint-plugin-import": "^2.32.0",
@@ -86,6 +88,7 @@
     "patch-package": "^8.0.1",
     "ts-node": "~10.0.0",
     "typescript": "~5.9.3",
+    "typescript-eslint": "^8.72.2",
     "vitest": "^4.1.5"
   },
   "overrides": {
