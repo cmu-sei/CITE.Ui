@@ -789,9 +789,18 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     ) {
       return EMPTY;
     }
+    // on a failure keep showing what the store holds
     return this.submissionDataService
       .refreshByEvaluationTeam(this.loadedEvaluationId, this.loadedTeamId)
-      .pipe(catchError(() => EMPTY));
+      .pipe(
+        catchError((err) => {
+          console.warn(
+            'CITE could not refetch the submissions after a move change: ' +
+              (err?.message ?? err),
+          );
+          return EMPTY;
+        }),
+      );
   }
 
   // After a move change refetch, keep the selection while it is on the

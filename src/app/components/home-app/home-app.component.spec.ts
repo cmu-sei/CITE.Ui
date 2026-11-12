@@ -16,7 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { screen, waitFor } from '@testing-library/angular';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import {
   ComnAuthService,
   ComnSettingsService,
@@ -797,6 +797,29 @@ describe('HomeAppComponent', () => {
 
       vi.runAllTimers();
       expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+    });
+
+    /**
+     * Verifies: a failed refetch is logged as a warning and leaves the submissions and the shown one as they were.
+     * Interacts with: SubmissionService.getByEvaluationTeam stub (fails once), console.warn spy, real Submission store, fake timers.
+     * Data: ?evaluation=e1 on move 0; Alice on t1; the move changes and the refetch fails.
+     */
+    it('keeps the submissions when the refetch fails', async () => {
+      const { submissionApi } = await renderTeamPage();
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      submissionApi.getByEvaluationTeam.mockReturnValueOnce(
+        throwError(() => new Error('Service Unavailable')),
+      );
+
+      changeCurrentMove(1);
+      vi.runAllTimers();
+
+      expect(warn).toHaveBeenCalledExactlyOnceWith(
+        'CITE could not refetch the submissions after a move change: Service Unavailable',
+      );
+      const submissionQuery = TestBed.inject(SubmissionQuery);
+      expect(submissionQuery.getCount()).toBe(2);
+      expect(submissionQuery.getActiveId()).toBe('s-t1-u1-0');
     });
 
     /**
