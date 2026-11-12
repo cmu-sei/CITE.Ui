@@ -146,7 +146,8 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"],
+            "maxWarnings": 319
           }
         }
       }
@@ -175,12 +176,6 @@
     "@schematics/angular:component": {
       "style": "scss",
       "type": "component"
-    },
-    "@angular-eslint/schematics:application": {
-      "setParserOptionsProject": true
-    },
-    "@angular-eslint/schematics:library": {
-      "setParserOptionsProject": true
     },
     "@schematics/angular:directive": {
       "type": "directive"
