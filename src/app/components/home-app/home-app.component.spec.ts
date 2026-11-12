@@ -823,24 +823,44 @@ describe('HomeAppComponent', () => {
     });
 
     /**
-     * Verifies: when the move goes back past the displayed one, the refetch shows the current move's submission of the same kind.
-     * Interacts with: nextDisplayedMove(), real Submission/Move stores, SubmissionService stubs, fake timers.
+     * Verifies: when the move goes back past the displayed one, the page shows the current move's submission of the same kind at once, from the store, and keeps it after the refetch, failed or not.
+     * Interacts with: nextDisplayedMove(), real Submission/Move stores, SubmissionService stubs (the refetch fails per row), fake timers.
      * Data: ?evaluation=e1 on move 1; Alice shows her move 1 submission; the hub moves the evaluation back to move 0.
      */
-    it('follows the move back to the current one', async () => {
-      const { fixture } = await renderTeamPage();
-      const home = fixture.componentInstance;
-      changeCurrentMove(1);
-      vi.runAllTimers();
-      home.nextDisplayedMove(MOVES[1]);
-      const submissionQuery = TestBed.inject(SubmissionQuery);
-      expect(submissionQuery.getActiveId()).toBe('s-t1-u1-1');
+    it.each([
+      { refetch: 'succeeds', fails: false },
+      { refetch: 'fails', fails: true },
+    ])(
+      'follows the move back at once when the refetch $refetch',
+      async ({ fails }) => {
+        const { fixture, submissionApi } = await renderTeamPage();
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const home = fixture.componentInstance;
+        changeCurrentMove(1);
+        vi.runAllTimers();
+        home.nextDisplayedMove(MOVES[1]);
+        const submissionQuery = TestBed.inject(SubmissionQuery);
+        expect(submissionQuery.getActiveId()).toBe('s-t1-u1-1');
+        const submissionLoads = submissionApi.getSubmission.mock.calls.length;
+        if (fails) {
+          submissionApi.getByEvaluationTeam.mockReturnValueOnce(
+            throwError(() => new Error('Service Unavailable')),
+          );
+        }
 
-      changeCurrentMove(0);
-      vi.runAllTimers();
+        changeCurrentMove(0);
+        expect(home.displayedMoveNumber).toBe(0);
+        expect(submissionQuery.getActiveId()).toBe('s-t1-u1-0');
+        expect(submissionApi.getSubmission).toHaveBeenCalledTimes(
+          submissionLoads,
+        );
 
-      expect(home.displayedMoveNumber).toBe(0);
-      expect(submissionQuery.getActiveId()).toBe('s-t1-u1-0');
-    });
+        vi.runAllTimers();
+        expect(submissionQuery.getActiveId()).toBe('s-t1-u1-0');
+        expect(submissionApi.getSubmission).toHaveBeenCalledTimes(
+          submissionLoads,
+        );
+      },
+    );
   });
 });

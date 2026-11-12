@@ -13,6 +13,7 @@ import {
   Subject,
   Observable,
   combineLatest,
+  of,
   timer,
 } from 'rxjs';
 import {
@@ -441,7 +442,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         filter(([previous, current]) => previous.id === current.id),
         takeUntil(this.unsubscribe$),
       )
-      .subscribe(() => this.currentMoveChanged$.next());
+      .subscribe(() => {
+        // the store already holds the submissions of every move up to the
+        // current one, so a move that went back past the displayed one is
+        // shown at once; the refetch then brings the new move's scores
+        this.reselectDisplayedSubmission();
+        this.currentMoveChanged$.next();
+      });
     this.currentMoveChanged$
       .pipe(
         debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
@@ -767,10 +774,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
   }
 
-  setActiveSubmission(submission: Submission) {
+  setActiveSubmission(submission: Submission, loadSubmission = true) {
     if (submission.id != this.submissionQuery.getActiveId()) {
       this.submissionDataService.setActive(submission.id);
-      if (!submission.scoreIsAnAverage) {
+      if (loadSubmission && !submission.scoreIsAnAverage) {
         this.submissionDataService.loadById(submission.id);
       }
       const activeMove = this.sortedMoveList.find(
@@ -798,14 +805,15 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             'CITE could not refetch the submissions after a move change: ' +
               (err?.message ?? err),
           );
-          return EMPTY;
+          return of(null);
         }),
       );
   }
 
-  // After a move change refetch, keep the selection while it is on the
-  // displayed move; otherwise (the move went back past it) show the displayed
-  // move's submission of the saved kind.
+  // After a move change, and after its refetch whether or not that worked,
+  // keep the selection while it is on the displayed move; otherwise (the move
+  // went back past it) show the displayed move's submission of the saved kind,
+  // from the store, without fetching it again.
   private reselectDisplayedSubmission() {
     const active = this.submissionQuery.getActive() as Submission;
     if (active && +active.moveNumber === +this.displayedMoveNumber) {
@@ -817,10 +825,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (submissionType === 'user' && !scoringModel?.useUserScore) {
       submissionType = 'team';
     }
-    this.selectDisplayedSubmission(submissionType);
+    this.selectDisplayedSubmission(submissionType, false);
   }
 
-  selectDisplayedSubmission(selection: string) {
+  selectDisplayedSubmission(selection: string, loadSubmission = true) {
     if (selection === 'report') {
       this.selectedSection =
         this.selectedSection === this.section.report
@@ -878,7 +886,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       }
       if (newSubmission) {
         this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
-        this.setActiveSubmission(newSubmission);
+        this.setActiveSubmission(newSubmission, loadSubmission);
       }
     }
   }
