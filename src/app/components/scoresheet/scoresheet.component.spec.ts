@@ -714,6 +714,49 @@ describe('ScoresheetComponent', () => {
         }
       },
     );
+
+    /**
+     * Verifies: the official score rules apply to the submission with no user, team or group, whatever the saved view says.
+     * Interacts with: setFormatting() with a saved view that does not match the shown submission, real PermissionDataService.hasTeamPermission.
+     * Data: per row, the saved view, the shown submission and the team claims. The first row is a Contributor (EditTeamScore, no SubmitTeamScore) who picked Official on a past move and moved to the current move, whose official score they cannot see, so their own submission is shown.
+     * Why: regression for the official score rules taking away Preset, Clear and the options on the user's own submission.
+     */
+    it.each<{
+      label: string;
+      displaying: 'user' | 'official';
+      activeSubmission: Partial<Submission>;
+      claims: TeamPermissionClaim[];
+      shown: string[];
+      hidden: string[];
+    }>([
+      {
+        label: "saved Official over the user's own submission, EditTeamScore t1",
+        displaying: 'official',
+        activeSubmission: { userId: 'u1', teamId: 't1' },
+        claims: [{ teamId: 't1', permissions: [TeamPermission.EditTeamScore] }],
+        shown: ['Clear', 'Preset'],
+        hidden: ['Submit'],
+      },
+      {
+        label: 'saved User over the official submission, no team claims',
+        displaying: 'user',
+        activeSubmission: { userId: null, teamId: null, groupId: null },
+        claims: [],
+        shown: [],
+        hidden: ['Submit', 'Clear', 'Preset'],
+      },
+    ])(
+      '$label shows $shown',
+      async ({ displaying, activeSubmission, claims, shown, hidden }) => {
+        await renderScoresheet({ displaying, activeSubmission, teamClaims: claims });
+        for (const name of shown) {
+          expect(toolbarButton(name)).toBeVisible();
+        }
+        for (const name of hidden) {
+          expect(toolbarButton(name)).not.toBeInTheDocument();
+        }
+      },
+    );
   });
 
   describe('view buttons', () => {

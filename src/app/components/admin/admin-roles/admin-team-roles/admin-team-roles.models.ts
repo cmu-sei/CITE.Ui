@@ -28,7 +28,7 @@ export class TeamRolesModel {
     ],
     [
       TeamPermission.EditOfficialScore,
-      'Allows viewing, scoring and submitting the Official score of the current move. Held on any of a user\'s Teams, it applies to the Official score of that Team\'s Evaluation.',
+      'Allows viewing the Official score of the current move, and scoring and submitting the Official score of any move. Held on any of a user\'s Teams, it applies to the Official score of that Team\'s Evaluation.',
     ],
   ]);
 }
