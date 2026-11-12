@@ -146,8 +146,11 @@ export class DashboardComponent implements OnDestroy {
         active = active ? active : ({ id: '' } as Evaluation);
         if (active.id === activeId) {
           // every evaluation update lands here; Gallery pushes the unread
-          // count after the first load
-          const evaluationChanged = active.id !== this.selectedEvaluation?.id;
+          // count after the first load for the evaluation and its exhibit
+          const evaluationChanged =
+            active.id !== this.selectedEvaluation?.id ||
+            active.galleryExhibitId !==
+              this.selectedEvaluation?.galleryExhibitId;
           this.selectedEvaluation = active;
           this.currentMoveNumber = active.currentMoveNumber;
           if (activeId && evaluationChanged) {

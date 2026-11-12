@@ -317,6 +317,29 @@ describe('DashboardComponent', () => {
   });
 
   /**
+   * Verifies: linking the evaluation to another Gallery exhibit fetches the unread count again, without reloading the team data.
+   * Interacts with: real EvaluationStore, Gallery and Action service stubs.
+   * Data: evaluation e1 with exhibit x1, team t1; the hub links e1 to exhibit x2.
+   */
+  it('fetches the unread count for a new Gallery exhibit', async () => {
+    const { actionApi, galleryApi, fixture } = await renderDashboard(
+      onTeam('t1', TeamPermission.EditTeamScore),
+      { evaluation: { galleryExhibitId: 'x1' } },
+    );
+    const evaluations = fixture.debugElement.injector.get(EvaluationStore);
+    expect(galleryApi.getEvaluationUnreadArticleCount).toHaveBeenCalledOnce();
+
+    evaluations.upsert('e1', { galleryExhibitId: 'x2' });
+    fixture.detectChanges();
+
+    expect(galleryApi.getEvaluationUnreadArticleCount).toHaveBeenCalledTimes(2);
+    expect(galleryApi.getEvaluationUnreadArticleCount).toHaveBeenLastCalledWith(
+      'e1',
+    );
+    expect(actionApi.getActionsByEvaluationTeam).toHaveBeenCalledOnce();
+  });
+
+  /**
    * Verifies: switching team loads that team's data, and switching evaluation loads its data and its unread count.
    * Interacts with: real Evaluation/Team stores, Action/Duty/TeamMemberships/Gallery service stubs.
    * Data: evaluation e1, team t1; the page switches to team t2, then to evaluation e2.
