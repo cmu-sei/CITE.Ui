@@ -7,8 +7,25 @@ import { Component, OnDestroy, OnInit, ViewChild, inject, viewChild } from '@ang
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { BehaviorSubject, Subject, Observable, combineLatest } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  EMPTY,
+  Subject,
+  Observable,
+  combineLatest,
+  timer,
+} from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  pairwise,
+  switchMap,
+  take,
+  takeUntil,
+} from 'rxjs/operators';
 import {
   ComnAuthService,
   ComnSettingsService,
@@ -52,6 +69,10 @@ import { GallerySignalRService } from 'src/app/services/gallery-signalr.service'
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { XApiService } from 'src/app/services/xapi/xapi.service';
+import {
+  MOVE_CHANGE_DEBOUNCE_MS,
+  MOVE_CHANGE_JITTER,
+} from 'src/app/services/move-change-refresh';
 import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
@@ -145,6 +166,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   private unreadArticlesQuery = inject(UnreadArticlesQuery);
   private uiDataService = inject(UIDataService);
   private xApiService = inject(XApiService);
+  private moveChangeJitter = inject(MOVE_CHANGE_JITTER);
 
   readonly sidenav = viewChild<MatSidenav>('sidenav');
   readonly sort = viewChild(MatSort);
@@ -204,6 +226,11 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   permissions: SystemPermission[] = [];
   canViewAdministration = false;
   readonly SystemPermission = SystemPermission;
+  // the evaluation and team whose submissions are loaded
+  private loadedEvaluationId = '';
+  private loadedTeamId = '';
+  private currentMoveChanged$ = new Subject<void>();
+  private teamChanged$ = new Subject<void>();
 
   constructor() {
     const titleService = inject(Title);
@@ -390,10 +417,43 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
       }
     });
-    // observe the submissions
-    this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
-      this.processSubmissions(submissions);
-    });
+    // observe the submissions; selecting one also needs the scoring model and
+    // the moves, which may arrive after the submissions
+    combineLatest([
+      this.submissionList$,
+      this.activeScoringModel$,
+      this.moveList$,
+    ])
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(([submissions]) => {
+        this.processSubmissions(submissions);
+      });
+    // refetch the team's submissions once after the current move changes
+    (this.evaluationQuery.selectActive() as Observable<Evaluation>)
+      .pipe(
+        filter((e) => !!e),
+        map((e) => ({ id: e.id, moveNumber: e.currentMoveNumber })),
+        distinctUntilChanged(
+          (a, b) => a.id === b.id && a.moveNumber === b.moveNumber,
+        ),
+        pairwise(),
+        filter(([previous, current]) => previous.id === current.id),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(() => this.currentMoveChanged$.next());
+    this.currentMoveChanged$
+      .pipe(
+        debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+        switchMap(() =>
+          timer(this.moveChangeJitter()).pipe(
+            switchMap(() => this.refreshSubmissions()),
+            // a team or evaluation switch loads the submissions itself
+            takeUntil(this.teamChanged$),
+          ),
+        ),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(() => this.reselectDisplayedSubmission());
     // observe the evaluations
     this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
       this.evaluationList = evaluations
@@ -574,7 +634,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
       }
     });
-    if (activeTeamId) {
+    // every evaluation, move and team update re-runs this, so load only when
+    // the evaluation or the team is a different one
+    if (
+      activeTeamId &&
+      (activeTeamId !== this.loadedTeamId ||
+        this.selectedEvaluationId !== this.loadedEvaluationId)
+    ) {
       this.changeTeam(activeTeamId);
       this.teamMembershipDataService.loadMemberships(activeTeamId);
     }
@@ -605,6 +671,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.submissionDataService.setActive('');
     this.moveDataService.setActive('');
     this.submissionDataService.unload();
+    this.teamChanged$.next();
+    this.loadedEvaluationId = this.selectedEvaluationId;
+    this.loadedTeamId = teamId;
     this.submissionDataService.loadByEvaluationTeam(
       this.selectedEvaluationId,
       teamId
@@ -701,8 +770,39 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       const activeMove = this.sortedMoveList.find(
         (m) => +m.moveNumber === +submission.moveNumber
       );
-      this.moveDataService.setActive(activeMove.id);
+      if (activeMove) {
+        this.moveDataService.setActive(activeMove.id);
+      }
     }
+  }
+
+  private refreshSubmissions(): Observable<Submission[]> {
+    if (
+      !this.loadedTeamId ||
+      this.loadedEvaluationId !== this.selectedEvaluationId
+    ) {
+      return EMPTY;
+    }
+    return this.submissionDataService
+      .refreshByEvaluationTeam(this.loadedEvaluationId, this.loadedTeamId)
+      .pipe(catchError(() => EMPTY));
+  }
+
+  // After a move change refetch, keep the selection while it is on the
+  // displayed move; otherwise (the move went back past it) show the displayed
+  // move's submission of the saved kind.
+  private reselectDisplayedSubmission() {
+    const active = this.submissionQuery.getActive() as Submission;
+    if (active && +active.moveNumber === +this.displayedMoveNumber) {
+      return;
+    }
+    const scoringModel = this.scoringModelQuery.getActive() as ScoringModel;
+    let submissionType =
+      this.uiDataService.getSubmissionType(this.selectedEvaluationId) || 'user';
+    if (submissionType === 'user' && !scoringModel?.useUserScore) {
+      submissionType = 'team';
+    }
+    this.selectDisplayedSubmission(submissionType);
   }
 
   selectDisplayedSubmission(selection: string) {

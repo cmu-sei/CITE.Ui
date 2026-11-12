@@ -171,6 +171,17 @@ export class SubmissionDataService {
       );
   }
 
+  // Refetch without clearing the store first, so the active submission stays
+  // selected when it is still in the list; the caller subscribes.
+  refreshByEvaluationTeam(
+    evaluationId: string,
+    teamId: string,
+  ): Observable<Submission[]> {
+    return this.submissionService
+      .getByEvaluationTeam(evaluationId, teamId)
+      .pipe(tap((submissions) => this.submissionStore.set(submissions)));
+  }
+
   loadById(id: string) {
     this.submissionStore.setLoading(true);
     return this.submissionService
