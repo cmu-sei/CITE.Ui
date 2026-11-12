@@ -664,6 +664,25 @@ describe('HomeAppComponent', () => {
     );
   });
 
+  /**
+   * Verifies: the list loads each evaluation's users once, not again on every evaluation update, and loads a new evaluation's users when it arrives.
+   * Interacts with: real EvaluationStore, UserService.getEvaluationUsers stub.
+   * Data: no evaluation in the route; e1 is listed, edited twice by the hub, then e2 is created.
+   */
+  it("loads each evaluation's users once", async () => {
+    const { userApi } = await renderHome({});
+    const evaluations = TestBed.inject(EvaluationStore);
+    expect(userApi.getEvaluationUsers).toHaveBeenCalledExactlyOnceWith('e1');
+
+    evaluations.upsert('e1', { ...EVALUATION, currentMoveNumber: 1 });
+    evaluations.upsert('e1', { ...EVALUATION, currentMoveNumber: 2 });
+    expect(userApi.getEvaluationUsers).toHaveBeenCalledOnce();
+
+    evaluations.upsert('e2', { ...EVALUATION, id: 'e2' });
+    expect(userApi.getEvaluationUsers).toHaveBeenCalledTimes(2);
+    expect(userApi.getEvaluationUsers).toHaveBeenLastCalledWith('e2');
+  });
+
   describe('move changes', () => {
     afterEach(() => vi.useRealTimers());
 

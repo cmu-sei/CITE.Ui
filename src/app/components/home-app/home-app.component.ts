@@ -231,6 +231,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   private loadedTeamId = '';
   private currentMoveChanged$ = new Subject<void>();
   private teamChanged$ = new Subject<void>();
+  private evaluationIdsWithUsers = new Set<string>();
 
   constructor() {
     const titleService = inject(Title);
@@ -470,10 +471,15 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
         });
       this.setDataSources();
-      // Load users for each evaluation (for displaying creator names)
-      evaluations.forEach(evaluation => {
-        if (evaluation.id) {
-          this.userDataService.loadByEvaluation(evaluation.id).pipe(take(1)).subscribe();
+      // Load users for each evaluation (for displaying creator names), once:
+      // every evaluation update re-runs this
+      evaluations.forEach((evaluation) => {
+        if (evaluation.id && !this.evaluationIdsWithUsers.has(evaluation.id)) {
+          this.evaluationIdsWithUsers.add(evaluation.id);
+          this.userDataService
+            .loadByEvaluation(evaluation.id)
+            .pipe(take(1))
+            .subscribe();
         }
       });
     });
