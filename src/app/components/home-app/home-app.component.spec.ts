@@ -16,7 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { screen, waitFor } from '@testing-library/angular';
-import { of } from 'rxjs';
+import { Subject, asyncScheduler, of, throwError } from 'rxjs';
 import {
   ComnAuthService,
   ComnSettingsService,
@@ -28,18 +28,34 @@ import {
   EvaluationPermission,
   EvaluationService,
   ItemStatus,
+  Move,
   MoveService,
+  ScoringModel,
   ScoringModelService,
+  Submission,
+  SubmissionService,
   SystemPermission,
+  Team,
+  TeamMembershipsService,
   TeamPermission,
   TeamRolesService,
   TeamService,
   UserService,
 } from '../../generated/cite.api';
+import { EvaluationStore } from '../../data/evaluation/evaluation.store';
+import { EvaluationDataService } from '../../data/evaluation/evaluation-data.service';
+import { MoveDataService } from '../../data/move/move-data.service';
+import { SubmissionQuery } from '../../data/submission/submission.query';
+import { TeamDataService } from '../../data/team/team-data.service';
 import { TeamStore } from '../../data/team/team.store';
 import { UIDataService } from '../../data/ui/ui-data.service';
 import { GallerySignalRService } from '../../services/gallery-signalr.service';
+import {
+  MOVE_CHANGE_DEBOUNCE_MS,
+  MOVE_CHANGE_JITTER,
+} from '../../services/move-change-refresh';
 import { SignalRService } from '../../services/signalr.service';
+import { XApiService } from '../../services/xapi/xapi.service';
 import { activatedRouteStub } from '../../test-utils/activated-route';
 import { ApiStub } from '../../test-utils/api-stub';
 import {
@@ -97,6 +113,32 @@ const EVALUATION: Evaluation = {
   dateCreated: new Date('2026-01-02T10:00:00Z'),
 };
 
+// The delay a page waits, after a move change, before it refetches.
+const JITTER_MS = 1200;
+
+// t1 is Alice's team; t2 is another team she can observe.
+const TEAMS: Team[] = [
+  {
+    id: 't1',
+    name: 'Blue Team',
+    memberships: [{ teamId: 't1', userId: 'u1' }],
+  },
+  { id: 't2', name: 'Red Team', memberships: [] },
+];
+const MOVES: Move[] = [
+  { id: 'm0', evaluationId: 'e1', moveNumber: 0, description: 'Initial' },
+  { id: 'm1', evaluationId: 'e1', moveNumber: 1, description: 'Escalation' },
+];
+const userSubmission = (teamId: string, moveNumber: number): Submission => ({
+  id: `s-${teamId}-u1-${moveNumber}`,
+  evaluationId: 'e1',
+  teamId,
+  userId: 'u1',
+  moveNumber,
+  scoreIsAnAverage: false,
+  submissionCategories: [{ id: `c-${teamId}-${moveNumber}` }],
+});
+
 // The test DOM never loads images, so tests fire load or error themselves.
 class FakeImage {
   static last: FakeImage | undefined;
@@ -118,7 +160,15 @@ async function renderHome(
     hubStart = () => Promise.resolve(),
     galleryHubStart = () => Promise.resolve(),
     logout = () => Promise.resolve(),
+    teams = [],
+    moves = [{ id: 'm0', evaluationId: 'e1', moveNumber: 0 }],
+    scoringModel = {},
+    submissions = (teamId: string) => [userSubmission(teamId, 0)],
   }: {
+    teams?: Team[];
+    moves?: Move[];
+    scoringModel?: Partial<ScoringModel>;
+    submissions?: (teamId: string) => Submission[];
     evaluation?: string;
     galleryApiUrl?: string;
     background?: string;
@@ -130,6 +180,7 @@ async function renderHome(
 ) {
   const evaluationApi = {
     getMyEvaluations: vi.fn(() => of([structuredClone(EVALUATION)])),
+    getEvaluation: vi.fn(() => of(structuredClone(EVALUATION))),
   } satisfies ApiStub<EvaluationService>;
   const userApi = {
     getEvaluationUsers: vi.fn(() => of([{ id: 'u1', name: 'Alice' }])),
@@ -139,21 +190,49 @@ async function renderHome(
   } satisfies ApiStub<TeamRolesService>;
   const scoringModelApi = {
     getScoringModel: vi.fn(() =>
-      of({ id: 'sm1', rightSideDisplay: 'None' as const }),
+      of({ id: 'sm1', rightSideDisplay: 'None' as const, ...scoringModel }),
     ),
   } satisfies ApiStub<ScoringModelService>;
   const moveApi = {
-    getByEvaluation: vi.fn(() =>
-      of([{ id: 'm0', evaluationId: 'e1', moveNumber: 0 }]),
-    ),
+    getByEvaluation: vi.fn(() => of(structuredClone(moves))),
   } satisfies ApiStub<MoveService>;
   const teamApi = {
-    getMyEvaluationTeams: vi.fn(() => of([])),
+    getMyEvaluationTeams: vi.fn(() => of(structuredClone(teams))),
   } satisfies ApiStub<TeamService>;
-  const signalR: Pick<SignalRService, 'startConnection' | 'join' | 'leave'> = {
+  const membershipApi = {
+    getAllTeamMemberships: vi.fn(() => of([])),
+  } satisfies ApiStub<TeamMembershipsService>;
+  const xApi = {
+    observedEvaluationDashboard: vi.fn(() => of(null)),
+    viewedEvaluationDashboard: vi.fn(() => of(null)),
+  } satisfies ApiStub<XApiService>;
+  const submissionApi = {
+    getByEvaluationTeam: vi.fn((_evaluationId: string, teamId: string) =>
+      of(submissions(teamId)),
+    ),
+    getSubmission: vi.fn((id: string) =>
+      of(
+        teams
+          .flatMap((t) => submissions(t.id))
+          .find((s) => s.id === id) as Submission,
+      ),
+    ),
+  } satisfies ApiStub<SubmissionService>;
+  const signalR: Pick<
+    SignalRService,
+    | 'startConnection'
+    | 'join'
+    | 'leave'
+    | 'switchTeam'
+    | 'reconnected$'
+    | 'teamMembershipChanged$'
+  > = {
     startConnection: vi.fn(hubStart),
     join: vi.fn(),
     leave: vi.fn(),
+    switchTeam: vi.fn(),
+    reconnected$: new Subject<void>(),
+    teamMembershipChanged$: new Subject<void>(),
   };
   // The page starts the Gallery hub only when GalleryApiUrl is set (empty in
   // the default settings).
@@ -222,6 +301,10 @@ async function renderHome(
       { provide: ScoringModelService, useValue: scoringModelApi },
       { provide: MoveService, useValue: moveApi },
       { provide: TeamService, useValue: teamApi },
+      { provide: SubmissionService, useValue: submissionApi },
+      { provide: TeamMembershipsService, useValue: membershipApi },
+      { provide: XApiService, useValue: xApi },
+      { provide: MOVE_CHANGE_JITTER, useValue: () => JITTER_MS },
       { provide: SignalRService, useValue: signalR },
       { provide: GallerySignalRService, useValue: gallerySignalR },
       { provide: ComnSettingsService, useValue: settings },
@@ -244,6 +327,9 @@ async function renderHome(
   return {
     ...rendered,
     evaluationApi,
+    moveApi,
+    userApi,
+    submissionApi,
     signalR,
     gallerySignalR,
     evaluationInfo,
@@ -584,6 +670,306 @@ describe('HomeAppComponent', () => {
         fixture.componentInstance.myTeamId = myTeamId;
 
         expect(fixture.componentInstance.observingAnotherTeam).toBe(observing);
+      },
+    );
+  });
+
+  /**
+   * Verifies: the list loads each evaluation's users once, not again on every evaluation update, and loads a new evaluation's users when it arrives.
+   * Interacts with: real EvaluationStore, UserService.getEvaluationUsers stub.
+   * Data: no evaluation in the route; e1 is listed, edited twice by the hub, then e2 is created.
+   */
+  it("loads each evaluation's users once", async () => {
+    const { userApi } = await renderHome({});
+    const evaluations = TestBed.inject(EvaluationStore);
+    expect(userApi.getEvaluationUsers).toHaveBeenCalledExactlyOnceWith('e1');
+
+    evaluations.upsert('e1', { ...EVALUATION, currentMoveNumber: 1 });
+    evaluations.upsert('e1', { ...EVALUATION, currentMoveNumber: 2 });
+    expect(userApi.getEvaluationUsers).toHaveBeenCalledOnce();
+
+    evaluations.upsert('e2', { ...EVALUATION, id: 'e2' });
+    expect(userApi.getEvaluationUsers).toHaveBeenCalledTimes(2);
+    expect(userApi.getEvaluationUsers).toHaveBeenLastCalledWith('e2');
+  });
+
+  describe('move changes', () => {
+    afterEach(() => vi.useRealTimers());
+
+    // What the hub sends every page when the current move changes: the
+    // evaluation, then each of its moves, within milliseconds.
+    const updateEvaluation = (changes: Partial<Evaluation>) =>
+      TestBed.inject(EvaluationDataService).updateStore({
+        ...structuredClone(EVALUATION),
+        ...changes,
+      });
+    const changeCurrentMove = (moveNumber: number) => {
+      updateEvaluation({ currentMoveNumber: moveNumber });
+      const moves = TestBed.inject(MoveDataService);
+      MOVES.forEach((m) => moves.updateStore(structuredClone(m)));
+    };
+
+    const renderTeamPage = async () => {
+      const page = await renderHome(
+        {},
+        {
+          evaluation: 'e1',
+          teams: TEAMS,
+          moves: MOVES,
+          scoringModel: { useUserScore: true },
+          submissions: (teamId) => [
+            userSubmission(teamId, 0),
+            userSubmission(teamId, 1),
+          ],
+        },
+      );
+      // Date stays real: the stores freeze the dates they hold, and a date
+      // made by the fake Date class names the real Date as its constructor,
+      // so freezing it breaks every later fake clock. rxjs reads the time
+      // from its scheduler, pointed at the fake performance clock instead.
+      vi.useFakeTimers({
+        toFake: [
+          'setTimeout',
+          'clearTimeout',
+          'setInterval',
+          'clearInterval',
+          'performance',
+        ],
+      });
+      vi.spyOn(asyncScheduler, 'now').mockImplementation(() =>
+        performance.now(),
+      );
+      return page;
+    };
+
+    /**
+     * Verifies: the evaluation message and the move messages of one move change refetch the team's submissions once, after the debounce and the jitter, and keep the shown submission.
+     * Interacts with: real Evaluation/Move/Submission stores, SubmissionService.getByEvaluationTeam/getSubmission stubs, MOVE_CHANGE_JITTER stub, fake timers.
+     * Data: ?evaluation=e1 on move 0; Alice on t1; moves 0 and 1; the hub moves the evaluation to move 1.
+     */
+    it('refetches the submissions once per move change', async () => {
+      const { submissionApi } = await renderTeamPage();
+      const submissionQuery = TestBed.inject(SubmissionQuery);
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledExactlyOnceWith(
+        'e1',
+        't1',
+      );
+      expect(submissionQuery.getActiveId()).toBe('s-t1-u1-0');
+      const submissionLoads = submissionApi.getSubmission.mock.calls.length;
+
+      changeCurrentMove(1);
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS + JITTER_MS - 1);
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledOnce();
+
+      vi.advanceTimersByTime(1);
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenLastCalledWith(
+        'e1',
+        't1',
+      );
+      expect(submissionQuery.getActiveId()).toBe('s-t1-u1-0');
+      expect(submissionApi.getSubmission).toHaveBeenCalledTimes(
+        submissionLoads,
+      );
+
+      vi.runAllTimers();
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+    });
+
+    /**
+     * Verifies: evaluation, move and team updates that leave the current move alone fetch no submissions and keep the shown submission.
+     * Interacts with: real Evaluation/Move/Team stores, SubmissionService stubs, fake timers.
+     * Data: ?evaluation=e1 on move 0; Alice on t1; an evaluation edit, the move messages and a team edit.
+     */
+    it('fetches nothing on updates that keep the move', async () => {
+      const { submissionApi } = await renderTeamPage();
+      const submissionLoads = submissionApi.getSubmission.mock.calls.length;
+
+      updateEvaluation({ situationDescription: 'Ransom note found' });
+      changeCurrentMove(0);
+      TestBed.inject(TeamDataService).updateStore({
+        ...structuredClone(TEAMS[0]),
+        name: 'Blue Team (Ops)',
+      });
+      vi.runAllTimers();
+
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledOnce();
+      expect(submissionApi.getSubmission).toHaveBeenCalledTimes(
+        submissionLoads,
+      );
+      expect(TestBed.inject(SubmissionQuery).getActiveId()).toBe('s-t1-u1-0');
+    });
+
+    /**
+     * Verifies: switching team loads the new team's submissions at once and drops a move change refetch still waiting.
+     * Interacts with: changeTeam(), SubmissionService.getByEvaluationTeam stub, fake timers.
+     * Data: ?evaluation=e1; Alice on t1; the move changes, then she observes t2 before the jitter ends.
+     */
+    it('loads the new team on a team switch', async () => {
+      const { fixture, submissionApi } = await renderTeamPage();
+
+      changeCurrentMove(1);
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS);
+      fixture.componentInstance.changeTeam('t2');
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenLastCalledWith(
+        'e1',
+        't2',
+      );
+
+      vi.runAllTimers();
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+    });
+
+    /**
+     * Verifies: a team switch inside the debounce drops the move change refetch too.
+     * Interacts with: changeTeam(), SubmissionService.getByEvaluationTeam stub, fake timers.
+     * Data: ?evaluation=e1; Alice on t1; the move changes, then she observes t2 before the debounce ends.
+     */
+    it('drops the refetch on a team switch inside the debounce', async () => {
+      const { fixture, submissionApi } = await renderTeamPage();
+
+      changeCurrentMove(1);
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS - 1);
+      fixture.componentInstance.changeTeam('t2');
+      vi.runAllTimers();
+
+      expect(submissionApi.getByEvaluationTeam.mock.calls).toEqual([
+        ['e1', 't1'],
+        ['e1', 't2'],
+      ]);
+    });
+
+    /**
+     * Verifies: after a hub reconnect the page reloads the evaluation and its moves and refetches the submissions, after the debounce and the jitter.
+     * Interacts with: SignalRService.reconnected$ (stub Subject), EvaluationService.getEvaluation, MoveService.getByEvaluation and SubmissionService stubs, fake timers.
+     * Data: ?evaluation=e1 on move 0; Alice on t1; the hub reconnects and the evaluation is still on move 0.
+     */
+    it('catches up after a reconnect', async () => {
+      const { signalR, evaluationApi, moveApi, submissionApi } =
+        await renderTeamPage();
+      const moveLoads = moveApi.getByEvaluation.mock.calls.length;
+
+      signalR.reconnected$.next();
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS + JITTER_MS - 1);
+      expect(evaluationApi.getEvaluation).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(1);
+      expect(evaluationApi.getEvaluation).toHaveBeenCalledExactlyOnceWith('e1');
+      expect(moveApi.getByEvaluation).toHaveBeenCalledTimes(moveLoads + 1);
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+
+      vi.runAllTimers();
+      expect(evaluationApi.getEvaluation).toHaveBeenCalledOnce();
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+    });
+
+    /**
+     * Verifies: a move change missed while the hub was down is picked up after the reconnect, with one submissions refetch through the move change.
+     * Interacts with: SignalRService.reconnected$ (stub Subject), EvaluationService.getEvaluation stub (now on move 1), SubmissionService stubs, fake timers.
+     * Data: ?evaluation=e1 on move 0; Alice on t1; the hub reconnects and the evaluation is on move 1.
+     */
+    it('picks up a missed move change after a reconnect', async () => {
+      const { signalR, evaluationApi, submissionApi } = await renderTeamPage();
+      evaluationApi.getEvaluation.mockReturnValue(
+        of({ ...structuredClone(EVALUATION), currentMoveNumber: 1 }),
+      );
+
+      signalR.reconnected$.next();
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS + JITTER_MS);
+      expect(evaluationApi.getEvaluation).toHaveBeenCalledOnce();
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledOnce();
+
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS + JITTER_MS);
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+      vi.runAllTimers();
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+      expect(evaluationApi.getEvaluation).toHaveBeenCalledOnce();
+    });
+
+    /**
+     * Verifies: a burst of team membership events reloads the evaluation's users once, after the debounce and the jitter.
+     * Interacts with: SignalRService.teamMembershipChanged$ (stub Subject), UserService.getEvaluationUsers stub, fake timers.
+     * Data: ?evaluation=e1; Alice on t1; three membership events arrive together.
+     */
+    it("reloads the evaluation's users once after membership events", async () => {
+      const { signalR, userApi } = await renderTeamPage();
+      const userLoads = userApi.getEvaluationUsers.mock.calls.length;
+
+      signalR.teamMembershipChanged$.next();
+      signalR.teamMembershipChanged$.next();
+      signalR.teamMembershipChanged$.next();
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS + JITTER_MS - 1);
+      expect(userApi.getEvaluationUsers).toHaveBeenCalledTimes(userLoads);
+
+      vi.advanceTimersByTime(1);
+      expect(userApi.getEvaluationUsers).toHaveBeenCalledTimes(userLoads + 1);
+      expect(userApi.getEvaluationUsers).toHaveBeenLastCalledWith('e1');
+      vi.runAllTimers();
+      expect(userApi.getEvaluationUsers).toHaveBeenCalledTimes(userLoads + 1);
+    });
+
+    /**
+     * Verifies: a failed refetch is logged as a warning and leaves the submissions and the shown one as they were.
+     * Interacts with: SubmissionService.getByEvaluationTeam stub (fails once), console.warn spy, real Submission store, fake timers.
+     * Data: ?evaluation=e1 on move 0; Alice on t1; the move changes and the refetch fails.
+     */
+    it('keeps the submissions when the refetch fails', async () => {
+      const { submissionApi } = await renderTeamPage();
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      submissionApi.getByEvaluationTeam.mockReturnValueOnce(
+        throwError(() => new Error('Service Unavailable')),
+      );
+
+      changeCurrentMove(1);
+      vi.runAllTimers();
+
+      expect(warn).toHaveBeenCalledExactlyOnceWith(
+        'CITE could not refetch the submissions after a move change: Service Unavailable',
+      );
+      const submissionQuery = TestBed.inject(SubmissionQuery);
+      expect(submissionQuery.getCount()).toBe(2);
+      expect(submissionQuery.getActiveId()).toBe('s-t1-u1-0');
+    });
+
+    /**
+     * Verifies: when the move goes back past the displayed one, the page shows the current move's submission of the same kind at once, from the store, and keeps it after the refetch, failed or not.
+     * Interacts with: nextDisplayedMove(), real Submission/Move stores, SubmissionService stubs (the refetch fails per row), fake timers.
+     * Data: ?evaluation=e1 on move 1; Alice shows her move 1 submission; the hub moves the evaluation back to move 0.
+     */
+    it.each([
+      { refetch: 'succeeds', fails: false },
+      { refetch: 'fails', fails: true },
+    ])(
+      'follows the move back at once when the refetch $refetch',
+      async ({ fails }) => {
+        const { fixture, submissionApi } = await renderTeamPage();
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const home = fixture.componentInstance;
+        changeCurrentMove(1);
+        vi.runAllTimers();
+        home.nextDisplayedMove(MOVES[1]);
+        const submissionQuery = TestBed.inject(SubmissionQuery);
+        expect(submissionQuery.getActiveId()).toBe('s-t1-u1-1');
+        const submissionLoads = submissionApi.getSubmission.mock.calls.length;
+        if (fails) {
+          submissionApi.getByEvaluationTeam.mockReturnValueOnce(
+            throwError(() => new Error('Service Unavailable')),
+          );
+        }
+
+        changeCurrentMove(0);
+        expect(home.displayedMoveNumber).toBe(0);
+        expect(submissionQuery.getActiveId()).toBe('s-t1-u1-0');
+        expect(submissionApi.getSubmission).toHaveBeenCalledTimes(
+          submissionLoads,
+        );
+
+        vi.runAllTimers();
+        expect(submissionQuery.getActiveId()).toBe('s-t1-u1-0');
+        expect(submissionApi.getSubmission).toHaveBeenCalledTimes(
+          submissionLoads,
+        );
       },
     );
   });

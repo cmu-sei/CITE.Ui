@@ -221,6 +221,22 @@ describe('SignalRService', () => {
     });
 
     /**
+     * Verifies: an automatic reconnect is announced on reconnected$, so the page can catch up on missed messages; the first start is not.
+     * Interacts with: FakeHubConnection.reconnectedCallbacks, SignalRService.reconnected$.
+     * Data: a connected home-area hub that reconnects once.
+     */
+    it('announces an automatic reconnect', async () => {
+      const { service, hub } = await connect();
+      const reconnected = vi.fn();
+      service.reconnected$.subscribe(reconnected);
+      await flush();
+      expect(reconnected).not.toHaveBeenCalled();
+
+      hub.reconnectedCallbacks.forEach((cb) => cb());
+      expect(reconnected).toHaveBeenCalledOnce();
+    });
+
+    /**
      * Verifies: a new OIDC user (token refresh) restarts the hub with a URL carrying the new token, then rejoins.
      * Interacts with: ComnAuthService.user$ (Subject), FakeHubConnection.stop/start/baseUrl/invoke.
      * Data: token changes from 'tok-1' to 'tok-2' before the user$ emission.
@@ -718,6 +734,24 @@ describe('SignalRService', () => {
         TestBed.inject(TeamMembershipDataService).teamMemberships$,
       );
       expect(memberships.map((m) => m.id)).toEqual(['tm1']);
+    });
+
+    /**
+     * Verifies: each team membership event is announced on teamMembershipChanged$, so the page can reload the evaluation's users.
+     * Interacts with: FakeHubConnection.trigger, SignalRService.teamMembershipChanged$.
+     * Data: tm1 of t1 created, updated and deleted through the hub.
+     */
+    it('announces team membership events', async () => {
+      const { service, hub } = await connect();
+      const changed = vi.fn();
+      service.teamMembershipChanged$.subscribe(changed);
+      const membership = { id: 'tm1', teamId: 't1', userId: 'u1' };
+
+      hub.trigger('TeamMembershipCreated', { ...membership }, null);
+      hub.trigger('TeamMembershipUpdated', { ...membership }, ['roleId']);
+      hub.trigger('TeamMembershipDeleted', { ...membership });
+
+      expect(changed).toHaveBeenCalledTimes(3);
     });
 
     /**

@@ -179,6 +179,13 @@ export class EvaluationDataService {
       );
   }
 
+  // Fetch one evaluation into the store; the caller subscribes.
+  refreshById(id: string): Observable<Evaluation> {
+    return this.evaluationService
+      .getEvaluation(id)
+      .pipe(tap((evaluation) => this.updateStore(evaluation)));
+  }
+
   loadById(id: string) {
     this.evaluationStore.setLoading(true);
     return this.evaluationService

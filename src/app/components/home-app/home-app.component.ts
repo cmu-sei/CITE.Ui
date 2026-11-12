@@ -7,8 +7,27 @@ import { Component, OnDestroy, OnInit, ViewChild, inject, viewChild } from '@ang
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { BehaviorSubject, Subject, Observable, combineLatest } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  EMPTY,
+  Subject,
+  Observable,
+  combineLatest,
+  of,
+  timer,
+} from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  pairwise,
+  startWith,
+  switchMap,
+  take,
+  takeUntil,
+} from 'rxjs/operators';
 import {
   ComnAuthService,
   ComnSettingsService,
@@ -52,6 +71,10 @@ import { GallerySignalRService } from 'src/app/services/gallery-signalr.service'
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { XApiService } from 'src/app/services/xapi/xapi.service';
+import {
+  MOVE_CHANGE_DEBOUNCE_MS,
+  MOVE_CHANGE_JITTER,
+} from 'src/app/services/move-change-refresh';
 import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
@@ -145,6 +168,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   private unreadArticlesQuery = inject(UnreadArticlesQuery);
   private uiDataService = inject(UIDataService);
   private xApiService = inject(XApiService);
+  private moveChangeJitter = inject(MOVE_CHANGE_JITTER);
 
   readonly sidenav = viewChild<MatSidenav>('sidenav');
   readonly sort = viewChild(MatSort);
@@ -204,6 +228,14 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   permissions: SystemPermission[] = [];
   canViewAdministration = false;
   readonly SystemPermission = SystemPermission;
+  // the evaluation and team whose submissions are loaded
+  private loadedEvaluationId = '';
+  private loadedTeamId = '';
+  private currentMoveChanged$ = new Subject<void>();
+  // set by a hub reconnect: the next refetch reloads the evaluation first
+  private catchUpPending = false;
+  private teamChanged$ = new Subject<void>();
+  private evaluationIdsWithUsers = new Set<string>();
 
   constructor() {
     const titleService = inject(Title);
@@ -390,10 +422,93 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
       }
     });
-    // observe the submissions
-    this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
-      this.processSubmissions(submissions);
-    });
+    // observe the submissions; selecting one also needs the scoring model and
+    // the moves, which may arrive after the submissions
+    combineLatest([
+      this.submissionList$,
+      this.activeScoringModel$,
+      this.moveList$,
+    ])
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(([submissions]) => {
+        this.processSubmissions(submissions);
+      });
+    // refetch the team's submissions once after the current move changes
+    (this.evaluationQuery.selectActive() as Observable<Evaluation>)
+      .pipe(
+        filter((e) => !!e),
+        map((e) => ({ id: e.id, moveNumber: e.currentMoveNumber })),
+        distinctUntilChanged(
+          (a, b) => a.id === b.id && a.moveNumber === b.moveNumber,
+        ),
+        pairwise(),
+        filter(([previous, current]) => previous.id === current.id),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(() => {
+        // the store already holds the submissions of every move up to the
+        // current one, so a move that went back past the displayed one is
+        // shown at once; the refetch then brings the new move's scores
+        this.reselectDisplayedSubmission();
+        this.currentMoveChanged$.next();
+      });
+    // a team or evaluation switch loads the submissions itself, so it drops a
+    // move change refetch still waiting, in the debounce or the jitter
+    this.teamChanged$
+      .pipe(
+        startWith(undefined),
+        switchMap(() =>
+          this.currentMoveChanged$.pipe(
+            debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+            switchMap(() =>
+              timer(this.moveChangeJitter()).pipe(
+                switchMap(() =>
+                  this.catchUpPending
+                    ? this.catchUpAfterReconnect()
+                    : this.refreshSubmissions(),
+                ),
+              ),
+            ),
+          ),
+        ),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(() => this.reselectDisplayedSubmission());
+    // catch up after a hub reconnect, spread out like a move change, since
+    // every page reconnects at once after an API restart
+    this.signalRService.reconnected$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.catchUpPending = true;
+        this.currentMoveChanged$.next();
+      });
+    // a team membership event can add or drop a user of the evaluation, so
+    // reload its users once the events stop, spread out like a move change
+    this.signalRService.teamMembershipChanged$
+      .pipe(
+        debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+        switchMap(() =>
+          timer(this.moveChangeJitter()).pipe(
+            switchMap(() =>
+              this.selectedEvaluationId
+                ? this.userDataService
+                    .loadByEvaluation(this.selectedEvaluationId)
+                    .pipe(
+                      catchError((err) => {
+                        console.warn(
+                          'CITE could not reload the evaluation users: ' +
+                            (err?.message ?? err),
+                        );
+                        return EMPTY;
+                      }),
+                    )
+                : EMPTY,
+            ),
+          ),
+        ),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe();
     // observe the evaluations
     this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
       this.evaluationList = evaluations
@@ -410,10 +525,15 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
         });
       this.setDataSources();
-      // Load users for each evaluation (for displaying creator names)
-      evaluations.forEach(evaluation => {
-        if (evaluation.id) {
-          this.userDataService.loadByEvaluation(evaluation.id).pipe(take(1)).subscribe();
+      // Load users for each evaluation (for displaying creator names), once:
+      // every evaluation update re-runs this
+      evaluations.forEach((evaluation) => {
+        if (evaluation.id && !this.evaluationIdsWithUsers.has(evaluation.id)) {
+          this.evaluationIdsWithUsers.add(evaluation.id);
+          this.userDataService
+            .loadByEvaluation(evaluation.id)
+            .pipe(take(1))
+            .subscribe();
         }
       });
     });
@@ -574,7 +694,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
       }
     });
-    if (activeTeamId) {
+    // every evaluation, move and team update re-runs this, so load only when
+    // the evaluation or the team is a different one
+    if (
+      activeTeamId &&
+      (activeTeamId !== this.loadedTeamId ||
+        this.selectedEvaluationId !== this.loadedEvaluationId)
+    ) {
       this.changeTeam(activeTeamId);
       this.teamMembershipDataService.loadMemberships(activeTeamId);
     }
@@ -605,6 +731,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.submissionDataService.setActive('');
     this.moveDataService.setActive('');
     this.submissionDataService.unload();
+    this.teamChanged$.next();
+    this.loadedEvaluationId = this.selectedEvaluationId;
+    this.loadedTeamId = teamId;
     this.submissionDataService.loadByEvaluationTeam(
       this.selectedEvaluationId,
       teamId
@@ -692,20 +821,90 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
   }
 
-  setActiveSubmission(submission: Submission) {
+  setActiveSubmission(submission: Submission, loadSubmission = true) {
     if (submission.id != this.submissionQuery.getActiveId()) {
       this.submissionDataService.setActive(submission.id);
-      if (!submission.scoreIsAnAverage) {
+      if (loadSubmission && !submission.scoreIsAnAverage) {
         this.submissionDataService.loadById(submission.id);
       }
       const activeMove = this.sortedMoveList.find(
         (m) => +m.moveNumber === +submission.moveNumber
       );
-      this.moveDataService.setActive(activeMove.id);
+      if (activeMove) {
+        this.moveDataService.setActive(activeMove.id);
+      }
     }
   }
 
-  selectDisplayedSubmission(selection: string) {
+  // A reconnect may have missed a move change, so reload the evaluation and
+  // its moves. A changed move refetches the submissions through the move
+  // change; otherwise they are refetched here.
+  private catchUpAfterReconnect(): Observable<unknown> {
+    this.catchUpPending = false;
+    const evaluationId = this.selectedEvaluationId;
+    if (!evaluationId) {
+      return EMPTY;
+    }
+    const moveNumber = (
+      this.evaluationQuery.getEntity(evaluationId) as Evaluation
+    )?.currentMoveNumber;
+    return this.evaluationDataService.refreshById(evaluationId).pipe(
+      switchMap((evaluation) => {
+        this.moveDataService.loadByEvaluation(evaluationId);
+        return +evaluation.currentMoveNumber === +moveNumber
+          ? this.refreshSubmissions()
+          : EMPTY;
+      }),
+      catchError((err) => {
+        console.warn(
+          'CITE could not catch up after reconnecting: ' +
+            (err?.message ?? err),
+        );
+        return of(null);
+      }),
+    );
+  }
+
+  private refreshSubmissions(): Observable<Submission[]> {
+    if (
+      !this.loadedTeamId ||
+      this.loadedEvaluationId !== this.selectedEvaluationId
+    ) {
+      return EMPTY;
+    }
+    // on a failure keep showing what the store holds
+    return this.submissionDataService
+      .refreshByEvaluationTeam(this.loadedEvaluationId, this.loadedTeamId)
+      .pipe(
+        catchError((err) => {
+          console.warn(
+            'CITE could not refetch the submissions after a move change: ' +
+              (err?.message ?? err),
+          );
+          return of(null);
+        }),
+      );
+  }
+
+  // After a move change, and after its refetch whether or not that worked,
+  // keep the selection while it is on the displayed move; otherwise (the move
+  // went back past it) show the displayed move's submission of the saved kind,
+  // from the store, without fetching it again.
+  private reselectDisplayedSubmission() {
+    const active = this.submissionQuery.getActive() as Submission;
+    if (active && +active.moveNumber === +this.displayedMoveNumber) {
+      return;
+    }
+    const scoringModel = this.scoringModelQuery.getActive() as ScoringModel;
+    let submissionType =
+      this.uiDataService.getSubmissionType(this.selectedEvaluationId) || 'user';
+    if (submissionType === 'user' && !scoringModel?.useUserScore) {
+      submissionType = 'team';
+    }
+    this.selectDisplayedSubmission(submissionType, false);
+  }
+
+  selectDisplayedSubmission(selection: string, loadSubmission = true) {
     if (selection === 'report') {
       this.selectedSection =
         this.selectedSection === this.section.report
@@ -763,7 +962,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       }
       if (newSubmission) {
         this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
-        this.setActiveSubmission(newSubmission);
+        this.setActiveSubmission(newSubmission, loadSubmission);
       }
     }
   }
