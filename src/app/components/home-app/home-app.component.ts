@@ -23,6 +23,7 @@ import {
   filter,
   map,
   pairwise,
+  startWith,
   switchMap,
   take,
   takeUntil,
@@ -449,14 +450,19 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.reselectDisplayedSubmission();
         this.currentMoveChanged$.next();
       });
-    this.currentMoveChanged$
+    // a team or evaluation switch loads the submissions itself, so it drops a
+    // move change refetch still waiting, in the debounce or the jitter
+    this.teamChanged$
       .pipe(
-        debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+        startWith(undefined),
         switchMap(() =>
-          timer(this.moveChangeJitter()).pipe(
-            switchMap(() => this.refreshSubmissions()),
-            // a team or evaluation switch loads the submissions itself
-            takeUntil(this.teamChanged$),
+          this.currentMoveChanged$.pipe(
+            debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+            switchMap(() =>
+              timer(this.moveChangeJitter()).pipe(
+                switchMap(() => this.refreshSubmissions()),
+              ),
+            ),
           ),
         ),
         takeUntil(this.unsubscribe$),

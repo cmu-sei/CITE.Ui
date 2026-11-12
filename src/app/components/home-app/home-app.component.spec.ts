@@ -800,6 +800,25 @@ describe('HomeAppComponent', () => {
     });
 
     /**
+     * Verifies: a team switch inside the debounce drops the move change refetch too.
+     * Interacts with: changeTeam(), SubmissionService.getByEvaluationTeam stub, fake timers.
+     * Data: ?evaluation=e1; Alice on t1; the move changes, then she observes t2 before the debounce ends.
+     */
+    it('drops the refetch on a team switch inside the debounce', async () => {
+      const { fixture, submissionApi } = await renderTeamPage();
+
+      changeCurrentMove(1);
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS - 1);
+      fixture.componentInstance.changeTeam('t2');
+      vi.runAllTimers();
+
+      expect(submissionApi.getByEvaluationTeam.mock.calls).toEqual([
+        ['e1', 't1'],
+        ['e1', 't2'],
+      ]);
+    });
+
+    /**
      * Verifies: a failed refetch is logged as a warning and leaves the submissions and the shown one as they were.
      * Interacts with: SubmissionService.getByEvaluationTeam stub (fails once), console.warn spy, real Submission store, fake timers.
      * Data: ?evaluation=e1 on move 0; Alice on t1; the move changes and the refetch fails.
