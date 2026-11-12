@@ -737,6 +737,24 @@ describe('SignalRService', () => {
     });
 
     /**
+     * Verifies: each team membership event is announced on teamMembershipChanged$, so the page can reload the evaluation's users.
+     * Interacts with: FakeHubConnection.trigger, SignalRService.teamMembershipChanged$.
+     * Data: tm1 of t1 created, updated and deleted through the hub.
+     */
+    it('announces team membership events', async () => {
+      const { service, hub } = await connect();
+      const changed = vi.fn();
+      service.teamMembershipChanged$.subscribe(changed);
+      const membership = { id: 'tm1', teamId: 't1', userId: 'u1' };
+
+      hub.trigger('TeamMembershipCreated', { ...membership }, null);
+      hub.trigger('TeamMembershipUpdated', { ...membership }, ['roleId']);
+      hub.trigger('TeamMembershipDeleted', { ...membership });
+
+      expect(changed).toHaveBeenCalledTimes(3);
+    });
+
+    /**
      * Verifies: TeamMembershipDeleted with the payload cite.api sends (the whole entity) removes nothing.
      * Interacts with: FakeHubConnection.trigger, real TeamMembershipDataService.teamMemberships$.
      * Data: team t1's memberships held; tm1 created through the hub, then deleted with the entity object as payload.

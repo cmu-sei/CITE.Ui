@@ -482,6 +482,33 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.catchUpPending = true;
         this.currentMoveChanged$.next();
       });
+    // a team membership event can add or drop a user of the evaluation, so
+    // reload its users once the events stop, spread out like a move change
+    this.signalRService.teamMembershipChanged$
+      .pipe(
+        debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+        switchMap(() =>
+          timer(this.moveChangeJitter()).pipe(
+            switchMap(() =>
+              this.selectedEvaluationId
+                ? this.userDataService
+                    .loadByEvaluation(this.selectedEvaluationId)
+                    .pipe(
+                      catchError((err) => {
+                        console.warn(
+                          'CITE could not reload the evaluation users: ' +
+                            (err?.message ?? err),
+                        );
+                        return EMPTY;
+                      }),
+                    )
+                : EMPTY,
+            ),
+          ),
+        ),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe();
     // observe the evaluations
     this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
       this.evaluationList = evaluations

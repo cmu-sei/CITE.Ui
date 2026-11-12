@@ -220,13 +220,19 @@ async function renderHome(
   } satisfies ApiStub<SubmissionService>;
   const signalR: Pick<
     SignalRService,
-    'startConnection' | 'join' | 'leave' | 'switchTeam' | 'reconnected$'
+    | 'startConnection'
+    | 'join'
+    | 'leave'
+    | 'switchTeam'
+    | 'reconnected$'
+    | 'teamMembershipChanged$'
   > = {
     startConnection: vi.fn(hubStart),
     join: vi.fn(),
     leave: vi.fn(),
     switchTeam: vi.fn(),
     reconnected$: new Subject<void>(),
+    teamMembershipChanged$: new Subject<void>(),
   };
   // The page starts the Gallery hub only when GalleryApiUrl is set (empty in
   // the default settings).
@@ -879,6 +885,28 @@ describe('HomeAppComponent', () => {
       vi.runAllTimers();
       expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
       expect(evaluationApi.getEvaluation).toHaveBeenCalledOnce();
+    });
+
+    /**
+     * Verifies: a burst of team membership events reloads the evaluation's users once, after the debounce and the jitter.
+     * Interacts with: SignalRService.teamMembershipChanged$ (stub Subject), UserService.getEvaluationUsers stub, fake timers.
+     * Data: ?evaluation=e1; Alice on t1; three membership events arrive together.
+     */
+    it("reloads the evaluation's users once after membership events", async () => {
+      const { signalR, userApi } = await renderTeamPage();
+      const userLoads = userApi.getEvaluationUsers.mock.calls.length;
+
+      signalR.teamMembershipChanged$.next();
+      signalR.teamMembershipChanged$.next();
+      signalR.teamMembershipChanged$.next();
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS + JITTER_MS - 1);
+      expect(userApi.getEvaluationUsers).toHaveBeenCalledTimes(userLoads);
+
+      vi.advanceTimersByTime(1);
+      expect(userApi.getEvaluationUsers).toHaveBeenCalledTimes(userLoads + 1);
+      expect(userApi.getEvaluationUsers).toHaveBeenLastCalledWith('e1');
+      vi.runAllTimers();
+      expect(userApi.getEvaluationUsers).toHaveBeenCalledTimes(userLoads + 1);
     });
 
     /**
