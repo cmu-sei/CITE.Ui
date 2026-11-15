@@ -19,7 +19,6 @@ import { PermissionDataService } from 'src/app/data/permission/permission-data.s
 import { CrucibleDialogService } from '@cmusei/crucible-common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgStyle } from '@angular/common';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 
@@ -27,7 +26,7 @@ import { RouterLink } from '@angular/router';
     selector: 'app-evaluation-info',
     templateUrl: './evaluation-info.component.html',
     styleUrls: ['./evaluation-info.component.scss'],
-    imports: [MatIconButton, MatIcon, NgStyle, MatButton, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink]
+    imports: [MatIconButton, MatIcon, MatButton, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink]
 })
 export class EvaluationInfoComponent implements OnDestroy {
   private evaluationQuery = inject(EvaluationQuery);

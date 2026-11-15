@@ -18,7 +18,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
     <mat-list class="appitems-container">
       @if (canViewEvaluations || canCreateEvaluations) {
       <mat-list-item id="wrapper showhand" (click)="gotoSection(evaluationsText)"
-        [ngClass]="getSelectedClass(evaluationsText)">
+        [class]="getSelectedClass(evaluationsText)">
         <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-briefcase-outline" />
         {{ evaluationsText }}
         <button aria-labelledby="evaluationsText" mat-icon-button class="pull-right">
@@ -27,7 +27,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-list-item>
       }
       @if (canViewScoringModels || canCreateScoringModels) {
-      <mat-list-item [ngClass]="getSelectedClass(scoringModelsText)" id="wrapper showhand"
+      <mat-list-item [class]="getSelectedClass(scoringModelsText)" id="wrapper showhand"
         (click)="gotoSection(scoringModelsText)">
         <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-grid" />
         {{ scoringModelsText }}
@@ -37,7 +37,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-list-item>
       }
       @if (canViewEvaluations || canCreateEvaluations) {
-      <mat-list-item [ngClass]="getSelectedClass(submissionsText)" id="wrapper showhand"
+      <mat-list-item [class]="getSelectedClass(submissionsText)" id="wrapper showhand"
         (click)="gotoSection(submissionsText)">
         <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-playlist-play" />
         {{ submissionsText }}
@@ -47,7 +47,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-list-item>
       }
       @if (canViewTeamTypes) {
-      <mat-list-item [ngClass]="getSelectedClass(teamTypesText)" id="wrapper showhand"
+      <mat-list-item [class]="getSelectedClass(teamTypesText)" id="wrapper showhand"
         (click)="gotoSection(teamTypesText)">
         <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-playlist-play" />
         {{ teamTypesText }}
@@ -57,7 +57,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-list-item>
       }
       @if (canViewUsers) {
-      <mat-list-item [ngClass]="getSelectedClass(usersText)" id="wrapper showhand" (click)="gotoSection(usersText)">
+      <mat-list-item [class]="getSelectedClass(usersText)" id="wrapper showhand" (click)="gotoSection(usersText)">
         <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-account" />
         {{ usersText }}
         <button aria-labelledby="usersText" mat-icon-button class="pull-right">
@@ -66,7 +66,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-list-item>
       }
       @if (canViewRoles) {
-      <mat-list-item [ngClass]="getSelectedClass(rolesText)" id="wrapper showhand" (click)="gotoSection(rolesText)">
+      <mat-list-item [class]="getSelectedClass(rolesText)" id="wrapper showhand" (click)="gotoSection(rolesText)">
         <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-lock" />
         {{ rolesText }}
         <button aria-labelledby="rolesText" mat-icon-button class="pull-right">
@@ -75,7 +75,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       </mat-list-item>
       }
       @if (canViewGroups) {
-      <mat-list-item [ngClass]="getSelectedClass(groupsText)" id="wrapper showhand" (click)="gotoSection(groupsText)">
+      <mat-list-item [class]="getSelectedClass(groupsText)" id="wrapper showhand" (click)="gotoSection(groupsText)">
         <mat-icon matListItemIcon class="mat-list-item-icon" fontIcon="mdi-account-group" />
         {{ groupsText }}
         <button aria-labelledby="groupsText" mat-icon-button class="pull-right">
