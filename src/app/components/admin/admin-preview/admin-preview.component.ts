@@ -16,7 +16,6 @@ import { takeUntil } from 'rxjs';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
-import { NgClass } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
@@ -24,7 +23,7 @@ import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
     selector: 'app-admin-preview',
     templateUrl: './admin-preview.component.html',
     styleUrl: './admin-preview.component.scss',
-    imports: [MatIconButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatCheckbox, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow, DisplayOrderPipe]
+    imports: [MatIconButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatCheckbox, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow, DisplayOrderPipe]
 })
 export class AdminPreviewComponent implements OnDestroy, OnInit {
   matDialog = inject(MatDialog);

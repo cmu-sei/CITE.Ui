@@ -2,7 +2,7 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit, inject, input, viewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject, input, viewChild, AfterViewInit } from '@angular/core';
 import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 import {
   Evaluation,
@@ -43,7 +43,7 @@ const ALL_MOVES_VALUE: number = -999;
     imports: [MatIcon, MatIconButton, MatFormField, MatLabel, MatSelect, MatOption, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner]
 })
 
-export class AdminActionsComponent implements OnDestroy, OnInit {
+export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
   private settingsService = inject(ComnSettingsService);
   private evaluationQuery = inject(EvaluationQuery);
   private actionDataService = inject(ActionDataService);

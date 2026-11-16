@@ -11,7 +11,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
       (click)="decrementDisplayedMove()" title="Previous Move">
       <mat-icon class="icon-color" fontIcon="mdi-chevron-left" />
     </button>
-    <span class="move-label">Move <span [ngStyle]="getMoveStyle()">{{ displayedMoveNumber }}</span> of {{
+    <span class="move-label">Move <span [style]="getMoveStyle()">{{ displayedMoveNumber }}</span> of {{
       getMaxMoveNumber() }}</span>
     <button aria-label="Increment Displayed Move" mat-icon-button [disabled]="isCurrentMoveNumber"
       (click)="incrementDisplayedMove()" title="Next Move">
