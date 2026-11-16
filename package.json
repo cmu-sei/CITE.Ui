@@ -79,7 +79,7 @@
     "patch-package": "^8.0.1",
     "ts-node": "~10.0.0",
     "typescript": "~5.9.3",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.11"
   },
   "overrides": {
     "memfs": "4.17.1",
