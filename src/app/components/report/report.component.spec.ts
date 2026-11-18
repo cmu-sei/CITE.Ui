@@ -156,27 +156,25 @@ async function renderReport(
       const teams = testBed.inject(TeamStore);
       teams.set([{ id: 't1', name: 'Blue Team', shortName: 'BLU' }]);
       teams.setActive('t1');
-      testBed
-        .inject(SubmissionStore)
-        .set([
-          selecting(
-            { id: 's-user', moveNumber: 1, userId: 'u1', score: 10 },
-            'o1',
-            { id: 'c-user', comment: 'Mail server down', createdBy: 'u1' },
-          ),
-          selecting(
-            { id: 's-team', moveNumber: 1, teamId: 't1', score: 50 },
-            'o2',
-            {
-              id: 'c-team',
-              comment: 'Payroll offline',
-              createdBy: namesHidden
-                ? '00000000-0000-0000-0000-000000000000'
-                : 'u1',
-            },
-            namesHidden ? null : 'u1',
-          ),
-        ]);
+      testBed.inject(SubmissionStore).set([
+        selecting(
+          { id: 's-user', moveNumber: 1, userId: 'u1', score: 10 },
+          'o1',
+          { id: 'c-user', comment: 'Mail server down', createdBy: 'u1' },
+        ),
+        selecting(
+          { id: 's-team', moveNumber: 1, teamId: 't1', score: 50 },
+          'o2',
+          {
+            id: 'c-team',
+            comment: 'Payroll offline',
+            createdBy: namesHidden
+              ? '00000000-0000-0000-0000-000000000000'
+              : 'u1',
+          },
+          namesHidden ? null : 'u1',
+        ),
+      ]);
       // comment authors are looked up among the evaluation's users
       testBed.inject(UserStore).set([{ id: 'u1', name: 'Alice' }]);
     },
@@ -219,14 +217,20 @@ describe('ReportComponent', () => {
     expect(
       screen.getByText(/Responses for Ransomware exercise/, { selector: 'h2' }),
     ).toHaveTextContent("BLU's Responses for Ransomware exercise");
-    expect(viewButton('Team').closest('button')).toHaveAttribute('aria-pressed', 'true');
+    expect(viewButton('Team').closest('button')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     expect(screen.getByLabelText('Significant')).toBeChecked();
     expect(screen.getByLabelText('Minimal')).not.toBeChecked();
     expect(selectDisplayedSubmission).toHaveBeenLastCalledWith('team');
 
     await user.click(viewButton('User'));
 
-    expect(viewButton('User').closest('button')).toHaveAttribute('aria-pressed', 'true');
+    expect(viewButton('User').closest('button')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     expect(screen.getByLabelText('Minimal')).toBeChecked();
     expect(selectDisplayedSubmission).toHaveBeenLastCalledWith('user');
   });
@@ -314,7 +318,9 @@ describe('ReportComponent', () => {
     expect(screen.getByText('Payroll offline')).toHaveTextContent(
       /^Payroll offline - Team member$/,
     );
-    expect(screen.getByLabelText('Significant')).not.toHaveAttribute('tabindex');
+    expect(screen.getByLabelText('Significant')).not.toHaveAttribute(
+      'tabindex',
+    );
     expect(screen.queryByText(/Alice/, { selector: '.comment *' })).toBeNull();
   });
 
@@ -331,9 +337,14 @@ describe('ReportComponent', () => {
       });
 
       expect(
-        screen.getByText(/Responses for Ransomware exercise/, { selector: 'h2' }),
+        screen.getByText(/Responses for Ransomware exercise/, {
+          selector: 'h2',
+        }),
       ).toHaveTextContent("BLU's Responses for Ransomware exercise");
-      expect(viewButton('Team').closest('button')).toHaveAttribute('aria-pressed', 'true');
+      expect(viewButton('Team').closest('button')).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      );
       expect(viewButton('User').closest('button')).toBeDisabled();
       expect(selectDisplayedSubmission).not.toHaveBeenCalled();
     },
@@ -354,9 +365,13 @@ describe('ReportComponent', () => {
       const { selectDisplayedSubmission } = await renderReport(savedType);
 
       expect(
-        screen.getByText(/Responses for Ransomware exercise/, { selector: 'h2' }),
+        screen.getByText(/Responses for Ransomware exercise/, {
+          selector: 'h2',
+        }),
       ).toHaveTextContent(`${heading} Responses for Ransomware exercise`);
-      expect(viewButton(pressed as 'User' | 'Team').closest('button')).toHaveAttribute('aria-pressed', 'true');
+      expect(
+        viewButton(pressed as 'User' | 'Team').closest('button'),
+      ).toHaveAttribute('aria-pressed', 'true');
       // opening the report never changes the saved view
       expect(selectDisplayedSubmission).not.toHaveBeenCalled();
     },

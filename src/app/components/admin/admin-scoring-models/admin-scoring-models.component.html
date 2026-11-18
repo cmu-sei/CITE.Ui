@@ -5,142 +5,251 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 @if (!previewScoringModelId) {
-<div class="cssLayoutRowStartCenter">
-  <div class="sp-icon">
-    <mat-icon class="mdi-24px" fontIcon="mdi-grid" [style.color]="'var(--mat-sys-primary)'" />
-  </div>
-  <mat-form-field style="width: 300px; margin-left: 20px;">
-    <input matInput [formControl]="filterControl" placeholder="Search" (click)="applyFilter()" />
-    @if (filterControl.value) {
-    <button mat-icon-button matSuffix (click)="clearFilter()" title="Clear Search">
-      <mat-icon style="transform: scale(0.85)" fontIcon="mdi-close-circle-outline" />
-    </button>
-    }
-  </mat-form-field>
-  @if (!addingNewScoringModel) {
-  <mat-form-field class="status-ff">
-    <mat-label>Statuses</mat-label>
-    <mat-select class="status-dd" placeholder="Statuses" [(ngModel)]="selectedStatuses" multiple
-      (selectionChange)="applyFilter()">
-      @for (status of itemStatuses; track status) {
-      <mat-option [value]="status">{{ status }}</mat-option>
+  <div class="cssLayoutRowStartCenter">
+    <div class="sp-icon">
+      <mat-icon
+        class="mdi-24px"
+        fontIcon="mdi-grid"
+        [style.color]="'var(--mat-sys-primary)'"
+      />
+    </div>
+    <mat-form-field style="width: 300px; margin-left: 20px">
+      <input
+        matInput
+        [formControl]="filterControl"
+        placeholder="Search"
+        (click)="applyFilter()"
+      />
+      @if (filterControl.value) {
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="clearFilter()"
+          title="Clear Search"
+        >
+          <mat-icon
+            style="transform: scale(0.85)"
+            fontIcon="mdi-close-circle-outline"
+          />
+        </button>
       }
-    </mat-select>
-  </mat-form-field>
-  }
-  <div style="width: 150px; margin-left: 20px;">
-    <mat-checkbox [(ngModel)]="showAll" (change)="applyFilter()">Show All</mat-checkbox>
-  </div>
-  @if (!addingNewScoringModel) {
-  <div>
-    <mat-paginator #paginator [length]="filteredScoringModelList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]" (page)="paginatorEvent($event)" />
-  </div>
-  }
-</div>
-
-<div class="table-container">
-  <table mat-table [dataSource]="displayedScoringModels" matSort (matSortChange)="sortChanged($event)"
-    [trackBy]="trackById" multiTemplateDataRows>
-
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>
-        <button mat-icon-button (click)="addOrEditScoringModel(null); $event.stopPropagation()"
-          title="Add Scoring Model" [disabled]="isBusy || !canCreateScoringModels">
-          <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle" />
-        </button>
-        <button mat-icon-button (click)="uploadFile('json', '', ''); jsonInput.click(); $event.stopPropagation()"
-          title="Upload Scoring Model" [disabled]="isBusy || !canCreateScoringModels">
-          <mat-icon class="mdi-18px" fontIcon="mdi-upload" />
-        </button>
-      </th>
-      <td mat-cell *matCellDef="let row">
-        <button mat-icon-button (click)="previewScoringModel(row.id); $event.stopPropagation()"
-          title="Preview {{ row.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-eye-outline" />
-        </button>
-        <button mat-icon-button (click)="addOrEditScoringModel(row); $event.stopPropagation()"
-          title="Edit {{ row.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline" />
-        </button>
-        <button mat-icon-button (click)="copyScoringModel(row.id); $event.stopPropagation();"
-          title="Copy {{ row.description }}" [disabled]="isBusy || !canCreateScoringModels">
-          <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" />
-        </button>
-        <button mat-icon-button (click)="downloadScoringModel(row); $event.stopPropagation();"
-          title="Download {{ row.description }}" [disabled]="isBusy">
-          <mat-icon class="mdi-18px" fontIcon="mdi-download" />
-        </button>
-        <button mat-icon-button (click)="deleteScoringModelRequest(row); $event.stopPropagation()"
-          title="Delete {{ row.description }}"
-          [disabled]="isBusy || row.evaluationId || !canManage(row.id)">
-          <mat-icon class="mdi-18px" fontIcon="mdi-trash-can-outline" />
-        </button>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Scoring Model Description</th>
-      <td mat-cell *matCellDef="let row">
-        {{ row.description }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="createdBy">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Created By</th>
-      <td mat-cell *matCellDef="let row">{{ getUserName(row.createdBy) }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="dateCreated">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Created</th>
-      <td mat-cell *matCellDef="let row">{{ row.dateCreated | date:"yyyy-MM-dd HH:mm" }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-      <td mat-cell *matCellDef="let row">{{ row.status }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="expandedDetail">
-      <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-        <div [@detailExpand]="element.id === editScoringModel.id ? 'expanded' : 'collapsed'"
-          (click)="$event.stopPropagation()">
-          @if (element.id === editScoringModel.id) {
-          <div class="sub-container">
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>Scoring Categories</mat-expansion-panel-header>
-              <app-admin-scoring-categories [scoringModelId]="element.id" [editScoringCategoryId]="scoringCategoryId"
-                [displayScoringModelbyMoveNumber]="element.displayScoringModelByMoveNumber"
-                [canEdit]="canEdit(element.id)"
-                (scoringCategoryClick)="scoringCategoryId = $event.toString()" />
-            </mat-expansion-panel>
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>Memberships</mat-expansion-panel-header>
-              <app-admin-scoring-model-memberships [scoringModelId]="element.id" />
-            </mat-expansion-panel>
-          </div>
+    </mat-form-field>
+    @if (!addingNewScoringModel) {
+      <mat-form-field class="status-ff">
+        <mat-label>Statuses</mat-label>
+        <mat-select
+          class="status-dd"
+          placeholder="Statuses"
+          [(ngModel)]="selectedStatuses"
+          multiple
+          (selectionChange)="applyFilter()"
+        >
+          @for (status of itemStatuses; track status) {
+            <mat-option [value]="status">{{ status }}</mat-option>
           }
-        </div>
-      </td>
-    </ng-container>
+        </mat-select>
+      </mat-form-field>
+    }
+    <div style="width: 150px; margin-left: 20px">
+      <mat-checkbox [(ngModel)]="showAll" (change)="applyFilter()"
+        >Show All</mat-checkbox
+      >
+    </div>
+    @if (!addingNewScoringModel) {
+      <div>
+        <mat-paginator
+          #paginator
+          [length]="filteredScoringModelList.length"
+          [pageIndex]="pageIndex"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 15, 20, 25, 50, 100, 200]"
+          (page)="paginatorEvent($event)"
+        />
+      </div>
+    }
+  </div>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns" class="element-row"
-      (click)="togglePanel(row)"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
-  </table>
-</div>
+  <div class="table-container">
+    <table
+      mat-table
+      [dataSource]="displayedScoringModels"
+      matSort
+      (matSortChange)="sortChanged($event)"
+      [trackBy]="trackById"
+      multiTemplateDataRows
+    >
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>
+          <button
+            mat-icon-button
+            (click)="addOrEditScoringModel(null); $event.stopPropagation()"
+            title="Add Scoring Model"
+            [disabled]="isBusy || !canCreateScoringModels"
+          >
+            <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle" />
+          </button>
+          <button
+            mat-icon-button
+            (click)="
+              uploadFile('json', '', '');
+              jsonInput.click();
+              $event.stopPropagation()
+            "
+            title="Upload Scoring Model"
+            [disabled]="isBusy || !canCreateScoringModels"
+          >
+            <mat-icon class="mdi-18px" fontIcon="mdi-upload" />
+          </button>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <button
+            mat-icon-button
+            (click)="previewScoringModel(row.id); $event.stopPropagation()"
+            title="Preview {{ row.description }}"
+            [disabled]="isBusy"
+          >
+            <mat-icon class="mdi-18px" fontIcon="mdi-eye-outline" />
+          </button>
+          <button
+            mat-icon-button
+            (click)="addOrEditScoringModel(row); $event.stopPropagation()"
+            title="Edit {{ row.description }}"
+            [disabled]="isBusy"
+          >
+            <mat-icon class="mdi-18px" fontIcon="mdi-square-edit-outline" />
+          </button>
+          <button
+            mat-icon-button
+            (click)="copyScoringModel(row.id); $event.stopPropagation()"
+            title="Copy {{ row.description }}"
+            [disabled]="isBusy || !canCreateScoringModels"
+          >
+            <mat-icon class="mdi-18px" fontIcon="mdi-content-copy" />
+          </button>
+          <button
+            mat-icon-button
+            (click)="downloadScoringModel(row); $event.stopPropagation()"
+            title="Download {{ row.description }}"
+            [disabled]="isBusy"
+          >
+            <mat-icon class="mdi-18px" fontIcon="mdi-download" />
+          </button>
+          <button
+            mat-icon-button
+            (click)="deleteScoringModelRequest(row); $event.stopPropagation()"
+            title="Delete {{ row.description }}"
+            [disabled]="isBusy || row.evaluationId || !canManage(row.id)"
+          >
+            <mat-icon class="mdi-18px" fontIcon="mdi-trash-can-outline" />
+          </button>
+        </td>
+      </ng-container>
 
-@if (isLoading) {
-<mat-card appearance="outlined" style="display: flex; justify-content: center; align-items: center;">
-  <mat-progress-spinner color="primary" mode="indeterminate" />
-</mat-card>
-}
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Scoring Model Description
+        </th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.description }}
+        </td>
+      </ng-container>
 
+      <ng-container matColumnDef="createdBy">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Created By</th>
+        <td mat-cell *matCellDef="let row">{{ getUserName(row.createdBy) }}</td>
+      </ng-container>
 
+      <ng-container matColumnDef="dateCreated">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Created</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.dateCreated | date: 'yyyy-MM-dd HH:mm' }}
+        </td>
+      </ng-container>
 
-<input hidden (change)="selectFile($event)" (cancel)="isBusy = false" #jsonInput type="file" accept=".json" />
-}
-@else {
-<app-admin-preview [scoringModelId]="previewScoringModelId" (closeMe)="previewScoringModel('')" />
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let row">{{ row.status }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="expandedDetail">
+        <td
+          mat-cell
+          *matCellDef="let element"
+          [attr.colspan]="displayedColumns.length"
+        >
+          <div
+            [@detailExpand]="
+              element.id === editScoringModel.id ? 'expanded' : 'collapsed'
+            "
+            (click)="$event.stopPropagation()"
+          >
+            @if (element.id === editScoringModel.id) {
+              <div class="sub-container">
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header
+                    >Scoring Categories</mat-expansion-panel-header
+                  >
+                  <app-admin-scoring-categories
+                    [scoringModelId]="element.id"
+                    [editScoringCategoryId]="scoringCategoryId"
+                    [displayScoringModelbyMoveNumber]="
+                      element.displayScoringModelByMoveNumber
+                    "
+                    [canEdit]="canEdit(element.id)"
+                    (scoringCategoryClick)="
+                      scoringCategoryId = $event.toString()
+                    "
+                  />
+                </mat-expansion-panel>
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header
+                    >Memberships</mat-expansion-panel-header
+                  >
+                  <app-admin-scoring-model-memberships
+                    [scoringModelId]="element.id"
+                  />
+                </mat-expansion-panel>
+              </div>
+            }
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        class="element-row"
+        (click)="togglePanel(row)"
+      ></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['expandedDetail']"
+        class="detail-row"
+      ></tr>
+    </table>
+  </div>
+
+  @if (isLoading) {
+    <mat-card
+      appearance="outlined"
+      style="display: flex; justify-content: center; align-items: center"
+    >
+      <mat-progress-spinner color="primary" mode="indeterminate" />
+    </mat-card>
+  }
+
+  <input
+    hidden
+    (change)="selectFile($event)"
+    (cancel)="isBusy = false"
+    #jsonInput
+    type="file"
+    accept=".json"
+  />
+} @else {
+  <app-admin-preview
+    [scoringModelId]="previewScoringModelId"
+    (closeMe)="previewScoringModel('')"
+  />
 }

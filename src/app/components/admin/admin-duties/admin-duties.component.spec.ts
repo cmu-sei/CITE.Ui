@@ -202,14 +202,30 @@ describe('AdminDutiesComponent', () => {
    */
   it('keeps other evaluations out of the panel and out of an add to all teams', async () => {
     const { created, editDialog, fixture, user } = await renderDuties(true);
-    TestBed.inject(TeamDataService).updateStore({ id: 't9', evaluationId: 'e2', name: 'Green', shortName: 'G' });
-    TestBed.inject(DutyDataService).updateStore({ id: 'd9', evaluationId: 'e2', teamId: 't9', name: 'Other evaluation duty', users: [] });
+    TestBed.inject(TeamDataService).updateStore({
+      id: 't9',
+      evaluationId: 'e2',
+      name: 'Green',
+      shortName: 'G',
+    });
+    TestBed.inject(DutyDataService).updateStore({
+      id: 'd9',
+      evaluationId: 'e2',
+      teamId: 't9',
+      name: 'Other evaluation duty',
+      users: [],
+    });
     fixture.detectChanges();
 
-    expect(within(screen.getByRole('table')).queryByText('Other evaluation duty')).not.toBeInTheDocument();
+    expect(
+      within(screen.getByRole('table')).queryByText('Other evaluation duty'),
+    ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Add Duty' }));
-    editDialog.complete({ saveChanges: true, duty: { evaluationId: 'e1', name: 'Timekeeper', teamId: '' } });
+    editDialog.complete({
+      saveChanges: true,
+      duty: { evaluationId: 'e1', name: 'Timekeeper', teamId: '' },
+    });
 
     expect(created.map((d) => d.teamId)).toEqual(['t1', 't2']);
   });

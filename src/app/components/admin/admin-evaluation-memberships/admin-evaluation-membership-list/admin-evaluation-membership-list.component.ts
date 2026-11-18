@@ -3,16 +3,35 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnChanges, OnInit, inject, input, output, viewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  OnChanges,
+  OnInit,
+  inject,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import {
-  EvaluationMembership,
-  Group,
-  User,
-} from 'src/app/generated/cite.api';
+  MatTableDataSource,
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+  MatNoDataRow,
+} from '@angular/material/table';
+import { EvaluationMembership, Group, User } from 'src/app/generated/cite.api';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
@@ -23,13 +42,40 @@ import { ClipboardModule } from 'ngx-clipboard';
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-    selector: 'app-admin-evaluation-membership-list',
-    templateUrl: './admin-evaluation-membership-list.component.html',
-    styleUrls: ['./admin-evaluation-membership-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbar, MatToolbarRow, MatIcon, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, ClipboardModule, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
+  selector: 'app-admin-evaluation-membership-list',
+  templateUrl: './admin-evaluation-membership-list.component.html',
+  styleUrls: ['./admin-evaluation-membership-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatToolbar,
+    MatToolbarRow,
+    MatIcon,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    MatIconButton,
+    MatSuffix,
+    MatPaginator,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    ClipboardModule,
+    MatTooltip,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+  ],
 })
-export class AdminEvaluationMembershipListComponent implements OnInit, OnChanges, AfterViewInit {
+export class AdminEvaluationMembershipListComponent
+  implements OnInit, OnChanges, AfterViewInit
+{
   snackBar = inject(MatSnackBar);
 
   readonly users = input<User[]>(undefined);
@@ -62,7 +108,7 @@ export class AdminEvaluationMembershipListComponent implements OnInit, OnChanges
     this.dataSource.data = this.buildModel();
 
     this.displayedColumns = this.viewColumns.concat(
-      this.canEdit() ? this.editColumns : []
+      this.canEdit() ? this.editColumns : [],
     );
   }
 

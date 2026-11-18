@@ -3,10 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Order, Query, QueryConfig, QueryEntity } from '@datorama/akita';
-import {
-  ScoringModelState,
-  ScoringModelStore,
-} from './scoring-model.store';
+import { ScoringModelState, ScoringModelStore } from './scoring-model.store';
 import { ScoringModel } from 'src/app/generated/cite.api';
 import { Injectable, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
@@ -26,7 +23,7 @@ export class ScoringModelQuery extends QueryEntity<ScoringModelState> {
     const store = inject(ScoringModelStore);
 
     super(store);
-  
+
     this.store = store;
   }
 

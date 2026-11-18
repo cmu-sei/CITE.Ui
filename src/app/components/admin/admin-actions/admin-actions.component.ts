@@ -2,7 +2,16 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit, inject, input, viewChild, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  inject,
+  input,
+  viewChild,
+  AfterViewInit,
+} from '@angular/core';
 import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 import {
   Evaluation,
@@ -17,17 +26,42 @@ import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource,
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+  MatNoDataRow,
+} from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminActionEditDialogComponent } from '../admin-action-edit-dialog/admin-action-edit-dialog.component';
-import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  UntypedFormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 
 import { MatIconButton } from '@angular/material/button';
-import { MatFormField, MatLabel, MatInput, MatSuffix } from '@angular/material/input';
+import {
+  MatFormField,
+  MatLabel,
+  MatInput,
+  MatSuffix,
+} from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -37,12 +71,38 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 const ALL_MOVES_VALUE: number = -999;
 
 @Component({
-    selector: 'app-admin-actions',
-    templateUrl: './admin-actions.component.html',
-    styleUrls: ['./admin-actions.component.scss'],
-    imports: [MatIcon, MatIconButton, MatFormField, MatLabel, MatSelect, MatOption, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner]
+  selector: 'app-admin-actions',
+  templateUrl: './admin-actions.component.html',
+  styleUrls: ['./admin-actions.component.scss'],
+  imports: [
+    MatIcon,
+    MatIconButton,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSuffix,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatCheckbox,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatCard,
+    MatProgressSpinner,
+  ],
 })
-
 export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
   private settingsService = inject(ComnSettingsService);
   private evaluationQuery = inject(EvaluationQuery);
@@ -72,7 +132,12 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
   displayedActions: Action[] = [];
   selectedMoveNumber = ALL_MOVES_VALUE;
   allMovesValue = ALL_MOVES_VALUE;
-  displayedColumns: string[] = ['description', 'moveNumber', 'teamId', 'isChecked'];
+  displayedColumns: string[] = [
+    'description',
+    'moveNumber',
+    'teamId',
+    'isChecked',
+  ];
   private unsubscribe$ = new Subject();
   dataSource = new MatTableDataSource<Action>();
   readonly sort = viewChild(MatSort);
@@ -97,19 +162,25 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((moves) => {
-        this.moveList = moves.filter((m) => m.evaluationId === this.selectedEvaluationId);
+        this.moveList = moves.filter(
+          (m) => m.evaluationId === this.selectedEvaluationId,
+        );
       });
     this.teamQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((teams) => {
-        this.teamList = teams.filter((t) => t.evaluationId === this.selectedEvaluationId);
+        this.teamList = teams.filter(
+          (t) => t.evaluationId === this.selectedEvaluationId,
+        );
       });
     this.actionQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((actions) => {
-        this.actionList = actions.filter((a) => a.evaluationId === this.selectedEvaluationId);
+        this.actionList = actions.filter(
+          (a) => a.evaluationId === this.selectedEvaluationId,
+        );
         this.criteriaChanged();
       });
     this.filterControl.valueChanges
@@ -130,7 +201,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     this.dataSource.sort = this.sort();
     const initialSortState: Sort = {
       active: 'moveNumber',
-      direction: 'asc'
+      direction: 'asc',
     };
     this.dataSource.data = this.displayedActions;
     this.sort().active = initialSortState.active;
@@ -171,7 +242,7 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
         action: action,
         teamList: this.teamList,
         moveList: this.moveList,
-        allMovesValue: ALL_MOVES_VALUE
+        allMovesValue: ALL_MOVES_VALUE,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -206,7 +277,8 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
     this.dialogService
       .confirm({
         title: 'Delete Action',
-        message: 'Are you sure that you want to delete ' + action.description + '?',
+        message:
+          'Are you sure that you want to delete ' + action.description + '?',
         confirmText: 'Delete',
         cancelText: 'Cancel',
       })
@@ -220,9 +292,12 @@ export class AdminActionsComponent implements OnDestroy, OnInit, AfterViewInit {
 
   criteriaChanged() {
     this.displayedActions = this.actionList.filter(
-      (r) => (!this.selectedTeamId || r.teamId === this.selectedTeamId) &&
-             (+this.selectedMoveNumber === ALL_MOVES_VALUE || +r.moveNumber === +this.selectedMoveNumber) &&
-             (!this.filterString || r.description.toLowerCase().includes(this.filterString))
+      (r) =>
+        (!this.selectedTeamId || r.teamId === this.selectedTeamId) &&
+        (+this.selectedMoveNumber === ALL_MOVES_VALUE ||
+          +r.moveNumber === +this.selectedMoveNumber) &&
+        (!this.filterString ||
+          r.description.toLowerCase().includes(this.filterString)),
     );
     this.dataSource.data = this.displayedActions;
   }

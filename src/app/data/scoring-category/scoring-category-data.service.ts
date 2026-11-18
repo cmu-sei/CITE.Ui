@@ -11,7 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   ScoringCategory,
   ScoringCategoryService,
-  UpdateScoringCategoryRequest
+  UpdateScoringCategoryRequest,
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -45,7 +45,7 @@ export class ScoringCategoryDataService {
     const activatedRoute = this.activatedRoute;
 
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('scoringCategorymask') || '')
+      map((params) => params.get('scoringCategorymask') || ''),
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
@@ -54,16 +54,16 @@ export class ScoringCategoryDataService {
       });
     });
     this.sortColumn = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('sorton') || 'name')
+      map((params) => params.get('sorton') || 'name'),
     );
     this.sortIsAscending = activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('sortdir') || 'asc') === 'asc')
+      map((params) => (params.get('sortdir') || 'asc') === 'asc'),
     );
     this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
+      map((params) => parseInt(params.get('pagesize') || '20', 10)),
     );
     this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
+      map((params) => parseInt(params.get('pageindex') || '0', 10)),
     );
     this.scoringCategoryList = combineLatest([
       this.scoringCategoryQuery.selectAll(),
@@ -84,20 +84,20 @@ export class ScoringCategoryDataService {
         ]) =>
           items
             ? (items as ScoringCategory[])
-              .sort((a: ScoringCategory, b: ScoringCategory) =>
-                this.sortScoringCategories(a, b, sortColumn, sortIsAscending)
-              )
-              .filter(
-                (scoringCategory) =>
-                  ('' + scoringCategory.description)
-                    .toLowerCase()
-                    .includes(filterTerm.toLowerCase()) ||
+                .sort((a: ScoringCategory, b: ScoringCategory) =>
+                  this.sortScoringCategories(a, b, sortColumn, sortIsAscending),
+                )
+                .filter(
+                  (scoringCategory) =>
+                    ('' + scoringCategory.description)
+                      .toLowerCase()
+                      .includes(filterTerm.toLowerCase()) ||
                     scoringCategory.id
                       .toLowerCase()
-                      .includes(filterTerm.toLowerCase())
-              )
-            : []
-      )
+                      .includes(filterTerm.toLowerCase()),
+                )
+            : [],
+      ),
     );
   }
 
@@ -105,7 +105,7 @@ export class ScoringCategoryDataService {
     a: ScoringCategory,
     b: ScoringCategory,
     column: string,
-    isAsc: boolean
+    isAsc: boolean,
   ) {
     switch (column) {
       case 'description':
@@ -114,10 +114,7 @@ export class ScoringCategoryDataService {
           (isAsc ? 1 : -1)
         );
       case 'displayOrder':
-        return (
-          (a.displayOrder < b.displayOrder ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
+        return (a.displayOrder < b.displayOrder ? -1 : 1) * (isAsc ? 1 : -1);
       case 'dateCreated':
         return (
           (a.dateCreated.valueOf() < b.dateCreated.valueOf() ? -1 : 1) *
@@ -136,7 +133,7 @@ export class ScoringCategoryDataService {
         tap(() => {
           this.scoringCategoryStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (scoringCategories) => {
@@ -144,7 +141,7 @@ export class ScoringCategoryDataService {
         },
         (error) => {
           this.scoringCategoryStore.set([]);
-        }
+        },
       );
   }
 
@@ -156,7 +153,7 @@ export class ScoringCategoryDataService {
         tap(() => {
           this.scoringCategoryStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.scoringCategoryStore.upsert(s.id, { ...s });
@@ -177,7 +174,7 @@ export class ScoringCategoryDataService {
         tap(() => {
           this.scoringCategoryStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.scoringCategoryStore.add(s);
@@ -202,7 +199,7 @@ export class ScoringCategoryDataService {
         tap(() => {
           this.scoringCategoryStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);

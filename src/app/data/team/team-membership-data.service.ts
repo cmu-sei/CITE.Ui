@@ -15,22 +15,20 @@ import {
 export class TeamMembershipDataService {
   private teamMembershipsService = inject(TeamMembershipsService);
 
-  private teamMembershipsSubject = new BehaviorSubject<
-    TeamMembership[]
-  >([]);
+  private teamMembershipsSubject = new BehaviorSubject<TeamMembership[]>([]);
   public teamMemberships$ = this.teamMembershipsSubject.asObservable();
   public teamMemberships: TeamMembership[] = [];
   // the team whose memberships are held; live updates arrive for other teams too
   private teamId: string;
 
   loadMemberships(teamId: string): Observable<TeamMembership[]> {
-    return this.teamMembershipsService
-      .getAllTeamMemberships(teamId)
-      .pipe(tap((x) => {
+    return this.teamMembershipsService.getAllTeamMemberships(teamId).pipe(
+      tap((x) => {
         this.teamId = teamId;
         this.teamMemberships = x;
         this.teamMembershipsSubject.next(x);
-      }));
+      }),
+    );
   }
 
   createMembership(teamId: string, teamMembership: TeamMembership) {
@@ -39,7 +37,7 @@ export class TeamMembershipDataService {
       .pipe(
         tap((x) => {
           this.upsert(x.id, x);
-        })
+        }),
       );
   }
 
@@ -49,7 +47,7 @@ export class TeamMembershipDataService {
       .pipe(
         tap((x) => {
           this.upsert(teamMembership.id, x);
-        })
+        }),
       );
   }
 
@@ -57,7 +55,7 @@ export class TeamMembershipDataService {
     return this.teamMembershipsService.deleteTeamMembership(id).pipe(
       tap(() => {
         this.remove(id);
-      })
+      }),
     );
   }
 

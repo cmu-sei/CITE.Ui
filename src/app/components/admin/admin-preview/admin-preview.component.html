@@ -6,59 +6,81 @@ project root for license information or contact permission@sei.cmu.edu for full 
 <div id="printable-area">
   <div class="header-div">
     <div class="header-text">
-      <h2>
-        Preview of {{ scoringModel.description }}
-      </h2>
+      <h2>Preview of {{ scoringModel.description }}</h2>
     </div>
     <div class="right-buttons no-print">
       <button
         aria-label="Print Preview"
         mat-icon-button
-        style="outline: none;"
+        style="outline: none"
         title="Print Preview"
         (click)="printpage()"
-        >
+      >
         <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-printer" />
       </button>
       <button
         aria-label="Close Preview"
         mat-icon-button
-        style="outline: none;"
+        style="outline: none"
         title="Close Preview"
         (click)="closePreview()"
-        >
-        <mat-icon aria-hidden="false" class="mdi-24px" fontIcon="mdi-close-circle-outline" />
+      >
+        <mat-icon
+          aria-hidden="false"
+          class="mdi-24px"
+          fontIcon="mdi-close-circle-outline"
+        />
       </button>
     </div>
   </div>
   @for (moveNumber of moveNumberList; track $index) {
-    <mat-table [dataSource]="getDisplayedScoringCategories(moveNumber) | displayOrder" class="full-width"
-      >
+    <mat-table
+      [dataSource]="getDisplayedScoringCategories(moveNumber) | displayOrder"
+      class="full-width"
+    >
       <!-- Description Definition -->
       <ng-container matColumnDef="scoringCategoryDescription">
         <mat-header-cell *matHeaderCellDef class="cssLayoutRowSpaceBetween">
           <div class="title-font">
             @if (moveNumberList.length > 1) {
               Move {{ moveNumber }}
-            }
-            @else {
+            } @else {
               For All Moves
             }
           </div>
         </mat-header-cell>
         <!-- Report display -->
-        <mat-cell *matCellDef="let scoringCategory" class="description-container">
+        <mat-cell
+          *matCellDef="let scoringCategory"
+          class="description-container"
+        >
           <div class="scoring-category-description">
-            {{ scoringCategory.displayOrder }}. {{ scoringCategory.description }}
+            {{ scoringCategory.displayOrder }}.
+            {{ scoringCategory.description }}
           </div>
-          <mat-table [dataSource]="scoringCategory.scoringOptions | displayOrder" class="full-width">
-            <ng-container matColumnDef="scoringOptionDescription" class="description-cell">
-              <mat-cell *matCellDef="let scoringOption" class="description-container">
-                <div [class]="scoringOption.isModifier ? 'indent-div' : 'no-indent-div'">
+          <mat-table
+            [dataSource]="scoringCategory.scoringOptions | displayOrder"
+            class="full-width"
+          >
+            <ng-container
+              matColumnDef="scoringOptionDescription"
+              class="description-cell"
+            >
+              <mat-cell
+                *matCellDef="let scoringOption"
+                class="description-container"
+              >
+                <div
+                  [class]="
+                    scoringOption.isModifier ? 'indent-div' : 'no-indent-div'
+                  "
+                >
                   <div class="score-option">
                     @if (scoringCategory.scoringOptionSelection !== 'None') {
                       <div class="checkbox-div">
-                        <mat-checkbox [aria-label]="scoringOption.description" />
+                        <mat-checkbox
+                          [aria-label]="scoringOption.description"
+                        />
                       </div>
                     }
                     <div class="description-div">
@@ -73,16 +95,20 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 @if (!scoringModel?.hideScoresOnScoreSheet) {
                   <div class="value-div">
                     {{
-                    !scoringCategory.isScored ||
-                    scoringOption.isModifier
-                    ? ' '
-                    : scoringOption.value
+                      !scoringCategory.isScored || scoringOption.isModifier
+                        ? ' '
+                        : scoringOption.value
                     }}
                   </div>
                 }
               </mat-cell>
             </ng-container>
-            <mat-row *matRowDef="let row; columns: ['scoringOptionDescription', 'value']" />
+            <mat-row
+              *matRowDef="
+                let row;
+                columns: ['scoringOptionDescription', 'value']
+              "
+            />
           </mat-table>
         </mat-cell>
       </ng-container>

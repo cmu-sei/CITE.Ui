@@ -12,7 +12,6 @@ import { SystemMessageService } from '../system-message/system-message.service';
 export class ErrorService implements ErrorHandler {
   private injector = inject(Injector);
 
-
   handleError(err: any) {
     // Http failure response for (unknown url): 0 Unknown Error
     if (err instanceof HttpErrorResponse) {
@@ -33,7 +32,7 @@ export class ErrorService implements ErrorHandler {
       } else if (rejection?.message === 'Network Error') {
         this.report(
           'Identity Server Error',
-          'The Identity Server could not be reached for user authentication.'
+          'The Identity Server could not be reached for user authentication.',
         );
       } else if (rejection?.message?.endsWith('Failed to fetch')) {
         // a SignalR hub start that its service didn't catch; it reports its own failures.

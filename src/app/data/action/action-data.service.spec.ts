@@ -205,10 +205,11 @@ describe('ActionDataService', () => {
     const { service, query, store, api } = setup();
     store.set([makeAction()]);
     service.updateAction(makeAction({ description: 'Renamed' }));
-    expect(api.updateAction).toHaveBeenCalledWith(
-      'a1',
-      { moveNumber: 1, actionNumber: 1, description: 'Renamed' },
-    );
+    expect(api.updateAction).toHaveBeenCalledWith('a1', {
+      moveNumber: 1,
+      actionNumber: 1,
+      description: 'Renamed',
+    });
     expect(query.getEntity('a1')?.description).toBe('Renamed');
   });
 

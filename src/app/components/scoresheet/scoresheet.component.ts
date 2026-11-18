@@ -32,57 +32,82 @@ import {
 } from 'src/app/generated/cite.api/model/models';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
-import { CrucibleDialogService, CrucibleDialogComponent, CrucibleDialogContentDirective, CrucibleDialogActionsDirective } from '@cmusei/crucible-common';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
+import {
+  CrucibleDialogService,
+  CrucibleDialogComponent,
+  CrucibleDialogContentDirective,
+  CrucibleDialogActionsDirective,
+} from '@cmusei/crucible-common';
+import {
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatRowDef,
+  MatRow,
+  MatHeaderRowDef,
+  MatHeaderRow,
+} from '@angular/material/table';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { DecimalPipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput, MatFormField, MatLabel, MatHint } from '@angular/material/input';
+import {
+  MatInput,
+  MatFormField,
+  MatLabel,
+  MatHint,
+} from '@angular/material/input';
 import { MatCard } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { FormsModule } from '@angular/forms';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 import { commentAuthor } from 'src/app/utilities/comment-author';
-import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/app/utilities/severity-levels';
+import {
+  severityLevelForScore,
+  severityLevelLabel,
+  severityLevels,
+} from 'src/app/utilities/severity-levels';
 
 @Component({
-    selector: 'app-scoresheet',
-    templateUrl: './scoresheet.component.html',
-    styleUrls: ['./scoresheet.component.scss'],
-    imports: [
-        MatTable,
-        MatColumnDef,
-        MatHeaderCellDef,
-        MatHeaderCell,
-        MatButton,
-        MatCellDef,
-        MatCell,
-        MatCheckbox,
-        MatTooltip,
-        MatIconButton,
-        MatIcon,
-        MatInput,
-        CdkTextareaAutosize,
-        MatHint,
-        MatCard,
-        MatProgressBar,
-        FormsModule,
-        MatRowDef,
-        MatRow,
-        MatHeaderRowDef,
-        MatHeaderRow,
-        CrucibleDialogComponent,
-        CrucibleDialogContentDirective,
-        MatFormField,
-        MatLabel,
-        CrucibleDialogActionsDirective,
-        MatDialogClose,
-        DecimalPipe,
-        DisplayOrderPipe,
-    ],
+  selector: 'app-scoresheet',
+  templateUrl: './scoresheet.component.html',
+  styleUrls: ['./scoresheet.component.scss'],
+  imports: [
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatButton,
+    MatCellDef,
+    MatCell,
+    MatCheckbox,
+    MatTooltip,
+    MatIconButton,
+    MatIcon,
+    MatInput,
+    CdkTextareaAutosize,
+    MatHint,
+    MatCard,
+    MatProgressBar,
+    FormsModule,
+    MatRowDef,
+    MatRow,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    CrucibleDialogComponent,
+    CrucibleDialogContentDirective,
+    MatFormField,
+    MatLabel,
+    CrucibleDialogActionsDirective,
+    MatDialogClose,
+    DecimalPipe,
+    DisplayOrderPipe,
+  ],
 })
 export class ScoresheetComponent implements OnDestroy {
   private permissionDataService = inject(PermissionDataService);
@@ -132,7 +157,9 @@ export class ScoresheetComponent implements OnDestroy {
   currentComment = 'current comment';
   showHeader = false;
   // save state of each answer box, keyed by scoring option id
-  commentSaveStates: { [scoringOptionId: string]: 'saving' | 'saved' | 'failed' } = {};
+  commentSaveStates: {
+    [scoringOptionId: string]: 'saving' | 'saved' | 'failed';
+  } = {};
   private unsubscribe$ = new Subject();
 
   constructor() {
@@ -197,9 +224,10 @@ export class ScoresheetComponent implements OnDestroy {
       });
     this.userDataService.setCurrentUser();
     // observe the evaluation users
-    this.userQuery.selectAll()
+    this.userQuery
+      .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(users => {
+      .subscribe((users) => {
         this.evaluationUsers = users;
       });
     // observe the submission list
@@ -212,11 +240,12 @@ export class ScoresheetComponent implements OnDestroy {
         this.setFormatting();
       });
     // observe the team users to get permissions
-    this.teamMembershipDataService
-      .teamMemberships$
+    this.teamMembershipDataService.teamMemberships$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((teamMemberships) => {
-        const currentTeamMembership = teamMemberships.find((tu) => tu.userId === this.loggedInUserId);
+        const currentTeamMembership = teamMemberships.find(
+          (tu) => tu.userId === this.loggedInUserId,
+        );
         this.hasCanModifyPermission = currentTeamMembership
           ? this.permissionDataService.canEditTeamScore(this.activeTeamId)
           : false;
@@ -232,7 +261,7 @@ export class ScoresheetComponent implements OnDestroy {
       return 0;
     } else {
       const submissionCategory = submissionCategories.find(
-        (sc) => sc.scoringCategoryId === scoringCategoryId
+        (sc) => sc.scoringCategoryId === scoringCategoryId,
       );
       return submissionCategory ? submissionCategory.score : 0;
     }
@@ -243,21 +272,21 @@ export class ScoresheetComponent implements OnDestroy {
     const submissionCategories = this.displayedSubmission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
       const sc = submissionCategories.find(
-        (subCat) => subCat.scoringCategoryId === scoringCategoryId
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId,
       );
       if (sc) {
         const so = sc.submissionOptions.find(
-          (subOpt) => subOpt.scoringOptionId === scoringOptionId
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId,
         );
         isSelected = so && so.isSelected;
       }
       if (isSelected) {
         const scoringCategory =
           this.selectedScoringModel.scoringCategories.find(
-            (subCat) => subCat.id === scoringCategoryId
+            (subCat) => subCat.id === scoringCategoryId,
           );
         const scoringOption = scoringCategory.scoringOptions.find(
-          (so) => so.id === scoringOptionId
+          (so) => so.id === scoringOptionId,
         );
       }
     }
@@ -269,11 +298,11 @@ export class ScoresheetComponent implements OnDestroy {
     const submissionCategories = this.displayedSubmission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
       const sc = submissionCategories.find(
-        (subCat) => subCat.scoringCategoryId === scoringCategoryId
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId,
       );
       if (sc) {
         const so = sc.submissionOptions.find(
-          (subOpt) => subOpt.scoringOptionId === scoringOptionId
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId,
         );
         selectedCount = so?.selectedCount ?? 0;
       }
@@ -285,11 +314,11 @@ export class ScoresheetComponent implements OnDestroy {
     const submissionOptionId = this.displayedSubmission.submissionCategories
       .find((sc) => sc.scoringCategoryId === scoringCategoryId)
       .submissionOptions.find(
-        (so) => so.scoringOptionId === scoringOptionId
+        (so) => so.scoringOptionId === scoringOptionId,
       ).id;
     this.submissionDataService.toggleSubmissionOption(
       submissionOptionId,
-      event.checked
+      event.checked,
     );
   }
 
@@ -300,12 +329,15 @@ export class ScoresheetComponent implements OnDestroy {
     this.dialogService
       .confirm({
         title: 'Clear all selections?',
-        message: 'This removes every selection on this scoresheet. Are you sure?',
+        message:
+          'This removes every selection on this scoresheet. Are you sure?',
       })
       .afterClosed()
       .subscribe((confirmed) => {
         if (confirmed) {
-          this.submissionDataService.clearSubmission(this.displayedSubmission.id);
+          this.submissionDataService.clearSubmission(
+            this.displayedSubmission.id,
+          );
         }
       });
   }
@@ -332,7 +364,7 @@ export class ScoresheetComponent implements OnDestroy {
         this.submissionDataService.addSubmissionComment(
           this.displayedSubmission.id,
           submissionOption.id,
-          this.currentComment
+          this.currentComment,
         );
       }
       this.currentComment = '';
@@ -343,7 +375,7 @@ export class ScoresheetComponent implements OnDestroy {
   editComment(
     templateRef,
     scoringOption: ScoringOption,
-    submissionComment: SubmissionComment
+    submissionComment: SubmissionComment,
   ) {
     this.currentComment = submissionComment.comment;
     this.commentOptionDescription = scoringOption.description;
@@ -358,7 +390,7 @@ export class ScoresheetComponent implements OnDestroy {
         newComment.comment = this.currentComment;
         this.submissionDataService.changeSubmissionComment(
           this.displayedSubmission.id,
-          newComment
+          newComment,
         );
       }
       this.currentComment = '';
@@ -374,37 +406,49 @@ export class ScoresheetComponent implements OnDestroy {
       if (commentText) {
         const newComment = { ...comment } as SubmissionComment;
         newComment.comment = event.target.value;
-        this.trackCommentSave(scoringOptionId, this.submissionDataService.changeSubmissionComment(
-          this.displayedSubmission.id,
-          newComment
-        ));
+        this.trackCommentSave(
+          scoringOptionId,
+          this.submissionDataService.changeSubmissionComment(
+            this.displayedSubmission.id,
+            newComment,
+          ),
+        );
       } else {
-        this.trackCommentSave(scoringOptionId, this.submissionDataService.removeSubmissionComment(
-          this.displayedSubmission.id,
-          comment.id
-        ));
+        this.trackCommentSave(
+          scoringOptionId,
+          this.submissionDataService.removeSubmissionComment(
+            this.displayedSubmission.id,
+            comment.id,
+          ),
+        );
       }
     } else {
       const submissionCategory =
         this.displayedSubmission.submissionCategories.find(
-          (sc) => sc.scoringCategoryId === scoringCategoryId
+          (sc) => sc.scoringCategoryId === scoringCategoryId,
         );
       if (submissionCategory) {
         const submissionOption = submissionCategory.submissionOptions.find(
-          (so) => so.scoringOptionId === scoringOptionId
+          (so) => so.scoringOptionId === scoringOptionId,
         );
         if (submissionOption) {
-          this.trackCommentSave(scoringOptionId, this.submissionDataService.addSubmissionComment(
-            this.displayedSubmission.id,
-            submissionOption.id,
-            commentText
-          ));
+          this.trackCommentSave(
+            scoringOptionId,
+            this.submissionDataService.addSubmissionComment(
+              this.displayedSubmission.id,
+              submissionOption.id,
+              commentText,
+            ),
+          );
         }
       }
     }
   }
 
-  private trackCommentSave(scoringOptionId: string, request$: Observable<Submission>) {
+  private trackCommentSave(
+    scoringOptionId: string,
+    request$: Observable<Submission>,
+  ) {
     this.commentSaveStates[scoringOptionId] = 'saving';
     request$.subscribe({
       next: () => (this.commentSaveStates[scoringOptionId] = 'saved'),
@@ -417,17 +461,29 @@ export class ScoresheetComponent implements OnDestroy {
   getAnsweredCounts(): { answered: number; total: number } {
     const counts = { answered: 0, total: 0 };
     this.getDisplayedScoringCategories().forEach((scoringCategory) => {
-      const scoringOptions = (scoringCategory.scoringOptions || []).filter((so) => !so.isModifier);
+      const scoringOptions = (scoringCategory.scoringOptions || []).filter(
+        (so) => !so.isModifier,
+      );
       if (this.selectedScoringModel.displayCommentTextBoxes) {
         scoringOptions.forEach((scoringOption) => {
           counts.total++;
-          if (this.optionComments(scoringCategory.id, scoringOption.id).some((c) => c.comment)) {
+          if (
+            this.optionComments(scoringCategory.id, scoringOption.id).some(
+              (c) => c.comment,
+            )
+          ) {
             counts.answered++;
           }
         });
-      } else if (scoringCategory.scoringOptionSelection !== ScoringOptionSelection.None) {
+      } else if (
+        scoringCategory.scoringOptionSelection !== ScoringOptionSelection.None
+      ) {
         counts.total++;
-        if (scoringOptions.some((so) => this.isSelected(scoringCategory.id, so.id))) {
+        if (
+          scoringOptions.some((so) =>
+            this.isSelected(scoringCategory.id, so.id),
+          )
+        ) {
           counts.answered++;
         }
       }
@@ -452,7 +508,9 @@ export class ScoresheetComponent implements OnDestroy {
       return '';
     }
     const nextMoveNumber = Math.min(...nextMoveNumbers);
-    const nextMove = this.moveQuery.getAll().find((m) => +m.moveNumber === nextMoveNumber);
+    const nextMove = this.moveQuery
+      .getAll()
+      .find((m) => +m.moveNumber === nextMoveNumber);
     return nextMove?.description || 'Move ' + nextMoveNumber;
   }
 
@@ -460,7 +518,10 @@ export class ScoresheetComponent implements OnDestroy {
     this.dialogService
       .confirm({
         title: 'Delete Comment',
-        message: 'Are you sure that you want to delete "' + submissionComment.comment + '"?',
+        message:
+          'Are you sure that you want to delete "' +
+          submissionComment.comment +
+          '"?',
         confirmText: 'Delete',
         cancelText: 'Cancel',
       })
@@ -469,7 +530,7 @@ export class ScoresheetComponent implements OnDestroy {
         if (confirmed) {
           this.submissionDataService.removeSubmissionComment(
             this.displayedSubmission.id,
-            submissionComment.id
+            submissionComment.id,
           );
         }
       });
@@ -486,11 +547,11 @@ export class ScoresheetComponent implements OnDestroy {
     }
     const submissionCategory =
       this.displayedSubmission.submissionCategories.find(
-        (sc) => sc.scoringCategoryId === scoringCategoryId
+        (sc) => sc.scoringCategoryId === scoringCategoryId,
       );
     if (submissionCategory) {
       const submissionOption = submissionCategory.submissionOptions.find(
-        (so) => so.scoringOptionId === scoringOptionId
+        (so) => so.scoringOptionId === scoringOptionId,
       );
       if (submissionOption) {
         return submissionOption.submissionComments;
@@ -508,11 +569,11 @@ export class ScoresheetComponent implements OnDestroy {
     const submissionCategories = this.displayedSubmission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
       const sc = submissionCategories.find(
-        (subCat) => subCat.scoringCategoryId === scoringCategoryId
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId,
       );
       if (sc) {
         const so = sc.submissionOptions.find(
-          (subOpt) => subOpt.scoringOptionId === scoringOptionId
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId,
         );
         isSelected = so && so.isSelected;
         selectedBy = so && so.modifiedBy;
@@ -548,7 +609,8 @@ export class ScoresheetComponent implements OnDestroy {
       this.dialogService
         .confirm({
           title: 'WARNING:  You will not be able to reopen this response!',
-          message: 'Move ' +
+          message:
+            'Move ' +
             this.displayedMoveNumber +
             ' has ended. You will not be able to reopen this response. Are you sure that you wish to submit?',
         })
@@ -603,7 +665,7 @@ export class ScoresheetComponent implements OnDestroy {
     const byMove = this.selectedScoringModel.displayScoringModelByMoveNumber;
     this.displayedSubmission.submissionCategories.forEach((sc) => {
       const scoringCategory = this.selectedScoringModel.scoringCategories.find(
-        (x) => x.id === sc.scoringCategoryId
+        (x) => x.id === sc.scoringCategoryId,
       );
       if (
         scoringCategory.scoringOptionSelection !==
@@ -684,16 +746,25 @@ export class ScoresheetComponent implements OnDestroy {
       this.teamQuery
         .getAll()
         .some((team) =>
-          this.permissionDataService.hasTeamPermission(team.id, TeamPermission.EditOfficialScore),
+          this.permissionDataService.hasTeamPermission(
+            team.id,
+            TeamPermission.EditOfficialScore,
+          ),
         );
     const canModify = isOfficial
       ? canEditOfficial
       : this.displaying === 'user' ||
-        this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.EditTeamScore);
+        this.permissionDataService.hasTeamPermission(
+          this.activeTeamId,
+          TeamPermission.EditTeamScore,
+        );
     const canSubmit = isOfficial
       ? canEditOfficial
       : this.displaying === 'user' ||
-        this.permissionDataService.hasTeamPermission(this.activeTeamId, TeamPermission.SubmitTeamScore);
+        this.permissionDataService.hasTeamPermission(
+          this.activeTeamId,
+          TeamPermission.SubmitTeamScore,
+        );
     this.showReopenButton =
       this.displayedSubmission &&
       canSubmit &&
@@ -736,37 +807,39 @@ export class ScoresheetComponent implements OnDestroy {
         !s.userId &&
         !s.teamId &&
         s.groupId &&
-        s.scoreIsAnAverage
+        s.scoreIsAnAverage,
     );
     this.showOfficialScore = this.submissionList.some(
       (s) =>
         +s.moveNumber === displayedMoveNumber &&
         !s.userId &&
         !s.teamId &&
-        !s.groupId
+        !s.groupId,
     );
   }
 
   getDisplayedScoringCategories(): ScoringCategory[] {
     const displayedScoringCategories: ScoringCategory[] = [];
     const displayedMoveNumber = this.getResolvedDisplayedMoveNumber();
-    (this.selectedScoringModel.scoringCategories || []).forEach((scoringCategory) => {
-      let hideIt = false;
-      if (
-        this.selectedScoringModel.displayScoringModelByMoveNumber &&
-        displayedMoveNumber !== null
-      ) {
+    (this.selectedScoringModel.scoringCategories || []).forEach(
+      (scoringCategory) => {
+        let hideIt = false;
         if (
-          displayedMoveNumber < +scoringCategory.moveNumberFirstDisplay ||
-          displayedMoveNumber > +scoringCategory.moveNumberLastDisplay
+          this.selectedScoringModel.displayScoringModelByMoveNumber &&
+          displayedMoveNumber !== null
         ) {
-          hideIt = true;
+          if (
+            displayedMoveNumber < +scoringCategory.moveNumberFirstDisplay ||
+            displayedMoveNumber > +scoringCategory.moveNumberLastDisplay
+          ) {
+            hideIt = true;
+          }
         }
-      }
-      if (!hideIt) {
-        displayedScoringCategories.push(scoringCategory);
-      }
-    });
+        if (!hideIt) {
+          displayedScoringCategories.push(scoringCategory);
+        }
+      },
+    );
     this.haveSomeScoringCategories = displayedScoringCategories.length > 0;
     return displayedScoringCategories;
   }
@@ -775,7 +848,10 @@ export class ScoresheetComponent implements OnDestroy {
 
   // the severity level of the displayed score, from the scoring model's levels
   displayedSeverityLevel() {
-    return severityLevelForScore(severityLevels(this.selectedScoringModel), this.displayedSubmission.score);
+    return severityLevelForScore(
+      severityLevels(this.selectedScoringModel),
+      this.displayedSubmission.score,
+    );
   }
 
   ngOnDestroy() {

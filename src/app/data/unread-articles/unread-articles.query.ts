@@ -12,8 +12,7 @@ import { Injectable, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
 
-@QueryConfig({
-})
+@QueryConfig({})
 @Injectable({
   providedIn: 'root',
 })
@@ -24,7 +23,7 @@ export class UnreadArticlesQuery extends QueryEntity<UnreadArticlesState> {
     const store = inject(UnreadArticlesStore);
 
     super(store);
-  
+
     this.store = store;
   }
 

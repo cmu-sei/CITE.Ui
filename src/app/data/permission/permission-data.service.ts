@@ -15,7 +15,7 @@ import {
   SystemPermissionsService,
   TeamPermission,
   TeamPermissionClaim,
-  TeamPermissionsService
+  TeamPermissionsService,
 } from 'src/app/generated/cite.api';
 
 @Injectable({
@@ -24,7 +24,9 @@ import {
 export class PermissionDataService {
   private permissionsService = inject(SystemPermissionsService);
   private evaluationPermissionsService = inject(EvaluationPermissionsService);
-  private scoringModelPermissionsService = inject(ScoringModelPermissionsService);
+  private scoringModelPermissionsService = inject(
+    ScoringModelPermissionsService,
+  );
   private teamPermissionService = inject(TeamPermissionsService);
 
   private _permissions: SystemPermission[] = [];
@@ -50,7 +52,7 @@ export class PermissionDataService {
   load(): Observable<SystemPermission[]> {
     return this.permissionsService.getMySystemPermissions().pipe(
       take(1),
-      tap((x) => (this._permissions = x))
+      tap((x) => (this._permissions = x)),
     );
   }
 
@@ -76,19 +78,17 @@ export class PermissionDataService {
       SystemPermission.ViewGroups,
       SystemPermission.ManageGroups,
       SystemPermission.ViewTeamTypes,
-      SystemPermission.ManageTeamTypes
+      SystemPermission.ManageTeamTypes,
     ];
 
     return this._permissions.some((perm) => adminPermissions.includes(perm));
   }
 
   loadEvaluationPermissions(): Observable<EvaluationPermissionClaim[]> {
-    return this.evaluationPermissionsService
-      .getMyEvaluationPermissions()
-      .pipe(
-        take(1),
-        tap((x) => (this._evaluationPermissions = x))
-      );
+    return this.evaluationPermissionsService.getMyEvaluationPermissions().pipe(
+      take(1),
+      tap((x) => (this._evaluationPermissions = x)),
+    );
   }
 
   loadScoringModelPermissions(): Observable<ScoringModelPermissionClaim[]> {
@@ -96,104 +96,110 @@ export class PermissionDataService {
       .getMyScoringModelPermissions()
       .pipe(
         take(1),
-        tap((x) => (this._scoringModelPermissions = x))
+        tap((x) => (this._scoringModelPermissions = x)),
       );
   }
 
   loadTeamPermissions(): Observable<TeamPermissionClaim[]> {
-    return this.teamPermissionService
-      .getMyTeamPermissions()
-      .pipe(
-        take(1),
-        tap((x) => (this._teamPermissions = x))
-      );
-  }
-
-  hasTeamPermission(teamId: string, permission: TeamPermission) {
-    return this._teamPermissions.some(claim => claim.teamId === teamId && claim.permissions.some(p => p === permission));
-  }
-
-  canCreateEvaluations(): boolean {
-    return this.canEvaluation(
-      SystemPermission.CreateEvaluations,
-      '',
-      null
+    return this.teamPermissionService.getMyTeamPermissions().pipe(
+      take(1),
+      tap((x) => (this._teamPermissions = x)),
     );
   }
 
+  hasTeamPermission(teamId: string, permission: TeamPermission) {
+    return this._teamPermissions.some(
+      (claim) =>
+        claim.teamId === teamId &&
+        claim.permissions.some((p) => p === permission),
+    );
+  }
+
+  canCreateEvaluations(): boolean {
+    return this.canEvaluation(SystemPermission.CreateEvaluations, '', null);
+  }
+
   canEditEvaluation(evaluationId: string): boolean {
-    return this.canEvaluation(SystemPermission.EditEvaluations, evaluationId, EvaluationPermission.EditEvaluation) ||
-      this.canEvaluation(SystemPermission.ManageEvaluations, evaluationId, EvaluationPermission.ManageEvaluation);
+    return (
+      this.canEvaluation(
+        SystemPermission.EditEvaluations,
+        evaluationId,
+        EvaluationPermission.EditEvaluation,
+      ) ||
+      this.canEvaluation(
+        SystemPermission.ManageEvaluations,
+        evaluationId,
+        EvaluationPermission.ManageEvaluation,
+      )
+    );
   }
 
   canManageEvaluation(evaluationId: string): boolean {
     return this.canEvaluation(
       SystemPermission.ManageEvaluations,
       evaluationId,
-      EvaluationPermission.ManageEvaluation
+      EvaluationPermission.ManageEvaluation,
     );
   }
 
   canAdvanceMove(evaluationId: string): boolean {
-    return this.canEvaluation(
-      SystemPermission.ManageEvaluations,
-      evaluationId,
-      EvaluationPermission.ManageEvaluation) || this.canEvaluation(
-      SystemPermission.ExecuteEvaluations,
-      evaluationId,
-      EvaluationPermission.ExecuteEvaluation
+    return (
+      this.canEvaluation(
+        SystemPermission.ManageEvaluations,
+        evaluationId,
+        EvaluationPermission.ManageEvaluation,
+      ) ||
+      this.canEvaluation(
+        SystemPermission.ExecuteEvaluations,
+        evaluationId,
+        EvaluationPermission.ExecuteEvaluation,
+      )
     );
   }
 
   canCreateScoringModels(): boolean {
-    return this.canScoringModel(
-      SystemPermission.CreateScoringModels,
-      '',
-      null
-    );
+    return this.canScoringModel(SystemPermission.CreateScoringModels, '', null);
   }
 
   canEditScoringModel(scoringModelId: string): boolean {
-    return this.canScoringModel(SystemPermission.EditScoringModels, scoringModelId, ScoringModelPermission.EditScoringModel) ||
-      this.canScoringModel(SystemPermission.ManageScoringModels, scoringModelId, ScoringModelPermission.ManageScoringModel);
+    return (
+      this.canScoringModel(
+        SystemPermission.EditScoringModels,
+        scoringModelId,
+        ScoringModelPermission.EditScoringModel,
+      ) ||
+      this.canScoringModel(
+        SystemPermission.ManageScoringModels,
+        scoringModelId,
+        ScoringModelPermission.ManageScoringModel,
+      )
+    );
   }
 
   canManageScoringModel(scoringModelId: string): boolean {
     return this.canScoringModel(
       SystemPermission.ManageScoringModels,
       scoringModelId,
-      ScoringModelPermission.ManageScoringModel
+      ScoringModelPermission.ManageScoringModel,
     );
   }
 
   canEditTeamScore(teamId: string): boolean {
-    return this.canTeam(
-      null,
-      teamId,
-      TeamPermission.EditTeamScore
-    );
+    return this.canTeam(null, teamId, TeamPermission.EditTeamScore);
   }
 
   canSubmitTeamScore(teamId: string): boolean {
-    return this.canTeam(
-      null,
-      teamId,
-      TeamPermission.SubmitTeamScore
-    );
+    return this.canTeam(null, teamId, TeamPermission.SubmitTeamScore);
   }
 
   canManageTeam(teamId: string): boolean {
-    return this.canTeam(
-      null,
-      teamId,
-      TeamPermission.ManageTeam
-    );
+    return this.canTeam(null, teamId, TeamPermission.ManageTeam);
   }
 
   private canEvaluation(
     permission: SystemPermission,
     evaluationId?: string,
-    evaluationPermission?: EvaluationPermission
+    evaluationPermission?: EvaluationPermission,
   ) {
     const permissions = this._permissions;
     const evaluationPermissionClaims = this._evaluationPermissions;
@@ -201,7 +207,7 @@ export class PermissionDataService {
       return true;
     } else if (evaluationId !== null && evaluationPermission !== null) {
       const evaluationPermissionClaim = evaluationPermissionClaims.find(
-        (x) => x.evaluationId === evaluationId
+        (x) => x.evaluationId === evaluationId,
       );
 
       if (
@@ -218,26 +224,20 @@ export class PermissionDataService {
   private canScoringModel(
     permission: SystemPermission,
     scoringModelId?: string,
-    scoringModelPermission?: ScoringModelPermission
+    scoringModelPermission?: ScoringModelPermission,
   ) {
     const permissions = this._permissions;
     const scoringModelPermissionClaims = this._scoringModelPermissions;
     if (permissions.includes(permission)) {
       return true;
-    } else if (
-      scoringModelId !== null &&
-      scoringModelPermission !== null
-    ) {
-      const scoringModelPermissionClaim =
-        scoringModelPermissionClaims.find(
-          (x) => x.scoringModelId === scoringModelId
-        );
+    } else if (scoringModelId !== null && scoringModelPermission !== null) {
+      const scoringModelPermissionClaim = scoringModelPermissionClaims.find(
+        (x) => x.scoringModelId === scoringModelId,
+      );
 
       if (
         scoringModelPermissionClaim &&
-        scoringModelPermissionClaim.permissions.includes(
-          scoringModelPermission
-        )
+        scoringModelPermissionClaim.permissions.includes(scoringModelPermission)
       ) {
         return true;
       }
@@ -249,7 +249,7 @@ export class PermissionDataService {
   private canTeam(
     permission: SystemPermission,
     teamId?: string,
-    teamPermission?: TeamPermission
+    teamPermission?: TeamPermission,
   ) {
     const permissions = this._permissions;
     const teamPermissionClaims = this._teamPermissions;
@@ -257,7 +257,7 @@ export class PermissionDataService {
       return true;
     } else if (teamId !== null && teamPermission !== null) {
       const evaluationPermissionClaim = teamPermissionClaims.find(
-        (x) => x.teamId === teamId
+        (x) => x.teamId === teamId,
       );
 
       if (
@@ -270,5 +270,4 @@ export class PermissionDataService {
 
     return false;
   }
-
 }

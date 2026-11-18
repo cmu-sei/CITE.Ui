@@ -4,5 +4,10 @@ Released under a MIT (SEI)-style license, please see LICENSE.md in the
 project root for license information or contact permission@sei.cmu.edu for full terms.
 -->
 
-<app-admin-user-list [users]="users$ | async" [isLoading]="isLoading$ | async"
-  [canEdit]="canEdit" (create)="create($event)" (delete)="deleteUser($event)" />
+<app-admin-user-list
+  [users]="users$ | async"
+  [isLoading]="isLoading$ | async"
+  [canEdit]="canEdit"
+  (create)="create($event)"
+  (delete)="deleteUser($event)"
+/>

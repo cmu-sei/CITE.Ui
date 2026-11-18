@@ -2,9 +2,27 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, Input, OnInit, OnDestroy, inject, viewChild } from '@angular/core';
-import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  OnDestroy,
+  inject,
+  viewChild,
+} from '@angular/core';
+import {
+  UntypedFormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import {
@@ -17,7 +35,10 @@ import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.s
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
@@ -27,12 +48,31 @@ import { TeamMembershipDataService } from 'src/app/data/team/team-membership-dat
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { MatIcon } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
-import { MatFormField, MatInput, MatSuffix, MatLabel } from '@angular/material/input';
+import {
+  MatFormField,
+  MatInput,
+  MatSuffix,
+  MatLabel,
+} from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
-import { MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import {
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+} from '@angular/material/table';
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+} from '@angular/material/expansion';
 import { AdminMovesComponent } from '../admin-moves/admin-moves.component';
 import { AdminTeamsComponent } from '../admin-teams/admin-teams.component';
 import { AdminActionsComponent } from '../admin-actions/admin-actions.component';
@@ -42,17 +82,20 @@ import { MatCard } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-    selector: 'app-admin-evaluations',
-    templateUrl: './admin-evaluations.component.html',
-    styleUrls: ['./admin-evaluations.component.scss'],
-    animations: [
-        trigger('detailExpand', [
-            state('collapsed', style({ height: '0px', minHeight: '0' })),
-            state('expanded', style({ height: '*' })),
-            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-        ]),
-    ],
-    imports: [
+  selector: 'app-admin-evaluations',
+  templateUrl: './admin-evaluations.component.html',
+  styleUrls: ['./admin-evaluations.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition(
+        'expanded <=> collapsed',
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'),
+      ),
+    ]),
+  ],
+  imports: [
     MatIcon,
     MatFormField,
     MatInput,
@@ -85,10 +128,9 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     MatRow,
     MatCard,
     MatProgressSpinner,
-    DatePipe
-],
+    DatePipe,
+  ],
 })
-
 export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   private settingsService = inject(ComnSettingsService);
   private evaluationDataService = inject(EvaluationDataService);
@@ -112,7 +154,14 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   addingNewEvaluation = false;
   newEvaluationDescription = '';
   editEvaluation: Evaluation = {};
-  displayedColumns = ['actions', 'description', 'currentMoveNumber', 'status', 'createdBy', 'dateCreated'];
+  displayedColumns = [
+    'actions',
+    'description',
+    'currentMoveNumber',
+    'status',
+    'createdBy',
+    'dateCreated',
+  ];
   scoringModels = [];
   selectedScoringModelId = '';
   filteredEvaluationList: Evaluation[] = [];
@@ -122,13 +171,17 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     ItemStatus.Active,
     ItemStatus.Cancelled,
     ItemStatus.Complete,
-    ItemStatus.Archived
+    ItemStatus.Archived,
   ];
-  selectedStatuses = [ ItemStatus.Pending, ItemStatus.Active, ItemStatus.Complete ];
+  selectedStatuses = [
+    ItemStatus.Pending,
+    ItemStatus.Active,
+    ItemStatus.Complete,
+  ];
   private unsubscribe$ = new Subject();
   sort: Sort = {
     active: 'description',
-    direction: 'asc'
+    direction: 'asc',
   };
   userList: User[] = [];
   isBusy = false;
@@ -137,25 +190,32 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   readonly jsonInput = viewChild<ElementRef<HTMLInputElement>>('jsonInput');
 
   constructor() {
-      // observe the scoring models
-    this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {
-      this.scoringModels = scoringModels;
-      this.selectedScoringModelId = '';
-    });
+    // observe the scoring models
+    this.scoringModelQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((scoringModels) => {
+        this.scoringModels = scoringModels;
+        this.selectedScoringModelId = '';
+      });
     this.scoringModelDataService.load();
     // oberve the users
-    this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
-      this.userList = users;
-    });
+    this.userQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((users) => {
+        this.userList = users;
+      });
     // subscribe to evaluations loading
-    this.evaluationQuery.selectLoading().pipe(takeUntil(this.unsubscribe$)).subscribe((isLoading) => {
-      this.isBusy = isLoading;
-    });
+    this.evaluationQuery
+      .selectLoading()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((isLoading) => {
+        this.isBusy = isLoading;
+      });
 
     this.filterControl.valueChanges
-      .pipe(
-        takeUntil(this.unsubscribe$)
-      )
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((term) => {
         this.filterString = term.trim().toLowerCase();
         this.applyFilter();
@@ -167,10 +227,13 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   loadInitialData() {
-    this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
-      this.evaluationList = Array.from(evaluations);
-      this.applyFilter();
-    });
+    this.evaluationQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((evaluations) => {
+        this.evaluationList = Array.from(evaluations);
+        this.applyFilter();
+      });
   }
 
   addOrEditEvaluation(evaluation: Evaluation) {
@@ -181,7 +244,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
         status: ItemStatus.Pending,
         scoringModelId: this.selectedScoringModelId,
         situationDescription: '',
-        situationTime: new Date()
+        situationTime: new Date(),
       };
     } else {
       evaluation = { ...evaluation };
@@ -192,10 +255,12 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       minWidth: '900px',
       data: {
         evaluation: evaluation,
-        scoringModels: this.scoringModels.filter(sm => !sm.evaluationId || sm.evaluationId === evaluation.id),
+        scoringModels: this.scoringModels.filter(
+          (sm) => !sm.evaluationId || sm.evaluationId === evaluation.id,
+        ),
         itemStatuses: this.itemStatuses,
         isExisting: !!evaluation.dateCreated,
-        canEdit: this.permissionDataService.canEditEvaluation(evaluation.id)
+        canEdit: this.permissionDataService.canEditEvaluation(evaluation.id),
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -207,7 +272,10 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   togglePanel(evaluation: Evaluation) {
-    this.editEvaluation = this.editEvaluation.id === evaluation.id ? this.editEvaluation = {} : this.editEvaluation = { ...evaluation};
+    this.editEvaluation =
+      this.editEvaluation.id === evaluation.id
+        ? (this.editEvaluation = {})
+        : (this.editEvaluation = { ...evaluation });
     this.evaluationDataService.setActive(this.editEvaluation.id);
     // if an evaluation has been selected, load the evaluation, so that we have its details
     if (this.editEvaluation.id) {
@@ -221,7 +289,11 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   canEdit(evaluation: Evaluation) {
-    return (evaluation.status === ItemStatus.Pending || evaluation.status === ItemStatus.Active) && this.permissionDataService.canEditEvaluation(evaluation.id);
+    return (
+      (evaluation.status === ItemStatus.Pending ||
+        evaluation.status === ItemStatus.Active) &&
+      this.permissionDataService.canEditEvaluation(evaluation.id)
+    );
   }
 
   saveEvaluation(evaluation: Evaluation) {
@@ -233,8 +305,11 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   getLowestMoveNumber(evaluation: Evaluation) {
-    let lowestMoveNumber = evaluation && evaluation.moves && evaluation.moves.length > 0 ? Number.MAX_SAFE_INTEGER : 0;
-    evaluation.moves.forEach(m => {
+    let lowestMoveNumber =
+      evaluation && evaluation.moves && evaluation.moves.length > 0
+        ? Number.MAX_SAFE_INTEGER
+        : 0;
+    evaluation.moves.forEach((m) => {
       if (m.moveNumber < lowestMoveNumber) {
         lowestMoveNumber = m.moveNumber;
       }
@@ -244,8 +319,11 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   getHighestMoveNumber(evaluation: Evaluation) {
-    let highestMoveNumber = evaluation && evaluation.moves && evaluation.moves.length > 0 ? Number.MIN_SAFE_INTEGER : 0;
-    evaluation.moves.forEach(m => {
+    let highestMoveNumber =
+      evaluation && evaluation.moves && evaluation.moves.length > 0
+        ? Number.MIN_SAFE_INTEGER
+        : 0;
+    evaluation.moves.forEach((m) => {
       if (m.moveNumber > highestMoveNumber) {
         highestMoveNumber = m.moveNumber;
       }
@@ -255,9 +333,12 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   incrementCurrentMoveNumber(evaluation: Evaluation) {
-    let nextHighestMove = {moveNumber: Number.MAX_SAFE_INTEGER} as Move;
-    evaluation.moves.forEach(m => {
-      if (m.moveNumber > evaluation.currentMoveNumber && m.moveNumber < nextHighestMove.moveNumber) {
+    let nextHighestMove = { moveNumber: Number.MAX_SAFE_INTEGER } as Move;
+    evaluation.moves.forEach((m) => {
+      if (
+        m.moveNumber > evaluation.currentMoveNumber &&
+        m.moveNumber < nextHighestMove.moveNumber
+      ) {
         nextHighestMove = m;
       }
     });
@@ -269,9 +350,12 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   decrementCurrentMoveNumber(evaluation: Evaluation) {
-    let nextLowestMove = {moveNumber: Number.MIN_SAFE_INTEGER} as Move;
-    evaluation.moves.forEach(m => {
-      if (m.moveNumber < evaluation.currentMoveNumber && m.moveNumber > nextLowestMove.moveNumber) {
+    let nextLowestMove = { moveNumber: Number.MIN_SAFE_INTEGER } as Move;
+    evaluation.moves.forEach((m) => {
+      if (
+        m.moveNumber < evaluation.currentMoveNumber &&
+        m.moveNumber > nextLowestMove.moveNumber
+      ) {
         nextLowestMove = m;
       }
     });
@@ -286,7 +370,10 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
     this.dialogService
       .confirm({
         title: 'Delete Evaluation',
-        message: 'Are you sure that you want to delete ' + evaluation.description + '?',
+        message:
+          'Are you sure that you want to delete ' +
+          evaluation.description +
+          '?',
         confirmText: 'Delete',
         cancelText: 'Cancel',
       })
@@ -299,12 +386,11 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
-    this.filteredEvaluationList = this.evaluationList.filter(evaluation =>
-      (
-        !this.filterString ||
-        evaluation.description.toLowerCase().includes(this.filterString)
-      ) &&
-      this.selectedStatuses.some(status => status === evaluation.status)
+    this.filteredEvaluationList = this.evaluationList.filter(
+      (evaluation) =>
+        (!this.filterString ||
+          evaluation.description.toLowerCase().includes(this.filterString)) &&
+        this.selectedStatuses.some((status) => status === evaluation.status),
     );
     this.sortList(this.sort);
   }
@@ -315,12 +401,18 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
 
   sortList(sort: Sort) {
     this.sort = sort;
-    this.filteredEvaluationList.sort((a, b) => this.sortEvaluations(a, b, sort.active, sort.direction));
+    this.filteredEvaluationList.sort((a, b) =>
+      this.sortEvaluations(a, b, sort.active, sort.direction),
+    );
     this.applyPagination();
   }
 
-  private sortEvaluations(a: Evaluation, b: Evaluation, column: string, direction: string)
-  {
+  private sortEvaluations(
+    a: Evaluation,
+    b: Evaluation,
+    column: string,
+    direction: string,
+  ) {
     const isAsc = direction !== 'desc';
     switch (column) {
       case 'description':
@@ -344,17 +436,14 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
           (isAsc ? 1 : -1)
         );
       case 'dateCreated':
-        return (
-          (a.dateCreated < b.dateCreated ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
+        return (a.dateCreated < b.dateCreated ? -1 : 1) * (isAsc ? 1 : -1);
       default:
         return 0;
     }
   }
 
   getUserName(id: string) {
-    const user = this.userList.find(u => u.id === id);
+    const user = this.userList.find((u) => u.id === id);
     return user ? user.name : '?';
   }
 
@@ -380,7 +469,7 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
       },
       () => {
         this.isBusy = false;
-      }
+      },
     );
   }
 
@@ -411,12 +500,14 @@ export class AdminEvaluationsComponent implements OnInit, OnDestroy {
 
   applyPagination() {
     const startIndex = this.pageIndex * this.pageSize;
-    this.displayedEvaluations = this.filteredEvaluationList.slice(startIndex, startIndex + this.pageSize);
+    this.displayedEvaluations = this.filteredEvaluationList.slice(
+      startIndex,
+      startIndex + this.pageSize,
+    );
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

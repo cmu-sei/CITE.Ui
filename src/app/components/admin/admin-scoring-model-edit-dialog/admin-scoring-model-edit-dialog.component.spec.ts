@@ -157,7 +157,9 @@ describe('AdminScoringModelEditDialogComponent', () => {
    */
   it('keeps the default severity levels unless they are customized', async () => {
     const { editComplete, user } = await renderModelDialog(true);
-    expect(screen.getByText('Using the default CISA levels.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Using the default CISA levels.'),
+    ).toBeInTheDocument();
 
     await user.type(screen.getByLabelText('Scoring Model Description'), ' v2');
     await user.click(save());
@@ -179,7 +181,12 @@ describe('AdminScoringModelEditDialogComponent', () => {
     await user.click(screen.getByRole('button', { name: 'Customize Levels' }));
     const names = screen.getAllByLabelText('Name') as HTMLInputElement[];
     expect(names.map((input) => input.value)).toEqual([
-      'Emergency', 'Severe', 'High', 'Medium', 'Low', 'Baseline',
+      'Emergency',
+      'Severe',
+      'High',
+      'Medium',
+      'Low',
+      'Baseline',
     ]);
     await user.clear(names[0]);
     await user.type(names[0], 'Critical');
@@ -187,7 +194,13 @@ describe('AdminScoringModelEditDialogComponent', () => {
 
     const saved = editComplete.mock.calls[0][0].scoringModel.severityLevels;
     expect(saved).toHaveLength(6);
-    expect(saved[0]).toEqual(expect.objectContaining({ name: 'Critical', minimumScore: 90, color: '#000000' }));
+    expect(saved[0]).toEqual(
+      expect.objectContaining({
+        name: 'Critical',
+        minimumScore: 90,
+        color: '#000000',
+      }),
+    );
   });
 
   /**
@@ -207,11 +220,17 @@ describe('AdminScoringModelEditDialogComponent', () => {
     await user.clear(minimums[1]);
     await user.type(minimums[1], '0');
 
-    expect(screen.getByRole('alert')).toHaveTextContent('Each level needs a different Minimum Score.');
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Each level needs a different Minimum Score.',
+    );
     expect(save()).toBeDisabled();
 
-    await user.click(screen.getByRole('button', { name: 'Use Default Levels' }));
-    expect(screen.getByText('Using the default CISA levels.')).toBeInTheDocument();
+    await user.click(
+      screen.getByRole('button', { name: 'Use Default Levels' }),
+    );
+    expect(
+      screen.getByText('Using the default CISA levels.'),
+    ).toBeInTheDocument();
     await user.click(save());
     expect(editComplete).toHaveBeenCalledWith({
       saveChanges: true,
@@ -226,7 +245,14 @@ describe('AdminScoringModelEditDialogComponent', () => {
    */
   it('shows the severity levels read-only without canEdit', async () => {
     await renderModelDialog(false, {
-      severityLevels: [{ name: 'Only', minimumScore: 0, color: '#00FF00', description: 'All of it' }],
+      severityLevels: [
+        {
+          name: 'Only',
+          minimumScore: 0,
+          color: '#00FF00',
+          description: 'All of it',
+        },
+      ],
     });
 
     expect(screen.getByLabelText('Name')).toBeDisabled();

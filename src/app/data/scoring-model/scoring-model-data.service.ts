@@ -12,7 +12,7 @@ import {
   ScoringModel,
   ScoringModelService,
   UpdateScoringModelRequest,
-  CreateScoringModelRequest
+  CreateScoringModelRequest,
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest, Subject } from 'rxjs';
@@ -44,7 +44,7 @@ export class ScoringModelDataService {
     const activatedRoute = this.activatedRoute;
 
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('modelterm') || '')
+      map((params) => params.get('modelterm') || ''),
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
@@ -53,16 +53,16 @@ export class ScoringModelDataService {
       });
     });
     this.sortColumn = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('sorton') || 'description')
+      map((params) => params.get('sorton') || 'description'),
     );
     this.sortIsAscending = activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('sortdir') || 'asc') === 'asc')
+      map((params) => (params.get('sortdir') || 'asc') === 'asc'),
     );
     this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
+      map((params) => parseInt(params.get('pagesize') || '20', 10)),
     );
     this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
+      map((params) => parseInt(params.get('pageindex') || '0', 10)),
     );
     this.scoringModelList = combineLatest([
       this.scoringModelQuery.selectAll(),
@@ -83,23 +83,23 @@ export class ScoringModelDataService {
         ]) =>
           items
             ? (items as ScoringModel[])
-              .sort((a: ScoringModel, b: ScoringModel) =>
-                this.sortScoringModels(a, b, sortColumn, sortIsAscending)
-              )
-              .filter(
-                (scoringModel) =>
-                  ('' + scoringModel.description)
-                    .toLowerCase()
-                    .includes(filterTerm.toLowerCase()) ||
+                .sort((a: ScoringModel, b: ScoringModel) =>
+                  this.sortScoringModels(a, b, sortColumn, sortIsAscending),
+                )
+                .filter(
+                  (scoringModel) =>
+                    ('' + scoringModel.description)
+                      .toLowerCase()
+                      .includes(filterTerm.toLowerCase()) ||
                     scoringModel.id
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase()) ||
                     scoringModel.status
                       .toLowerCase()
-                      .includes(filterTerm.toLowerCase())
-              )
-            : []
-      )
+                      .includes(filterTerm.toLowerCase()),
+                )
+            : [],
+      ),
     );
   }
 
@@ -107,7 +107,7 @@ export class ScoringModelDataService {
     a: ScoringModel,
     b: ScoringModel,
     column: string,
-    isAsc: boolean
+    isAsc: boolean,
   ) {
     switch (column) {
       case 'description':
@@ -133,7 +133,7 @@ export class ScoringModelDataService {
         tap(() => {
           this.scoringModelStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (scoringModels) => {
@@ -141,7 +141,7 @@ export class ScoringModelDataService {
         },
         (error) => {
           this.scoringModelStore.set([]);
-        }
+        },
       );
   }
 
@@ -153,7 +153,7 @@ export class ScoringModelDataService {
         tap(() => {
           this.scoringModelStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.scoringModelStore.upsert(s.id, { ...s });
@@ -176,8 +176,10 @@ export class ScoringModelDataService {
         status: scoringModel.status,
         hideScoresOnScoreSheet: scoringModel.hideScoresOnScoreSheet,
         displayCommentTextBoxes: scoringModel.displayCommentTextBoxes,
-        displayScoringModelByMoveNumber: scoringModel.displayScoringModelByMoveNumber,
-        showPastSituationDescriptions: scoringModel.showPastSituationDescriptions,
+        displayScoringModelByMoveNumber:
+          scoringModel.displayScoringModelByMoveNumber,
+        showPastSituationDescriptions:
+          scoringModel.showPastSituationDescriptions,
         useSubmit: scoringModel.useSubmit,
         useUserScore: scoringModel.useUserScore,
         useTeamScore: scoringModel.useTeamScore,
@@ -195,7 +197,7 @@ export class ScoringModelDataService {
         tap(() => {
           this.scoringModelStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.scoringModelStore.add(s);
@@ -211,14 +213,16 @@ export class ScoringModelDataService {
         tap(() => {
           this.scoringModelStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
-      .subscribe((s) => {
-        this.scoringModelStore.add(s);
-      },
-      (error) => {
-        this.scoringModelStore.setLoading(false);
-      });
+      .subscribe(
+        (s) => {
+          this.scoringModelStore.add(s);
+        },
+        (error) => {
+          this.scoringModelStore.setLoading(false);
+        },
+      );
   }
 
   updateScoringModel(scoringModel: ScoringModel) {
@@ -230,8 +234,10 @@ export class ScoringModelDataService {
         status: scoringModel.status,
         hideScoresOnScoreSheet: scoringModel.hideScoresOnScoreSheet,
         displayCommentTextBoxes: scoringModel.displayCommentTextBoxes,
-        displayScoringModelByMoveNumber: scoringModel.displayScoringModelByMoveNumber,
-        showPastSituationDescriptions: scoringModel.showPastSituationDescriptions,
+        displayScoringModelByMoveNumber:
+          scoringModel.displayScoringModelByMoveNumber,
+        showPastSituationDescriptions:
+          scoringModel.showPastSituationDescriptions,
         useSubmit: scoringModel.useSubmit,
         useUserScore: scoringModel.useUserScore,
         useTeamScore: scoringModel.useTeamScore,
@@ -247,7 +253,7 @@ export class ScoringModelDataService {
         tap(() => {
           this.scoringModelStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -272,23 +278,27 @@ export class ScoringModelDataService {
     this.scoringModelStore.setLoading(true);
     this.scoringModelService
       .uploadJsonFiles(file, observe, reportProgress)
-      .subscribe((event: any) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          const uploadProgress = Math.round((100 * event.loaded) / event.total);
-          this.uploadProgress.next(uploadProgress);
-        } else if (event instanceof HttpResponse) {
-          this.uploadProgress.next(0);
-          this.scoringModelStore.setLoading(false);
-          if (event.status === 200) {
-            const scoringModel = event.body;
-            this.scoringModelStore.upsert(scoringModel.id, scoringModel);
+      .subscribe(
+        (event: any) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            const uploadProgress = Math.round(
+              (100 * event.loaded) / event.total,
+            );
+            this.uploadProgress.next(uploadProgress);
+          } else if (event instanceof HttpResponse) {
+            this.uploadProgress.next(0);
+            this.scoringModelStore.setLoading(false);
+            if (event.status === 200) {
+              const scoringModel = event.body;
+              this.scoringModelStore.upsert(scoringModel.id, scoringModel);
+            }
           }
-        }
-      },
-      (error) => {
-        this.scoringModelStore.setLoading(false);
-        this.uploadProgress.next(0);
-      });
+        },
+        (error) => {
+          this.scoringModelStore.setLoading(false);
+          this.uploadProgress.next(0);
+        },
+      );
   }
 
   setActive(id: string) {

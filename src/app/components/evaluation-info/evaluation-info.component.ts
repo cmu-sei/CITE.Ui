@@ -2,8 +2,20 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, inject, input, output } from '@angular/core';
-import { Evaluation, ItemStatus, Move, Team } from 'src/app/generated/cite.api/model/models';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  inject,
+  input,
+  output,
+} from '@angular/core';
+import {
+  Evaluation,
+  ItemStatus,
+  Move,
+  Team,
+} from 'src/app/generated/cite.api/model/models';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { MoveQuery } from 'src/app/data/move/move.query';
@@ -23,10 +35,18 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 
 @Component({
-    selector: 'app-evaluation-info',
-    templateUrl: './evaluation-info.component.html',
-    styleUrls: ['./evaluation-info.component.scss'],
-    imports: [MatIconButton, MatIcon, MatButton, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink]
+  selector: 'app-evaluation-info',
+  templateUrl: './evaluation-info.component.html',
+  styleUrls: ['./evaluation-info.component.scss'],
+  imports: [
+    MatIconButton,
+    MatIcon,
+    MatButton,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    RouterLink,
+  ],
 })
 export class EvaluationInfoComponent implements OnDestroy {
   private evaluationQuery = inject(EvaluationQuery);
@@ -73,81 +93,121 @@ export class EvaluationInfoComponent implements OnDestroy {
 
   constructor() {
     // observe the active evaluation
-    (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(e => {
-      if (e) {
-        this.selectedEvaluationId = e.id;
-        this.currentMoveNumber = e.currentMoveNumber;
-        this.evaluationShowAdvanceButton = !!e.showAdvanceButton;
-      }
-    });
+    (this.evaluationQuery.selectActive() as Observable<Evaluation>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((e) => {
+        if (e) {
+          this.selectedEvaluationId = e.id;
+          this.currentMoveNumber = e.currentMoveNumber;
+          this.evaluationShowAdvanceButton = !!e.showAdvanceButton;
+        }
+      });
     // observe the active move
-    (this.moveQuery.selectActive() as Observable<Move>).pipe(takeUntil(this.unsubscribe$)).subscribe(m => {
-      this.displayedMoveNumber = m ? m.moveNumber : this.displayedMoveNumber;
-      this.isMinMoveNumber = this.sortedMoveList().length === 0 ? true : +this.displayedMoveNumber === +this.sortedMoveList()[0].moveNumber;
-      this.isCurrentMoveNumber = +this.displayedMoveNumber === +this.currentMoveNumber;
-      this.showAdvanceMoveButton = this.evaluationShowAdvanceButton && this.canAdvanceMove && this.selectedEvaluationId && +this.displayedMoveNumber === +this.currentMoveNumber && +this.displayedMoveNumber < +this.getMaxMoveNumber();
-    });
+    (this.moveQuery.selectActive() as Observable<Move>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((m) => {
+        this.displayedMoveNumber = m ? m.moveNumber : this.displayedMoveNumber;
+        this.isMinMoveNumber =
+          this.sortedMoveList().length === 0
+            ? true
+            : +this.displayedMoveNumber ===
+              +this.sortedMoveList()[0].moveNumber;
+        this.isCurrentMoveNumber =
+          +this.displayedMoveNumber === +this.currentMoveNumber;
+        this.showAdvanceMoveButton =
+          this.evaluationShowAdvanceButton &&
+          this.canAdvanceMove &&
+          this.selectedEvaluationId &&
+          +this.displayedMoveNumber === +this.currentMoveNumber &&
+          +this.displayedMoveNumber < +this.getMaxMoveNumber();
+      });
     // observe the active team
-    (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(t => {
-      if (t) {
-        this.selectedTeamId = t ? t.id : this.selectedTeamId;
-      }
-    });
+    (this.teamQuery.selectActive() as Observable<Team>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((t) => {
+        if (t) {
+          this.selectedTeamId = t ? t.id : this.selectedTeamId;
+        }
+      });
     //observe the current user
     this.currentUserQuery
       .select()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((cu) => {
         this.loggedInUserId = cu.id;
-        this.canAdvanceMove = this.permissionDataService.canAdvanceMove(this.selectedEvaluationId);
+        this.canAdvanceMove = this.permissionDataService.canAdvanceMove(
+          this.selectedEvaluationId,
+        );
       });
     this.userDataService.setCurrentUser();
     // observe the team users to get permissions
-    this.teamMembershipDataService.teamMemberships$.pipe(takeUntil(this.unsubscribe$)).subscribe(teamMemberships => {
-      const currentTeamMembership = teamMemberships.find(tu => tu.userId === this.loggedInUserId);
-    });
+    this.teamMembershipDataService.teamMemberships$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((teamMemberships) => {
+        const currentTeamMembership = teamMemberships.find(
+          (tu) => tu.userId === this.loggedInUserId,
+        );
+      });
     this.selectedTeamId = this.uiDataService.getTeam(this.selectedEvaluationId);
   }
 
   sortedMoveList() {
     const moveList = this.moveList();
-    return moveList ? moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1) : [];
+    return moveList
+      ? moveList.sort((a, b) => (+a.moveNumber < +b.moveNumber ? -1 : 1))
+      : [];
   }
 
   getMinMoveNumber() {
-    return this.sortedMoveList().length > 0 ? this.sortedMoveList()[0].moveNumber : +this.currentMoveNumber;
+    return this.sortedMoveList().length > 0
+      ? this.sortedMoveList()[0].moveNumber
+      : +this.currentMoveNumber;
   }
 
   getMaxMoveNumber() {
-    return this.sortedMoveList().length > 0 ? this.sortedMoveList()[this.moveList().length - 1].moveNumber : +this.currentMoveNumber;
+    return this.sortedMoveList().length > 0
+      ? this.sortedMoveList()[this.moveList().length - 1].moveNumber
+      : +this.currentMoveNumber;
   }
 
   getMoveStyle() {
-    return +this.displayedMoveNumber === +this.currentMoveNumber ? {} : { color: 'darkgray' };
+    return +this.displayedMoveNumber === +this.currentMoveNumber
+      ? {}
+      : { color: 'darkgray' };
   }
 
   getMoveDescription() {
-    const move = this.moveList().find(m => m.moveNumber === this.displayedMoveNumber);
+    const move = this.moveList().find(
+      (m) => m.moveNumber === this.displayedMoveNumber,
+    );
     return move ? move.description : 'Move not found in list (description)!';
   }
 
   getEvaluationDescriptionById(evaluationId: string): string {
-    const evaluation = this.evaluationList().find(e => e.id === evaluationId);
+    const evaluation = this.evaluationList().find((e) => e.id === evaluationId);
     return evaluation ? evaluation.description : 'Evaluation not found';
   }
 
   incrementDisplayedMove() {
-    const nextMoveIndex = this.sortedMoveList().findIndex(m => +m.moveNumber === +this.displayedMoveNumber) + 1;
+    const nextMoveIndex =
+      this.sortedMoveList().findIndex(
+        (m) => +m.moveNumber === +this.displayedMoveNumber,
+      ) + 1;
     if (+nextMoveIndex <= +this.currentMoveNumber) {
-      this.displayedMoveNumber = this.sortedMoveList()[nextMoveIndex].moveNumber;
+      this.displayedMoveNumber =
+        this.sortedMoveList()[nextMoveIndex].moveNumber;
       this.nextDisplayedMove.emit(this.sortedMoveList()[nextMoveIndex]);
     }
   }
 
   decrementDisplayedMove() {
-    const nextMoveIndex = this.sortedMoveList().findIndex(m => +m.moveNumber === +this.displayedMoveNumber) - 1;
+    const nextMoveIndex =
+      this.sortedMoveList().findIndex(
+        (m) => +m.moveNumber === +this.displayedMoveNumber,
+      ) - 1;
     if (nextMoveIndex >= 0) {
-      this.displayedMoveNumber = this.sortedMoveList()[nextMoveIndex].moveNumber;
+      this.displayedMoveNumber =
+        this.sortedMoveList()[nextMoveIndex].moveNumber;
       this.previousDisplayedMove.emit(this.sortedMoveList()[nextMoveIndex]);
     }
   }
@@ -167,7 +227,10 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   setSection(section: Section) {
-    if (this.hideScoresheet() && !(section === Section.report || section === Section.aggregate)) {
+    if (
+      this.hideScoresheet() &&
+      !(section === Section.report || section === Section.aggregate)
+    ) {
       section = Section.dashboard;
     }
     this.selectedSection = section;
@@ -175,12 +238,14 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   getTeamShortName() {
-    const myTeam = this.teamList.find(t => t.id === this.myTeamId());
+    const myTeam = this.teamList.find((t) => t.id === this.myTeamId());
     return myTeam ? myTeam.shortName : '';
   }
 
   getSelectedTeamShortName() {
-    const selectedTeam = this.teamList.find(t => t.id === this.selectedTeamId);
+    const selectedTeam = this.teamList.find(
+      (t) => t.id === this.selectedTeamId,
+    );
     return selectedTeam ? selectedTeam.shortName : '';
   }
 
@@ -190,12 +255,14 @@ export class EvaluationInfoComponent implements OnDestroy {
   }
 
   activeEvaluations(): Evaluation[] {
-    return this.evaluationList().filter(e => e.status === ItemStatus.Active);
+    return this.evaluationList().filter((e) => e.status === ItemStatus.Active);
   }
 
   hideScoresheet(): boolean {
     let hideIt = this.scoresheetOnRight();
-    const selectedTeam = this.teamList?.find(t => t.id === this.selectedTeamId);
+    const selectedTeam = this.teamList?.find(
+      (t) => t.id === this.selectedTeamId,
+    );
     if (!hideIt && selectedTeam) {
       hideIt = selectedTeam.hideScoresheet;
     }
@@ -210,5 +277,4 @@ export class EvaluationInfoComponent implements OnDestroy {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

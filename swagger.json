@@ -7,9 +7,7 @@
   "paths": {
     "/api/evaluations/{evaluationId}/actions": {
       "get": {
-        "tags": [
-          "Action"
-        ],
+        "tags": ["Action"],
         "summary": "Gets Actions for the specified evaluation",
         "description": "Returns a list of the Actions.\n<para />\nAccessible to a User who can view the evaluation",
         "operationId": "getActionsByEvaluation",
@@ -69,9 +67,7 @@
     },
     "/api/evaluations/{evaluationId}/teams/{teamId}/actions": {
       "get": {
-        "tags": [
-          "Action"
-        ],
+        "tags": ["Action"],
         "summary": "Gets Actions for the specified evaluation team\nfor the current move",
         "description": "Returns a list of the Actions.\n<para />\nAccessible to a User that is a member of the specified Team",
         "operationId": "getActionsByEvaluationTeam",
@@ -140,9 +136,7 @@
     },
     "/api/evaluations/{evaluationId}/moves/{moveNumber}/actions": {
       "get": {
-        "tags": [
-          "Action"
-        ],
+        "tags": ["Action"],
         "summary": "Gets Actions for the specified evaluation and move",
         "description": "Returns a list of the Actions.\n<para />\nAccessible to a Content Developer",
         "operationId": "getActionsByEvaluationMove",
@@ -211,9 +205,7 @@
     },
     "/api/evaluations/{evaluationId}/moves/{moveNumber}/teams/{teamId}/actions": {
       "get": {
-        "tags": [
-          "Action"
-        ],
+        "tags": ["Action"],
         "summary": "Gets Actions for the specified evaluation, move and team",
         "description": "Returns a list of the Actions.\n<para />\nAccessible to a User that is a member of the specified Team",
         "operationId": "getActionsByEvaluationMoveTeam",
@@ -291,9 +283,7 @@
     },
     "/api/actions/{id}": {
       "get": {
-        "tags": [
-          "Action"
-        ],
+        "tags": ["Action"],
         "summary": "Gets a specific Action by id",
         "description": "Returns the Action with the id specified\n<para />\nAccessible to a User that is a member of a Team within the specified Action",
         "operationId": "getAction",
@@ -343,9 +333,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Action"
-        ],
+        "tags": ["Action"],
         "summary": "Updates an Action",
         "description": "Updates an Action with the attributes specified\n<para />\nAccessible only to a SuperUser or a User on an Admin Team within the specified Action",
         "operationId": "updateAction",
@@ -415,9 +403,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Action"
-        ],
+        "tags": ["Action"],
         "summary": "Deletes an Action",
         "description": "Deletes an Action with the specified id\n<para />\nAccessible only to a SuperUser or a User on an Admin Team within the specified Action",
         "operationId": "deleteAction",
@@ -452,9 +438,7 @@
     },
     "/api/actions": {
       "post": {
-        "tags": [
-          "Action"
-        ],
+        "tags": ["Action"],
         "summary": "Creates a new Action",
         "description": "Creates a new Action with the attributes specified\n<para />\nAccessible only to a SuperUser or an Administrator",
         "operationId": "createAction",
@@ -514,9 +498,7 @@
     },
     "/api/actions/{id}/check": {
       "put": {
-        "tags": [
-          "Action"
-        ],
+        "tags": ["Action"],
         "summary": "Checks an Action",
         "description": "Checks an Action",
         "operationId": "checkAction",
@@ -568,9 +550,7 @@
     },
     "/api/actions/{id}/uncheck": {
       "put": {
-        "tags": [
-          "Action"
-        ],
+        "tags": ["Action"],
         "summary": "Unchecks an Action",
         "description": "Unchecks an Action",
         "operationId": "uncheckAction",
@@ -622,9 +602,7 @@
     },
     "/api/evaluations/{evaluationId}/duties": {
       "get": {
-        "tags": [
-          "Duty"
-        ],
+        "tags": ["Duty"],
         "summary": "Gets Duties for the specified evaluation",
         "description": "Returns a list of the Duties.\n<para />\nAccessible to a User that is a member of the specified Evaluation",
         "operationId": "getDutiesByEvaluation",
@@ -684,9 +662,7 @@
     },
     "/api/evaluations/{evaluationId}/teams/{teamId}/duties": {
       "get": {
-        "tags": [
-          "Duty"
-        ],
+        "tags": ["Duty"],
         "summary": "Gets Duties for the specified evaluation team",
         "description": "Returns a list of the Duties.\n<para />\nAccessible to a User that is a member of the specified Team",
         "operationId": "getDutiesByEvaluationTeam",
@@ -755,9 +731,7 @@
     },
     "/api/duties/{id}": {
       "get": {
-        "tags": [
-          "Duty"
-        ],
+        "tags": ["Duty"],
         "summary": "Gets a specific Duty by id",
         "description": "Returns the Duty with the id specified\n<para />\nAccessible to a User that is a member of a Team within the specified Duty",
         "operationId": "getDuty",
@@ -807,9 +781,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Duty"
-        ],
+        "tags": ["Duty"],
         "summary": "Updates a Duty",
         "description": "Updates a Duty with the attributes specified\n<para />\nAccessible only to a SuperUser or a User on an Admin Team within the specified Duty",
         "operationId": "updateDuty",
@@ -879,9 +851,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Duty"
-        ],
+        "tags": ["Duty"],
         "summary": "Deletes a Duty",
         "description": "Deletes a Duty with the specified id\n<para />\nAccessible only to a SuperUser or a User on an Admin Team within the specified Duty",
         "operationId": "deleteDuty",
@@ -916,9 +886,7 @@
     },
     "/api/duties": {
       "post": {
-        "tags": [
-          "Duty"
-        ],
+        "tags": ["Duty"],
         "summary": "Creates a new Duty",
         "description": "Creates a new Duty with the attributes specified\n<para />\nAccessible only to a SuperUser or an Administrator",
         "operationId": "createDuty",
@@ -978,9 +946,7 @@
     },
     "/api/duties/{dutyId}/users/{userId}/add": {
       "put": {
-        "tags": [
-          "Duty"
-        ],
+        "tags": ["Duty"],
         "summary": "Adds a User to a Duty",
         "description": "Adds the specified User to the specified Duty",
         "operationId": "addUserToDuty",
@@ -1042,9 +1008,7 @@
     },
     "/api/duties/{dutyId}/users/{userId}/remove": {
       "put": {
-        "tags": [
-          "Duty"
-        ],
+        "tags": ["Duty"],
         "summary": "Removes a User to a Duty",
         "description": "Removes the specified User to the specified Duty",
         "operationId": "removeUserFromDuty",
@@ -1106,9 +1070,7 @@
     },
     "/api/evaluations": {
       "get": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Gets Evaluations",
         "description": "Returns a list of Evaluations.",
         "operationId": "getEvaluations",
@@ -1181,9 +1143,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Creates a new Evaluation",
         "description": "Creates a new Evaluation with the attributes specified\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createEvaluation",
@@ -1243,9 +1203,7 @@
     },
     "/api/my-evaluations": {
       "get": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Gets Evaluations for the current user",
         "description": "Returns a list of the current user's active Evaluations.",
         "operationId": "getMyEvaluations",
@@ -1294,9 +1252,7 @@
     },
     "/api/evaluations/{id}": {
       "get": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Gets a specific Evaluation by id",
         "description": "Returns the Evaluation with the id specified",
         "operationId": "getEvaluation",
@@ -1346,9 +1302,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Updates an Evaluation",
         "description": "Updates an Evaluation with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the evaluation parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateEvaluation",
@@ -1418,9 +1372,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Deletes an Evaluation",
         "description": "Deletes an Evaluation with the specified id\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "deleteEvaluation",
@@ -1455,9 +1407,7 @@
     },
     "/api/evaluations/{id}/copy": {
       "post": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Creates a new Evaluation by copying an existing Evaluation",
         "description": "Creates a new Evaluation from the specified existing Evaluation\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "copyEvaluation",
@@ -1509,9 +1459,7 @@
     },
     "/api/evaluations/{id}/situation": {
       "put": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Updates an Evaluation situation details",
         "description": "Updates an Evaluation with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the evaluation parameter",
         "operationId": "updateEvaluationSituation",
@@ -1583,9 +1531,7 @@
     },
     "/api/evaluations/{id}/move/{move}": {
       "put": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Sets an Evaluation Current Move Number",
         "description": "Updates an Evaluation with the move number specified.",
         "operationId": "setEvaluationCurrentMove",
@@ -1647,9 +1593,7 @@
     },
     "/api/evaluations/json": {
       "post": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Upload a json Evaluation file",
         "operationId": "uploadJsonFiles",
         "requestBody": {
@@ -1708,9 +1652,7 @@
     },
     "/api/evaluations/{id}/json": {
       "get": {
-        "tags": [
-          "Evaluation"
-        ],
+        "tags": ["Evaluation"],
         "summary": "Download a Evaluation by id as json file",
         "operationId": "downloadJson",
         "parameters": [
@@ -1764,9 +1706,7 @@
     },
     "/api/evaluations/memberships/{id}": {
       "get": {
-        "tags": [
-          "EvaluationMemberships"
-        ],
+        "tags": ["EvaluationMemberships"],
         "summary": "Get a single EvaluationMembership.",
         "operationId": "GetEvaluationMembership",
         "parameters": [
@@ -1815,9 +1755,7 @@
         }
       },
       "put": {
-        "tags": [
-          "EvaluationMemberships"
-        ],
+        "tags": ["EvaluationMemberships"],
         "summary": "Updates a EvaluationMembership",
         "description": "Updates a EvaluationMembership with the attributes specified",
         "operationId": "updateEvaluationMembership",
@@ -1887,9 +1825,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "EvaluationMemberships"
-        ],
+        "tags": ["EvaluationMemberships"],
         "summary": "Delete a Evaluation Membership.",
         "operationId": "DeleteEvaluationMembership",
         "parameters": [
@@ -1922,9 +1858,7 @@
     },
     "/api/evaluations/{id}/memberships": {
       "get": {
-        "tags": [
-          "EvaluationMemberships"
-        ],
+        "tags": ["EvaluationMemberships"],
         "summary": "Get all EvaluationMemberships.",
         "operationId": "GetAllEvaluationMemberships",
         "parameters": [
@@ -1983,9 +1917,7 @@
     },
     "/api/evaluations/{evaluationId}/memberships": {
       "post": {
-        "tags": [
-          "EvaluationMemberships"
-        ],
+        "tags": ["EvaluationMemberships"],
         "summary": "Create a new Evaluation Membership.",
         "operationId": "CreateEvaluationMembership",
         "parameters": [
@@ -2056,9 +1988,7 @@
     },
     "/api/evaluation-permissions": {
       "get": {
-        "tags": [
-          "EvaluationPermissions"
-        ],
+        "tags": ["EvaluationPermissions"],
         "summary": "Get all SystemPermissions for the calling User.",
         "operationId": "GetMyEvaluationPermissions",
         "responses": {
@@ -2106,9 +2036,7 @@
     },
     "/api/evaluation-roles/{id}": {
       "get": {
-        "tags": [
-          "EvaluationRoles"
-        ],
+        "tags": ["EvaluationRoles"],
         "summary": "Get a single EvaluationRole.",
         "operationId": "GetEvaluationRole",
         "parameters": [
@@ -2159,9 +2087,7 @@
     },
     "/api/evaluation-roles": {
       "get": {
-        "tags": [
-          "EvaluationRoles"
-        ],
+        "tags": ["EvaluationRoles"],
         "summary": "Get all EvaluationRoles.",
         "operationId": "GetAllEvaluationRoles",
         "responses": {
@@ -2209,9 +2135,7 @@
     },
     "/api/evaluations/{evaluationId}/unreadarticlecount": {
       "get": {
-        "tags": [
-          "Gallery"
-        ],
+        "tags": ["Gallery"],
         "summary": "Gets the evaluation's unread article count for the requesting user",
         "description": "Returns the count of unread articles.",
         "operationId": "getEvaluationUnreadArticleCount",
@@ -2263,9 +2187,7 @@
     },
     "/api/groups/{id}": {
       "get": {
-        "tags": [
-          "Group"
-        ],
+        "tags": ["Group"],
         "summary": "Get a single group.",
         "operationId": "getGroup",
         "parameters": [
@@ -2314,9 +2236,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Group"
-        ],
+        "tags": ["Group"],
         "summary": "Update a group.",
         "operationId": "updateGroup",
         "parameters": [
@@ -2383,9 +2303,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Group"
-        ],
+        "tags": ["Group"],
         "summary": "Delete a group.",
         "operationId": "deleteGroup",
         "parameters": [
@@ -2419,9 +2337,7 @@
     },
     "/api/groups": {
       "get": {
-        "tags": [
-          "Group"
-        ],
+        "tags": ["Group"],
         "summary": "Get all groups.",
         "operationId": "getAllGroups",
         "responses": {
@@ -2467,9 +2383,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Group"
-        ],
+        "tags": ["Group"],
         "summary": "Create a new group.",
         "operationId": "createGroup",
         "requestBody": {
@@ -2528,9 +2442,7 @@
     },
     "/api/groups/memberships/{id}": {
       "get": {
-        "tags": [
-          "Group"
-        ],
+        "tags": ["Group"],
         "summary": "Get a single Group Membership.",
         "operationId": "GetGroupMembership",
         "parameters": [
@@ -2578,9 +2490,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Group"
-        ],
+        "tags": ["Group"],
         "summary": "Delete a Group Membership.",
         "operationId": "DeleteGroupMembership",
         "parameters": [
@@ -2613,9 +2523,7 @@
     },
     "/api/groups/{groupId}/memberships": {
       "get": {
-        "tags": [
-          "Group"
-        ],
+        "tags": ["Group"],
         "summary": "Get all Group Memberships of a Group.",
         "operationId": "GetGroupMemberships",
         "parameters": [
@@ -2672,9 +2580,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Group"
-        ],
+        "tags": ["Group"],
         "summary": "Create a new Group Membership.",
         "operationId": "CreateGroupMembership",
         "parameters": [
@@ -2745,9 +2651,7 @@
     },
     "/api/health/live": {
       "get": {
-        "tags": [
-          "HealthCheck"
-        ],
+        "tags": ["HealthCheck"],
         "summary": "Checks the liveliness health endpoint",
         "description": "Returns a HealthReport of the liveliness health check",
         "operationId": "getLiveliness",
@@ -2787,9 +2691,7 @@
     },
     "/api/health/ready": {
       "get": {
-        "tags": [
-          "HealthCheck"
-        ],
+        "tags": ["HealthCheck"],
         "summary": "Checks the readiness health endpoint",
         "description": "Returns a HealthReport of the readiness health check",
         "operationId": "getReadiness",
@@ -2829,9 +2731,7 @@
     },
     "/api/version": {
       "get": {
-        "tags": [
-          "HealthCheck"
-        ],
+        "tags": ["HealthCheck"],
         "summary": "Returns the current version of the API",
         "description": "Returns the version.",
         "operationId": "getVersion",
@@ -2871,9 +2771,7 @@
     },
     "/api/evaluations/{evaluationId}/moves": {
       "get": {
-        "tags": [
-          "Move"
-        ],
+        "tags": ["Move"],
         "summary": "Gets Moves by evaluation",
         "description": "Returns a list of Moves for the evaluation.",
         "operationId": "getByEvaluation",
@@ -2934,9 +2832,7 @@
     },
     "/api/moves/{id}": {
       "get": {
-        "tags": [
-          "Move"
-        ],
+        "tags": ["Move"],
         "summary": "Gets a specific Move by id",
         "description": "Returns the Move with the id specified",
         "operationId": "getMove",
@@ -2986,9 +2882,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Move"
-        ],
+        "tags": ["Move"],
         "summary": "Updates a  Move",
         "description": "Updates a Move with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the move parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateMove",
@@ -3058,9 +2952,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Move"
-        ],
+        "tags": ["Move"],
         "summary": "Deletes a  Move",
         "description": "Deletes a  Move with the specified id\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "deleteMove",
@@ -3095,9 +2987,7 @@
     },
     "/api/moves": {
       "post": {
-        "tags": [
-          "Move"
-        ],
+        "tags": ["Move"],
         "summary": "Creates a new Move",
         "description": "Creates a new Move with the attributes specified\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createMove",
@@ -3157,9 +3047,7 @@
     },
     "/api/scoringcategories": {
       "get": {
-        "tags": [
-          "ScoringCategory"
-        ],
+        "tags": ["ScoringCategory"],
         "summary": "Gets ScoringCategories",
         "description": "Returns a list of ScoringCategories.",
         "operationId": "getScoringCategories",
@@ -3216,9 +3104,7 @@
         }
       },
       "post": {
-        "tags": [
-          "ScoringCategory"
-        ],
+        "tags": ["ScoringCategory"],
         "summary": "Creates a new ScoringCategory",
         "description": "Creates a new ScoringCategory with the attributes specified\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createScoringCategory",
@@ -3278,9 +3164,7 @@
     },
     "/api/scoringmodel/{scoringModelId}/scoringcategories": {
       "get": {
-        "tags": [
-          "ScoringCategory"
-        ],
+        "tags": ["ScoringCategory"],
         "summary": "Gets ScoringCategories for the designated ScoringModel",
         "description": "Returns a list of ScoringCategories for the ScoringModel.",
         "operationId": "getScoringCategoriesByScoringModelId",
@@ -3341,9 +3225,7 @@
     },
     "/api/scoringcategories/{id}": {
       "get": {
-        "tags": [
-          "ScoringCategory"
-        ],
+        "tags": ["ScoringCategory"],
         "summary": "Gets a specific ScoringCategory by id",
         "description": "Returns the ScoringCategory with the id specified",
         "operationId": "getScoringCategory",
@@ -3393,9 +3275,7 @@
         }
       },
       "put": {
-        "tags": [
-          "ScoringCategory"
-        ],
+        "tags": ["ScoringCategory"],
         "summary": "Updates a  ScoringCategory",
         "description": "Updates a ScoringCategory with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the scoringCategory parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateScoringCategory",
@@ -3465,9 +3345,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "ScoringCategory"
-        ],
+        "tags": ["ScoringCategory"],
         "summary": "Deletes a  ScoringCategory",
         "description": "Deletes a  ScoringCategory with the specified id\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "deleteScoringCategory",
@@ -3502,9 +3380,7 @@
     },
     "/api/scoringmodels": {
       "get": {
-        "tags": [
-          "ScoringModel"
-        ],
+        "tags": ["ScoringModel"],
         "summary": "Gets ScoringModels",
         "description": "Returns a list of ScoringModels.",
         "operationId": "getScoringModels",
@@ -3577,9 +3453,7 @@
         }
       },
       "post": {
-        "tags": [
-          "ScoringModel"
-        ],
+        "tags": ["ScoringModel"],
         "summary": "Creates a new ScoringModel",
         "description": "Creates a new ScoringModel with the attributes specified, and the categories and options sent with it as new rows of it\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createScoringModel",
@@ -3639,9 +3513,7 @@
     },
     "/api/scoringmodels/{id}": {
       "get": {
-        "tags": [
-          "ScoringModel"
-        ],
+        "tags": ["ScoringModel"],
         "summary": "Gets a specific ScoringModel by id",
         "description": "Returns the ScoringModel with the id specified",
         "operationId": "getScoringModel",
@@ -3691,9 +3563,7 @@
         }
       },
       "put": {
-        "tags": [
-          "ScoringModel"
-        ],
+        "tags": ["ScoringModel"],
         "summary": "Updates a  ScoringModel",
         "description": "Updates a ScoringModel with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the scoringModel parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateScoringModel",
@@ -3763,9 +3633,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "ScoringModel"
-        ],
+        "tags": ["ScoringModel"],
         "summary": "Deletes a  ScoringModel",
         "description": "Deletes a  ScoringModel with the specified id\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "deleteScoringModel",
@@ -3800,9 +3668,7 @@
     },
     "/api/scoringmodels/{id}/copy": {
       "post": {
-        "tags": [
-          "ScoringModel"
-        ],
+        "tags": ["ScoringModel"],
         "summary": "Creates a new ScoringModel by copying an existing ScoringModel",
         "description": "Creates a new ScoringModel from the specified existing ScoringModel\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "copyScoringModel",
@@ -3854,9 +3720,7 @@
     },
     "/api/scoringmodels/json": {
       "post": {
-        "tags": [
-          "ScoringModel"
-        ],
+        "tags": ["ScoringModel"],
         "summary": "Upload a json ScoringModel file",
         "operationId": "uploadJsonFiles",
         "requestBody": {
@@ -3915,9 +3779,7 @@
     },
     "/api/scoringmodels/{id}/json": {
       "get": {
-        "tags": [
-          "ScoringModel"
-        ],
+        "tags": ["ScoringModel"],
         "summary": "Download a ScoringModel by id as json file",
         "operationId": "downloadJson",
         "parameters": [
@@ -3971,9 +3833,7 @@
     },
     "/api/scoringmodels/memberships/{id}": {
       "get": {
-        "tags": [
-          "ScoringModelMemberships"
-        ],
+        "tags": ["ScoringModelMemberships"],
         "summary": "Get a single ScoringModelMembership.",
         "operationId": "GetScoringModelMembership",
         "parameters": [
@@ -4022,9 +3882,7 @@
         }
       },
       "put": {
-        "tags": [
-          "ScoringModelMemberships"
-        ],
+        "tags": ["ScoringModelMemberships"],
         "summary": "Updates a ScoringModelMembership",
         "description": "Updates a ScoringModelMembership with the attributes specified",
         "operationId": "updateScoringModelMembership",
@@ -4094,9 +3952,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "ScoringModelMemberships"
-        ],
+        "tags": ["ScoringModelMemberships"],
         "summary": "Delete a ScoringModel Membership.",
         "operationId": "DeleteScoringModelMembership",
         "parameters": [
@@ -4129,9 +3985,7 @@
     },
     "/api/scoringmodels/{id}/memberships": {
       "get": {
-        "tags": [
-          "ScoringModelMemberships"
-        ],
+        "tags": ["ScoringModelMemberships"],
         "summary": "Get all ScoringModelMemberships.",
         "operationId": "GetAllScoringModelMemberships",
         "parameters": [
@@ -4190,9 +4044,7 @@
     },
     "/api/scoringmodels/{scoringModelId}/memberships": {
       "post": {
-        "tags": [
-          "ScoringModelMemberships"
-        ],
+        "tags": ["ScoringModelMemberships"],
         "summary": "Create a new ScoringModel Membership.",
         "operationId": "CreateScoringModelMembership",
         "parameters": [
@@ -4263,9 +4115,7 @@
     },
     "/api/scoringmodels-permissions": {
       "get": {
-        "tags": [
-          "ScoringModelPermissions"
-        ],
+        "tags": ["ScoringModelPermissions"],
         "summary": "Get all SystemPermissions for the calling User.",
         "operationId": "GetMyScoringModelPermissions",
         "responses": {
@@ -4313,9 +4163,7 @@
     },
     "/api/scoringmodel-roles/{id}": {
       "get": {
-        "tags": [
-          "ScoringModelRoles"
-        ],
+        "tags": ["ScoringModelRoles"],
         "summary": "Get a single ScoringModelRole.",
         "operationId": "GetScoringModelRole",
         "parameters": [
@@ -4366,9 +4214,7 @@
     },
     "/api/scoringmodel-roles": {
       "get": {
-        "tags": [
-          "ScoringModelRoles"
-        ],
+        "tags": ["ScoringModelRoles"],
         "summary": "Get all ScoringModelRoles.",
         "operationId": "GetAllScoringModelRoles",
         "responses": {
@@ -4416,9 +4262,7 @@
     },
     "/api/scoringoptions": {
       "get": {
-        "tags": [
-          "ScoringOption"
-        ],
+        "tags": ["ScoringOption"],
         "summary": "Gets ScoringOptions",
         "description": "Returns a list of ScoringOptions.",
         "operationId": "getScoringOptions",
@@ -4475,9 +4319,7 @@
         }
       },
       "post": {
-        "tags": [
-          "ScoringOption"
-        ],
+        "tags": ["ScoringOption"],
         "summary": "Creates a new ScoringOption",
         "description": "Creates a new ScoringOption with the attributes specified\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createScoringOption",
@@ -4537,9 +4379,7 @@
     },
     "/api/scoringcategory/{scoringCategoryId}/scoringoptions": {
       "get": {
-        "tags": [
-          "ScoringOption"
-        ],
+        "tags": ["ScoringOption"],
         "summary": "Gets ScoringOptions for the designated ScoringCategory",
         "description": "Returns a list of ScoringOptions for the ScoringCategory.",
         "operationId": "getScoringOptionsByScoringCategoryId",
@@ -4600,9 +4440,7 @@
     },
     "/api/scoringoptions/{id}": {
       "get": {
-        "tags": [
-          "ScoringOption"
-        ],
+        "tags": ["ScoringOption"],
         "summary": "Gets a specific ScoringOption by id",
         "description": "Returns the ScoringOption with the id specified",
         "operationId": "getScoringOption",
@@ -4652,9 +4490,7 @@
         }
       },
       "put": {
-        "tags": [
-          "ScoringOption"
-        ],
+        "tags": ["ScoringOption"],
         "summary": "Updates a  ScoringOption",
         "description": "Updates a ScoringOption with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the scoringOption parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateScoringOption",
@@ -4724,9 +4560,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "ScoringOption"
-        ],
+        "tags": ["ScoringOption"],
         "summary": "Deletes a  ScoringOption",
         "description": "Deletes a  ScoringOption with the specified id\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "deleteScoringOption",
@@ -4761,9 +4595,7 @@
     },
     "/api/submissions": {
       "get": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Gets Submissions",
         "description": "Returns a list of Submissions.",
         "operationId": "getSubmissions",
@@ -4844,9 +4676,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Creates a new Submission",
         "description": "Creates a new Submission with the attributes specified\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createSubmission",
@@ -4906,9 +4736,7 @@
     },
     "/api/evaluations/{evaluationId}/submissions": {
       "get": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Gets Submissions by evaluation",
         "description": "Returns a list of Submissions for the evaluation.",
         "operationId": "getByEvaluation",
@@ -4969,9 +4797,7 @@
     },
     "/api/evaluations/{evaluationId}/my-submissions": {
       "get": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Gets Submissions by evaluation for current user",
         "description": "Returns a list of Submissions for the evaluation for the current user.",
         "operationId": "getMineByEvaluation",
@@ -5032,9 +4858,7 @@
     },
     "/api/evaluations/{evaluationId}/teams/{teamId}/submissions": {
       "get": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Gets Submissions by evaluation team",
         "description": "Returns a list of Submissions for the evaluation team specified.",
         "operationId": "getByEvaluationTeam",
@@ -5105,9 +4929,7 @@
     },
     "/api/submissions/{id}": {
       "get": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Gets a specific Submission by id",
         "description": "Returns the Submission with the id specified",
         "operationId": "getSubmission",
@@ -5157,9 +4979,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Updates a  Submission",
         "description": "Updates a Submission with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the submission parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateSubmission",
@@ -5229,9 +5049,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Deletes a  Submission",
         "description": "Deletes a  Submission with the specified id\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "deleteSubmission",
@@ -5266,9 +5084,7 @@
     },
     "/api/submissions/{id}/clear": {
       "put": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Clears Submission Selections",
         "description": "Updates a Submission to no selections.\n<para />",
         "operationId": "clearSubmission",
@@ -5320,9 +5136,7 @@
     },
     "/api/submissions/{id}/preset": {
       "put": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Presets Submission Selections to previous move values",
         "description": "Updates a Submission to previous move submission selections.\n<para />",
         "operationId": "presetSubmission",
@@ -5374,9 +5188,7 @@
     },
     "/api/submissions/{submissionId}/comments": {
       "post": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Adds a new SubmissionComment",
         "description": "Adds a new SubmissionComment with the attributes specified",
         "operationId": "addSubmissionComment",
@@ -5448,9 +5260,7 @@
     },
     "/api/submissions/{submissionId}/comments/{submissionCommentId}": {
       "put": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Updates a  SubmissionComment",
         "description": "Updates a SubmissionComment with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the submissionComment parameter",
         "operationId": "changeSubmissionComment",
@@ -5530,9 +5340,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Submission"
-        ],
+        "tags": ["Submission"],
         "summary": "Deletes a  SubmissionComment",
         "description": "Deletes a  SubmissionComment with the specified id",
         "operationId": "removeSubmissionComment",
@@ -5594,9 +5402,7 @@
     },
     "/api/submission/{submissionId}/submissioncategories": {
       "get": {
-        "tags": [
-          "SubmissionCategory"
-        ],
+        "tags": ["SubmissionCategory"],
         "summary": "Gets SubmissionCategories for the designated Submission",
         "description": "Returns a list of SubmissionCategories for the Submission.",
         "operationId": "getSubmissionCategoriesBySubmissionId",
@@ -5657,9 +5463,7 @@
     },
     "/api/submissioncategories/{id}": {
       "get": {
-        "tags": [
-          "SubmissionCategory"
-        ],
+        "tags": ["SubmissionCategory"],
         "summary": "Gets a specific SubmissionCategory by id",
         "description": "Returns the SubmissionCategory with the id specified",
         "operationId": "getSubmissionCategory",
@@ -5709,9 +5513,7 @@
         }
       },
       "put": {
-        "tags": [
-          "SubmissionCategory"
-        ],
+        "tags": ["SubmissionCategory"],
         "summary": "Updates a  SubmissionCategory",
         "description": "Updates a SubmissionCategory with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the submissionCategory parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateSubmissionCategory",
@@ -5781,9 +5583,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "SubmissionCategory"
-        ],
+        "tags": ["SubmissionCategory"],
         "summary": "Deletes a  SubmissionCategory",
         "description": "Deletes a  SubmissionCategory with the specified id\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "deleteSubmissionCategory",
@@ -5818,9 +5618,7 @@
     },
     "/api/submissioncategories": {
       "post": {
-        "tags": [
-          "SubmissionCategory"
-        ],
+        "tags": ["SubmissionCategory"],
         "summary": "Creates a new SubmissionCategory",
         "description": "Creates a new SubmissionCategory with the attributes specified\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createSubmissionCategory",
@@ -5880,9 +5678,7 @@
     },
     "/api/submissionoption/{submissionOptionId}/submissioncomments": {
       "get": {
-        "tags": [
-          "SubmissionComment"
-        ],
+        "tags": ["SubmissionComment"],
         "summary": "Gets SubmissionComments for the designated SubmissionOption",
         "description": "Returns a list of SubmissionComments for the SubmissionOption.",
         "operationId": "getSubmissionCommentsBySubmissionOptionId",
@@ -5943,9 +5739,7 @@
     },
     "/api/submissioncomments/{id}": {
       "get": {
-        "tags": [
-          "SubmissionComment"
-        ],
+        "tags": ["SubmissionComment"],
         "summary": "Gets a specific SubmissionComment by id",
         "description": "Returns the SubmissionComment with the id specified",
         "operationId": "getSubmissionComment",
@@ -5995,9 +5789,7 @@
         }
       },
       "put": {
-        "tags": [
-          "SubmissionComment"
-        ],
+        "tags": ["SubmissionComment"],
         "summary": "Updates a  SubmissionComment",
         "description": "Updates a SubmissionComment with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the submissionComment parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateSubmissionComment",
@@ -6067,9 +5859,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "SubmissionComment"
-        ],
+        "tags": ["SubmissionComment"],
         "summary": "Deletes a  SubmissionComment",
         "description": "Deletes a  SubmissionComment with the specified id\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "deleteSubmissionComment",
@@ -6104,9 +5894,7 @@
     },
     "/api/submissioncomments": {
       "post": {
-        "tags": [
-          "SubmissionComment"
-        ],
+        "tags": ["SubmissionComment"],
         "summary": "Creates a new SubmissionComment",
         "description": "Creates a new SubmissionComment with the attributes specified\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createSubmissionComment",
@@ -6166,9 +5954,7 @@
     },
     "/api/submissioncategory/{submissionCategoryId}/submissionoptions": {
       "get": {
-        "tags": [
-          "SubmissionOption"
-        ],
+        "tags": ["SubmissionOption"],
         "summary": "Gets SubmissionOptions for the designated SubmissionCategory",
         "description": "Returns a list of SubmissionOptions for the SubmissionCategory.",
         "operationId": "getSubmissionOptionsBySubmissionCategoryId",
@@ -6229,9 +6015,7 @@
     },
     "/api/submissionoptions/{id}": {
       "get": {
-        "tags": [
-          "SubmissionOption"
-        ],
+        "tags": ["SubmissionOption"],
         "summary": "Gets a specific SubmissionOption by id",
         "description": "Returns the SubmissionOption with the id specified",
         "operationId": "getSubmissionOption",
@@ -6281,9 +6065,7 @@
         }
       },
       "put": {
-        "tags": [
-          "SubmissionOption"
-        ],
+        "tags": ["SubmissionOption"],
         "summary": "Updates a  SubmissionOption",
         "description": "Updates a SubmissionOption with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the submissionOption parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateSubmissionOption",
@@ -6353,9 +6135,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "SubmissionOption"
-        ],
+        "tags": ["SubmissionOption"],
         "summary": "Deletes a  SubmissionOption",
         "description": "Deletes a  SubmissionOption with the specified id\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "deleteSubmissionOption",
@@ -6390,9 +6170,7 @@
     },
     "/api/submissionoptions": {
       "post": {
-        "tags": [
-          "SubmissionOption"
-        ],
+        "tags": ["SubmissionOption"],
         "summary": "Creates a new SubmissionOption",
         "description": "Creates a new SubmissionOption with the attributes specified\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createSubmissionOption",
@@ -6452,9 +6230,7 @@
     },
     "/api/submissionoptions/{id}/select": {
       "put": {
-        "tags": [
-          "SubmissionOption"
-        ],
+        "tags": ["SubmissionOption"],
         "summary": "Sets the selected state of a SubmissionOption to true",
         "description": "Sets the SubmissionOption to selected.",
         "operationId": "selectSubmissionOption",
@@ -6506,9 +6282,7 @@
     },
     "/api/submissionoptions/{id}/deselect": {
       "put": {
-        "tags": [
-          "SubmissionOption"
-        ],
+        "tags": ["SubmissionOption"],
         "summary": "Sets the selected state of a SubmissionOption to false",
         "description": "Sets the SubmissionOption to not selected.",
         "operationId": "deselectSubmissionOption",
@@ -6560,9 +6334,7 @@
     },
     "/api/me/systempermissions": {
       "get": {
-        "tags": [
-          "SystemPermissions"
-        ],
+        "tags": ["SystemPermissions"],
         "summary": "Get all SystemPermissions for the calling User.",
         "operationId": "GetMySystemPermissions",
         "responses": {
@@ -6610,9 +6382,7 @@
     },
     "/api/system-roles/{id}": {
       "get": {
-        "tags": [
-          "SystemRoles"
-        ],
+        "tags": ["SystemRoles"],
         "summary": "Get a single SystemRole.",
         "operationId": "GetSystemRole",
         "parameters": [
@@ -6661,9 +6431,7 @@
         }
       },
       "put": {
-        "tags": [
-          "SystemRoles"
-        ],
+        "tags": ["SystemRoles"],
         "summary": "Update a SystemRole.",
         "operationId": "UpdateSystemRole",
         "parameters": [
@@ -6732,9 +6500,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "SystemRoles"
-        ],
+        "tags": ["SystemRoles"],
         "summary": "Delete a SystemRole.",
         "operationId": "DeleteSystemRole",
         "parameters": [
@@ -6768,9 +6534,7 @@
     },
     "/api/system-roles": {
       "get": {
-        "tags": [
-          "SystemRoles"
-        ],
+        "tags": ["SystemRoles"],
         "summary": "Get all SystemRoles.",
         "operationId": "GetAllSystemRoles",
         "responses": {
@@ -6816,9 +6580,7 @@
         }
       },
       "post": {
-        "tags": [
-          "SystemRoles"
-        ],
+        "tags": ["SystemRoles"],
         "summary": "Create a new SystemRole.",
         "operationId": "CreateSystemRole",
         "requestBody": {
@@ -6877,9 +6639,7 @@
     },
     "/api/evaluations/{evaluationId}/myteams": {
       "get": {
-        "tags": [
-          "Team"
-        ],
+        "tags": ["Team"],
         "summary": "Gets Evaluation Teams for the current user",
         "description": "Returns a list of the current user's Evaluation Teams.",
         "operationId": "getMyEvaluationTeams",
@@ -6939,9 +6699,7 @@
     },
     "/api/evaluations/{evaluationId}/teams": {
       "get": {
-        "tags": [
-          "Team"
-        ],
+        "tags": ["Team"],
         "summary": "Gets Teams for the specified evaluation",
         "description": "Returns a list of the specified evaluation's Teams.\n<para />\nOnly accessible to an evaluation user",
         "operationId": "getEvaluationTeams",
@@ -7001,9 +6759,7 @@
     },
     "/api/teams/{id}": {
       "get": {
-        "tags": [
-          "Team"
-        ],
+        "tags": ["Team"],
         "summary": "Gets a specific Team by id",
         "description": "Returns the Team with the id specified\n<para />\nAccessible to a SuperUser or a User that is a member of a Team within the specified Team",
         "operationId": "getTeam",
@@ -7053,9 +6809,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Team"
-        ],
+        "tags": ["Team"],
         "summary": "Updates a Team",
         "description": "Updates a Team with the attributes specified\n<para />\nAccessible only to a SuperUser or a User on an Admin Team within the specified Team",
         "operationId": "updateTeam",
@@ -7125,9 +6879,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Team"
-        ],
+        "tags": ["Team"],
         "summary": "Deletes a Team",
         "description": "Deletes a Team with the specified id\n<para />\nAccessible only to a SuperUser or a User on an Admin Team within the specified Team",
         "operationId": "deleteTeam",
@@ -7162,9 +6914,7 @@
     },
     "/api/teams": {
       "post": {
-        "tags": [
-          "Team"
-        ],
+        "tags": ["Team"],
         "summary": "Creates a new Team",
         "description": "Creates a new Team with the attributes specified\n<para />\nAccessible only to a SuperUser or an Administrator",
         "operationId": "createTeam",
@@ -7224,9 +6974,7 @@
     },
     "/api/teams/memberships/{id}": {
       "get": {
-        "tags": [
-          "TeamMemberships"
-        ],
+        "tags": ["TeamMemberships"],
         "summary": "Get a single TeamMembership.",
         "operationId": "GetTeamMembership",
         "parameters": [
@@ -7275,9 +7023,7 @@
         }
       },
       "put": {
-        "tags": [
-          "TeamMemberships"
-        ],
+        "tags": ["TeamMemberships"],
         "summary": "Updates a TeamMembership",
         "description": "Updates a TeamMembership with the attributes specified",
         "operationId": "updateTeamMembership",
@@ -7347,9 +7093,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "TeamMemberships"
-        ],
+        "tags": ["TeamMemberships"],
         "summary": "Delete a Team Membership.",
         "operationId": "DeleteTeamMembership",
         "parameters": [
@@ -7382,9 +7126,7 @@
     },
     "/api/teams/{id}/memberships": {
       "get": {
-        "tags": [
-          "TeamMemberships"
-        ],
+        "tags": ["TeamMemberships"],
         "summary": "Get all TeamMemberships.",
         "operationId": "GetAllTeamMemberships",
         "parameters": [
@@ -7443,9 +7185,7 @@
     },
     "/api/teams/{teamId}/memberships": {
       "post": {
-        "tags": [
-          "TeamMemberships"
-        ],
+        "tags": ["TeamMemberships"],
         "summary": "Create a new Team Membership.",
         "operationId": "CreateTeamMembership",
         "parameters": [
@@ -7516,9 +7256,7 @@
     },
     "/api/team-permissions": {
       "get": {
-        "tags": [
-          "TeamPermissions"
-        ],
+        "tags": ["TeamPermissions"],
         "summary": "Get all SystemPermissions for the calling User.",
         "operationId": "GetMyTeamPermissions",
         "responses": {
@@ -7566,9 +7304,7 @@
     },
     "/api/team-roles/{id}": {
       "get": {
-        "tags": [
-          "TeamRoles"
-        ],
+        "tags": ["TeamRoles"],
         "summary": "Get a single TeamRole.",
         "operationId": "GetTeamRole",
         "parameters": [
@@ -7619,9 +7355,7 @@
     },
     "/api/team-roles": {
       "get": {
-        "tags": [
-          "TeamRoles"
-        ],
+        "tags": ["TeamRoles"],
         "summary": "Get all TeamRoles.",
         "operationId": "GetAllTeamRoles",
         "responses": {
@@ -7669,9 +7403,7 @@
     },
     "/api/teamtypes": {
       "get": {
-        "tags": [
-          "TeamType"
-        ],
+        "tags": ["TeamType"],
         "summary": "Gets TeamTypes",
         "description": "Returns a list of TeamTypes.",
         "operationId": "getTeamTypes",
@@ -7718,9 +7450,7 @@
         }
       },
       "post": {
-        "tags": [
-          "TeamType"
-        ],
+        "tags": ["TeamType"],
         "summary": "Creates a new TeamType",
         "description": "Creates a new TeamType with the attributes specified\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "createTeamType",
@@ -7780,9 +7510,7 @@
     },
     "/api/teamtypes/{id}": {
       "get": {
-        "tags": [
-          "TeamType"
-        ],
+        "tags": ["TeamType"],
         "summary": "Gets a specific TeamType by id",
         "description": "Returns the TeamType with the id specified",
         "operationId": "getTeamType",
@@ -7832,9 +7560,7 @@
         }
       },
       "put": {
-        "tags": [
-          "TeamType"
-        ],
+        "tags": ["TeamType"],
         "summary": "Updates a  TeamType",
         "description": "Updates a TeamType with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the teamType parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateTeamType",
@@ -7904,9 +7630,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "TeamType"
-        ],
+        "tags": ["TeamType"],
         "summary": "Deletes a  TeamType",
         "description": "Deletes a  TeamType with the specified id\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "deleteTeamType",
@@ -7941,9 +7665,7 @@
     },
     "/api/users": {
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Gets all Users in the system",
         "description": "Returns a list of all of the Users in the system.\n<para />\nOnly accessible to a SuperUser",
         "operationId": "getUsers",
@@ -7990,9 +7712,7 @@
         }
       },
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Creates a new User",
         "description": "Creates a new User with the attributes specified\n<para />\nAccessible only to a SuperUser",
         "operationId": "createUser",
@@ -8052,9 +7772,7 @@
     },
     "/api/evaluations/{evaluationId}/users": {
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Gets all Users in the evaluation",
         "description": "Returns a list of all of the Users in the evaluation.",
         "operationId": "getEvaluationUsers",
@@ -8114,9 +7832,7 @@
     },
     "/api/users/{id}": {
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Gets a specific User by id",
         "description": "Returns the User with the id specified\n<para />\nOnly accessible to a SuperUser",
         "operationId": "getUser",
@@ -8166,9 +7882,7 @@
         }
       },
       "put": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Updates a  User",
         "description": "Updates a User with the attributes specified.\nThe ID from the route MUST MATCH the ID contained in the user parameter\n<para />\nAccessible only to a ContentDeveloper or an Administrator",
         "operationId": "updateUser",
@@ -8238,9 +7952,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Deletes a User",
         "description": "Deletes a User with the specified id\n<para />\nAccessible only to a SuperUser",
         "operationId": "deleteUser",
@@ -8275,9 +7987,7 @@
     },
     "/api/xapi/viewed/evaluation/{evaluationId}/dashboard": {
       "get": {
-        "tags": [
-          "XApi"
-        ],
+        "tags": ["XApi"],
         "summary": "Logs xAPI viewed statement for Dashboard by Evaluation id",
         "description": "Returns status",
         "operationId": "viewedEvaluationDashboard",
@@ -8312,9 +8022,7 @@
     },
     "/api/xapi/viewed/evaluation/{evaluationId}/scoresheet": {
       "get": {
-        "tags": [
-          "XApi"
-        ],
+        "tags": ["XApi"],
         "summary": "Logs xAPI viewed statement for Scoresheet by Evaluation id",
         "description": "Returns status",
         "operationId": "viewedEvaluationScoresheet",
@@ -8349,9 +8057,7 @@
     },
     "/api/xapi/observed/evaluation/{evaluationId}/team/{teamId}/dashboard": {
       "get": {
-        "tags": [
-          "XApi"
-        ],
+        "tags": ["XApi"],
         "summary": "Logs xAPI observed statement for Dashboard by Evaluation id and Team id",
         "description": "Returns status",
         "operationId": "observedEvaluationDashboard",
@@ -8396,9 +8102,7 @@
     },
     "/api/xapi/observed/evaluation/{evaluationId}/team/{teamId}/scoresheet": {
       "get": {
-        "tags": [
-          "XApi"
-        ],
+        "tags": ["XApi"],
         "summary": "Logs xAPI observed statement for Scoresheet by Evaluation id and Team id",
         "description": "Returns status",
         "operationId": "observedEvaluationScoresheet",
@@ -8611,13 +8315,7 @@
         "additionalProperties": false
       },
       "CallingConventions": {
-        "enum": [
-          "Standard",
-          "VarArgs",
-          "Any",
-          "HasThis",
-          "ExplicitThis"
-        ],
+        "enum": ["Standard", "VarArgs", "Any", "HasThis", "ExplicitThis"],
         "type": "string"
       },
       "ConstructorInfo": {
@@ -9224,11 +8922,7 @@
         "additionalProperties": false
       },
       "EventAttributes": {
-        "enum": [
-          "None",
-          "SpecialName",
-          "RTSpecialName"
-        ],
+        "enum": ["None", "SpecialName", "RTSpecialName"],
         "type": "string"
       },
       "EventInfo": {
@@ -9307,7 +9001,7 @@
           },
           "data": {
             "type": "object",
-            "additionalProperties": { },
+            "additionalProperties": {},
             "nullable": true,
             "readOnly": true
           },
@@ -9543,7 +9237,7 @@
         "properties": {
           "data": {
             "type": "object",
-            "additionalProperties": { },
+            "additionalProperties": {},
             "nullable": true
           },
           "description": {
@@ -9572,11 +9266,7 @@
         "additionalProperties": false
       },
       "HealthStatus": {
-        "enum": [
-          "Unhealthy",
-          "Degraded",
-          "Healthy"
-        ],
+        "enum": ["Unhealthy", "Degraded", "Healthy"],
         "type": "string"
       },
       "ICustomAttributeProvider": {
@@ -9588,21 +9278,11 @@
         "additionalProperties": false
       },
       "ItemStatus": {
-        "enum": [
-          "Pending",
-          "Active",
-          "Cancelled",
-          "Complete",
-          "Archived"
-        ],
+        "enum": ["Pending", "Active", "Cancelled", "Complete", "Archived"],
         "type": "string"
       },
       "LayoutKind": {
-        "enum": [
-          "Sequential",
-          "Explicit",
-          "Auto"
-        ],
+        "enum": ["Sequential", "Explicit", "Auto"],
         "type": "string"
       },
       "MemberInfo": {
@@ -10199,7 +9879,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "PropertyAttributes": {
         "enum": [
@@ -10523,11 +10203,7 @@
         "additionalProperties": false
       },
       "ScoringModelPermission": {
-        "enum": [
-          "ViewScoringModel",
-          "EditScoringModel",
-          "ManageScoringModel"
-        ],
+        "enum": ["ViewScoringModel", "EditScoringModel", "ManageScoringModel"],
         "type": "string"
       },
       "ScoringModelPermissionClaim": {
@@ -10619,26 +10295,15 @@
         "additionalProperties": false
       },
       "ScoringOptionSelection": {
-        "enum": [
-          "Single",
-          "Multiple",
-          "None"
-        ],
+        "enum": ["Single", "Multiple", "None"],
         "type": "string"
       },
       "SecurityRuleSet": {
-        "enum": [
-          "None",
-          "Level1",
-          "Level2"
-        ],
+        "enum": ["None", "Level1", "Level2"],
         "type": "string"
       },
       "SeverityLevel": {
-        "required": [
-          "color",
-          "name"
-        ],
+        "required": ["color", "name"],
         "type": "object",
         "properties": {
           "name": {
@@ -12074,9 +11739,7 @@
         "description": "The only field editable on an existing submission comment. It has no SubmissionOptionId, so a\nrequest cannot move the comment to another option or submission."
       },
       "UpdateSubmissionOptionRequest": {
-        "required": [
-          "isSelected"
-        ],
+        "required": ["isSelected"],
         "type": "object",
         "properties": {
           "isSelected": {
@@ -12087,9 +11750,7 @@
         "description": "The only field editable on an existing submission option. It is applied as a selection, so the category's exclusivity and the submission's score are kept, and is required, so a request that leaves it out cannot clear the category."
       },
       "UpdateSubmissionRequest": {
-        "required": [
-          "status"
-        ],
+        "required": ["status"],
         "type": "object",
         "properties": {
           "status": {
@@ -12195,9 +11856,7 @@
   },
   "security": [
     {
-      "oauth2": [
-        "cite"
-      ]
+      "oauth2": ["cite"]
     }
   ],
   "tags": [

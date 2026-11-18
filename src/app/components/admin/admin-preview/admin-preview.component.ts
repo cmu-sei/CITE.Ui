@@ -2,7 +2,14 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnDestroy, OnInit, inject, input, output } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import {
@@ -15,15 +22,41 @@ import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.quer
 import { takeUntil } from 'rxjs';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow } from '@angular/material/table';
+import {
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatRowDef,
+  MatRow,
+  MatHeaderRowDef,
+  MatHeaderRow,
+} from '@angular/material/table';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 
 @Component({
-    selector: 'app-admin-preview',
-    templateUrl: './admin-preview.component.html',
-    styleUrl: './admin-preview.component.scss',
-    imports: [MatIconButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatCheckbox, MatRowDef, MatRow, MatHeaderRowDef, MatHeaderRow, DisplayOrderPipe]
+  selector: 'app-admin-preview',
+  templateUrl: './admin-preview.component.html',
+  styleUrl: './admin-preview.component.scss',
+  imports: [
+    MatIconButton,
+    MatIcon,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatCheckbox,
+    MatRowDef,
+    MatRow,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    DisplayOrderPipe,
+  ],
 })
 export class AdminPreviewComponent implements OnDestroy, OnInit {
   matDialog = inject(MatDialog);
@@ -44,14 +77,25 @@ export class AdminPreviewComponent implements OnDestroy, OnInit {
 
   constructor() {
     this.titleService.setTitle('CITE Preview');
-    this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(smList => {
-      this.scoringModel = smList.find(m => m.id === this.scoringModelId());
-      if (this.scoringModel && this.scoringModel.scoringCategories.length > 0) {
-        let maxValues = this.scoringModel.scoringCategories.map(m => m.moveNumberLastDisplay);
-        let maxMoveNumber = maxValues.length > 0 ? Math.max(...maxValues) : 0;
-        this.moveNumberList = !this.scoringModel.displayScoringModelByMoveNumber ? [0] : Array.from({ length: maxMoveNumber + 1 }, (_, i) => i);
-      }
-    });
+    this.scoringModelQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((smList) => {
+        this.scoringModel = smList.find((m) => m.id === this.scoringModelId());
+        if (
+          this.scoringModel &&
+          this.scoringModel.scoringCategories.length > 0
+        ) {
+          let maxValues = this.scoringModel.scoringCategories.map(
+            (m) => m.moveNumberLastDisplay,
+          );
+          let maxMoveNumber = maxValues.length > 0 ? Math.max(...maxValues) : 0;
+          this.moveNumberList = !this.scoringModel
+            .displayScoringModelByMoveNumber
+            ? [0]
+            : Array.from({ length: maxMoveNumber + 1 }, (_, i) => i);
+        }
+      });
   }
 
   ngOnInit() {

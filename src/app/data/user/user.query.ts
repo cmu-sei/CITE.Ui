@@ -58,7 +58,7 @@ export class CurrentUserQuery extends Query<CurrentUserState> {
     const store = inject(CurrentUserStore);
 
     super(store);
-  
+
     this.store = store;
   }
 

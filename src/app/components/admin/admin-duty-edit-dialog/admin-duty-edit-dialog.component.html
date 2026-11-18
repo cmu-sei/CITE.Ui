@@ -13,35 +13,35 @@ project root for license information or contact permission@sei.cmu.edu for full 
   (cancel)="handleEditComplete(false)"
   (submit)="handleEditComplete(true)"
 >
-@if (data && data.duty) {
-  <div crucibleDialogContent [formGroup]="form">
-    <div class="add-margin">
-      <div>
-        <mat-form-field class="name-field full-width">
-          <mat-label>Duty Name</mat-label>
-          <input matInput formControlName="name" />
-        </mat-form-field>
-      </div>
-    </div>
-    @if (data.teamList) {
+  @if (data && data.duty) {
+    <div crucibleDialogContent [formGroup]="form">
       <div class="add-margin">
         <div>
-          <mat-form-field class="button-margins full-width">
-            <mat-label>Team</mat-label>
-            <mat-select placeholder="Team" formControlName="teamId">
-              @if (!data.duty.id && data.teamList.length > 1) {
-                <mat-option value="">All Teams</mat-option>
-              }
-              @for (team of data.teamList; track team) {
-                <mat-option [value]="team.id">
-                  {{ team.name }}
-                </mat-option>
-              }
-            </mat-select>
+          <mat-form-field class="name-field full-width">
+            <mat-label>Duty Name</mat-label>
+            <input matInput formControlName="name" />
           </mat-form-field>
         </div>
       </div>
-    }
-  </div>
-}
+      @if (data.teamList) {
+        <div class="add-margin">
+          <div>
+            <mat-form-field class="button-margins full-width">
+              <mat-label>Team</mat-label>
+              <mat-select placeholder="Team" formControlName="teamId">
+                @if (!data.duty.id && data.teamList.length > 1) {
+                  <mat-option value="">All Teams</mat-option>
+                }
+                @for (team of data.teamList; track team) {
+                  <mat-option [value]="team.id">
+                    {{ team.name }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      }
+    </div>
+  }
 </crucible-dialog>

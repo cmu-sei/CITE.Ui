@@ -5,31 +5,76 @@
 import { Component, OnDestroy, OnInit, inject, viewChild } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
-import { SystemPermission, TeamType } from 'src/app/generated/cite.api/model/models';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  SystemPermission,
+  TeamType,
+} from 'src/app/generated/cite.api/model/models';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { AdminTeamTypeEditDialogComponent } from '../admin-teamtype-edit-dialog/admin-teamtype-edit-dialog.component';
 import { TeamTypeDataService } from 'src/app/data/teamtype/team-type-data.service';
 import { TeamTypeQuery } from 'src/app/data/teamtype/team-type.query';
 import { Subject } from 'rxjs';
-import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  UntypedFormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { MatIcon } from '@angular/material/icon';
 
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import {
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+} from '@angular/material/table';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatCard } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-    selector: 'app-admin-teamtypes',
-    templateUrl: './admin-teamtypes.component.html',
-    styleUrls: ['./admin-teamtypes.component.scss'],
-    imports: [MatIcon, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatSortHeader, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatCard, MatProgressSpinner]
+  selector: 'app-admin-teamtypes',
+  templateUrl: './admin-teamtypes.component.html',
+  styleUrls: ['./admin-teamtypes.component.scss'],
+  imports: [
+    MatIcon,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIconButton,
+    MatSuffix,
+    MatPaginator,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatSortHeader,
+    MatCheckbox,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatCard,
+    MatProgressSpinner,
+  ],
 })
 export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
@@ -45,13 +90,20 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   filteredTeamTypeList: TeamType[] = [];
   sortedTeamTypeList: TeamType[] = [];
   displayedTeamTypes: TeamType[] = [];
-  displayedColumns = ['actions', 'name', 'isOfficialScoreContributor', 'showTeamTypeAverage'];
+  displayedColumns = [
+    'actions',
+    'name',
+    'isOfficialScoreContributor',
+    'showTeamTypeAverage',
+  ];
   filterControl = new UntypedFormControl();
   filterString = '';
   sort: Sort = { active: 'name', direction: 'asc' };
   isLoading = false;
   topbarColor = '#ef3a47';
-  canEdit = this.permissionDataService.hasPermission(SystemPermission.ManageTeamTypes);
+  canEdit = this.permissionDataService.hasPermission(
+    SystemPermission.ManageTeamTypes,
+  );
   private unsubscribe$ = new Subject<void>();
   readonly paginator = viewChild(MatPaginator);
 
@@ -83,7 +135,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
       teamType = {
         name: '',
         isOfficialScoreContributor: false,
-        showTeamTypeAverage: false
+        showTeamTypeAverage: false,
       };
     } else {
       teamType = { ...teamType };
@@ -93,7 +145,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
       maxWidth: '90vw',
       data: {
         teamType: teamType,
-        canEdit: this.canEdit
+        canEdit: this.canEdit,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -144,7 +196,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
   updateFilteredData() {
     this.filteredTeamTypeList = this.getFilteredTeamTypes(this.teamTypeList);
     this.sortedTeamTypeList = this.getSortedTeamTypes(
-      this.filteredTeamTypeList
+      this.filteredTeamTypeList,
     );
     this.paginator().length = this.sortedTeamTypeList.length;
     this.pageIndex = 0;
@@ -156,7 +208,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     this.sort =
       sort && sort.direction ? sort : { active: 'name', direction: 'asc' };
     this.sortedTeamTypeList = this.getSortedTeamTypes(
-      this.getFilteredTeamTypes(this.teamTypeList)
+      this.getFilteredTeamTypes(this.teamTypeList),
     );
     this.paginateTeamtypes();
   }
@@ -165,14 +217,14 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     if (!teamTypes) return [];
 
     return teamTypes.filter((t) =>
-      t.name.toLowerCase().includes(this.filterString)
+      t.name.toLowerCase().includes(this.filterString),
     );
   }
 
   getSortedTeamTypes(teamTypes: TeamType[]) {
     if (teamTypes) {
       teamTypes.sort((a, b) =>
-        this.sortTeamTypes(a, b, this.sort.active, this.sort.direction)
+        this.sortTeamTypes(a, b, this.sort.active, this.sort.direction),
       );
     }
     return teamTypes;
@@ -182,7 +234,7 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
     a: TeamType,
     b: TeamType,
     column: string,
-    direction: string
+    direction: string,
   ) {
     const isAsc = direction !== 'desc';
     switch (column) {
@@ -216,7 +268,10 @@ export class AdminTeamTypesComponent implements OnInit, OnDestroy {
 
   paginateTeamtypes() {
     const startIndex = this.pageIndex * this.pageSize;
-    this.displayedTeamTypes = this.sortedTeamTypeList.slice(startIndex, startIndex + this.pageSize);
+    this.displayedTeamTypes = this.sortedTeamTypeList.slice(
+      startIndex,
+      startIndex + this.pageSize,
+    );
   }
 
   toggleIsOfficialScoreContributor(teamType: TeamType) {

@@ -2,39 +2,95 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, inject, input, viewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import {
-  Duty,
-  Team,
-  User,
-} from 'src/app/generated/cite.api/model/models';
+  AfterViewInit,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  inject,
+  input,
+  viewChild,
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Duty, Team, User } from 'src/app/generated/cite.api/model/models';
 import { DutyDataService } from 'src/app/data/duty/duty-data.service';
 import { DutyQuery } from 'src/app/data/duty/duty.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource,
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+  MatNoDataRow,
+} from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 import { AdminDutyEditDialogComponent } from '../admin-duty-edit-dialog/admin-duty-edit-dialog.component';
-import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  UntypedFormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 
 import { MatIconButton } from '@angular/material/button';
-import { MatFormField, MatLabel, MatInput, MatSuffix } from '@angular/material/input';
+import {
+  MatFormField,
+  MatLabel,
+  MatInput,
+  MatSuffix,
+} from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatCard } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-    selector: 'app-admin-duties',
-    templateUrl: './admin-duties.component.html',
-    styleUrls: ['./admin-duties.component.scss'],
-    imports: [MatIcon, MatIconButton, MatFormField, MatLabel, MatSelect, MatOption, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner]
+  selector: 'app-admin-duties',
+  templateUrl: './admin-duties.component.html',
+  styleUrls: ['./admin-duties.component.scss'],
+  imports: [
+    MatIcon,
+    MatIconButton,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSuffix,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatCard,
+    MatProgressSpinner,
+  ],
 })
 export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
   private settingsService = inject(ComnSettingsService);
@@ -72,13 +128,17 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((teams) => {
-        this.teamList = teams.filter((t) => t.evaluationId === this.selectedEvaluationId);
+        this.teamList = teams.filter(
+          (t) => t.evaluationId === this.selectedEvaluationId,
+        );
       });
     this.dutyQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((duties) => {
-        this.dutyList = duties.filter((d) => d.evaluationId === this.selectedEvaluationId);
+        this.dutyList = duties.filter(
+          (d) => d.evaluationId === this.selectedEvaluationId,
+        );
         this.criteriaChanged();
       });
     this.filterControl.valueChanges
@@ -106,7 +166,7 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
     this.dataSource.sort = this.sort();
     const initialSortState: Sort = {
       active: 'teamId',
-      direction: 'asc'
+      direction: 'asc',
     };
     this.sort().active = initialSortState.active;
     this.sort().direction = initialSortState.direction;
@@ -139,7 +199,7 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
       data: {
         duty: duty,
         teamList: this.teamList,
-        canEdit: this.canEdit()
+        canEdit: this.canEdit(),
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -183,8 +243,10 @@ export class AdminDutiesComponent implements OnDestroy, OnInit, AfterViewInit {
 
   criteriaChanged() {
     this.displayedDuties = this.dutyList.filter(
-      (r) => (!this.selectedTeamId || r.teamId === this.selectedTeamId) &&
-             (!this.filterString || r.name.toLowerCase().includes(this.filterString))
+      (r) =>
+        (!this.selectedTeamId || r.teamId === this.selectedTeamId) &&
+        (!this.filterString ||
+          r.name.toLowerCase().includes(this.filterString)),
     );
     this.dataSource.data = this.displayedDuties;
   }

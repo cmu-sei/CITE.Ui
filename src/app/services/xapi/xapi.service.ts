@@ -27,12 +27,14 @@ export class XApiService {
     if (!this.enabled) {
       return of(null);
     }
-    return this.generatedXApiService.viewedEvaluationDashboard(evaluationId).pipe(
-      catchError((error) => {
-        console.error('xAPI tracking error:', error);
-        return of(null);
-      })
-    );
+    return this.generatedXApiService
+      .viewedEvaluationDashboard(evaluationId)
+      .pipe(
+        catchError((error) => {
+          console.error('xAPI tracking error:', error);
+          return of(null);
+        }),
+      );
   }
 
   /**
@@ -42,41 +44,53 @@ export class XApiService {
     if (!this.enabled) {
       return of(null);
     }
-    return this.generatedXApiService.viewedEvaluationScoresheet(evaluationId).pipe(
-      catchError((error) => {
-        console.error('xAPI tracking error:', error);
-        return of(null);
-      })
-    );
+    return this.generatedXApiService
+      .viewedEvaluationScoresheet(evaluationId)
+      .pipe(
+        catchError((error) => {
+          console.error('xAPI tracking error:', error);
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Logs xAPI observed statement when user observes the dashboard
    */
-  observedEvaluationDashboard(evaluationId: string, teamId: string): Observable<any> {
+  observedEvaluationDashboard(
+    evaluationId: string,
+    teamId: string,
+  ): Observable<any> {
     if (!this.enabled) {
       return of(null);
     }
-    return this.generatedXApiService.observedEvaluationDashboard(evaluationId, teamId).pipe(
-      catchError((error) => {
-        console.error('xAPI tracking error:', error);
-        return of(null);
-      })
-    );
+    return this.generatedXApiService
+      .observedEvaluationDashboard(evaluationId, teamId)
+      .pipe(
+        catchError((error) => {
+          console.error('xAPI tracking error:', error);
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Logs xAPI observed statement when user observes the scoresheet
    */
-  observedEvaluationScoresheet(evaluationId: string, teamId: string): Observable<any> {
+  observedEvaluationScoresheet(
+    evaluationId: string,
+    teamId: string,
+  ): Observable<any> {
     if (!this.enabled) {
       return of(null);
     }
-    return this.generatedXApiService.observedEvaluationScoresheet(evaluationId, teamId).pipe(
-      catchError((error) => {
-        console.error('xAPI tracking error:', error);
-        return of(null);
-      })
-    );
+    return this.generatedXApiService
+      .observedEvaluationScoresheet(evaluationId, teamId)
+      .pipe(
+        catchError((error) => {
+          console.error('xAPI tracking error:', error);
+          return of(null);
+        }),
+      );
   }
 }

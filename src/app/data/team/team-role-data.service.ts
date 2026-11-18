@@ -4,10 +4,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import {
-  TeamRole,
-  TeamRolesService,
-} from 'src/app/generated/cite.api';
+import { TeamRole, TeamRolesService } from 'src/app/generated/cite.api';
 
 @Injectable({
   providedIn: 'root',
@@ -24,5 +21,4 @@ export class TeamRoleDataService {
       .getAllTeamRoles()
       .pipe(tap((x) => this.teamRolesSubject.next(x)));
   }
-
 }

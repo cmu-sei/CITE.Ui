@@ -18,7 +18,11 @@ describe('commentAuthor', () => {
    * Data: per row, the comment's createdBy; Alice is u1.
    */
   it.each([
-    { createdBy: '00000000-0000-0000-0000-000000000000', label: HIDDEN_AUTHOR_LABEL, hidden: true },
+    {
+      createdBy: '00000000-0000-0000-0000-000000000000',
+      label: HIDDEN_AUTHOR_LABEL,
+      hidden: true,
+    },
     { createdBy: null, label: HIDDEN_AUTHOR_LABEL, hidden: true },
     { createdBy: undefined, label: HIDDEN_AUTHOR_LABEL, hidden: true },
     { createdBy: 'u1', label: 'Alice', hidden: false },

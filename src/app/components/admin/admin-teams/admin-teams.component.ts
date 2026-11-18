@@ -3,14 +3,21 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, OnInit, OnDestroy, inject, input } from '@angular/core';
-import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  UntypedFormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import { Team, TeamType, User } from 'src/app/generated/cite.api/model/models';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
 import { TeamQuery } from 'src/app/data/team/team.query';
 import { UserQuery } from 'src/app/data/user/user.query';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,16 +27,36 @@ import { MatIcon } from '@angular/material/icon';
 
 import { MatIconButton } from '@angular/material/button';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
-import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import {
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+} from '@angular/material/expansion';
 import { AdminTeamMembershipsComponent } from '../admin-team-memberships/admin-team-memberships/admin-team-memberships.component';
 import { MatCard } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-    selector: 'app-admin-teams',
-    templateUrl: './admin-teams.component.html',
-    styleUrls: ['./admin-teams.component.scss'],
-    imports: [MatIcon, MatIconButton, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatAccordion, MatSort, MatSortHeader, MatExpansionPanel, MatExpansionPanelHeader, AdminTeamMembershipsComponent, MatCard, MatProgressSpinner]
+  selector: 'app-admin-teams',
+  templateUrl: './admin-teams.component.html',
+  styleUrls: ['./admin-teams.component.scss'],
+  imports: [
+    MatIcon,
+    MatIconButton,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSuffix,
+    MatAccordion,
+    MatSort,
+    MatSortHeader,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    AdminTeamMembershipsComponent,
+    MatCard,
+    MatProgressSpinner,
+  ],
 })
 export class AdminTeamsComponent implements OnInit, OnDestroy {
   private settingsService = inject(ComnSettingsService);
@@ -57,29 +84,42 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   filteredTeamList: Team[];
   teamTypeList: TeamType[] = [];
   userList: User[] = [];
-  sort: Sort = {active: 'shortName', direction: 'asc'};
+  sort: Sort = { active: 'shortName', direction: 'asc' };
   sortedTeams: Team[] = [];
   private unsubscribe$ = new Subject();
 
   constructor() {
     // subscribe to TeamTypes
-    this.teamTypeQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teamTypes => {
-      this.teamTypeList = teamTypes.sort((a: TeamType, b: TeamType) => {
-        return ( (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) );
+    this.teamTypeQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((teamTypes) => {
+        this.teamTypeList = teamTypes.sort((a: TeamType, b: TeamType) => {
+          return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+        });
       });
-    });
-    this.teamQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(teams => {
-      this.teamList = teams ? teams : [];
-      this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
-    });
-    this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
-      this.userList = users;
-    });
+    this.teamQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((teams) => {
+        this.teamList = teams ? teams : [];
+        this.sortedTeams = this.getSortedTeams(
+          this.getFilteredTeams(this.teamList),
+        );
+      });
+    this.userQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((users) => {
+        this.userList = users;
+      });
     this.filterControl.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((term) => {
         this.filterString = term;
-        this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
+        this.sortedTeams = this.getSortedTeams(
+          this.getFilteredTeams(this.teamList),
+        );
       });
   }
 
@@ -95,10 +135,10 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
         shortName: '',
         teamTypeId: '',
         evaluationId: this.evaluationId(),
-        hideScoresheet: false
+        hideScoresheet: false,
       };
     } else {
-      team = {... team};
+      team = { ...team };
     }
     const dialogRef = this.dialog.open(AdminTeamEditDialogComponent, {
       minWidth: '400px',
@@ -107,7 +147,7 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
       data: {
         team: team,
         teamTypeList: this.teamTypeList,
-        userList: this.userList
+        userList: this.userList,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -119,7 +159,10 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   }
 
   togglePanel(team: Team) {
-    this.editTeam = this.editTeam.id === team.id ? this.editTeam = {} : this.editTeam = { ...team};
+    this.editTeam =
+      this.editTeam.id === team.id
+        ? (this.editTeam = {})
+        : (this.editTeam = { ...team });
   }
 
   selectTeam(team: Team) {
@@ -158,27 +201,32 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
   }
 
   sortChanged(sort: Sort) {
-    this.sort = sort && sort.direction ? sort : {active: 'shortName', direction: 'asc'};
-    this.sortedTeams = this.getSortedTeams(this.getFilteredTeams(this.teamList));
+    this.sort =
+      sort && sort.direction ? sort : { active: 'shortName', direction: 'asc' };
+    this.sortedTeams = this.getSortedTeams(
+      this.getFilteredTeams(this.teamList),
+    );
   }
 
   getFilteredTeams(teams: Team[]): Team[] {
     let filteredTeams: Team[] = [];
     if (teams) {
-      teams.forEach(t => {
+      teams.forEach((t) => {
         if (t.evaluationId === this.evaluationId()) {
-          filteredTeams.push({... t});
+          filteredTeams.push({ ...t });
         } else {
         }
       });
       if (filteredTeams && filteredTeams.length > 0 && this.filterString) {
         const filterString = this.filterString.toLowerCase();
-        filteredTeams = filteredTeams
-          .filter((a) =>
+        filteredTeams = filteredTeams.filter(
+          (a) =>
             a.shortName.toLowerCase().includes(filterString) ||
             a.name.toLowerCase().includes(filterString) ||
-            this.getTeamTypeName(a.teamTypeId).toLowerCase().includes(filterString)
-          );
+            this.getTeamTypeName(a.teamTypeId)
+              .toLowerCase()
+              .includes(filterString),
+        );
       }
     }
     return filteredTeams;
@@ -186,41 +234,50 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
 
   getSortedTeams(teams: Team[]) {
     if (teams) {
-      teams.sort((a, b) => this.sortTeams(a, b, this.sort.active, this.sort.direction));
+      teams.sort((a, b) =>
+        this.sortTeams(a, b, this.sort.active, this.sort.direction),
+      );
     }
     return teams;
   }
 
-  private sortTeams(
-    a: Team,
-    b: Team,
-    column: string,
-    direction: string
-  ) {
+  private sortTeams(a: Team, b: Team, column: string, direction: string) {
     const isAsc = direction !== 'desc';
     switch (column) {
       case 'teamTypeId':
         const aVal = this.getTeamTypeName(a.teamTypeId);
         const bVal = this.getTeamTypeName(b.teamTypeId);
         if (aVal === bVal) {
-          return ( (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+          return (
+            (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) *
+            (isAsc ? 1 : -1)
+          );
         }
-        return ( (aVal < bVal ? -1 : 1) * (isAsc ? 1 : -1) );
+        return (aVal < bVal ? -1 : 1) * (isAsc ? 1 : -1);
         break;
       case 'name':
         if (a.name.toLowerCase() === b.name.toLowerCase()) {
-          return ( (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+          return (
+            (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) *
+            (isAsc ? 1 : -1)
+          );
         }
-        return ( (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        return (
+          (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
         break;
       default:
-        return ( (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        return (
+          (a.shortName.toLowerCase() < b.shortName.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1)
+        );
         break;
     }
   }
 
   getTeamTypeName(teamTypeId: string) {
-    const teamType = this.teamTypeList.find(tt => tt.id === teamTypeId);
+    const teamType = this.teamTypeList.find((tt) => tt.id === teamTypeId);
     return teamType ? teamType.name : ' ';
   }
 
@@ -228,5 +285,4 @@ export class AdminTeamsComponent implements OnInit, OnDestroy {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

@@ -16,7 +16,7 @@ import {
   SubmissionComment,
   SubmissionCommentService,
   UpdateSubmissionRequest,
-  UpdateSubmissionCommentRequest
+  UpdateSubmissionCommentRequest,
 } from 'src/app/generated/cite.api';
 import { map, share, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -47,7 +47,7 @@ export class SubmissionDataService {
     const activatedRoute = this.activatedRoute;
 
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('submissionmask') || '')
+      map((params) => params.get('submissionmask') || ''),
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
@@ -56,16 +56,16 @@ export class SubmissionDataService {
       });
     });
     this.sortColumn = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('sorton') || 'name')
+      map((params) => params.get('sorton') || 'name'),
     );
     this.sortIsAscending = activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('sortdir') || 'asc') === 'asc')
+      map((params) => (params.get('sortdir') || 'asc') === 'asc'),
     );
     this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
+      map((params) => parseInt(params.get('pagesize') || '20', 10)),
     );
     this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
+      map((params) => parseInt(params.get('pageindex') || '0', 10)),
     );
     this.submissionList = combineLatest([
       this.submissionQuery.selectAll(),
@@ -85,12 +85,11 @@ export class SubmissionDataService {
           pageIndex,
         ]) =>
           items
-            ? (items as Submission[])
-              .sort((a: Submission, b: Submission) =>
-                this.sortSubmissions(a, b, sortColumn, sortIsAscending)
+            ? (items as Submission[]).sort((a: Submission, b: Submission) =>
+                this.sortSubmissions(a, b, sortColumn, sortIsAscending),
               )
-            : []
-      )
+            : [],
+      ),
     );
   }
 
@@ -98,7 +97,7 @@ export class SubmissionDataService {
     a: Submission,
     b: Submission,
     column: string,
-    isAsc: boolean
+    isAsc: boolean,
   ) {
     switch (column) {
       case 'dateCreated':
@@ -119,7 +118,7 @@ export class SubmissionDataService {
         tap(() => {
           this.submissionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (submissions) => {
@@ -127,7 +126,7 @@ export class SubmissionDataService {
         },
         (error) => {
           this.submissionStore.set([]);
-        }
+        },
       );
   }
 
@@ -139,7 +138,7 @@ export class SubmissionDataService {
         tap(() => {
           this.submissionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (submissions) => {
@@ -147,7 +146,7 @@ export class SubmissionDataService {
         },
         (error) => {
           this.submissionStore.set([]);
-        }
+        },
       );
   }
 
@@ -159,7 +158,7 @@ export class SubmissionDataService {
         tap(() => {
           this.submissionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (submissions) => {
@@ -167,7 +166,7 @@ export class SubmissionDataService {
         },
         (error) => {
           this.submissionStore.set([]);
-        }
+        },
       );
   }
 
@@ -179,7 +178,7 @@ export class SubmissionDataService {
         tap(() => {
           this.submissionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.submissionStore.upsert(s.id, { ...s });
@@ -200,7 +199,7 @@ export class SubmissionDataService {
         tap(() => {
           this.submissionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         if (s) {
@@ -213,12 +212,14 @@ export class SubmissionDataService {
   updateSubmissionStatus(id: string, status: ItemStatus) {
     this.submissionStore.setLoading(true);
     this.submissionService
-      .updateSubmission(id, { status } satisfies Required<UpdateSubmissionRequest>)
+      .updateSubmission(id, {
+        status,
+      } satisfies Required<UpdateSubmissionRequest>)
       .pipe(
         tap(() => {
           this.submissionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -233,7 +234,7 @@ export class SubmissionDataService {
         tap(() => {
           this.submissionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -248,7 +249,7 @@ export class SubmissionDataService {
         tap(() => {
           this.submissionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -274,35 +275,47 @@ export class SubmissionDataService {
   }
 
   // the comment methods return the request so callers can show its outcome; the store is updated either way
-  addSubmissionComment(submissionId: string, submissionOptionId: string, comment: string): Observable<Submission> {
+  addSubmissionComment(
+    submissionId: string,
+    submissionOptionId: string,
+    comment: string,
+  ): Observable<Submission> {
     const submissionComment = {
       submissionOptionId: submissionOptionId,
-      comment: comment
+      comment: comment,
     } as SubmissionComment;
-    const request$ = this.submissionService.addSubmissionComment(submissionId, submissionComment).pipe(take(1), share());
-    request$.subscribe(s => {
+    const request$ = this.submissionService
+      .addSubmissionComment(submissionId, submissionComment)
+      .pipe(take(1), share());
+    request$.subscribe((s) => {
       this.submissionStore.upsert(s.id, { ...s });
     });
     return request$;
   }
 
-  changeSubmissionComment(submissionId: string, submissionComment: SubmissionComment): Observable<Submission> {
-    const request$ = this.submissionService.changeSubmissionComment(
-      submissionId,
-      submissionComment.id,
-      { comment: submissionComment.comment } satisfies Required<UpdateSubmissionCommentRequest>,
-    ).pipe(take(1), share());
-    request$.subscribe(s => {
+  changeSubmissionComment(
+    submissionId: string,
+    submissionComment: SubmissionComment,
+  ): Observable<Submission> {
+    const request$ = this.submissionService
+      .changeSubmissionComment(submissionId, submissionComment.id, {
+        comment: submissionComment.comment,
+      } satisfies Required<UpdateSubmissionCommentRequest>)
+      .pipe(take(1), share());
+    request$.subscribe((s) => {
       this.submissionStore.upsert(s.id, { ...s });
     });
     return request$;
   }
 
-  removeSubmissionComment(submissionId: string, submissionCommentId: string): Observable<Submission> {
+  removeSubmissionComment(
+    submissionId: string,
+    submissionCommentId: string,
+  ): Observable<Submission> {
     const request$ = this.submissionService
       .removeSubmissionComment(submissionId, submissionCommentId)
       .pipe(take(1), share());
-    request$.subscribe(s => {
+    request$.subscribe((s) => {
       this.submissionStore.upsert(s.id, { ...s });
     });
     return request$;
@@ -327,22 +340,34 @@ export class SubmissionDataService {
   }
 
   updateStore(updatedSubmission: Submission) {
-    const submission = {...updatedSubmission};
+    const submission = { ...updatedSubmission };
     if (submission.scoreIsAnAverage) {
       const allSubmissions = this.submissionQuery.getAll();
-      const matchingSubmission = allSubmissions.find(s =>
-        ((!s.userId && !submission.userId) || s.userId === submission.userId) &&        // both IDs are null or equal
-        ((!s.teamId && !submission.teamId) || s.teamId === submission.teamId) &&        // both IDs are null or equal
-        ((!s.groupId && !submission.groupId) || s.groupId === submission.groupId) &&    // both IDs are null or equal
-        s.evaluationId === submission.evaluationId &&
-        +s.moveNumber === +submission.moveNumber &&
-        s.scoreIsAnAverage);
+      const matchingSubmission = allSubmissions.find(
+        (s) =>
+          ((!s.userId && !submission.userId) ||
+            s.userId === submission.userId) && // both IDs are null or equal
+          ((!s.teamId && !submission.teamId) ||
+            s.teamId === submission.teamId) && // both IDs are null or equal
+          ((!s.groupId && !submission.groupId) ||
+            s.groupId === submission.groupId) && // both IDs are null or equal
+          s.evaluationId === submission.evaluationId &&
+          +s.moveNumber === +submission.moveNumber &&
+          s.scoreIsAnAverage,
+      );
       if (matchingSubmission) {
         submission.id = matchingSubmission.id;
       } else {
-        console.log('submission not found. user=' +
-          submission.userId + ', team=' + submission.teamId +
-          ', group=' + submission.groupId + ', evaluation=' + submission.evaluationId);
+        console.log(
+          'submission not found. user=' +
+            submission.userId +
+            ', team=' +
+            submission.teamId +
+            ', group=' +
+            submission.groupId +
+            ', evaluation=' +
+            submission.evaluationId,
+        );
       }
     }
     this.submissionStore.upsert(submission.id, submission);
@@ -351,5 +376,4 @@ export class SubmissionDataService {
   deleteFromStore(id: string) {
     this.submissionStore.remove(id);
   }
-
 }

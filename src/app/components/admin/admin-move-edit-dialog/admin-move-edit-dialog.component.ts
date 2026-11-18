@@ -3,15 +3,36 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, inject, output } from '@angular/core';
-import { FormBuilder, FormGroup, UntypedFormControl, FormGroupDirective, NgForm, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
 import {
-  MAT_DIALOG_DATA as MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+  FormBuilder,
+  FormGroup,
+  UntypedFormControl,
+  FormGroupDirective,
+  NgForm,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EDITOR_CONFIG } from 'src/app/utilities/editor-config';
-import { CrucibleDialogComponent, CrucibleDialogContentDirective } from '@cmusei/crucible-common';
-import { MatFormField, MatLabel, MatInput, MatSuffix } from '@angular/material/input';
-import { NgxMatDatepickerInput, NgxMatDatetimepicker, NgxMatDatepickerActions, NgxMatDatepickerApply, NgxMatDatepickerCancel } from '@ngxmc/datetime-picker';
+import {
+  CrucibleDialogComponent,
+  CrucibleDialogContentDirective,
+} from '@cmusei/crucible-common';
+import {
+  MatFormField,
+  MatLabel,
+  MatInput,
+  MatSuffix,
+} from '@angular/material/input';
+import {
+  NgxMatDatepickerInput,
+  NgxMatDatetimepicker,
+  NgxMatDatepickerActions,
+  NgxMatDatepickerApply,
+  NgxMatDatepickerCancel,
+} from '@ngxmc/datetime-picker';
 import { MatDatepickerToggle } from '@angular/material/datepicker';
 import { MatButton } from '@angular/material/button';
 import { AngularEditorModule } from '@kolkov/angular-editor';
@@ -21,7 +42,7 @@ import { DatePipe } from '@angular/common';
 export class UserErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(
     control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
+    form: FormGroupDirective | NgForm | null,
   ): boolean {
     const isSubmitted = form && form.submitted;
     return !!(control && control.invalid && (control.dirty || isSubmitted));
@@ -29,12 +50,29 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-    selector: 'app-admin-move-edit-dialog',
-    templateUrl: './admin-move-edit-dialog.component.html',
-    styleUrls: ['./admin-move-edit-dialog.component.scss'],
-    imports: [CrucibleDialogComponent, CrucibleDialogContentDirective, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, NgxMatDatepickerInput, MatDatepickerToggle, MatSuffix, NgxMatDatetimepicker, NgxMatDatepickerActions, MatButton, NgxMatDatepickerApply, NgxMatDatepickerCancel, AngularEditorModule, DatePipe]
+  selector: 'app-admin-move-edit-dialog',
+  templateUrl: './admin-move-edit-dialog.component.html',
+  styleUrls: ['./admin-move-edit-dialog.component.scss'],
+  imports: [
+    CrucibleDialogComponent,
+    CrucibleDialogContentDirective,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    NgxMatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix,
+    NgxMatDatetimepicker,
+    NgxMatDatepickerActions,
+    MatButton,
+    NgxMatDatepickerApply,
+    NgxMatDatepickerCancel,
+    AngularEditorModule,
+    DatePipe,
+  ],
 })
-
 export class AdminMoveEditDialogComponent {
   data = inject(MAT_DIALOG_DATA);
   private formBuilder = inject(FormBuilder);
@@ -92,7 +130,7 @@ export class AdminMoveEditDialogComponent {
         if (this.situationDateFormControl.value) {
           this.situationDateFormControl.setValue(
             new Date(this.situationDateFormControl.value),
-            { emitEvent: false }
+            { emitEvent: false },
           );
         }
         break;
@@ -102,15 +140,15 @@ export class AdminMoveEditDialogComponent {
   }
 
   getUserName(userId: string) {
-    return this.data.userList.find(u => u.id === userId).name;
+    return this.data.userList.find((u) => u.id === userId).name;
   }
 
   incrementCurrentMoveNumber() {
-    this.data.move.currentMoveNumber ++;
+    this.data.move.currentMoveNumber++;
   }
 
   decrementCurrentMoveNumber() {
-    this.data.move.currentMoveNumber --;
+    this.data.move.currentMoveNumber--;
   }
 
   getUserTimezone(): string {
@@ -124,7 +162,7 @@ export class AdminMoveEditDialogComponent {
       const timeZone = this.getUserTimezone();
       const formatted = date.toLocaleTimeString('en-US', {
         timeZoneName: 'short',
-        timeZone
+        timeZone,
       });
       const parts = formatted.split(' ');
       return parts[parts.length - 1] || 'UTC';
@@ -132,5 +170,4 @@ export class AdminMoveEditDialogComponent {
       return 'UTC';
     }
   }
-
 }

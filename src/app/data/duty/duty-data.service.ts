@@ -28,7 +28,7 @@ export class DutyDataService {
 
   private _requestedDutyId: string;
   private _requestedDutyId$ = this.activatedRoute.queryParamMap.pipe(
-    map((params) => params.get('dutyId') || '')
+    map((params) => params.get('dutyId') || ''),
   );
   readonly DutyList: Observable<Duty[]>;
   readonly filterControl = new UntypedFormControl();
@@ -44,7 +44,7 @@ export class DutyDataService {
     const activatedRoute = this.activatedRoute;
 
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('dutymask') || '')
+      map((params) => params.get('dutymask') || ''),
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
@@ -53,16 +53,16 @@ export class DutyDataService {
       });
     });
     this.sortColumn = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('sorton') || 'name')
+      map((params) => params.get('sorton') || 'name'),
     );
     this.sortIsAscending = activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('sortdir') || 'asc') === 'asc')
+      map((params) => (params.get('sortdir') || 'asc') === 'asc'),
     );
     this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
+      map((params) => parseInt(params.get('pagesize') || '20', 10)),
     );
     this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
+      map((params) => parseInt(params.get('pageindex') || '0', 10)),
     );
     this.DutyList = combineLatest([
       this.dutyQuery.selectAll(),
@@ -83,29 +83,22 @@ export class DutyDataService {
         ]) =>
           items
             ? (items as Duty[])
-              .sort((a: Duty, b: Duty) =>
-                this.sortDuties(a, b, sortColumn, sortIsAscending)
-              )
-              .filter(
-                (duty) =>
-                  ('' + duty.name)
-                    .toLowerCase()
-                    .includes(filterTerm.toLowerCase()) ||
-                    duty.id
+                .sort((a: Duty, b: Duty) =>
+                  this.sortDuties(a, b, sortColumn, sortIsAscending),
+                )
+                .filter(
+                  (duty) =>
+                    ('' + duty.name)
                       .toLowerCase()
-                      .includes(filterTerm.toLowerCase())
-              )
-            : []
-      )
+                      .includes(filterTerm.toLowerCase()) ||
+                    duty.id.toLowerCase().includes(filterTerm.toLowerCase()),
+                )
+            : [],
+      ),
     );
   }
 
-  private sortDuties(
-    a: Duty,
-    b: Duty,
-    column: string,
-    isAsc: boolean
-  ) {
+  private sortDuties(a: Duty, b: Duty, column: string, isAsc: boolean) {
     switch (column) {
       case 'name':
         return (
@@ -130,18 +123,18 @@ export class DutyDataService {
         tap(() => {
           this.dutyStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (duties) => {
-          duties.forEach(e => {
+          duties.forEach((e) => {
             this.setAsDates(e);
           });
           this.dutyStore.set(duties);
         },
         (error) => {
           this.dutyStore.set([]);
-        }
+        },
       );
   }
 
@@ -153,18 +146,18 @@ export class DutyDataService {
         tap(() => {
           this.dutyStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (duties) => {
-          duties.forEach(e => {
+          duties.forEach((e) => {
             this.setAsDates(e);
           });
           this.dutyStore.set(duties);
         },
         (error) => {
           this.dutyStore.set([]);
-        }
+        },
       );
   }
 
@@ -176,7 +169,7 @@ export class DutyDataService {
         tap(() => {
           this.dutyStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.dutyStore.upsert(s.id, { ...s });
@@ -196,7 +189,7 @@ export class DutyDataService {
         tap(() => {
           this.dutyStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.setAsDates(s);
@@ -207,12 +200,14 @@ export class DutyDataService {
   updateDuty(duty: Duty) {
     this.dutyStore.setLoading(true);
     this.dutyService
-      .updateDuty(duty.id, { name: duty.name } satisfies Required<UpdateDutyRequest>)
+      .updateDuty(duty.id, {
+        name: duty.name,
+      } satisfies Required<UpdateDutyRequest>)
       .pipe(
         tap(() => {
           this.dutyStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -227,7 +222,7 @@ export class DutyDataService {
         tap(() => {
           this.dutyStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -242,7 +237,7 @@ export class DutyDataService {
         tap(() => {
           this.dutyStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -283,5 +278,4 @@ export class DutyDataService {
     duty.dateCreated = new Date(duty.dateCreated);
     duty.dateModified = new Date(duty.dateModified);
   }
-
 }

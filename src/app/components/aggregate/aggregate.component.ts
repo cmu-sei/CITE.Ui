@@ -2,7 +2,15 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnDestroy, OnInit, effect, inject, input, output } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  effect,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -12,7 +20,8 @@ import { TeamQuery } from 'src/app/data/team/team.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { CurrentUserQuery } from 'src/app/data/user/user.query';
-import { ItemStatus,
+import {
+  ItemStatus,
   Evaluation,
   Move,
   ScoringCategory,
@@ -20,11 +29,14 @@ import { ItemStatus,
   Submission,
   SubmissionComment,
   Team,
-  User
+  User,
 } from 'src/app/generated/cite.api/model/models';
 import { SubmissionService } from 'src/app/generated/cite.api';
 import { TeamService } from 'src/app/generated/cite.api';
-import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
+import {
+  PopulatedSubmission,
+  SubmissionType,
+} from 'src/app/data/submission/submission.models';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { MatButton } from '@angular/material/button';
@@ -34,10 +46,10 @@ import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 import { commentAuthor } from 'src/app/utilities/comment-author';
 
 @Component({
-    selector: 'app-aggregate',
-    templateUrl: './aggregate.component.html',
-    styleUrls: ['./aggregate.component.scss'],
-    imports: [MatButton, MatIcon, DatePipe, DisplayOrderPipe]
+  selector: 'app-aggregate',
+  templateUrl: './aggregate.component.html',
+  styleUrls: ['./aggregate.component.scss'],
+  imports: [MatButton, MatIcon, DatePipe, DisplayOrderPipe],
 })
 export class AggregateComponent implements OnInit, OnDestroy {
   private submissionService = inject(SubmissionService);
@@ -78,7 +90,8 @@ export class AggregateComponent implements OnInit, OnDestroy {
   constructor() {
     this.titleService.setTitle('CITE Report');
     // observe the logged in user ID
-    this.currentUserQuery.select()
+    this.currentUserQuery
+      .select()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user) => {
         if (user && user.id !== this.loggedInUserId) {
@@ -88,9 +101,10 @@ export class AggregateComponent implements OnInit, OnDestroy {
       });
     this.userDataService.setCurrentUser();
     // observe the evaluation users
-    this.userQuery.selectAll()
+    this.userQuery
+      .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(users => {
+      .subscribe((users) => {
         this.userList = users;
       });
     // observing another team, only the team submissions can be shown, whatever
@@ -106,14 +120,23 @@ export class AggregateComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.currentMoveNumber = this.selectedEvaluation().currentMoveNumber;
     const selectedEvaluation = this.selectedEvaluation();
-    const savedType = this.uiDataService.getSubmissionType(selectedEvaluation.id)?.toLowerCase();
-    this.displaying = this.observing() || savedType === 'team' ? 'team' : 'user';
+    const savedType = this.uiDataService
+      .getSubmissionType(selectedEvaluation.id)
+      ?.toLowerCase();
+    this.displaying =
+      this.observing() || savedType === 'team' ? 'team' : 'user';
     this.teamList$ = this.teamService.getEvaluationTeams(selectedEvaluation.id);
-    this.submissionList$ = this.submissionService.getByEvaluation(selectedEvaluation.id);
+    this.submissionList$ = this.submissionService.getByEvaluation(
+      selectedEvaluation.id,
+    );
     // observe the vital information and process it when it is all present
     combineLatest([this.teamList$, this.submissionList$])
-      .pipe(takeUntil(this.unsubscribe$)).subscribe(([teams, submissions]) => {
-        this.teamList = teams.length > 0 ? teams.sort((a, b) => a.shortName < b.shortName ? -1 : 1) : [];
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(([teams, submissions]) => {
+        this.teamList =
+          teams.length > 0
+            ? teams.sort((a, b) => (a.shortName < b.shortName ? -1 : 1))
+            : [];
         this.getPopulatedSubmissions(submissions);
       });
   }
@@ -123,52 +146,84 @@ export class AggregateComponent implements OnInit, OnDestroy {
     if (!submissionCategories || submissionCategories.length === 0) {
       return 0;
     } else {
-      const submissionCategory = submissionCategories.find(sc => sc.scoringCategoryId === scoringCategoryId);
+      const submissionCategory = submissionCategories.find(
+        (sc) => sc.scoringCategoryId === scoringCategoryId,
+      );
       return submissionCategory ? submissionCategory.score : 0;
     }
   }
 
-  isSelected(submission: PopulatedSubmission, scoringCategoryId: string, scoringOptionId: string) {
+  isSelected(
+    submission: PopulatedSubmission,
+    scoringCategoryId: string,
+    scoringOptionId: string,
+  ) {
     let isSelected = false;
     const submissionCategories = submission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
-      const sc = submissionCategories.find(subCat => subCat.scoringCategoryId === scoringCategoryId);
+      const sc = submissionCategories.find(
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId,
+      );
       if (sc) {
-        const so = sc.submissionOptions.find(subOpt => subOpt.scoringOptionId === scoringOptionId);
+        const so = sc.submissionOptions.find(
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId,
+        );
         isSelected = so && so.isSelected;
       }
       if (isSelected) {
-        const scoringCategory = this.selectedScoringModel()?.scoringCategories?.find(subCat => subCat.id === scoringCategoryId);
-        const scoringOption = scoringCategory?.scoringOptions?.find(so => so.id === scoringOptionId);
+        const scoringCategory =
+          this.selectedScoringModel()?.scoringCategories?.find(
+            (subCat) => subCat.id === scoringCategoryId,
+          );
+        const scoringOption = scoringCategory?.scoringOptions?.find(
+          (so) => so.id === scoringOptionId,
+        );
       }
     }
     return isSelected;
   }
 
-  selectedCount(submission: PopulatedSubmission, scoringCategoryId: string, scoringOptionId: string) {
+  selectedCount(
+    submission: PopulatedSubmission,
+    scoringCategoryId: string,
+    scoringOptionId: string,
+  ) {
     let selectedCount = 0;
     const submissionCategories = submission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
-      const sc = submissionCategories.find(subCat => subCat.scoringCategoryId === scoringCategoryId);
+      const sc = submissionCategories.find(
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId,
+      );
       if (sc) {
-        const so = sc.submissionOptions.find(subOpt => subOpt.scoringOptionId === scoringOptionId);
+        const so = sc.submissionOptions.find(
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId,
+        );
         selectedCount = so ? so.selectedCount : 0;
       }
     }
     return selectedCount > 0 ? selectedCount.toString() : '   ';
   }
 
-  optionComments(submission: PopulatedSubmission, scoringCategoryId: string, scoringOptionId: string) {
-    if (!submission ||
-        !submission.submissionCategories ||
-        !scoringCategoryId ||
-        !scoringOptionId) {
+  optionComments(
+    submission: PopulatedSubmission,
+    scoringCategoryId: string,
+    scoringOptionId: string,
+  ) {
+    if (
+      !submission ||
+      !submission.submissionCategories ||
+      !scoringCategoryId ||
+      !scoringOptionId
+    ) {
       return [];
     }
-    const submissionCategory = submission.submissionCategories
-      .find(sc => sc.scoringCategoryId === scoringCategoryId);
+    const submissionCategory = submission.submissionCategories.find(
+      (sc) => sc.scoringCategoryId === scoringCategoryId,
+    );
     if (submissionCategory) {
-      const submissionOption = submissionCategory.submissionOptions.find(so => so.scoringOptionId === scoringOptionId);
+      const submissionOption = submissionCategory.submissionOptions.find(
+        (so) => so.scoringOptionId === scoringOptionId,
+      );
       if (submissionOption) {
         return submissionOption.submissionComments;
       }
@@ -178,24 +233,46 @@ export class AggregateComponent implements OnInit, OnDestroy {
 
   // the team or user a submission belongs to, as named in the report
   submissionName(submission: PopulatedSubmission) {
-    return this.displaying === 'team' ? this.getTeamShortName(submission.teamId) : this.getUserName(submission.userId);
+    return this.displaying === 'team'
+      ? this.getTeamShortName(submission.teamId)
+      : this.getUserName(submission.userId);
   }
 
   // who selected an option, across all of the move's submissions
-  optionSelectors(submissions: PopulatedSubmission[], scoringCategoryId: string, scoringOptionId: string) {
+  optionSelectors(
+    submissions: PopulatedSubmission[],
+    scoringCategoryId: string,
+    scoringOptionId: string,
+  ) {
     return submissions
-      .filter(submission => this.isSelected(submission, scoringCategoryId, scoringOptionId))
-      .map(submission => this.submissionName(submission))
+      .filter((submission) =>
+        this.isSelected(submission, scoringCategoryId, scoringOptionId),
+      )
+      .map((submission) => this.submissionName(submission))
       .sort((a, b) => a.localeCompare(b));
   }
 
   // every comment on an option, across all of the move's submissions
-  moveOptionComments(submissions: PopulatedSubmission[], scoringCategoryId: string, scoringOptionId: string) {
-    return submissions.reduce<SubmissionComment[]>((comments, submission) =>
-      comments.concat(this.optionComments(submission, scoringCategoryId, scoringOptionId) ?? []), []);
+  moveOptionComments(
+    submissions: PopulatedSubmission[],
+    scoringCategoryId: string,
+    scoringOptionId: string,
+  ) {
+    return submissions.reduce<SubmissionComment[]>(
+      (comments, submission) =>
+        comments.concat(
+          this.optionComments(submission, scoringCategoryId, scoringOptionId) ??
+            [],
+        ),
+      [],
+    );
   }
 
-  selectedBy(submission: PopulatedSubmission, scoringCategoryId: string, scoringOptionId: string) {
+  selectedBy(
+    submission: PopulatedSubmission,
+    scoringCategoryId: string,
+    scoringOptionId: string,
+  ) {
     if (this.displaying !== 'team') {
       return;
     }
@@ -203,9 +280,13 @@ export class AggregateComponent implements OnInit, OnDestroy {
     let isSelected = null;
     const submissionCategories = submission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
-      const sc = submissionCategories.find(subCat => subCat.scoringCategoryId === scoringCategoryId);
+      const sc = submissionCategories.find(
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId,
+      );
       if (sc) {
-        const so = sc.submissionOptions.find(subOpt => subOpt.scoringOptionId === scoringOptionId);
+        const so = sc.submissionOptions.find(
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId,
+        );
         isSelected = so && so.isSelected;
         selectedBy = so && so.modifiedBy;
       }
@@ -219,7 +300,7 @@ export class AggregateComponent implements OnInit, OnDestroy {
   }
 
   getTeamShortName(id: string) {
-    const theTeam = this.teamList?.find(tu => tu.id === id);
+    const theTeam = this.teamList?.find((tu) => tu.id === id);
     return theTeam ? theTeam.shortName : '';
   }
 
@@ -229,37 +310,43 @@ export class AggregateComponent implements OnInit, OnDestroy {
   }
 
   getUserName(id: string) {
-    const theUser = this.userList?.find(tu => tu.id === id);
+    const theUser = this.userList?.find((tu) => tu.id === id);
     return theUser ? theUser.name : '';
   }
 
   getUserListFromTeams(teams: Team[]): User[] {
     const users: User[] = [];
-    teams.forEach(team => {
-      team.memberships.forEach(user => {
+    teams.forEach((team) => {
+      team.memberships.forEach((user) => {
         users.push(user);
       });
     });
-    return users.sort((a, b) => a.name < b.name ? -1 : 1);
+    return users.sort((a, b) => (a.name < b.name ? -1 : 1));
   }
 
   getSubmissionStatusText(submission: PopulatedSubmission) {
-    return submission.status === ItemStatus.Complete ? 'Submitted' : 'Unsubmitted';
+    return submission.status === ItemStatus.Complete
+      ? 'Submitted'
+      : 'Unsubmitted';
   }
 
   getDisplayedScoringCategories(moveNumber: number): ScoringCategory[] {
     const displayedScoringCategories: ScoringCategory[] = [];
-    this.selectedScoringModel()?.scoringCategories.forEach(scoringCategory => {
-      let hideIt = false;
-      if (this.selectedScoringModel().displayScoringModelByMoveNumber &&
+    this.selectedScoringModel()?.scoringCategories.forEach(
+      (scoringCategory) => {
+        let hideIt = false;
+        if (
+          this.selectedScoringModel().displayScoringModelByMoveNumber &&
           (+moveNumber < +scoringCategory.moveNumberFirstDisplay ||
-          +moveNumber > +scoringCategory.moveNumberLastDisplay)) {
-        hideIt = true
-      }
-    if (!hideIt) {
-        displayedScoringCategories.push(scoringCategory);
-      }
-    });
+            +moveNumber > +scoringCategory.moveNumberLastDisplay)
+        ) {
+          hideIt = true;
+        }
+        if (!hideIt) {
+          displayedScoringCategories.push(scoringCategory);
+        }
+      },
+    );
     return displayedScoringCategories;
   }
 
@@ -298,33 +385,49 @@ export class AggregateComponent implements OnInit, OnDestroy {
             populatedSubmission.submissionType = SubmissionType.team;
             allSubmissions.push(submission);
             teamSubmissions.push(populatedSubmission);
-            }
+          }
         }
       }
     });
-    this.submissionList = allSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
-    this.teamSubmissionList = teamSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
-    this.userSubmissionList = userSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
-    this.displayedSubmissionList = this.displaying === 'team' ? this.teamSubmissionList : this.userSubmissionList;
+    this.submissionList = allSubmissions.sort((a, b) =>
+      +a.moveNumber < +b.moveNumber ? -1 : 1,
+    );
+    this.teamSubmissionList = teamSubmissions.sort((a, b) =>
+      +a.moveNumber < +b.moveNumber ? -1 : 1,
+    );
+    this.userSubmissionList = userSubmissions.sort((a, b) =>
+      +a.moveNumber < +b.moveNumber ? -1 : 1,
+    );
+    this.displayedSubmissionList =
+      this.displaying === 'team'
+        ? this.teamSubmissionList
+        : this.userSubmissionList;
   }
 
   getSortedMoveList(): Move[] {
     const moveList = [];
-    this.moveList().forEach(move => {
-      const addIt = (+move.moveNumber <= +this.selectedEvaluation().currentMoveNumber) && this.getDisplayedScoringCategories(move.moveNumber).length > 0;
+    this.moveList().forEach((move) => {
+      const addIt =
+        +move.moveNumber <= +this.selectedEvaluation().currentMoveNumber &&
+        this.getDisplayedScoringCategories(move.moveNumber).length > 0;
       if (addIt) {
         moveList.push(move);
       }
     });
-    return moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
+    return moveList.sort((a, b) => (+a.moveNumber < +b.moveNumber ? -1 : 1));
   }
 
   hasScoresAndValidMove(vs: PopulatedSubmission): boolean {
     const selectedScoringModel = this.selectedScoringModel();
-    const hasScores = !selectedScoringModel.displayScoringModelByMoveNumber ||
+    const hasScores =
+      !selectedScoringModel.displayScoringModelByMoveNumber ||
       selectedScoringModel?.scoringCategories.some(
-        sc => +vs.moveNumber >= +sc.moveNumberFirstDisplay && +vs.moveNumber <= +sc.moveNumberLastDisplay);
-    const hasValidMove = +vs.moveNumber <= +this.selectedEvaluation().currentMoveNumber;
+        (sc) =>
+          +vs.moveNumber >= +sc.moveNumberFirstDisplay &&
+          +vs.moveNumber <= +sc.moveNumberLastDisplay,
+      );
+    const hasValidMove =
+      +vs.moveNumber <= +this.selectedEvaluation().currentMoveNumber;
     return hasScores && hasValidMove;
   }
 
@@ -350,19 +453,21 @@ export class AggregateComponent implements OnInit, OnDestroy {
     // Print the report alone, keeping its root element so its print styles
     // apply, and in the light theme so a dark background never reaches the
     // page. The reload restores the app.
-    document.body.innerHTML = document.getElementById('printable-area').outerHTML;
+    document.body.innerHTML =
+      document.getElementById('printable-area').outerHTML;
     document.body.classList.remove('darkMode');
     window.print();
     location.reload();
   }
 
   getMoveSubmissions(move: Move): PopulatedSubmission[] {
-    return this.displayedSubmissionList.filter(m => +m.moveNumber === +move.moveNumber);
+    return this.displayedSubmissionList.filter(
+      (m) => +m.moveNumber === +move.moveNumber,
+    );
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

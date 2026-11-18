@@ -5,7 +5,18 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { ComnAuthService, ComnSettingsService } from '@cmusei/crucible-common';
 import * as signalR from '@microsoft/signalr';
-import { Action, Evaluation, ItemStatus, Move, Duty, ScoringModel, Submission, Team, TeamMembership, User } from 'src/app/generated/cite.api';
+import {
+  Action,
+  Evaluation,
+  ItemStatus,
+  Move,
+  Duty,
+  ScoringModel,
+  Submission,
+  Team,
+  TeamMembership,
+  User,
+} from 'src/app/generated/cite.api';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { EvaluationDataService } from 'src/app/data/evaluation/evaluation-data.service';
 import { MoveDataService } from '../data/move/move-data.service';
@@ -21,7 +32,7 @@ import { takeUntil } from 'rxjs/operators';
 
 export enum ApplicationArea {
   home = '',
-  admin = 'Admin'
+  admin = 'Admin',
 }
 @Injectable({
   providedIn: 'root',
@@ -98,13 +109,17 @@ export class SignalRService implements OnDestroy {
       this.hubConnection.stop().then(() => {
         this.hubConnection.baseUrl = this.getHubUrlWithAuth();
         this.connectionPromise = this.hubConnection.start();
-        this.connectionPromise.then(() => {
-          if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
-            setTimeout(() => this.reconnect(), 500);
-          } else {
-            this.onConnected();
-          }
-        }).catch((err) => this.onStartFailed(err));
+        this.connectionPromise
+          .then(() => {
+            if (
+              this.hubConnection.state !== signalR.HubConnectionState.Connected
+            ) {
+              setTimeout(() => this.reconnect(), 500);
+            } else {
+              this.onConnected();
+            }
+          })
+          .catch((err) => this.onStartFailed(err));
       });
     }
   }
@@ -123,7 +138,7 @@ export class SignalRService implements OnDestroy {
     console.warn('CITE hub unreachable: ' + (err?.message ?? err));
     this.systemMessageService.displayMessage(
       'Live Updates Unavailable',
-      'CITE could not connect to the CITE API for live updates. Changes made by others will not appear until the connection is restored. Refresh the page to try again.'
+      'CITE could not connect to the CITE API for live updates. Changes made by others will not appear until the connection is restored. Refresh the page to try again.',
     );
   }
 
@@ -168,11 +183,9 @@ export class SignalRService implements OnDestroy {
   }
 
   private addActionHandlers() {
-    this.hubConnection.on(
-      'ActionUpdated', (action: Action) => {
-        this.actionDataService.updateStore(action);
-      }
-    );
+    this.hubConnection.on('ActionUpdated', (action: Action) => {
+      this.actionDataService.updateStore(action);
+    });
 
     this.hubConnection.on('ActionCreated', (action: Action) => {
       this.actionDataService.updateStore(action);
@@ -184,11 +197,9 @@ export class SignalRService implements OnDestroy {
   }
 
   private addEvaluationHandlers() {
-    this.hubConnection.on(
-      'EvaluationUpdated', (evaluation: Evaluation) => {
-        this.evaluationDataService.updateStore(evaluation);
-      }
-    );
+    this.hubConnection.on('EvaluationUpdated', (evaluation: Evaluation) => {
+      this.evaluationDataService.updateStore(evaluation);
+    });
 
     this.hubConnection.on('EvaluationCreated', (evaluation: Evaluation) => {
       this.evaluationDataService.updateStore(evaluation);
@@ -200,11 +211,9 @@ export class SignalRService implements OnDestroy {
   }
 
   private addMoveHandlers() {
-    this.hubConnection.on(
-      'MoveUpdated', (move: Move) => {
-        this.moveDataService.updateStore(move);
-      }
-    );
+    this.hubConnection.on('MoveUpdated', (move: Move) => {
+      this.moveDataService.updateStore(move);
+    });
 
     this.hubConnection.on('MoveCreated', (move: Move) => {
       this.moveDataService.updateStore(move);
@@ -216,11 +225,9 @@ export class SignalRService implements OnDestroy {
   }
 
   private addSubmissionHandlers() {
-    this.hubConnection.on(
-      'SubmissionUpdated', (submission: Submission) => {
-        this.submissionDataService.updateStore(submission);
-      }
-    );
+    this.hubConnection.on('SubmissionUpdated', (submission: Submission) => {
+      this.submissionDataService.updateStore(submission);
+    });
 
     this.hubConnection.on('SubmissionCreated', (submission: Submission) => {
       this.submissionDataService.updateStore(submission);
@@ -232,11 +239,9 @@ export class SignalRService implements OnDestroy {
   }
 
   private addDutyHandlers() {
-    this.hubConnection.on(
-      'DutyUpdated', (duty: Duty) => {
-        this.dutyDataService.updateStore(duty);
-      }
-    );
+    this.hubConnection.on('DutyUpdated', (duty: Duty) => {
+      this.dutyDataService.updateStore(duty);
+    });
 
     this.hubConnection.on('DutyCreated', (duty: Duty) => {
       this.dutyDataService.updateStore(duty);
@@ -249,14 +254,18 @@ export class SignalRService implements OnDestroy {
 
   private addScoringModelHandlers() {
     this.hubConnection.on(
-      'ScoringModelUpdated', (scoringModel: ScoringModel) => {
+      'ScoringModelUpdated',
+      (scoringModel: ScoringModel) => {
         this.scoringModelDataService.updateStore(scoringModel);
-      }
+      },
     );
 
-    this.hubConnection.on('ScoringModelCreated', (scoringModel: ScoringModel) => {
-      this.scoringModelDataService.updateStore(scoringModel);
-    });
+    this.hubConnection.on(
+      'ScoringModelCreated',
+      (scoringModel: ScoringModel) => {
+        this.scoringModelDataService.updateStore(scoringModel);
+      },
+    );
 
     this.hubConnection.on('ScoringModelDeleted', (id: string) => {
       this.scoringModelDataService.deleteFromStore(id);
@@ -266,8 +275,7 @@ export class SignalRService implements OnDestroy {
   private addTeamHandlers() {
     this.hubConnection.on('TeamUpdated', (team: Team) => {
       this.teamDataService.updateStore(team);
-    }
-    );
+    });
 
     this.hubConnection.on('TeamCreated', (team: Team) => {
       this.teamDataService.updateStore(team);
@@ -279,13 +287,19 @@ export class SignalRService implements OnDestroy {
   }
 
   private addTeamMembershipHandlers() {
-    this.hubConnection.on('TeamMembershipUpdated', (teamMembership: TeamMembership) => {
-      this.teamMembershipDataService.updateStore(teamMembership);
-    });
+    this.hubConnection.on(
+      'TeamMembershipUpdated',
+      (teamMembership: TeamMembership) => {
+        this.teamMembershipDataService.updateStore(teamMembership);
+      },
+    );
 
-    this.hubConnection.on('TeamMembershipCreated', (teamMembership: TeamMembership) => {
-      this.teamMembershipDataService.updateStore(teamMembership);
-    });
+    this.hubConnection.on(
+      'TeamMembershipCreated',
+      (teamMembership: TeamMembership) => {
+        this.teamMembershipDataService.updateStore(teamMembership);
+      },
+    );
 
     this.hubConnection.on('TeamMembershipDeleted', (id: string) => {
       this.teamMembershipDataService.deleteFromStore(id);
@@ -295,8 +309,7 @@ export class SignalRService implements OnDestroy {
   private addUserHandlers() {
     this.hubConnection.on('UserUpdated', (user: User) => {
       this.userDataService.updateStore(user);
-    }
-    );
+    });
 
     this.hubConnection.on('UserCreated', (user: User) => {
       this.userDataService.updateStore(user);
@@ -311,18 +324,17 @@ export class SignalRService implements OnDestroy {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }
 
 class RetryPolicy {
   constructor(
     private maxSeconds: number,
     private minJitterSeconds: number,
-    private maxJitterSeconds: number
+    private maxJitterSeconds: number,
   ) {}
 
   nextRetryDelayInMilliseconds(
-    retryContext: signalR.RetryContext
+    retryContext: signalR.RetryContext,
   ): number | null {
     let nextRetrySeconds = Math.pow(2, retryContext.previousRetryCount + 1);
 
@@ -332,7 +344,7 @@ class RetryPolicy {
 
     nextRetrySeconds +=
       Math.floor(
-        Math.random() * (this.maxJitterSeconds - this.minJitterSeconds + 1)
+        Math.random() * (this.maxJitterSeconds - this.minJitterSeconds + 1),
       ) + this.minJitterSeconds; // Add Jitter
 
     return nextRetrySeconds * 1000;

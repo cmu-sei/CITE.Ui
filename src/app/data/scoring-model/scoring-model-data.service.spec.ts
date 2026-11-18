@@ -51,7 +51,9 @@ function setup(
     copyScoringModel: vi.fn((id: string) =>
       of(makeModel({ id: `${id}-copy` })),
     ),
-    updateScoringModel: vi.fn((id: string, m?: ScoringModel) => of({ ...m, id })),
+    updateScoringModel: vi.fn((id: string, m?: ScoringModel) =>
+      of({ ...m, id }),
+    ),
     deleteScoringModel: vi.fn(() => of(null)),
     uploadJsonFiles: vi.fn(() => of()),
     ...overrides.api,
@@ -197,7 +199,12 @@ describe('ScoringModelDataService', () => {
     store.set([makeModel()]);
     const severityLevels = [
       { name: 'Low', minimumScore: 0, color: '#00ff00', description: 'Minor' },
-      { name: 'High', minimumScore: 50, color: '#ff0000', description: 'Severe' },
+      {
+        name: 'High',
+        minimumScore: 50,
+        color: '#ff0000',
+        description: 'Severe',
+      },
     ];
     service.add(makeModel({ id: undefined, severityLevels }));
     service.updateScoringModel(makeModel({ severityLevels }));
@@ -218,9 +225,18 @@ describe('ScoringModelDataService', () => {
   it('add() sends no categories', () => {
     const { service, api } = setup();
 
-    service.add(makeModel({ id: undefined, scoringCategories: [{ id: 'cat-1', description: 'Impact', scoringModelId: 'sm1' }] }));
+    service.add(
+      makeModel({
+        id: undefined,
+        scoringCategories: [
+          { id: 'cat-1', description: 'Impact', scoringModelId: 'sm1' },
+        ],
+      }),
+    );
 
-    expect(api.createScoringModel).toHaveBeenCalledWith(expect.objectContaining({ scoringCategories: [] }));
+    expect(api.createScoringModel).toHaveBeenCalledWith(
+      expect.objectContaining({ scoringCategories: [] }),
+    );
   });
 
   /**

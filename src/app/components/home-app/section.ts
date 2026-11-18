@@ -7,5 +7,5 @@ export enum Section {
   dashboard = 'dashboard',
   scoresheet = 'scoresheet',
   report = 'report',
-  aggregate = 'aggregate'
+  aggregate = 'aggregate',
 }

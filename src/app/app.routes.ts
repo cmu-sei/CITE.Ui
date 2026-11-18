@@ -8,12 +8,18 @@ import { ComnAuthGuardService } from '@cmusei/crucible-common';
 export const ROUTES: Routes = [
   {
     path: '',
-    loadComponent: () => import('./components/home-app/home-app.component').then(m => m.HomeAppComponent),
+    loadComponent: () =>
+      import('./components/home-app/home-app.component').then(
+        (m) => m.HomeAppComponent,
+      ),
     canActivate: [ComnAuthGuardService],
   },
   {
     path: 'admin',
-    loadComponent: () => import('./components/admin/admin-container/admin-container.component').then(m => m.AdminContainerComponent),
+    loadComponent: () =>
+      import('./components/admin/admin-container/admin-container.component').then(
+        (m) => m.AdminContainerComponent,
+      ),
     canActivate: [ComnAuthGuardService],
   },
 ];

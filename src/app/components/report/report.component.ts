@@ -2,7 +2,15 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, effect, inject, input, output } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  effect,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
@@ -22,7 +30,10 @@ import {
   User,
   ScoringCategory,
 } from 'src/app/generated/cite.api/model/models';
-import { PopulatedSubmission, SubmissionType } from 'src/app/data/submission/submission.models';
+import {
+  PopulatedSubmission,
+  SubmissionType,
+} from 'src/app/data/submission/submission.models';
 import { Title } from '@angular/platform-browser';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { MatButton } from '@angular/material/button';
@@ -31,20 +42,24 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DisplayOrderPipe } from 'src/app/utilities/sort-by-pipe';
 import { commentAuthor } from 'src/app/utilities/comment-author';
-import { severityLevelForScore, severityLevelLabel, severityLevels } from 'src/app/utilities/severity-levels';
+import {
+  severityLevelForScore,
+  severityLevelLabel,
+  severityLevels,
+} from 'src/app/utilities/severity-levels';
 
 @Component({
-    selector: 'app-report',
-    templateUrl: './report.component.html',
-    styleUrls: ['./report.component.scss'],
-    imports: [
-        MatButton,
-        MatIcon,
-        MatTooltip,
-        DatePipe,
-        DecimalPipe,
-        DisplayOrderPipe,
-    ],
+  selector: 'app-report',
+  templateUrl: './report.component.html',
+  styleUrls: ['./report.component.scss'],
+  imports: [
+    MatButton,
+    MatIcon,
+    MatTooltip,
+    DatePipe,
+    DecimalPipe,
+    DisplayOrderPipe,
+  ],
 })
 export class ReportComponent implements OnDestroy {
   private scoringModelQuery = inject(ScoringModelQuery);
@@ -93,18 +108,23 @@ export class ReportComponent implements OnDestroy {
   constructor() {
     this.titleService.setTitle('CITE Report');
     // observe the selected evaluation
-    (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      if (active) {
-        this.selectedEvaluation = active;
-        this.currentMoveNumber = active.currentMoveNumber;
-        // start on the view saved from the scoresheet or this page; later
-        // updates to the evaluation keep whatever the user has picked since
-        if (active.id !== this.displayingEvaluationId) {
-          this.displayingEvaluationId = active.id;
-          this.displaying = this.uiDataService.getSubmissionType(active.id) === 'team' ? 'team' : 'user';
+    (this.evaluationQuery.selectActive() as Observable<Evaluation>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((active) => {
+        if (active) {
+          this.selectedEvaluation = active;
+          this.currentMoveNumber = active.currentMoveNumber;
+          // start on the view saved from the scoresheet or this page; later
+          // updates to the evaluation keep whatever the user has picked since
+          if (active.id !== this.displayingEvaluationId) {
+            this.displayingEvaluationId = active.id;
+            this.displaying =
+              this.uiDataService.getSubmissionType(active.id) === 'team'
+                ? 'team'
+                : 'user';
+          }
         }
-      }
-    });
+      });
     // observe the selected scoring model
     (this.scoringModelQuery.selectActive() as Observable<ScoringModel>)
       .pipe(takeUntil(this.unsubscribe$))
@@ -114,13 +134,16 @@ export class ReportComponent implements OnDestroy {
         }
       });
     // observe the active team
-    (this.teamQuery.selectActive() as Observable<Team>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      if (active) {
-        this.selectedTeam = active;
-      }
-    });
+    (this.teamQuery.selectActive() as Observable<Team>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((active) => {
+        if (active) {
+          this.selectedTeam = active;
+        }
+      });
     // observe the logged in user ID
-    this.currentUserQuery.select()
+    this.currentUserQuery
+      .select()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user) => {
         if (user && user.id !== this.loggedInUserId) {
@@ -130,9 +153,10 @@ export class ReportComponent implements OnDestroy {
       });
     this.userDataService.setCurrentUser();
     // observe the evaluation users
-    this.userQuery.selectAll()
+    this.userQuery
+      .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(users => {
+      .subscribe((users) => {
         this.evaluationUsers = users;
       });
     // observe the submission list
@@ -147,14 +171,14 @@ export class ReportComponent implements OnDestroy {
             !s.userId &&
             !s.teamId &&
             s.groupId &&
-            s.scoreIsAnAverage
+            s.scoreIsAnAverage,
         );
         this.showOfficialScore = this.submissionList.some(
           (s) =>
             +s.moveNumber === +this.displayedMoveNumber &&
             !s.userId &&
             !s.teamId &&
-            !s.groupId
+            !s.groupId,
         );
         this.selectDisplayedSubmissions();
       });
@@ -174,7 +198,7 @@ export class ReportComponent implements OnDestroy {
       return 0;
     } else {
       const submissionCategory = submissionCategories.find(
-        (sc) => sc.scoringCategoryId === scoringCategoryId
+        (sc) => sc.scoringCategoryId === scoringCategoryId,
       );
       return submissionCategory ? submissionCategory.score : 0;
     }
@@ -183,27 +207,27 @@ export class ReportComponent implements OnDestroy {
   isSelected(
     submission: PopulatedSubmission,
     scoringCategoryId: string,
-    scoringOptionId: string
+    scoringOptionId: string,
   ) {
     let isSelected = false;
     const submissionCategories = submission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
       const sc = submissionCategories.find(
-        (subCat) => subCat.scoringCategoryId === scoringCategoryId
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId,
       );
       if (sc) {
         const so = sc.submissionOptions.find(
-          (subOpt) => subOpt.scoringOptionId === scoringOptionId
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId,
         );
         isSelected = so && so.isSelected;
       }
       if (isSelected) {
         const scoringCategory =
           this.selectedScoringModel.scoringCategories.find(
-            (subCat) => subCat.id === scoringCategoryId
+            (subCat) => subCat.id === scoringCategoryId,
           );
         const scoringOption = scoringCategory.scoringOptions.find(
-          (so) => so.id === scoringOptionId
+          (so) => so.id === scoringOptionId,
         );
       }
     }
@@ -213,17 +237,17 @@ export class ReportComponent implements OnDestroy {
   selectedCount(
     submission: PopulatedSubmission,
     scoringCategoryId: string,
-    scoringOptionId: string
+    scoringOptionId: string,
   ) {
     let selectedCount = 0;
     const submissionCategories = submission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
       const sc = submissionCategories.find(
-        (subCat) => subCat.scoringCategoryId === scoringCategoryId
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId,
       );
       if (sc) {
         const so = sc.submissionOptions.find(
-          (subOpt) => subOpt.scoringOptionId === scoringOptionId
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId,
         );
         selectedCount = so ? so.selectedCount : 0;
       }
@@ -234,7 +258,7 @@ export class ReportComponent implements OnDestroy {
   optionComments(
     submission: PopulatedSubmission,
     scoringCategoryId: string,
-    scoringOptionId: string
+    scoringOptionId: string,
   ) {
     if (
       !submission ||
@@ -245,11 +269,11 @@ export class ReportComponent implements OnDestroy {
       return [];
     }
     const submissionCategory = submission.submissionCategories.find(
-      (sc) => sc.scoringCategoryId === scoringCategoryId
+      (sc) => sc.scoringCategoryId === scoringCategoryId,
     );
     if (submissionCategory) {
       const submissionOption = submissionCategory.submissionOptions.find(
-        (so) => so.scoringOptionId === scoringOptionId
+        (so) => so.scoringOptionId === scoringOptionId,
       );
       if (submissionOption) {
         return submissionOption.submissionComments;
@@ -261,7 +285,7 @@ export class ReportComponent implements OnDestroy {
   selectedBy(
     submission: PopulatedSubmission,
     scoringCategoryId: string,
-    scoringOptionId: string
+    scoringOptionId: string,
   ) {
     if (this.displaying !== 'team') {
       return;
@@ -271,11 +295,11 @@ export class ReportComponent implements OnDestroy {
     const submissionCategories = submission.submissionCategories;
     if (submissionCategories && submissionCategories.length > 0) {
       const sc = submissionCategories.find(
-        (subCat) => subCat.scoringCategoryId === scoringCategoryId
+        (subCat) => subCat.scoringCategoryId === scoringCategoryId,
       );
       if (sc) {
         const so = sc.submissionOptions.find(
-          (subOpt) => subOpt.scoringOptionId === scoringOptionId
+          (subOpt) => subOpt.scoringOptionId === scoringOptionId,
         );
         isSelected = so && so.isSelected;
         selectedBy = so && so.modifiedBy;
@@ -348,32 +372,48 @@ export class ReportComponent implements OnDestroy {
             populatedSubmission.submissionType = SubmissionType.team;
             allSubmissions.push(submission);
             teamSubmissions.push(populatedSubmission);
-            }
+          }
         }
       }
     });
-    this.submissionList = allSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
-    this.teamSubmissionList = teamSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
-    this.userSubmissionList = userSubmissions.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
-    this.displayedSubmissionList = this.displaying === 'team' ? this.teamSubmissionList : this.userSubmissionList;
+    this.submissionList = allSubmissions.sort((a, b) =>
+      +a.moveNumber < +b.moveNumber ? -1 : 1,
+    );
+    this.teamSubmissionList = teamSubmissions.sort((a, b) =>
+      +a.moveNumber < +b.moveNumber ? -1 : 1,
+    );
+    this.userSubmissionList = userSubmissions.sort((a, b) =>
+      +a.moveNumber < +b.moveNumber ? -1 : 1,
+    );
+    this.displayedSubmissionList =
+      this.displaying === 'team'
+        ? this.teamSubmissionList
+        : this.userSubmissionList;
   }
 
   getSortedMoveList(): Move[] {
     const moveList = [];
-    this.moveList().forEach(move => {
-      const addIt = (+move.moveNumber <= +this.selectedEvaluation.currentMoveNumber) && this.getDisplayedScoringCategories(move.moveNumber).length > 0;
+    this.moveList().forEach((move) => {
+      const addIt =
+        +move.moveNumber <= +this.selectedEvaluation.currentMoveNumber &&
+        this.getDisplayedScoringCategories(move.moveNumber).length > 0;
       if (addIt) {
         moveList.push(move);
       }
     });
-    return moveList.sort((a, b) => +a.moveNumber < +b.moveNumber ? -1 : 1);
+    return moveList.sort((a, b) => (+a.moveNumber < +b.moveNumber ? -1 : 1));
   }
 
   hasScoresAndValidMove(vs: PopulatedSubmission): boolean {
-    const hasScores = !this.selectedScoringModel.displayScoringModelByMoveNumber ||
+    const hasScores =
+      !this.selectedScoringModel.displayScoringModelByMoveNumber ||
       this.selectedScoringModel?.scoringCategories.some(
-        sc => +vs.moveNumber >= +sc.moveNumberFirstDisplay && +vs.moveNumber <= +sc.moveNumberLastDisplay);
-    const hasValidMove = +vs.moveNumber <= +this.selectedEvaluation.currentMoveNumber;
+        (sc) =>
+          +vs.moveNumber >= +sc.moveNumberFirstDisplay &&
+          +vs.moveNumber <= +sc.moveNumberLastDisplay,
+      );
+    const hasValidMove =
+      +vs.moveNumber <= +this.selectedEvaluation.currentMoveNumber;
     return hasScores && hasValidMove;
   }
 
@@ -397,14 +437,17 @@ export class ReportComponent implements OnDestroy {
 
   // e.g. "Level 4 - Severe", from the scoring model's severity levels
   scoreLevelLabel(score: number) {
-    return severityLevelLabel(severityLevelForScore(severityLevels(this.selectedScoringModel), score));
+    return severityLevelLabel(
+      severityLevelForScore(severityLevels(this.selectedScoringModel), score),
+    );
   }
 
   printpage() {
     // Print the report alone, keeping its root element so its print styles
     // apply, and in the light theme so a dark background never reaches the
     // page. The reload restores the app.
-    document.body.innerHTML = document.getElementById('printable-area').outerHTML;
+    document.body.innerHTML =
+      document.getElementById('printable-area').outerHTML;
     document.body.classList.remove('darkMode');
     window.print();
     location.reload();

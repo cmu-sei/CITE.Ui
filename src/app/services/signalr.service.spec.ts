@@ -104,7 +104,9 @@ function recordWarnings() {
 
 // The membership store holds one team's memberships and keeps only that team's pushed ones.
 async function holdTeamMemberships(teamId: string) {
-  await firstValueFrom(TestBed.inject(TeamMembershipDataService).loadMemberships(teamId));
+  await firstValueFrom(
+    TestBed.inject(TeamMembershipDataService).loadMemberships(teamId),
+  );
 }
 
 async function connect(area: ApplicationArea = ApplicationArea.home) {
@@ -389,7 +391,8 @@ describe('SignalRService', () => {
       'tells the user live updates are unavailable when the hub start fails with $kind',
       async ({ reason, shown }) => {
         builder = mockHubConnectionBuilder({
-          onBuild: (c) => c.start.mockImplementation(() => Promise.reject(reason)),
+          onBuild: (c) =>
+            c.start.mockImplementation(() => Promise.reject(reason)),
         });
         const rejections = captureUnhandledRejections();
         const warnings = recordWarnings();
@@ -432,7 +435,9 @@ describe('SignalRService', () => {
     it('reports one outage once across failed restarts', async () => {
       builder = mockHubConnectionBuilder({
         onBuild: (c) =>
-          c.start.mockImplementation(() => Promise.reject(new Error('hub down'))),
+          c.start.mockImplementation(() =>
+            Promise.reject(new Error('hub down')),
+          ),
       });
       const rejections = captureUnhandledRejections();
       const warnings = recordWarnings();
@@ -472,36 +477,33 @@ describe('SignalRService', () => {
           await flush();
         },
       },
-    ])(
-      'reports the next outage again after $how',
-      async ({ recover }) => {
-        builder = mockHubConnectionBuilder({
-          onBuild: (c) =>
-            c.start.mockImplementation(() =>
-              Promise.reject(new Error('hub down')),
-            ),
-        });
-        const rejections = captureUnhandledRejections();
-        const warnings = recordWarnings();
-        const { service, authUser$, displayMessage } = setup();
-        await service.startConnection(ApplicationArea.home).catch(() => {});
-        await flush();
-        const [hub] = builder.connections;
-        await recover({ hub, authUser$ });
-        expect(hub.invoke).toHaveBeenCalledWith('Join');
-        hub.start.mockImplementation(() =>
-          Promise.reject(new Error('hub down again')),
-        );
-        authUser$.next({});
-        await flush();
-        expect(displayMessage.mock.calls).toEqual([UNAVAILABLE, UNAVAILABLE]);
-        expect(warnings).toEqual([
-          ['CITE hub unreachable: hub down'],
-          ['CITE hub unreachable: hub down again'],
-        ]);
-        expect(rejections).toEqual([]);
-      },
-    );
+    ])('reports the next outage again after $how', async ({ recover }) => {
+      builder = mockHubConnectionBuilder({
+        onBuild: (c) =>
+          c.start.mockImplementation(() =>
+            Promise.reject(new Error('hub down')),
+          ),
+      });
+      const rejections = captureUnhandledRejections();
+      const warnings = recordWarnings();
+      const { service, authUser$, displayMessage } = setup();
+      await service.startConnection(ApplicationArea.home).catch(() => {});
+      await flush();
+      const [hub] = builder.connections;
+      await recover({ hub, authUser$ });
+      expect(hub.invoke).toHaveBeenCalledWith('Join');
+      hub.start.mockImplementation(() =>
+        Promise.reject(new Error('hub down again')),
+      );
+      authUser$.next({});
+      await flush();
+      expect(displayMessage.mock.calls).toEqual([UNAVAILABLE, UNAVAILABLE]);
+      expect(warnings).toEqual([
+        ['CITE hub unreachable: hub down'],
+        ['CITE hub unreachable: hub down again'],
+      ]);
+      expect(rejections).toEqual([]);
+    });
   });
 
   describe('entity events', () => {

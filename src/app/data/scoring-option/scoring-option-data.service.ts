@@ -11,7 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   ScoringOption,
   ScoringOptionService,
-  UpdateScoringOptionRequest
+  UpdateScoringOptionRequest,
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -45,7 +45,7 @@ export class ScoringOptionDataService {
     const activatedRoute = this.activatedRoute;
 
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('scoringOptionmask') || '')
+      map((params) => params.get('scoringOptionmask') || ''),
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
@@ -54,16 +54,16 @@ export class ScoringOptionDataService {
       });
     });
     this.sortColumn = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('sorton') || 'name')
+      map((params) => params.get('sorton') || 'name'),
     );
     this.sortIsAscending = activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('sortdir') || 'asc') === 'asc')
+      map((params) => (params.get('sortdir') || 'asc') === 'asc'),
     );
     this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
+      map((params) => parseInt(params.get('pagesize') || '20', 10)),
     );
     this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
+      map((params) => parseInt(params.get('pageindex') || '0', 10)),
     );
     this.scoringOptionList = combineLatest([
       this.scoringOptionQuery.selectAll(),
@@ -84,20 +84,20 @@ export class ScoringOptionDataService {
         ]) =>
           items
             ? (items as ScoringOption[])
-              .sort((a: ScoringOption, b: ScoringOption) =>
-                this.sortScoringOptions(a, b, sortColumn, sortIsAscending)
-              )
-              .filter(
-                (scoringOption) =>
-                  ('' + scoringOption.description)
-                    .toLowerCase()
-                    .includes(filterTerm.toLowerCase()) ||
+                .sort((a: ScoringOption, b: ScoringOption) =>
+                  this.sortScoringOptions(a, b, sortColumn, sortIsAscending),
+                )
+                .filter(
+                  (scoringOption) =>
+                    ('' + scoringOption.description)
+                      .toLowerCase()
+                      .includes(filterTerm.toLowerCase()) ||
                     scoringOption.id
                       .toLowerCase()
-                      .includes(filterTerm.toLowerCase())
-              )
-            : []
-      )
+                      .includes(filterTerm.toLowerCase()),
+                )
+            : [],
+      ),
     );
   }
 
@@ -105,7 +105,7 @@ export class ScoringOptionDataService {
     a: ScoringOption,
     b: ScoringOption,
     column: string,
-    isAsc: boolean
+    isAsc: boolean,
   ) {
     switch (column) {
       case 'description':
@@ -114,10 +114,7 @@ export class ScoringOptionDataService {
           (isAsc ? 1 : -1)
         );
       case 'displayOrder':
-        return (
-          (a.displayOrder < b.displayOrder ? -1 : 1) *
-          (isAsc ? 1 : -1)
-        );
+        return (a.displayOrder < b.displayOrder ? -1 : 1) * (isAsc ? 1 : -1);
       case 'dateCreated':
         return (
           (a.dateCreated.valueOf() < b.dateCreated.valueOf() ? -1 : 1) *
@@ -136,7 +133,7 @@ export class ScoringOptionDataService {
         tap(() => {
           this.scoringOptionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (scoringOptions) => {
@@ -144,7 +141,7 @@ export class ScoringOptionDataService {
         },
         (error) => {
           this.scoringOptionStore.set([]);
-        }
+        },
       );
   }
 
@@ -156,7 +153,7 @@ export class ScoringOptionDataService {
         tap(() => {
           this.scoringOptionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.scoringOptionStore.upsert(s.id, { ...s });
@@ -177,7 +174,7 @@ export class ScoringOptionDataService {
         tap(() => {
           this.scoringOptionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.scoringOptionStore.add(s);
@@ -198,7 +195,7 @@ export class ScoringOptionDataService {
         tap(() => {
           this.scoringOptionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);

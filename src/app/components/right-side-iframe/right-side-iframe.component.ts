@@ -10,10 +10,10 @@ import { Subject, Observable, combineLatest } from 'rxjs';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
 
 @Component({
-    selector: 'app-right-side-iframe',
-    templateUrl: './right-side-iframe.component.html',
-    styleUrls: ['./right-side-iframe.component.scss'],
-    imports: []
+  selector: 'app-right-side-iframe',
+  templateUrl: './right-side-iframe.component.html',
+  styleUrls: ['./right-side-iframe.component.scss'],
+  imports: [],
 })
 export class RightSideIframeComponent implements OnDestroy {
   private sanitizer = inject(DomSanitizer);
@@ -23,21 +23,24 @@ export class RightSideIframeComponent implements OnDestroy {
   safeUrl: SafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
   private unsubscribe$ = new Subject();
 
-
   constructor() {
     // observe active evaluation
-    (this.scoringModelQuery.selectActive() as Observable<ScoringModel>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      if (active) {
-        this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(active.rightSideEmbeddedUrl);
-      }
-    });
+    (this.scoringModelQuery.selectActive() as Observable<ScoringModel>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((active) => {
+        if (active) {
+          this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+            active.rightSideEmbeddedUrl,
+          );
+        }
+      });
   }
 
   getTopClass() {
     if (this.hideTopbar()) {
-      return 'top-level-container in-player'
+      return 'top-level-container in-player';
     } else {
-      return 'top-level-container out-of-player'
+      return 'top-level-container out-of-player';
     }
   }
 
