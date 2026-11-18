@@ -59,6 +59,10 @@ export class SignalRService implements OnDestroy {
   private token = '';
   private unreachableReported = false;
   private unsubscribe$ = new Subject();
+  /** Emits after an automatic reconnect, when hub messages may have been missed. */
+  readonly reconnected$ = new Subject<void>();
+  /** Emits on each team membership event, which can change an evaluation's users. */
+  readonly teamMembershipChanged$ = new Subject<void>();
 
   constructor() {
     this.authService.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
@@ -81,6 +85,7 @@ export class SignalRService implements OnDestroy {
 
     this.hubConnection.onreconnected(() => {
       this.onConnected();
+      this.reconnected$.next();
     });
 
     this.addHandlers();
@@ -117,6 +122,8 @@ export class SignalRService implements OnDestroy {
               setTimeout(() => this.reconnect(), 500);
             } else {
               this.onConnected();
+              // messages sent while the hub was stopped were missed
+              this.reconnected$.next();
             }
           })
           .catch((err) => this.onStartFailed(err));
@@ -291,6 +298,7 @@ export class SignalRService implements OnDestroy {
       'TeamMembershipUpdated',
       (teamMembership: TeamMembership) => {
         this.teamMembershipDataService.updateStore(teamMembership);
+        this.teamMembershipChanged$.next();
       },
     );
 
@@ -298,11 +306,13 @@ export class SignalRService implements OnDestroy {
       'TeamMembershipCreated',
       (teamMembership: TeamMembership) => {
         this.teamMembershipDataService.updateStore(teamMembership);
+        this.teamMembershipChanged$.next();
       },
     );
 
     this.hubConnection.on('TeamMembershipDeleted', (id: string) => {
       this.teamMembershipDataService.deleteFromStore(id);
+      this.teamMembershipChanged$.next();
     });
   }
 

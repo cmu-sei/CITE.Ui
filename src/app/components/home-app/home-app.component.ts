@@ -14,8 +14,27 @@ import {
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { BehaviorSubject, Subject, Observable, combineLatest } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  EMPTY,
+  Subject,
+  Observable,
+  combineLatest,
+  of,
+  timer,
+} from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  pairwise,
+  startWith,
+  switchMap,
+  take,
+  takeUntil,
+} from 'rxjs/operators';
 import {
   ComnAuthService,
   ComnSettingsService,
@@ -60,6 +79,10 @@ import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-article
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { XApiService } from 'src/app/services/xapi/xapi.service';
 import {
+  MOVE_CHANGE_DEBOUNCE_MS,
+  MOVE_CHANGE_JITTER,
+} from 'src/app/services/move-change-refresh';
+import {
   MatTableDataSource,
   MatTable,
   MatColumnDef,
@@ -96,6 +119,14 @@ import { ScoreSummaryComponent } from '../score-summary/score-summary.component'
 import { RightSideHtmlComponent } from '../right-side-html/right-side-html.component';
 import { RightSideIframeComponent } from '../right-side-iframe/right-side-iframe.component';
 import { Section } from './section';
+
+// the text of a caught error, which may not be an Error
+function errorText(err: unknown): string {
+  if (err instanceof Error) {
+    return err.message;
+  }
+  return typeof err === 'string' ? err : 'unknown error';
+}
 
 @Component({
   selector: 'app-home-app',
@@ -169,6 +200,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   private unreadArticlesQuery = inject(UnreadArticlesQuery);
   private uiDataService = inject(UIDataService);
   private xApiService = inject(XApiService);
+  private moveChangeJitter = inject(MOVE_CHANGE_JITTER);
 
   readonly sidenav = viewChild<MatSidenav>('sidenav');
   readonly sort = viewChild(MatSort);
@@ -209,7 +241,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   unreadArticles$ =
     this.unreadArticlesQuery.selectActive() as Observable<UnreadArticles>;
   evaluationForLoadedSubmissions: Evaluation;
-  moveList$ = this.moveQuery.selectAll() as Observable<Move[]>;
+  moveList$ = this.moveQuery.selectAll();
   sortedMoveList: Move[] = [];
   teamList$ = this.teamQuery.selectAll();
   myTeamId = '';
@@ -230,6 +262,12 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   permissions: SystemPermission[] = [];
   canViewAdministration = false;
   readonly SystemPermission = SystemPermission;
+  // the evaluation and team whose submissions are loaded
+  private loadedEvaluationId = '';
+  private loadedTeamId = '';
+  private currentMoveChanged$ = new Subject<void>();
+  private teamChanged$ = new Subject<void>();
+  private evaluationIdsWithUsers = new Set<string>();
 
   constructor() {
     const titleService = inject(Title);
@@ -367,6 +405,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         } else {
           this.evaluationDataService.setActive('');
           this.selectedEvaluationId = '';
+          // opening an evaluation again loads its team data again
+          this.loadedEvaluationId = '';
+          this.loadedTeamId = '';
         }
         // get the requested section or set the saved section
         const section = params.get('section');
@@ -422,12 +463,95 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
         }
       });
-    // observe the submissions
-    this.submissionList$
+    // observe the submissions; selecting one also needs the scoring model and
+    // the moves, which may arrive after the submissions
+    combineLatest([
+      this.submissionList$,
+      this.activeScoringModel$,
+      this.moveList$,
+    ])
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((submissions) => {
+      .subscribe(([submissions]) => {
         this.processSubmissions(submissions);
       });
+    // refetch the team's submissions once after the current move changes
+    (this.evaluationQuery.selectActive() as Observable<Evaluation>)
+      .pipe(
+        filter((e) => !!e),
+        map((e) => ({ id: e.id, moveNumber: e.currentMoveNumber })),
+        distinctUntilChanged(
+          (a, b) => a.id === b.id && a.moveNumber === b.moveNumber,
+        ),
+        pairwise(),
+        filter(([previous, current]) => previous.id === current.id),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(() => {
+        // the store already holds the submissions of every move up to the
+        // current one, so a move that went back past the displayed one is
+        // shown at once; the refetch then brings the new move's scores
+        this.reselectDisplayedSubmission();
+        this.currentMoveChanged$.next();
+      });
+    // a team or evaluation switch loads the submissions itself, so it drops a
+    // move change refetch still waiting, in the debounce or the jitter
+    this.teamChanged$
+      .pipe(
+        startWith(undefined),
+        switchMap(() =>
+          this.currentMoveChanged$.pipe(
+            debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+            switchMap(() =>
+              timer(this.moveChangeJitter()).pipe(
+                switchMap(() => this.refreshSubmissions()),
+              ),
+            ),
+          ),
+        ),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(() => this.reselectDisplayedSubmission());
+    // catch up after a hub reconnect, spread out like a move change, since
+    // every page reconnects at once after an API restart. A team switch does
+    // not cancel it: the switch loads the submissions, not the evaluation.
+    this.signalRService.reconnected$
+      .pipe(
+        debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+        switchMap(() =>
+          timer(this.moveChangeJitter()).pipe(
+            switchMap(() => this.catchUpAfterReconnect()),
+          ),
+        ),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(() => this.reselectDisplayedSubmission());
+    // a team membership event can add or drop a user of the evaluation, so
+    // reload its users once the events stop, spread out like a move change
+    this.signalRService.teamMembershipChanged$
+      .pipe(
+        debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+        switchMap(() =>
+          timer(this.moveChangeJitter()).pipe(
+            switchMap(() =>
+              this.selectedEvaluationId
+                ? this.userDataService
+                    .loadByEvaluation(this.selectedEvaluationId)
+                    .pipe(
+                      catchError((err: unknown) => {
+                        console.warn(
+                          'CITE could not reload the evaluation users: ' +
+                            errorText(err),
+                        );
+                        return EMPTY;
+                      }),
+                    )
+                : EMPTY,
+            ),
+          ),
+        ),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe();
     // observe the evaluations
     this.evaluationQuery
       .selectAll()
@@ -446,15 +570,23 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           }
         });
         this.setDataSources();
-        // Load users for each evaluation (for displaying creator names)
-        evaluations.forEach((evaluation) => {
-          if (evaluation.id) {
-            this.userDataService
-              .loadByEvaluation(evaluation.id)
-              .pipe(take(1))
-              .subscribe();
-          }
+        // Load users for each evaluation (for displaying creator names), once:
+        // every evaluation update re-runs this. The user store holds one
+        // evaluation's users, the last one loaded, so the selected evaluation
+        // is loaded again last when others were loaded.
+        const newIds = evaluations
+          .map((evaluation) => evaluation.id)
+          .filter((id) => id && !this.evaluationIdsWithUsers.has(id));
+        newIds.forEach((id) => {
+          this.evaluationIdsWithUsers.add(id);
+          this.userDataService.loadByEvaluation(id).pipe(take(1)).subscribe();
         });
+        if (newIds.length > 0 && this.selectedEvaluationId) {
+          this.userDataService
+            .loadByEvaluation(this.selectedEvaluationId)
+            .pipe(take(1))
+            .subscribe();
+        }
       });
     // load the user's evaluations
     this.evaluationDataService.loadMine();
@@ -612,9 +744,15 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         }
       }
     });
-    if (activeTeamId) {
+    // every evaluation, move and team update re-runs this, so load only when
+    // the evaluation or the team is a different one
+    if (
+      activeTeamId &&
+      (activeTeamId !== this.loadedTeamId ||
+        this.selectedEvaluationId !== this.loadedEvaluationId)
+    ) {
       this.changeTeam(activeTeamId);
-      this.teamMembershipDataService.loadMemberships(activeTeamId);
+      this.teamMembershipDataService.loadMemberships(activeTeamId).subscribe();
     }
   }
 
@@ -643,6 +781,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.submissionDataService.setActive('');
     this.moveDataService.setActive('');
     this.submissionDataService.unload();
+    this.teamChanged$.next();
+    this.loadedEvaluationId = this.selectedEvaluationId;
+    this.loadedTeamId = teamId;
     this.submissionDataService.loadByEvaluationTeam(
       this.selectedEvaluationId,
       teamId,
@@ -742,20 +883,87 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     }
   }
 
-  setActiveSubmission(submission: Submission) {
+  setActiveSubmission(submission: Submission, loadSubmission = true) {
     if (submission.id != this.submissionQuery.getActiveId()) {
       this.submissionDataService.setActive(submission.id);
-      if (!submission.scoreIsAnAverage) {
+      if (loadSubmission && !submission.scoreIsAnAverage) {
         this.submissionDataService.loadById(submission.id);
       }
       const activeMove = this.sortedMoveList.find(
         (m) => +m.moveNumber === +submission.moveNumber,
       );
-      this.moveDataService.setActive(activeMove.id);
+      if (activeMove) {
+        this.moveDataService.setActive(activeMove.id);
+      }
     }
   }
 
-  selectDisplayedSubmission(selection: string) {
+  // A reconnect may have missed a move change, so reload the evaluation and
+  // its moves. A changed move refetches the submissions through the move
+  // change; otherwise they are refetched here.
+  private catchUpAfterReconnect(): Observable<unknown> {
+    const evaluationId = this.selectedEvaluationId;
+    if (!evaluationId) {
+      return EMPTY;
+    }
+    const moveNumber =
+      this.evaluationQuery.getEntity(evaluationId)?.currentMoveNumber;
+    return this.evaluationDataService.refreshById(evaluationId).pipe(
+      switchMap((evaluation) => {
+        this.moveDataService.loadByEvaluation(evaluationId);
+        return +evaluation.currentMoveNumber === +moveNumber
+          ? this.refreshSubmissions()
+          : EMPTY;
+      }),
+      catchError((err: unknown) => {
+        console.warn(
+          'CITE could not catch up after reconnecting: ' + errorText(err),
+        );
+        return of(null);
+      }),
+    );
+  }
+
+  private refreshSubmissions(): Observable<Submission[]> {
+    if (
+      !this.loadedTeamId ||
+      this.loadedEvaluationId !== this.selectedEvaluationId
+    ) {
+      return EMPTY;
+    }
+    // on a failure keep showing what the store holds
+    return this.submissionDataService
+      .refreshByEvaluationTeam(this.loadedEvaluationId, this.loadedTeamId)
+      .pipe(
+        catchError((err: unknown) => {
+          console.warn(
+            'CITE could not refetch the submissions after a move change: ' +
+              errorText(err),
+          );
+          return of(null);
+        }),
+      );
+  }
+
+  // After a move change, and after its refetch whether or not that worked,
+  // keep the selection while it is on the displayed move; otherwise (the move
+  // went back past it) show the displayed move's submission of the saved kind,
+  // from the store, without fetching it again.
+  private reselectDisplayedSubmission() {
+    const active = this.submissionQuery.getActive() as Submission;
+    if (active && +active.moveNumber === +this.displayedMoveNumber) {
+      return;
+    }
+    const scoringModel = this.scoringModelQuery.getActive() as ScoringModel;
+    let submissionType =
+      this.uiDataService.getSubmissionType(this.selectedEvaluationId) || 'user';
+    if (submissionType === 'user' && !scoringModel?.useUserScore) {
+      submissionType = 'team';
+    }
+    this.selectDisplayedSubmission(submissionType, false);
+  }
+
+  selectDisplayedSubmission(selection: string, loadSubmission = true) {
     if (selection === 'report') {
       this.selectedSection =
         this.selectedSection === this.section.report
@@ -816,7 +1024,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           this.selectedEvaluationId,
           selection,
         );
-        this.setActiveSubmission(newSubmission);
+        this.setActiveSubmission(newSubmission, loadSubmission);
       }
     }
   }

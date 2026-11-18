@@ -368,6 +368,30 @@ describe('GallerySignalRService', () => {
   });
 
   /**
+   * Verifies: both an automatic reconnect and the restart after a token renewal are announced on reconnected$, so the page can fetch the unread count it missed; the first start is not.
+   * Interacts with: FakeHubConnection.reconnectedCallbacks, ComnAuthService.user$ (Subject), GallerySignalRService.reconnected$.
+   * Data: a joined hub that reconnects automatically, then restarts for a new token.
+   */
+  it('announces reconnects', async () => {
+    let token = 'tok-1';
+    const { service, authUser$ } = setup({ token: () => token });
+    const reconnected = vi.fn();
+    service.reconnected$.subscribe(reconnected);
+    await service.startConnection();
+    const [hub] = builder.connections;
+    await flush();
+    expect(reconnected).not.toHaveBeenCalled();
+
+    hub.reconnectedCallbacks.forEach((cb) => cb());
+    expect(reconnected).toHaveBeenCalledTimes(1);
+
+    token = 'tok-2';
+    authUser$.next({});
+    await flush();
+    expect(reconnected).toHaveBeenCalledTimes(2);
+  });
+
+  /**
    * Verifies: leave() leaves the joined hub once; a second leave() sends nothing.
    * Interacts with: FakeHubConnection.invoke spy.
    * Data: a joined hub; leave() called twice.

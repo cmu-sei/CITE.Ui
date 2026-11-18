@@ -1078,7 +1078,7 @@
   },
   "src/app/components/home-app/home-app.component.spec.ts": {
     "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 12
+      "count": 5
     }
   },
   "src/app/components/home-app/home-app.component.ts": {
@@ -1089,9 +1089,6 @@
       "count": 4
     },
     "@typescript-eslint/no-this-alias": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
       "count": 1
     },
     "@typescript-eslint/no-unsafe-argument": {

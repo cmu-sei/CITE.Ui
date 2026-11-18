@@ -4,7 +4,7 @@
 import { Injectable, inject } from '@angular/core';
 import { ComnAuthService, Theme } from '@cmusei/crucible-common';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 import { User, UserService } from 'src/app/generated/cite.api';
 import { UserQuery } from './user.query';
 import { CurrentUserStore, UserStore } from './user.store';
@@ -31,14 +31,24 @@ export class UserDataService {
     );
   }
 
+  // Only the latest request's response is stored, so the store ends up with
+  // the users of the evaluation requested last, whatever the response order.
+  private latestEvaluationUsersRequest = 0;
+
   loadByEvaluation(evaluationId: string): Observable<User[]> {
     this.userStore.setLoading(true);
+    const request = ++this.latestEvaluationUsersRequest;
     return this.userService.getEvaluationUsers(evaluationId).pipe(
       tap((users: User[]) => {
-        this.userStore.set(users);
+        if (request === this.latestEvaluationUsersRequest) {
+          this.userStore.set(users);
+        }
       }),
-      tap(() => {
-        this.userStore.setLoading(false);
+      finalize(() => {
+        // a failed request must not leave the store loading
+        if (request === this.latestEvaluationUsersRequest) {
+          this.userStore.setLoading(false);
+        }
       }),
     );
   }
