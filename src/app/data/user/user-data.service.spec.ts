@@ -206,9 +206,9 @@ describe('UserDataService', () => {
       const { service, query } = setup({
         api: { getEvaluationUsers: failing() },
       });
-      await expect(
-        firstValueFrom(service.loadByEvaluation('e1')),
-      ).rejects.toBe(failure);
+      await expect(firstValueFrom(service.loadByEvaluation('e1'))).rejects.toBe(
+        failure,
+      );
       expect(await firstValueFrom(query.isLoading$)).toBe(false);
       expect(query.getAll()).toEqual([]);
     });
