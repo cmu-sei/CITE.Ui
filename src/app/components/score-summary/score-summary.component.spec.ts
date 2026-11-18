@@ -26,7 +26,7 @@ describe('ScoreSummaryComponent', () => {
     expect(
       screen
         .getAllByRole('heading', { level: 2 })
-        .map((h) => h.textContent?.trim()),
+        .map((h) => h.textContent?.replace(/\s+/g, ' ').trim()),
     ).toEqual([
       'Level 5 - Emergency',
       'Level 4 - Severe',
@@ -153,7 +153,7 @@ describe('ScoreSummaryComponent', () => {
     expect(
       screen
         .getAllByRole('heading', { level: 2 })
-        .map((h) => h.textContent?.trim()),
+        .map((h) => h.textContent?.replace(/\s+/g, ' ').trim()),
     ).toEqual(['Level 1 - Storm', 'Level 0 - Calm']);
     expect(screen.getByText('60+')).toBeInTheDocument();
     expect(screen.getByText('<60')).toBeInTheDocument();
