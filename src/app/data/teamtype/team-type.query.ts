@@ -3,10 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Order, Query, QueryConfig, QueryEntity } from '@datorama/akita';
-import {
-  TeamTypeState,
-  TeamTypeStore,
-} from './team-type.store';
+import { TeamTypeState, TeamTypeStore } from './team-type.store';
 import { TeamType } from 'src/app/generated/cite.api';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -25,7 +22,7 @@ export class TeamTypeQuery extends QueryEntity<TeamTypeState> {
     const store = inject(TeamTypeStore);
 
     super(store);
-  
+
     this.store = store;
   }
 

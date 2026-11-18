@@ -3,10 +3,16 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
-import { ScoringOption, ItemStatus } from 'src/app/generated/cite.api/model/models';
+import {
+  ScoringOption,
+  ItemStatus,
+} from 'src/app/generated/cite.api/model/models';
 import { ScoringOptionDataService } from 'src/app/data/scoring-option/scoring-option-data.service';
 import { ScoringOptionQuery } from 'src/app/data/scoring-option/scoring-option.query';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,10 +25,17 @@ import { MatCard } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-    selector: 'app-admin-scoring-options',
-    templateUrl: './admin-scoring-options.component.html',
-    styleUrls: ['./admin-scoring-options.component.scss'],
-    imports: [MatIconButton, MatIcon, MatCheckbox, FormsModule, MatCard, MatProgressSpinner]
+  selector: 'app-admin-scoring-options',
+  templateUrl: './admin-scoring-options.component.html',
+  styleUrls: ['./admin-scoring-options.component.scss'],
+  imports: [
+    MatIconButton,
+    MatIcon,
+    MatCheckbox,
+    FormsModule,
+    MatCard,
+    MatProgressSpinner,
+  ],
 })
 export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
   private settingsService = inject(ComnSettingsService);
@@ -45,21 +58,28 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
     ItemStatus.Active,
     ItemStatus.Cancelled,
     ItemStatus.Complete,
-    ItemStatus.Archived
+    ItemStatus.Archived,
   ];
   private unsubscribe$ = new Subject();
 
   constructor() {
-    this.scoringOptionQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringOptions => {
-      this.scoringOptionList = [];
-      scoringOptions.sort((a, b) => +a.displayOrder < +b.displayOrder ? -1 : 1).forEach(scoringOption => {
-        this.scoringOptionList.push({ ...scoringOption });
+    this.scoringOptionQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((scoringOptions) => {
+        this.scoringOptionList = [];
+        scoringOptions
+          .sort((a, b) => (+a.displayOrder < +b.displayOrder ? -1 : 1))
+          .forEach((scoringOption) => {
+            this.scoringOptionList.push({ ...scoringOption });
+          });
       });
-    });
   }
 
   ngOnInit() {
-    this.scoringOptionDataService.loadByScoringCategory(this.scoringCategoryId());
+    this.scoringOptionDataService.loadByScoringCategory(
+      this.scoringCategoryId(),
+    );
   }
 
   addOrEditScoringOption(scoringOption: ScoringOption) {
@@ -69,17 +89,17 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
         description: '',
         displayOrder: 0,
         value: 0.0,
-        isModifier: false
+        isModifier: false,
       };
     } else {
-      scoringOption = {... scoringOption};
+      scoringOption = { ...scoringOption };
     }
     const dialogRef = this.dialog.open(AdminScoringOptionEditDialogComponent, {
       minWidth: '400px',
       maxWidth: '90vw',
       width: 'auto',
       data: {
-        scoringOption: scoringOption
+        scoringOption: scoringOption,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -102,7 +122,10 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
     this.dialogService
       .confirm({
         title: 'Delete Scoring Option',
-        message: 'Are you sure that you want to delete ' + scoringOption.description + '?',
+        message:
+          'Are you sure that you want to delete ' +
+          scoringOption.description +
+          '?',
         confirmText: 'Delete',
         cancelText: 'Cancel',
       })
@@ -118,5 +141,4 @@ export class AdminScoringOptionsComponent implements OnInit, OnDestroy {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

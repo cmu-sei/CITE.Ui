@@ -13,30 +13,30 @@ project root for license information or contact permission@sei.cmu.edu for full 
   (cancel)="handleEditComplete(false)"
   (submit)="handleEditComplete(true)"
 >
-@if (data && data.teamType) {
-  <div crucibleDialogContent [formGroup]="form">
-    <div class="add-margin">
-      <div>
-        <mat-form-field class="name-field full-width">
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" />
-        </mat-form-field>
+  @if (data && data.teamType) {
+    <div crucibleDialogContent [formGroup]="form">
+      <div class="add-margin">
+        <div>
+          <mat-form-field class="name-field full-width">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="add-margin">
+        <div>
+          <mat-checkbox formControlName="isOfficialScoreContributor">
+            Official Score Contributor
+          </mat-checkbox>
+        </div>
+      </div>
+      <div class="add-margin">
+        <div>
+          <mat-checkbox formControlName="showTeamTypeAverage">
+            Show Team Type Average
+          </mat-checkbox>
+        </div>
       </div>
     </div>
-    <div class="add-margin">
-      <div>
-        <mat-checkbox formControlName="isOfficialScoreContributor">
-          Official Score Contributor
-        </mat-checkbox>
-      </div>
-    </div>
-    <div class="add-margin">
-      <div>
-        <mat-checkbox formControlName="showTeamTypeAverage">
-          Show Team Type Average
-        </mat-checkbox>
-      </div>
-    </div>
-  </div>
-}
+  }
 </crucible-dialog>

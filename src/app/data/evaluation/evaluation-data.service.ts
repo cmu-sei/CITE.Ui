@@ -12,7 +12,7 @@ import {
   Evaluation,
   EvaluationService,
   ItemStatus,
-  UpdateEvaluationRequest
+  UpdateEvaluationRequest,
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest, Subject } from 'rxjs';
@@ -30,7 +30,7 @@ export class EvaluationDataService {
 
   private _requestedEvaluationId: string;
   private _requestedEvaluationId$ = this.activatedRoute.queryParamMap.pipe(
-    map((params) => params.get('evaluationId') || '')
+    map((params) => params.get('evaluationId') || ''),
   );
   readonly EvaluationList: Observable<Evaluation[]>;
   readonly filterControl = new UntypedFormControl();
@@ -47,7 +47,7 @@ export class EvaluationDataService {
     const activatedRoute = this.activatedRoute;
 
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('evalterm') || '')
+      map((params) => params.get('evalterm') || ''),
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
@@ -56,16 +56,16 @@ export class EvaluationDataService {
       });
     });
     this.sortColumn = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('sorton') || 'name')
+      map((params) => params.get('sorton') || 'name'),
     );
     this.sortIsAscending = activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('sortdir') || 'asc') === 'asc')
+      map((params) => (params.get('sortdir') || 'asc') === 'asc'),
     );
     this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
+      map((params) => parseInt(params.get('pagesize') || '20', 10)),
     );
     this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
+      map((params) => parseInt(params.get('pageindex') || '0', 10)),
     );
     this.EvaluationList = combineLatest([
       this.evaluationQuery.selectAll(),
@@ -86,23 +86,23 @@ export class EvaluationDataService {
         ]) =>
           items
             ? (items as Evaluation[])
-              .sort((a: Evaluation, b: Evaluation) =>
-                this.sortEvaluations(a, b, sortColumn, sortIsAscending)
-              )
-              .filter(
-                (evaluation) =>
-                  ('' + evaluation.description)
-                    .toLowerCase()
-                    .includes(filterTerm.toLowerCase()) ||
+                .sort((a: Evaluation, b: Evaluation) =>
+                  this.sortEvaluations(a, b, sortColumn, sortIsAscending),
+                )
+                .filter(
+                  (evaluation) =>
+                    ('' + evaluation.description)
+                      .toLowerCase()
+                      .includes(filterTerm.toLowerCase()) ||
                     ('' + evaluation.status)
                       .toLowerCase()
                       .includes(filterTerm.toLowerCase()) ||
                     evaluation.id
                       .toLowerCase()
-                      .includes(filterTerm.toLowerCase())
-              )
-            : []
-      )
+                      .includes(filterTerm.toLowerCase()),
+                )
+            : [],
+      ),
     );
   }
 
@@ -110,7 +110,7 @@ export class EvaluationDataService {
     a: Evaluation,
     b: Evaluation,
     column: string,
-    isAsc: boolean
+    isAsc: boolean,
   ) {
     switch (column) {
       case 'description':
@@ -141,18 +141,18 @@ export class EvaluationDataService {
         tap(() => {
           this.evaluationStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (evaluations) => {
-          evaluations.forEach(e => {
+          evaluations.forEach((e) => {
             this.setAsDates(e);
           });
           this.evaluationStore.set(evaluations);
         },
         (error) => {
           this.evaluationStore.set([]);
-        }
+        },
       );
   }
 
@@ -164,18 +164,18 @@ export class EvaluationDataService {
         tap(() => {
           this.evaluationStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (evaluations) => {
-          evaluations.forEach(e => {
+          evaluations.forEach((e) => {
             this.setAsDates(e);
           });
           this.evaluationStore.set(evaluations);
         },
         (error) => {
           this.evaluationStore.set([]);
-        }
+        },
       );
   }
 
@@ -187,7 +187,7 @@ export class EvaluationDataService {
         tap(() => {
           this.evaluationStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.setAsDates(s);
@@ -208,15 +208,17 @@ export class EvaluationDataService {
         tap(() => {
           this.evaluationStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
-      .subscribe((s) => {
-        this.setAsDates(s);
-        this.evaluationStore.add(s);
-      },
-      (error) => {
-        this.evaluationStore.setLoading(false);
-      });
+      .subscribe(
+        (s) => {
+          this.setAsDates(s);
+          this.evaluationStore.add(s);
+        },
+        (error) => {
+          this.evaluationStore.setLoading(false);
+        },
+      );
   }
 
   copy(id: string) {
@@ -227,14 +229,16 @@ export class EvaluationDataService {
         tap(() => {
           this.evaluationStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
-      .subscribe((s) => {
-        this.evaluationStore.add(s);
-      },
-      (error) => {
-        this.evaluationStore.setLoading(false);
-      });
+      .subscribe(
+        (s) => {
+          this.evaluationStore.add(s);
+        },
+        (error) => {
+          this.evaluationStore.setLoading(false);
+        },
+      );
   }
 
   updateEvaluation(evaluation: Evaluation) {
@@ -254,7 +258,7 @@ export class EvaluationDataService {
         tap(() => {
           this.evaluationStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -269,7 +273,7 @@ export class EvaluationDataService {
         tap(() => {
           this.evaluationStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -296,23 +300,27 @@ export class EvaluationDataService {
     this.evaluationStore.setLoading(true);
     this.evaluationService
       .uploadJsonFiles(file, observe, reportProgress)
-      .subscribe((event: any) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          const uploadProgress = Math.round((100 * event.loaded) / event.total);
-          this.uploadProgress.next(uploadProgress);
-        } else if (event instanceof HttpResponse) {
-          this.uploadProgress.next(0);
-          this.evaluationStore.setLoading(false);
-          if (event.status === 200) {
-            const evaluation = event.body;
-            this.evaluationStore.upsert(evaluation.id, evaluation);
+      .subscribe(
+        (event: any) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            const uploadProgress = Math.round(
+              (100 * event.loaded) / event.total,
+            );
+            this.uploadProgress.next(uploadProgress);
+          } else if (event instanceof HttpResponse) {
+            this.uploadProgress.next(0);
+            this.evaluationStore.setLoading(false);
+            if (event.status === 200) {
+              const evaluation = event.body;
+              this.evaluationStore.upsert(evaluation.id, evaluation);
+            }
           }
-        }
-      },
-      (error) => {
-        this.evaluationStore.setLoading(false);
-        this.uploadProgress.next(0);
-      });
+        },
+        (error) => {
+          this.evaluationStore.setLoading(false);
+          this.uploadProgress.next(0);
+        },
+      );
   }
 
   setActive(id: string) {
@@ -338,5 +346,4 @@ export class EvaluationDataService {
     evaluation.dateModified = new Date(evaluation.dateModified);
     evaluation.situationTime = new Date(evaluation.situationTime);
   }
-
 }

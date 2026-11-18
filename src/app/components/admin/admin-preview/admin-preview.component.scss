@@ -41,7 +41,7 @@
 
 .title-row {
   position: sticky;
-  top: -.5px;
+  top: -0.5px;
   z-index: 100;
 }
 
@@ -61,7 +61,6 @@
 .comment {
   width: calc(100% - 32px);
   resize: vertical;
-
 }
 
 .indent-div {

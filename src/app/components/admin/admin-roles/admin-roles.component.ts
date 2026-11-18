@@ -11,10 +11,18 @@ import { AdminEvaluationRolesComponent } from './admin-evaluation-roles/admin-ev
 import { AdminTeamRolesComponent } from './admin-team-roles/admin-team-roles.component';
 
 @Component({
-    selector: 'app-admin-roles',
-    templateUrl: './admin-roles.component.html',
-    styleUrls: ['./admin-roles.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatTabGroup, MatTab, MatTabContent, AdminSystemRolesComponent, AdminScoringModelRolesComponent, AdminEvaluationRolesComponent, AdminTeamRolesComponent]
+  selector: 'app-admin-roles',
+  templateUrl: './admin-roles.component.html',
+  styleUrls: ['./admin-roles.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatTabGroup,
+    MatTab,
+    MatTabContent,
+    AdminSystemRolesComponent,
+    AdminScoringModelRolesComponent,
+    AdminEvaluationRolesComponent,
+    AdminTeamRolesComponent,
+  ],
 })
 export class AdminRolesComponent {}

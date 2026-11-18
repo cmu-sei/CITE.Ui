@@ -274,7 +274,9 @@ describe('AdminContainerComponent', () => {
       expect(evaluationApi.getEvaluations).toHaveBeenCalled();
       expect(evaluationApi.getMyEvaluations).not.toHaveBeenCalled();
       expect(
-        evaluationsSection(fixture).evaluationList().map((e) => e.id),
+        evaluationsSection(fixture)
+          .evaluationList()
+          .map((e) => e.id),
       ).toEqual(['e-all']);
     });
 
@@ -290,7 +292,9 @@ describe('AdminContainerComponent', () => {
       await fixture.whenStable();
       expect(evaluationApi.getEvaluations).not.toHaveBeenCalled();
       expect(
-        evaluationsSection(fixture).evaluationList().map((e) => e.id),
+        evaluationsSection(fixture)
+          .evaluationList()
+          .map((e) => e.id),
       ).toEqual(['e-mine']);
     });
 

@@ -11,13 +11,14 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-system-message',
-    templateUrl: './system-message.component.html',
-    styleUrls: ['./system-message.component.scss'],
-    imports: [MatIconButton, MatIcon]
+  selector: 'app-system-message',
+  templateUrl: './system-message.component.html',
+  styleUrls: ['./system-message.component.scss'],
+  imports: [MatIconButton, MatIcon],
 })
 export class SystemMessageComponent implements OnInit {
-  messageSheet = inject<MatBottomSheetRef<SystemMessageComponent>>(MatBottomSheetRef);
+  messageSheet =
+    inject<MatBottomSheetRef<SystemMessageComponent>>(MatBottomSheetRef);
   data = inject(MAT_BOTTOM_SHEET_DATA);
 
   public displayTitle: string;

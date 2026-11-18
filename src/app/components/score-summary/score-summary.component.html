@@ -7,38 +7,48 @@ project root for license information or contact permission@sei.cmu.edu for full 
   <header class="summary-header">
     <h1>Score Summary</h1>
     @if (activeSubmission.moveNumber != null) {
-    <span class="summary-move">Move {{ activeSubmission.moveNumber }}</span>
+      <span class="summary-move">Move {{ activeSubmission.moveNumber }}</span>
     }
   </header>
   <ul class="level-list">
     @for (level of levels(); track level.level) {
-    @let levelScores = scoresInLevel(level);
-    <li class="level" [class.current]="isCurrentLevel(level)">
-      <span class="level-swatch" [style.background-color]="level.color" [style.color]="level.textColor"
-        aria-hidden="true">{{ level.level }}</span>
-      <div class="level-body">
-        <div class="level-heading">
-          <h2 class="level-name">Level {{ level.level }} - {{ level.name }}</h2>
-          <span class="level-range">{{ levelRange(level) }}</span>
-        </div>
-        @if (level.description) {
-        <p class="level-definition">{{ level.description }}</p>
-        }
-        @if (levelScores.length) {
-        <ul class="score-list" [attr.aria-label]="'Scores in ' + level.name">
-          @for (levelScore of levelScores; track levelScore.id) {
-          <li class="score-chip" [class.active]="levelScore.isActive">
-            <span class="score-type">{{ levelScore.type }}</span>{{ ' ' }}
-            <span class="score-value">{{ levelScore.score }}</span>
-          </li>
+      @let levelScores = scoresInLevel(level);
+      <li class="level" [class.current]="isCurrentLevel(level)">
+        <span
+          class="level-swatch"
+          [style.background-color]="level.color"
+          [style.color]="level.textColor"
+          aria-hidden="true"
+          >{{ level.level }}</span
+        >
+        <div class="level-body">
+          <div class="level-heading">
+            <h2 class="level-name">
+              Level {{ level.level }} - {{ level.name }}
+            </h2>
+            <span class="level-range">{{ levelRange(level) }}</span>
+          </div>
+          @if (level.description) {
+            <p class="level-definition">{{ level.description }}</p>
           }
-        </ul>
-        }
-      </div>
-    </li>
+          @if (levelScores.length) {
+            <ul
+              class="score-list"
+              [attr.aria-label]="'Scores in ' + level.name"
+            >
+              @for (levelScore of levelScores; track levelScore.id) {
+                <li class="score-chip" [class.active]="levelScore.isActive">
+                  <span class="score-type">{{ levelScore.type }}</span>{{ ' ' }}
+                  <span class="score-value">{{ levelScore.score }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </li>
     }
   </ul>
   @if (!activeSubmission.id) {
-  <p class="empty-state">No Active Submission</p>
+    <p class="empty-state">No Active Submission</p>
   }
 </section>

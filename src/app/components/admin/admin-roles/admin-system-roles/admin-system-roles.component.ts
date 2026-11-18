@@ -3,13 +3,28 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
 import {
-  SystemPermission,
-  SystemRole,
-} from 'src/app/generated/cite.api';
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import {
+  MatTableDataSource,
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+} from '@angular/material/table';
+import { SystemPermission, SystemRole } from 'src/app/generated/cite.api';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { SystemRolesModel } from './admin-system-roles.models';
@@ -28,10 +43,26 @@ import { AsyncPipe } from '@angular/common';
 const NAME_VALUE = 'nameValue';
 
 @Component({
-    selector: 'app-admin-system-roles',
-    templateUrl: './admin-system-roles.component.html',
-    styleUrls: ['./admin-system-roles.component.scss'],
-    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatIconButton, MatTooltip, MatIcon, MatCellDef, MatCell, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe]
+  selector: 'app-admin-system-roles',
+  templateUrl: './admin-system-roles.component.html',
+  styleUrls: ['./admin-system-roles.component.scss'],
+  imports: [
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    MatCellDef,
+    MatCell,
+    MatCheckbox,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    AsyncPipe,
+  ],
 })
 export class AdminSystemRolesComponent implements OnInit, OnDestroy {
   private roleService = inject(RoleDataService);
@@ -62,23 +93,28 @@ export class AdminSystemRolesComponent implements OnInit, OnDestroy {
         }
         // If 'immutable' values are the same, sort by 'name' (case-insensitive)
         return a.name.localeCompare(b.name);
-      })
-    )
+      }),
+    ),
   );
 
   public displayedColumns$ = this.roles$.pipe(
     map((x) => {
       const columnNames = x.map((y) => y.name);
       return ['permissions', ...columnNames];
-    })
+    }),
   );
 
   ngOnInit(): void {
     this.roleService.getRoles().subscribe();
-    this.permissionDataService.load().pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      this.canEdit = this.permissionDataService.hasPermission(SystemPermission.ManageRoles);
-      this.changeDetectorRef.detectChanges();
-    });
+    this.permissionDataService
+      .load()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.canEdit = this.permissionDataService.hasPermission(
+          SystemPermission.ManageRoles,
+        );
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   ngOnDestroy(): void {
@@ -101,7 +137,7 @@ export class AdminSystemRolesComponent implements OnInit, OnDestroy {
   setPermission(
     permission: string,
     role: SystemRole,
-    event: MatCheckboxChange
+    event: MatCheckboxChange,
   ) {
     if (permission === this.allPermission) {
       role.allPermissions = event.checked;
@@ -110,7 +146,7 @@ export class AdminSystemRolesComponent implements OnInit, OnDestroy {
         role.permissions.push(permission as SystemPermission);
       } else if (!event.checked) {
         role.permissions = role.permissions.filter(
-          (x) => x !== (permission as SystemPermission)
+          (x) => x !== (permission as SystemPermission),
         );
       }
     }

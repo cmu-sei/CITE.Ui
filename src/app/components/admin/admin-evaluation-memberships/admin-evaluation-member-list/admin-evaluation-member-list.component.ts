@@ -10,12 +10,25 @@ import {
   OnInit,
   input,
   output,
-  viewChild
+  viewChild,
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource,
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+  MatNoDataRow,
+} from '@angular/material/table';
 import {
   Group,
   EvaluationMembership,
@@ -32,10 +45,36 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-    selector: 'app-admin-evaluation-member-list',
-    templateUrl: './admin-evaluation-member-list.component.html',
-    styleUrls: ['./admin-evaluation-member-list.component.scss'],
-    imports: [MatToolbar, MatToolbarRow, MatIcon, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatSelect, MatOption, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
+  selector: 'app-admin-evaluation-member-list',
+  templateUrl: './admin-evaluation-member-list.component.html',
+  styleUrls: ['./admin-evaluation-member-list.component.scss'],
+  imports: [
+    MatToolbar,
+    MatToolbarRow,
+    MatIcon,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    MatIconButton,
+    MatSuffix,
+    MatPaginator,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatSelect,
+    MatOption,
+    MatTooltip,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+  ],
 })
 export class AdminEvaluationMemberListComponent
   implements OnInit, OnChanges, AfterViewInit
@@ -93,7 +132,7 @@ export class AdminEvaluationMemberListComponent
     this.buildModel();
 
     this.displayedColumns = this.viewColumns.concat(
-      this.canEdit() ? this.editColumns : []
+      this.canEdit() ? this.editColumns : [],
     );
   }
 

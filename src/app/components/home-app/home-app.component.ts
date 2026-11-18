@@ -3,7 +3,14 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { DOCUMENT, AsyncPipe, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild, inject, viewChild } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+  viewChild,
+} from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -52,12 +59,29 @@ import { GallerySignalRService } from 'src/app/services/gallery-signalr.service'
 import { UnreadArticlesQuery } from 'src/app/data/unread-articles/unread-articles.query';
 import { UIDataService } from 'src/app/data/ui/ui-data.service';
 import { XApiService } from 'src/app/services/xapi/xapi.service';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import {
+  MatTableDataSource,
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+} from '@angular/material/table';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { TopbarComponent } from '../shared/top-bar/topbar.component';
-import { MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle } from '@angular/material/card';
+import {
+  MatCard,
+  MatCardHeader,
+  MatCardTitle,
+  MatCardSubtitle,
+} from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -74,48 +98,48 @@ import { RightSideIframeComponent } from '../right-side-iframe/right-side-iframe
 import { Section } from './section';
 
 @Component({
-    selector: 'app-home-app',
-    templateUrl: './home-app.component.html',
-    styleUrls: ['./home-app.component.scss'],
-    imports: [
-        TopbarComponent,
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        MatCardSubtitle,
-        MatProgressSpinner,
-        MatIconButton,
-        RouterLink,
-        MatIcon,
-        MatFormField,
-        MatInput,
-        FormsModule,
-        MatSuffix,
-        MatTable,
-        MatSort,
-        MatColumnDef,
-        MatHeaderCellDef,
-        MatHeaderCell,
-        MatSortHeader,
-        MatCellDef,
-        MatCell,
-        MatHeaderRowDef,
-        MatHeaderRow,
-        MatRowDef,
-        MatRow,
-        MatPaginator,
-        EvaluationInfoComponent,
-        DashboardComponent,
-        ScoresheetComponent,
-        ReportComponent,
-        AggregateComponent,
-        ScoreSummaryComponent,
-        RightSideHtmlComponent,
-        RightSideIframeComponent,
-        AsyncPipe,
-        DatePipe,
-        CrucibleLandingBackgroundDirective,
-    ],
+  selector: 'app-home-app',
+  templateUrl: './home-app.component.html',
+  styleUrls: ['./home-app.component.scss'],
+  imports: [
+    TopbarComponent,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatProgressSpinner,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    MatSuffix,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatPaginator,
+    EvaluationInfoComponent,
+    DashboardComponent,
+    ScoresheetComponent,
+    ReportComponent,
+    AggregateComponent,
+    ScoreSummaryComponent,
+    RightSideHtmlComponent,
+    RightSideIframeComponent,
+    AsyncPipe,
+    DatePipe,
+    CrucibleLandingBackgroundDirective,
+  ],
 })
 export class HomeAppComponent implements OnDestroy, OnInit {
   private _document = inject<HTMLDocument>(DOCUMENT);
@@ -195,7 +219,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   public filterString: string;
   userList: User[] = [];
   Evaluation: Evaluation[] = [];
-  evaluationDataSource = new MatTableDataSource<Evaluation>(new Array<Evaluation>());
+  evaluationDataSource = new MatTableDataSource<Evaluation>(
+    new Array<Evaluation>(),
+  );
   public displayedColumns: string[] = ['description', 'status', 'dateCreated'];
   private isSubmissionDataServiceLoading: boolean;
   waitingForCurrentMoveNumber = 0;
@@ -208,7 +234,8 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   constructor() {
     const titleService = inject(Title);
 
-    const appTitle = this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
+    const appTitle =
+      this.settingsService.settings.AppTitle || 'Set AppTitle in Settings';
     titleService.setTitle(appTitle);
     this.topbarTextBase =
       this.settingsService.settings.AppTopBarText || this.topbarTextBase;
@@ -218,22 +245,22 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.submissionDataService.unload();
     this.scoringModelDataService.unload();
     this.teamDataService.unload();
-    this.submissionQuery.selectLoading().pipe(takeUntil(this.unsubscribe$)).subscribe(isLoading => {
-      this.isSubmissionDataServiceLoading = isLoading;
-    });
+    this.submissionQuery
+      .selectLoading()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((isLoading) => {
+        this.isSubmissionDataServiceLoading = isLoading;
+      });
     // Set the display settings from config file
   }
 
   ngOnInit() {
     // load system permissions
-    this.permissionDataService
-      .load()
-      .subscribe(
-        (x) => {
-          this.permissions = this.permissionDataService.permissions;
-          this.canViewAdministration = this.permissionDataService.canViewAdministration();
-        }
-      );
+    this.permissionDataService.load().subscribe((x) => {
+      this.permissions = this.permissionDataService.permissions;
+      this.canViewAdministration =
+        this.permissionDataService.canViewAdministration();
+    });
     // load evaluation permissions
     this.permissionDataService.loadEvaluationPermissions().subscribe();
     // load team permissions
@@ -250,7 +277,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         // set the top bar text
         this.evaluationList = evaluations;
         this.sortedMoveList = moves.sort((a, b) =>
-          +a.moveNumber < +b.moveNumber ? -1 : 1
+          +a.moveNumber < +b.moveNumber ? -1 : 1,
         );
         const numberOfEvaluations = evaluations ? evaluations.length : 0;
         let evaluation: Evaluation;
@@ -261,7 +288,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           evaluations.length > 0
         ) {
           evaluation = evaluations.find(
-            (e) => e.id === this.selectedEvaluationId
+            (e) => e.id === this.selectedEvaluationId,
           );
           this.currentMoveNumber = evaluation.currentMoveNumber;
           this.evaluationDataService.setActive(evaluation.id);
@@ -269,16 +296,16 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         if (evaluation) {
           this.selectedEvaluationId = evaluation.id;
           this.displayedMoveNumber = this.uiDataService.getMoveNumber(
-            this.selectedEvaluationId
+            this.selectedEvaluationId,
           );
           this.displayedMoveNumber =
             this.displayedMoveNumber >= 0 &&
-              this.displayedMoveNumber <= evaluation.currentMoveNumber
+            this.displayedMoveNumber <= evaluation.currentMoveNumber
               ? this.displayedMoveNumber
               : evaluation.currentMoveNumber;
           this.uiDataService.setMoveNumber(
             this.selectedEvaluationId,
-            this.displayedMoveNumber
+            this.displayedMoveNumber,
           );
           if (moves.length > 0 && !this.moveQuery.getActive()) {
             if (!this.moveQuery.getActive()) {
@@ -293,7 +320,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           // if we intiated advancing to next evaluation move, then display it
           if (this.waitingForCurrentMoveNumber > 0) {
             const newMove = this.sortedMoveList.find(
-              (m) => +m.moveNumber === +this.waitingForCurrentMoveNumber
+              (m) => +m.moveNumber === +this.waitingForCurrentMoveNumber,
             );
             if (newMove) {
               this.waitingForCurrentMoveNumber = 0;
@@ -312,92 +339,101 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       });
     this.userDataService.setCurrentUser();
     // observe active evaluation
-    (this.evaluationQuery.selectActive() as Observable<Evaluation>).pipe(takeUntil(this.unsubscribe$)).subscribe(active => {
-      if (active && active.id !== this.selectedEvaluationId) {
-        this.selectedEvaluationId = active.id;
-        this.loadEvaluationData();
-        this.noChanges$.next(active.status === ItemStatus.Complete);
-      }
-    });
+    (this.evaluationQuery.selectActive() as Observable<Evaluation>)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((active) => {
+        if (active && active.id !== this.selectedEvaluationId) {
+          this.selectedEvaluationId = active.id;
+          this.loadEvaluationData();
+          this.noChanges$.next(active.status === ItemStatus.Complete);
+        }
+      });
     //get users
-    this.userQuery.selectAll()
+    this.userQuery
+      .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((users) => {
         this.userList = users;
       });
     // observe route changes
-    this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
-      // get and set the evaluation
-      const evaluationId = params.get('evaluation');
-      if (evaluationId) {
-        this.evaluationDataService.setActive(evaluationId);
-        this.uiDataService.setEvaluation(evaluationId);
-      } else {
-        this.evaluationDataService.setActive('');
-        this.selectedEvaluationId = '';
-      }
-      // get the requested section or set the saved section
-      const section = params.get('section');
-      switch (section) {
-        case 'scoresheet':
-          // set scoresheet
-          this.selectedSection = Section.scoresheet;
-          this.uiDataService.setSection(evaluationId, Section.scoresheet);
-          // now remove the section from the url, so that refreshes work properly
-          this.router.navigate([], {
-            queryParams: { evaluation: evaluationId },
-          });
-          break;
-        case 'dashboard':
-          // set dashboard
-          this.selectedSection = Section.dashboard;
-          this.uiDataService.setSection(evaluationId, Section.dashboard);
-          // now remove the section from the url, so that refreshes work properly
-          this.router.navigate([], {
-            queryParams: { evaluation: evaluationId },
-          });
-          break;
-        default:
-          // get the saved section
-          const savedSection = this.uiDataService.getSection(evaluationId);
-          if (savedSection === 'scoresheet') {
+    this.activatedRoute.queryParamMap
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((params) => {
+        // get and set the evaluation
+        const evaluationId = params.get('evaluation');
+        if (evaluationId) {
+          this.evaluationDataService.setActive(evaluationId);
+          this.uiDataService.setEvaluation(evaluationId);
+        } else {
+          this.evaluationDataService.setActive('');
+          this.selectedEvaluationId = '';
+        }
+        // get the requested section or set the saved section
+        const section = params.get('section');
+        switch (section) {
+          case 'scoresheet':
+            // set scoresheet
             this.selectedSection = Section.scoresheet;
-          } else if (savedSection === 'report') {
-            this.selectedSection = Section.report;
-          } else if (savedSection === 'aggregate') {
-            this.selectedSection = Section.aggregate;
-          } else {
+            this.uiDataService.setSection(evaluationId, Section.scoresheet);
+            // now remove the section from the url, so that refreshes work properly
+            this.router.navigate([], {
+              queryParams: { evaluation: evaluationId },
+            });
+            break;
+          case 'dashboard':
+            // set dashboard
             this.selectedSection = Section.dashboard;
-          }
-          break;
-      }
-      // xAPI for team members (not observers)
-      if (evaluationId && this.myTeamId) {
-        const activeTeamId = this.teamQuery.getActiveId();
-        if (activeTeamId === this.myTeamId) {
-          // viewed
-          if (this.selectedSection === Section.dashboard) {
-            this.xApiService
-              .viewedEvaluationDashboard(evaluationId)
-              .pipe(take(1))
-              .subscribe();
-          } else if (this.selectedSection === Section.scoresheet) {
-            this.xApiService
-              .viewedEvaluationScoresheet(evaluationId)
-              .pipe(take(1))
-              .subscribe();
+            this.uiDataService.setSection(evaluationId, Section.dashboard);
+            // now remove the section from the url, so that refreshes work properly
+            this.router.navigate([], {
+              queryParams: { evaluation: evaluationId },
+            });
+            break;
+          default:
+            // get the saved section
+            const savedSection = this.uiDataService.getSection(evaluationId);
+            if (savedSection === 'scoresheet') {
+              this.selectedSection = Section.scoresheet;
+            } else if (savedSection === 'report') {
+              this.selectedSection = Section.report;
+            } else if (savedSection === 'aggregate') {
+              this.selectedSection = Section.aggregate;
+            } else {
+              this.selectedSection = Section.dashboard;
+            }
+            break;
+        }
+        // xAPI for team members (not observers)
+        if (evaluationId && this.myTeamId) {
+          const activeTeamId = this.teamQuery.getActiveId();
+          if (activeTeamId === this.myTeamId) {
+            // viewed
+            if (this.selectedSection === Section.dashboard) {
+              this.xApiService
+                .viewedEvaluationDashboard(evaluationId)
+                .pipe(take(1))
+                .subscribe();
+            } else if (this.selectedSection === Section.scoresheet) {
+              this.xApiService
+                .viewedEvaluationScoresheet(evaluationId)
+                .pipe(take(1))
+                .subscribe();
+            }
           }
         }
-      }
-    });
+      });
     // observe the submissions
-    this.submissionList$.pipe(takeUntil(this.unsubscribe$)).subscribe(submissions => {
-      this.processSubmissions(submissions);
-    });
+    this.submissionList$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((submissions) => {
+        this.processSubmissions(submissions);
+      });
     // observe the evaluations
-    this.evaluationQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(evaluations => {
-      this.evaluationList = evaluations
-        .sort((a, b) => {
+    this.evaluationQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((evaluations) => {
+        this.evaluationList = evaluations.sort((a, b) => {
           const aDescription = a.description.toLowerCase();
           const bDescription = b.description.toLowerCase();
 
@@ -409,14 +445,17 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             return 0;
           }
         });
-      this.setDataSources();
-      // Load users for each evaluation (for displaying creator names)
-      evaluations.forEach(evaluation => {
-        if (evaluation.id) {
-          this.userDataService.loadByEvaluation(evaluation.id).pipe(take(1)).subscribe();
-        }
+        this.setDataSources();
+        // Load users for each evaluation (for displaying creator names)
+        evaluations.forEach((evaluation) => {
+          if (evaluation.id) {
+            this.userDataService
+              .loadByEvaluation(evaluation.id)
+              .pipe(take(1))
+              .subscribe();
+          }
+        });
       });
-    });
     // load the user's evaluations
     this.evaluationDataService.loadMine();
     // load team roles
@@ -458,7 +497,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       this.scoringModelDataService.loadById(evaluation.scoringModelId);
       this.moveDataService.loadByEvaluation(this.selectedEvaluationId);
       this.teamDataService.loadMine(this.selectedEvaluationId);
-      this.userDataService.loadByEvaluation(this.selectedEvaluationId).pipe(take(1)).subscribe();
+      this.userDataService
+        .loadByEvaluation(this.selectedEvaluationId)
+        .pipe(take(1))
+        .subscribe();
       this.currentMoveNumber = evaluation.currentMoveNumber;
     }
   }
@@ -483,7 +525,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.moveDataService.setActive(move.id);
     this.uiDataService.setMoveNumber(
       this.selectedEvaluationId,
-      move.moveNumber
+      move.moveNumber,
     );
     this.displayedMoveNumber = move.moveNumber;
     const displayedSubmission = this.submissionQuery.getActive() as Submission;
@@ -494,7 +536,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         s.userId === displayedSubmission?.userId &&
         s.teamId === displayedSubmission?.teamId &&
         s.groupId === displayedSubmission?.groupId &&
-        s.scoreIsAnAverage === displayedSubmission?.scoreIsAnAverage
+        s.scoreIsAnAverage === displayedSubmission?.scoreIsAnAverage,
     );
     if (sameKind) {
       this.setActiveSubmission(sameKind);
@@ -503,13 +545,13 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     const userSubmission =
       this.myTeamId === (this.teamQuery.getActive() as Team)?.id
         ? submissions.find(
-          (s) =>
-            +s.moveNumber === +move.moveNumber &&
-            s.userId &&
-            s.teamId &&
-            !s.groupId &&
-            !s.scoreIsAnAverage
-        )
+            (s) =>
+              +s.moveNumber === +move.moveNumber &&
+              s.userId &&
+              s.teamId &&
+              !s.groupId &&
+              !s.scoreIsAnAverage,
+          )
         : undefined;
     const fallback =
       userSubmission ??
@@ -519,7 +561,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           !s.userId &&
           s.teamId &&
           !s.groupId &&
-          !s.scoreIsAnAverage
+          !s.scoreIsAnAverage,
       );
     if (fallback) {
       // save the view shown, so the scoresheet's view buttons and controls
@@ -528,7 +570,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       // the scoresheet.
       this.uiDataService.setSubmissionType(
         this.selectedEvaluationId,
-        userSubmission ? 'user' : 'team'
+        userSubmission ? 'user' : 'team',
       );
       this.setActiveSubmission(fallback);
     }
@@ -536,7 +578,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
 
   nextEvaluationMove(moveNumber: number) {
     const evaluation = this.evaluationList.find(
-      (e) => e.id === this.selectedEvaluationId
+      (e) => e.id === this.selectedEvaluationId,
     );
     if (+moveNumber <= +this.getMaxMoveNumber()) {
       const updateEvaluation = { ...evaluation };
@@ -589,9 +631,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (teamId && this.myTeamId && teamId !== this.myTeamId) {
       if (
         this.uiDataService.getSubmissionType(this.selectedEvaluationId) ===
-        'user' ||
+          'user' ||
         this.uiDataService.getSubmissionType(this.selectedEvaluationId) ===
-        'team-avg'
+          'team-avg'
       ) {
         this.uiDataService.setSubmissionType(this.selectedEvaluationId, 'team');
       }
@@ -603,10 +645,16 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     this.submissionDataService.unload();
     this.submissionDataService.loadByEvaluationTeam(
       this.selectedEvaluationId,
-      teamId
+      teamId,
     );
     // Only log xAPI observed statement when team actually changes
-    if (teamChanged && this.myTeamId && teamId && this.selectedEvaluationId && teamId !== this.myTeamId) {
+    if (
+      teamChanged &&
+      this.myTeamId &&
+      teamId &&
+      this.selectedEvaluationId &&
+      teamId !== this.myTeamId
+    ) {
       if (this.selectedSection === Section.dashboard) {
         this.xApiService
           .observedEvaluationDashboard(this.selectedEvaluationId, teamId)
@@ -645,12 +693,18 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         // Observing another team
         if (section === Section.dashboard) {
           this.xApiService
-            .observedEvaluationDashboard(this.selectedEvaluationId, activeTeamId)
+            .observedEvaluationDashboard(
+              this.selectedEvaluationId,
+              activeTeamId,
+            )
             .pipe(take(1))
             .subscribe();
         } else if (section === Section.scoresheet) {
           this.xApiService
-            .observedEvaluationScoresheet(this.selectedEvaluationId, activeTeamId)
+            .observedEvaluationScoresheet(
+              this.selectedEvaluationId,
+              activeTeamId,
+            )
             .pipe(take(1))
             .subscribe();
         }
@@ -665,7 +719,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     if (!activeTeam || !scoringModel) {
       return;
     }
-    if (submissions.some(s => s.teamId && s.teamId === activeTeam.id)) {
+    if (submissions.some((s) => s.teamId && s.teamId === activeTeam.id)) {
       let activeSubmission = this.submissionQuery.getActive() as Submission;
       activeSubmission = activeSubmission
         ? submissions.find((s) => s.id === activeSubmission.id)
@@ -675,7 +729,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         activeSubmission.submissionCategories.length === 0
       ) {
         let submissionType = this.uiDataService.getSubmissionType(
-          this.selectedEvaluationId
+          this.selectedEvaluationId,
         );
         if (!submissionType) {
           submissionType = 'user';
@@ -695,7 +749,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.submissionDataService.loadById(submission.id);
       }
       const activeMove = this.sortedMoveList.find(
-        (m) => +m.moveNumber === +submission.moveNumber
+        (m) => +m.moveNumber === +submission.moveNumber,
       );
       this.moveDataService.setActive(activeMove.id);
     }
@@ -715,7 +769,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           newSubmission = submissions.find(
             (s) =>
               +s.moveNumber === +this.displayedMoveNumber &&
-              s.userId === this.loggedInUserId
+              s.userId === this.loggedInUserId,
           );
           break;
         case 'team':
@@ -724,7 +778,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
               +s.moveNumber === +this.displayedMoveNumber &&
               s.userId === null &&
               s.teamId !== null &&
-              !s.scoreIsAnAverage
+              !s.scoreIsAnAverage,
           );
           break;
         case 'team-avg':
@@ -733,7 +787,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
               +s.moveNumber === +this.displayedMoveNumber &&
               s.userId === null &&
               s.teamId !== null &&
-              s.scoreIsAnAverage
+              s.scoreIsAnAverage,
           );
           break;
         case 'group-avg':
@@ -742,7 +796,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
               +s.moveNumber === +this.displayedMoveNumber &&
               s.userId === null &&
               s.teamId === null &&
-              s.scoreIsAnAverage
+              s.scoreIsAnAverage,
           );
           break;
         case 'official':
@@ -751,14 +805,17 @@ export class HomeAppComponent implements OnDestroy, OnInit {
               +s.moveNumber === +this.displayedMoveNumber &&
               s.userId === null &&
               s.teamId === null &&
-              s.groupId === null
+              s.groupId === null,
           );
           break;
         default:
           break;
       }
       if (newSubmission) {
-        this.uiDataService.setSubmissionType(this.selectedEvaluationId, selection);
+        this.uiDataService.setSubmissionType(
+          this.selectedEvaluationId,
+          selection,
+        );
         this.setActiveSubmission(newSubmission);
       }
     }

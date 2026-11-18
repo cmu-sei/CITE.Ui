@@ -9,7 +9,10 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { screen, within } from '@testing-library/angular';
 import { of } from 'rxjs';
-import { TeamPermission, TeamRolesService } from '../../../../generated/cite.api';
+import {
+  TeamPermission,
+  TeamRolesService,
+} from '../../../../generated/cite.api';
 import { ApiStub } from '../../../../test-utils/api-stub';
 import { renderComponent } from '../../../../test-utils/render-component';
 import { AdminTeamRolesComponent } from './admin-team-roles.component';

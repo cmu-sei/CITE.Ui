@@ -3,7 +3,15 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { Component, OnChanges, OnInit, SimpleChanges, inject, input, output } from '@angular/core';
+import {
+  Component,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
@@ -23,14 +31,22 @@ import { AdminScoringModelMemberListComponent } from '../admin-scoring-model-mem
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-admin-scoring-model-memberships',
-    templateUrl: './admin-scoring-model-memberships.component.html',
-    styleUrls: ['./admin-scoring-model-memberships.component.scss'],
-    imports: [AdminScoringModelMembershipListComponent, AdminScoringModelMemberListComponent, AsyncPipe]
+  selector: 'app-admin-scoring-model-memberships',
+  templateUrl: './admin-scoring-model-memberships.component.html',
+  styleUrls: ['./admin-scoring-model-memberships.component.scss'],
+  imports: [
+    AdminScoringModelMembershipListComponent,
+    AdminScoringModelMemberListComponent,
+    AsyncPipe,
+  ],
 })
-export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges {
+export class AdminScoringModelMembershipsComponent
+  implements OnInit, OnChanges
+{
   private scoringModelQuery = inject(ScoringModelQuery);
-  private scoringModelMembershipDataService = inject(ScoringModelMembershipDataService);
+  private scoringModelMembershipDataService = inject(
+    ScoringModelMembershipDataService,
+  );
   private scoringModelRolesDataService = inject(ScoringModelRoleDataService);
   private userDataService = inject(UserDataService);
   private userQuery = inject(UserQuery);
@@ -60,7 +76,7 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
   ngOnInit(): void {
     forkJoin([
       this.scoringModelMembershipDataService.loadMemberships(
-        this.scoringModelId()
+        this.scoringModelId(),
       ),
       this.userDataService.load(),
       this.scoringModelRolesDataService.loadRoles(),
@@ -68,8 +84,14 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
     ]).subscribe();
     this.permissionDataService
       .loadScoringModelPermissions()
-      .subscribe((x) =>
-        this.canManage$ = of(this.permissionDataService.canManageScoringModel(this.scoringModelId())));
+      .subscribe(
+        (x) =>
+          (this.canManage$ = of(
+            this.permissionDataService.canManageScoringModel(
+              this.scoringModelId(),
+            ),
+          )),
+      );
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -77,10 +99,13 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
       .selectEntity(this.scoringModelId())
       .pipe(
         filter((x) => x != null),
-        tap(
-          (x) => {
-            this.canManage$ = of(this.permissionDataService.canEditScoringModel(this.scoringModelId()));
-          })
+        tap((x) => {
+          this.canManage$ = of(
+            this.permissionDataService.canEditScoringModel(
+              this.scoringModelId(),
+            ),
+          );
+        }),
       );
   }
 
@@ -100,7 +125,7 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
             );
           }
         });
-      })
+      }),
     );
   }
 
@@ -123,7 +148,7 @@ export class AdminScoringModelMembershipsComponent implements OnInit, OnChanges 
             );
           }
         });
-      })
+      }),
     );
   }
 

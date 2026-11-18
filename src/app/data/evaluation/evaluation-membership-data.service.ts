@@ -19,7 +19,8 @@ export class EvaluationMembershipDataService {
   private evaluationMembershipsSubject = new BehaviorSubject<
     EvaluationMembership[]
   >([]);
-  public evaluationMemberships$ = this.evaluationMembershipsSubject.asObservable();
+  public evaluationMemberships$ =
+    this.evaluationMembershipsSubject.asObservable();
 
   loadMemberships(evaluationId: string): Observable<EvaluationMembership[]> {
     return this.evaluationMembershipsService
@@ -27,13 +28,16 @@ export class EvaluationMembershipDataService {
       .pipe(tap((x) => this.evaluationMembershipsSubject.next(x)));
   }
 
-  createMembership(evaluationId: string, evaluationMembership: EvaluationMembership) {
+  createMembership(
+    evaluationId: string,
+    evaluationMembership: EvaluationMembership,
+  ) {
     return this.evaluationMembershipsService
       .createEvaluationMembership(evaluationId, evaluationMembership)
       .pipe(
         tap((x) => {
           this.upsert(x.id, x);
-        })
+        }),
       );
   }
 
@@ -45,16 +49,18 @@ export class EvaluationMembershipDataService {
       .pipe(
         tap((x) => {
           this.upsert(evaluationMembership.id, x);
-        })
+        }),
       );
   }
 
   deleteMembership(id: string) {
-    return this.evaluationMembershipsService.deleteEvaluationMembership(id).pipe(
-      tap(() => {
-        this.remove(id);
-      })
-    );
+    return this.evaluationMembershipsService
+      .deleteEvaluationMembership(id)
+      .pipe(
+        tap(() => {
+          this.remove(id);
+        }),
+      );
   }
 
   upsert(id: string, evaluationMembership: Partial<EvaluationMembership>) {

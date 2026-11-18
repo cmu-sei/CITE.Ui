@@ -12,10 +12,10 @@ export class UIState {
   selectedEvaluation = '';
   expandedItems: string[] = [];
   // per evaluation items
-  evaluationMoveNumber: {[ key: string ]: number} = {};
-  evaluationSection: {[ key: string ]: string} = {};
-  evaluationSubmissionType: {[ key: string ]: string} = {};
-  evaluationTeam: {[ key: string ]: string} = {};
+  evaluationMoveNumber: { [key: string]: number } = {};
+  evaluationSection: { [key: string]: string } = {};
+  evaluationSubmissionType: { [key: string]: string } = {};
+  evaluationTeam: { [key: string]: string } = {};
 }
 
 @Injectable({
@@ -32,7 +32,7 @@ export class UIDataService {
   //
   // Item Expansion
   isItemExpanded(id: string): boolean {
-    return this.uiState.expandedItems.some(ei => ei === id);
+    return this.uiState.expandedItems.some((ei) => ei === id);
   }
 
   setItemExpanded(id: string) {

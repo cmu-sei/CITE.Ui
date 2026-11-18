@@ -13,14 +13,18 @@ import {
   providedIn: 'root',
 })
 export class ScoringModelMembershipDataService {
-  private scoringModelMembershipsService = inject(ScoringModelMembershipsService);
+  private scoringModelMembershipsService = inject(
+    ScoringModelMembershipsService,
+  );
 
-  private scoringModelMembershipsSubject = new BehaviorSubject<ScoringModelMembership[]>([]);
+  private scoringModelMembershipsSubject = new BehaviorSubject<
+    ScoringModelMembership[]
+  >([]);
   public scoringModelMemberships$ =
     this.scoringModelMembershipsSubject.asObservable();
 
   loadMemberships(
-    scoringModelId: string
+    scoringModelId: string,
   ): Observable<ScoringModelMembership[]> {
     return this.scoringModelMembershipsService
       .getAllScoringModelMemberships(scoringModelId)
@@ -29,17 +33,14 @@ export class ScoringModelMembershipDataService {
 
   createMembership(
     scoringModelId: string,
-    scoringModelMembership: ScoringModelMembership
+    scoringModelMembership: ScoringModelMembership,
   ) {
     return this.scoringModelMembershipsService
-      .createScoringModelMembership(
-        scoringModelId,
-        scoringModelMembership
-      )
+      .createScoringModelMembership(scoringModelId, scoringModelMembership)
       .pipe(
         tap((x) => {
           this.upsert(x.id, x);
-        })
+        }),
       );
   }
 
@@ -47,12 +48,12 @@ export class ScoringModelMembershipDataService {
     return this.scoringModelMembershipsService
       .updateScoringModelMembership(
         scoringModelMembership.id,
-        scoringModelMembership
+        scoringModelMembership,
       )
       .pipe(
         tap((x) => {
           this.upsert(scoringModelMembership.id, x);
-        })
+        }),
       );
   }
 
@@ -62,14 +63,11 @@ export class ScoringModelMembershipDataService {
       .pipe(
         tap(() => {
           this.remove(id);
-        })
+        }),
       );
   }
 
-  upsert(
-    id: string,
-    scoringModelMembership: Partial<ScoringModelMembership>
-  ) {
+  upsert(id: string, scoringModelMembership: Partial<ScoringModelMembership>) {
     const memberships = this.scoringModelMembershipsSubject.getValue();
     const membershipToUpdate = memberships.find((x) => x.id === id);
 

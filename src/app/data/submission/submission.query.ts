@@ -28,7 +28,7 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
     const store = inject(SubmissionStore);
 
     super(store);
-  
+
     this.store = store;
   }
 
@@ -40,7 +40,7 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
     return combineLatest([
       this.selectAll(),
       this.teamQuery.selectAll(),
-      this.userQuery.selectAll()
+      this.userQuery.selectAll(),
     ]).pipe(
       map(([submissions, teams, users]) => {
         const populatedSubmissions: Array<PopulatedSubmission> = [];
@@ -109,18 +109,20 @@ export class SubmissionQuery extends QueryEntity<SubmissionState> {
             populatedSubmissions.push(populatedSubmission);
           }
         });
-        return populatedSubmissions.sort((a: PopulatedSubmission, b: PopulatedSubmission) => {
-          if (a.moveNumber === b.moveNumber) {
-            if (a.submissionType === b.submissionType) {
-              return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+        return populatedSubmissions.sort(
+          (a: PopulatedSubmission, b: PopulatedSubmission) => {
+            if (a.moveNumber === b.moveNumber) {
+              if (a.submissionType === b.submissionType) {
+                return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+              } else {
+                return a.submissionType < b.submissionType ? -1 : 1;
+              }
             } else {
-              return a.submissionType < b.submissionType ? -1 : 1;
+              return b.moveNumber - a.moveNumber;
             }
-          } else {
-            return b.moveNumber - a.moveNumber;
-          }
-        });
-      })
+          },
+        );
+      }),
     );
   }
 }

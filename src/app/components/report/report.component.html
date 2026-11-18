@@ -9,22 +9,33 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <span class="report-kind">Submission Review</span>
       <h2>
         @if (displaying === 'team') {
-        <span>{{ selectedTeam.shortName }}'s</span>
+          <span>{{ selectedTeam.shortName }}'s</span>
         } @else {
-        <span>{{ loggedInUserName }}'s</span>
+          <span>{{ loggedInUserName }}'s</span>
         }
         Responses for {{ selectedEvaluation.description }}
       </h2>
-      <span class="report-generated">Generated {{ generatedOn | date: 'medium' }}</span>
+      <span class="report-generated"
+        >Generated {{ generatedOn | date: 'medium' }}</span
+      >
     </div>
     <div class="report-actions no-print">
       <span class="view-buttons" role="group" aria-label="Displayed responses">
-        <button matButton="outlined" [class.selected]="displaying !== 'team'"
-          [attr.aria-pressed]="displaying !== 'team'" (click)="setDisplaying('user')" [disabled]="observing()">
+        <button
+          matButton="outlined"
+          [class.selected]="displaying !== 'team'"
+          [attr.aria-pressed]="displaying !== 'team'"
+          (click)="setDisplaying('user')"
+          [disabled]="observing()"
+        >
           User
         </button>
-        <button matButton="outlined" [class.selected]="displaying === 'team'"
-          [attr.aria-pressed]="displaying === 'team'" (click)="setDisplaying('team')">
+        <button
+          matButton="outlined"
+          [class.selected]="displaying === 'team'"
+          [attr.aria-pressed]="displaying === 'team'"
+          (click)="setDisplaying('team')"
+        >
           Team
         </button>
       </span>
@@ -36,95 +47,150 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </header>
 
   @for (submission of displayedSubmissionList; track submission.id) {
-  <section class="report-move">
-    <div class="move-header">
-      <h3 class="move-title">Move {{ submission.moveNumber }}</h3>
-      <div class="move-meta">
-        @if (selectedScoringModel?.useSubmit) {
-        <span class="chip">{{ getSubmissionStatusText(submission) }}</span>
-        }
-        @if (!selectedScoringModel?.hideScoresOnScoreSheet) {
-        <span class="chip" [matTooltip]="scoreLevelLabel(submission.score)">
-          <span class="chip-label">Score</span>&ngsp;
-          <strong>{{ submission.score | number: '1.2-2' }}</strong>
-        </span>
-        }
-      </div>
-    </div>
-    @for (scoringCategory of getDisplayedScoringCategories(submission.moveNumber) | displayOrder; track scoringCategory.id) {
-    @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
-    <!-- without selectable options a category scores nothing, even with an equation (new ones default to {max}) -->
-    @let showScores = canSelect && !selectedScoringModel?.hideScoresOnScoreSheet && scoringCategory.isScored;
-    <div class="category">
-      <div class="category-header">
-        <h4 class="category-title">
-          <span class="category-number">{{ scoringCategory.displayOrder }}</span>
-          <span class="category-text">{{ scoringCategory.description }}</span>
-        </h4>
-        @if (showScores) {
-        <span class="chip">
-          <span class="chip-label">Score</span>&ngsp;
-          <strong>{{ categoryScore(submission, scoringCategory.id) | number: '1.0-0' }}</strong>
-        </span>
-        }
-      </div>
-      <ul class="option-list">
-        @let scoringOptions = scoringCategory.scoringOptions | displayOrder;
-        @for (scoringOption of scoringOptions; track scoringOption.id; let optionIndex = $index) {
-        @if (scoringOption.isModifier && !scoringOptions[optionIndex - 1]?.isModifier) {
-        <li class="modifier-heading">Modifiers</li>
-        }
-        @let selected = canSelect && isSelected(submission, scoringCategory.id, scoringOption.id);
-        <li class="option" [class.selected]="selected">
-          <div class="option-row">
-            @if (canSelect) {
-            <!-- focusable when it has a tooltip, so keyboard users can open it too -->
-            @let selectedByText = selectedBy(submission, scoringCategory.id, scoringOption.id);
-            <span class="option-check" role="checkbox" aria-readonly="true" [attr.aria-checked]="selected"
-              [attr.aria-label]="scoringOption.description"
-              [matTooltip]="selectedByText" [attr.tabindex]="selectedByText ? 0 : null">
-              <mat-icon aria-hidden="true" [fontIcon]="selected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'" />
+    <section class="report-move">
+      <div class="move-header">
+        <h3 class="move-title">Move {{ submission.moveNumber }}</h3>
+        <div class="move-meta">
+          @if (selectedScoringModel?.useSubmit) {
+            <span class="chip">{{ getSubmissionStatusText(submission) }}</span>
+          }
+          @if (!selectedScoringModel?.hideScoresOnScoreSheet) {
+            <span class="chip" [matTooltip]="scoreLevelLabel(submission.score)">
+              <span class="chip-label">Score</span>&ngsp;
+              <strong>{{ submission.score | number: '1.2-2' }}</strong>
             </span>
-            }
-            <span class="option-text">
-              @if (selectedScoringModel.displayCommentTextBoxes) {
-              <span class="question-number">{{ optionIndex + 1 }}.</span>
-              }
-              {{ scoringOption.description }}
-            </span>
-            @if (showScores && !scoringOption.isModifier) {
-            <span class="option-value">{{ scoringOption.value }}</span>
+          }
+        </div>
+      </div>
+      @for (
+        scoringCategory of getDisplayedScoringCategories(submission.moveNumber)
+          | displayOrder;
+        track scoringCategory.id
+      ) {
+        @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
+        <!-- without selectable options a category scores nothing, even with an equation (new ones default to {max}) -->
+        @let showScores =
+          canSelect &&
+          !selectedScoringModel?.hideScoresOnScoreSheet &&
+          scoringCategory.isScored;
+        <div class="category">
+          <div class="category-header">
+            <h4 class="category-title">
+              <span class="category-number">{{
+                scoringCategory.displayOrder
+              }}</span>
+              <span class="category-text">{{
+                scoringCategory.description
+              }}</span>
+            </h4>
+            @if (showScores) {
+              <span class="chip">
+                <span class="chip-label">Score</span>&ngsp;
+                <strong>{{
+                  categoryScore(submission, scoringCategory.id)
+                    | number: '1.0-0'
+                }}</strong>
+              </span>
             }
           </div>
-          @if (selectedScoringModel.displayCommentTextBoxes) {
-          @let answer = optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment;
-          @if (answer) {
-          <div class="answer">{{ answer }}</div>
-          } @else {
-          <div class="answer no-response">No response</div>
-          }
-          } @else {
-          @let comments = optionComments(submission, scoringCategory.id, scoringOption.id);
-          @if (comments?.length) {
-          <ul class="comment-list">
-            @for (comment of comments; track comment.id) {
-            <li class="comment">
-              {{ comment.comment }}
-              @if (displaying === 'team') {
-              <span> - {{ getCommentAuthor(comment.createdBy) }}</span>
+          <ul class="option-list">
+            @let scoringOptions = scoringCategory.scoringOptions | displayOrder;
+            @for (
+              scoringOption of scoringOptions;
+              track scoringOption.id;
+              let optionIndex = $index
+            ) {
+              @if (
+                scoringOption.isModifier &&
+                !scoringOptions[optionIndex - 1]?.isModifier
+              ) {
+                <li class="modifier-heading">Modifiers</li>
               }
-            </li>
+              @let selected =
+                canSelect &&
+                isSelected(submission, scoringCategory.id, scoringOption.id);
+              <li class="option" [class.selected]="selected">
+                <div class="option-row">
+                  @if (canSelect) {
+                    <!-- focusable when it has a tooltip, so keyboard users can open it too -->
+                    @let selectedByText =
+                      selectedBy(
+                        submission,
+                        scoringCategory.id,
+                        scoringOption.id
+                      );
+                    <span
+                      class="option-check"
+                      role="checkbox"
+                      aria-readonly="true"
+                      [attr.aria-checked]="selected"
+                      [attr.aria-label]="scoringOption.description"
+                      [matTooltip]="selectedByText"
+                      [attr.tabindex]="selectedByText ? 0 : null"
+                    >
+                      <mat-icon
+                        aria-hidden="true"
+                        [fontIcon]="
+                          selected
+                            ? 'mdi-checkbox-marked'
+                            : 'mdi-checkbox-blank-outline'
+                        "
+                      />
+                    </span>
+                  }
+                  <span class="option-text">
+                    @if (selectedScoringModel.displayCommentTextBoxes) {
+                      <span class="question-number"
+                        >{{ optionIndex + 1 }}.</span
+                      >
+                    }
+                    {{ scoringOption.description }}
+                  </span>
+                  @if (showScores && !scoringOption.isModifier) {
+                    <span class="option-value">{{ scoringOption.value }}</span>
+                  }
+                </div>
+                @if (selectedScoringModel.displayCommentTextBoxes) {
+                  @let answer =
+                    optionComments(
+                      submission,
+                      scoringCategory.id,
+                      scoringOption.id
+                    )[0]?.comment;
+                  @if (answer) {
+                    <div class="answer">{{ answer }}</div>
+                  } @else {
+                    <div class="answer no-response">No response</div>
+                  }
+                } @else {
+                  @let comments =
+                    optionComments(
+                      submission,
+                      scoringCategory.id,
+                      scoringOption.id
+                    );
+                  @if (comments?.length) {
+                    <ul class="comment-list">
+                      @for (comment of comments; track comment.id) {
+                        <li class="comment">
+                          {{ comment.comment }}
+                          @if (displaying === 'team') {
+                            <span>
+                              - {{ getCommentAuthor(comment.createdBy) }}</span
+                            >
+                          }
+                        </li>
+                      }
+                    </ul>
+                  }
+                }
+              </li>
             }
           </ul>
-          }
-          }
-        </li>
-        }
-      </ul>
-    </div>
-    }
-  </section>
+        </div>
+      }
+    </section>
   } @empty {
-  <div class="empty-state">There are no responses to review yet.</div>
+    <div class="empty-state">There are no responses to review yet.</div>
   }
 </div>

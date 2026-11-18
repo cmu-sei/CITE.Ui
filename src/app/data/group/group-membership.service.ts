@@ -41,7 +41,7 @@ export class GroupMembershipDataService {
         });
 
         this.groupMembershipSubject.next(memberships);
-      })
+      }),
     );
   }
 
@@ -49,7 +49,7 @@ export class GroupMembershipDataService {
     return this.groupService.createGroupMembership(groupId, group).pipe(
       tap((x) => {
         this.upsert(x.id, x);
-      })
+      }),
     );
   }
 
@@ -57,7 +57,7 @@ export class GroupMembershipDataService {
     return this.groupService.deleteGroupMembership(id).pipe(
       tap(() => {
         this.remove(id);
-      })
+      }),
     );
   }
 

@@ -6,26 +6,52 @@ import { Component, OnInit, OnDestroy, inject, input } from '@angular/core';
 import { Move } from 'src/app/generated/cite.api/model/models';
 import { MoveDataService } from 'src/app/data/move/move-data.service';
 import { MoveQuery } from 'src/app/data/move/move.query';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminMoveEditDialogComponent } from '../admin-move-edit-dialog/admin-move-edit-dialog.component';
-import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  UntypedFormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 
 import { MatIconButton } from '@angular/material/button';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
-import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import {
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+} from '@angular/material/expansion';
 import { MatCard } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-    selector: 'app-admin-moves',
-    templateUrl: './admin-moves.component.html',
-    styleUrls: ['./admin-moves.component.scss'],
-    imports: [MatIcon, MatIconButton, MatFormField, MatInput, FormsModule, ReactiveFormsModule, MatSuffix, MatAccordion, MatSort, MatSortHeader, MatExpansionPanel, MatExpansionPanelHeader, MatCard, MatProgressSpinner]
+  selector: 'app-admin-moves',
+  templateUrl: './admin-moves.component.html',
+  styleUrls: ['./admin-moves.component.scss'],
+  imports: [
+    MatIcon,
+    MatIconButton,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSuffix,
+    MatAccordion,
+    MatSort,
+    MatSortHeader,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatCard,
+    MatProgressSpinner,
+  ],
 })
 export class AdminMovesComponent implements OnInit, OnDestroy {
   private settingsService = inject(ComnSettingsService);
@@ -38,7 +64,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   readonly canEdit = input<boolean>(undefined);
   filterControl: UntypedFormControl = this.moveDataService.filterControl;
   filterString = '';
-  sort: Sort = {active: 'moveNumber', direction: 'asc'};
+  sort: Sort = { active: 'moveNumber', direction: 'asc' };
   sortedMoves: Move[] = [];
   moveList: Move[];
   filteredMoveList: Move[];
@@ -47,15 +73,22 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject();
 
   constructor() {
-    this.moveQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(moves => {
-      this.moveList = moves;
-      this.sortedMoves = this.getSortedMoves(this.getFilteredMoves(this.moveList));
-    });
+    this.moveQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((moves) => {
+        this.moveList = moves;
+        this.sortedMoves = this.getSortedMoves(
+          this.getFilteredMoves(this.moveList),
+        );
+      });
     this.filterControl.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((term) => {
         this.filterString = term;
-        this.sortedMoves = this.getSortedMoves(this.getFilteredMoves(this.moveList));
+        this.sortedMoves = this.getSortedMoves(
+          this.getFilteredMoves(this.moveList),
+        );
       });
   }
 
@@ -67,17 +100,17 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
     if (!move) {
       // The store also holds moves SignalR broadcasts for other evaluations, so number from this one's own
       const moveNumbers = this.moveList
-        .filter(m => m.evaluationId === this.evaluationId())
-        .map(m => +m.moveNumber);
+        .filter((m) => m.evaluationId === this.evaluationId())
+        .map((m) => +m.moveNumber);
       move = {
         evaluationId: this.evaluationId(),
         description: '',
         moveNumber: moveNumbers.length !== 0 ? Math.max(...moveNumbers) + 1 : 0,
         situationDescription: '',
-        situationTime: new Date()
+        situationTime: new Date(),
       };
     } else {
-      move = {... move};
+      move = { ...move };
     }
     const dialogRef = this.dialog.open(AdminMoveEditDialogComponent, {
       maxWidth: '90vw',
@@ -85,7 +118,7 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
       minWidth: '900px',
       data: {
         move: move,
-        canEdit: this.canEdit()
+        canEdit: this.canEdit(),
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -104,7 +137,8 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
     this.dialogService
       .confirm({
         title: 'Delete Move',
-        message: 'Are you sure that you want to delete ' + move.description + '?',
+        message:
+          'Are you sure that you want to delete ' + move.description + '?',
         confirmText: 'Delete',
         cancelText: 'Cancel',
       })
@@ -121,25 +155,29 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
   }
 
   sortChanged(sort: Sort) {
-    this.sort = sort && sort.direction ? sort : {active: 'moveNumber', direction: 'asc'};
-    this.sortedMoves = this.getSortedMoves(this.getFilteredMoves(this.moveList));
+    this.sort =
+      sort && sort.direction
+        ? sort
+        : { active: 'moveNumber', direction: 'asc' };
+    this.sortedMoves = this.getSortedMoves(
+      this.getFilteredMoves(this.moveList),
+    );
   }
 
   getFilteredMoves(moves: Move[]): Move[] {
     let filteredMoves: Move[] = [];
     if (moves) {
-      moves.forEach(se => {
+      moves.forEach((se) => {
         if (se.evaluationId === this.evaluationId()) {
-          filteredMoves.push({... se});
+          filteredMoves.push({ ...se });
         }
       });
       // Filter by search string
       if (filteredMoves && filteredMoves.length > 0 && this.filterString) {
         const filterString = this.filterString.toLowerCase();
-        filteredMoves = filteredMoves
-          .filter((a) =>
-            a.description.toLowerCase().includes(filterString)
-          );
+        filteredMoves = filteredMoves.filter((a) =>
+          a.description.toLowerCase().includes(filterString),
+        );
       }
     }
     return filteredMoves;
@@ -147,27 +185,24 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
 
   getSortedMoves(moves: Move[]) {
     if (moves) {
-      moves.sort((a, b) => this.sortMoves(a, b, this.sort.active, this.sort.direction));
+      moves.sort((a, b) =>
+        this.sortMoves(a, b, this.sort.active, this.sort.direction),
+      );
     }
     return moves;
   }
 
-  private sortMoves(
-    a: Move,
-    b: Move,
-    column: string,
-    direction: string
-  ) {
+  private sortMoves(a: Move, b: Move, column: string, direction: string) {
     const isAsc = direction !== 'desc';
     switch (column) {
       case 'description':
         if (a.description.toLowerCase() === b.description.toLowerCase()) {
-          return ( (+a.moveNumber < +b.moveNumber ? -1 : 1) * (isAsc ? 1 : -1) );
+          return (+a.moveNumber < +b.moveNumber ? -1 : 1) * (isAsc ? 1 : -1);
         }
-        return ( (a.description < b.description ? -1 : 1) * (isAsc ? 1 : -1) );
+        return (a.description < b.description ? -1 : 1) * (isAsc ? 1 : -1);
         break;
       default:
-        return ( (+a.moveNumber < +b.moveNumber ? -1 : 1) * (isAsc ? 1 : -1) );
+        return (+a.moveNumber < +b.moveNumber ? -1 : 1) * (isAsc ? 1 : -1);
         break;
     }
   }
@@ -176,5 +211,4 @@ export class AdminMovesComponent implements OnInit, OnDestroy {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

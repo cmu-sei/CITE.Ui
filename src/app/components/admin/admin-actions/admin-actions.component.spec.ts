@@ -229,24 +229,49 @@ describe('AdminActionsComponent', () => {
    */
   it('keeps other evaluations out of the panel and out of an add to all teams and moves', async () => {
     const { created, editDialog, fixture, user } = await renderActions(true);
-    TestBed.inject(TeamDataService).updateStore({ id: 't9', evaluationId: 'e2', name: 'Green', shortName: 'G' });
-    TestBed.inject(MoveDataService).updateStore({ id: 'm9', evaluationId: 'e2', moveNumber: 5 });
+    TestBed.inject(TeamDataService).updateStore({
+      id: 't9',
+      evaluationId: 'e2',
+      name: 'Green',
+      shortName: 'G',
+    });
+    TestBed.inject(MoveDataService).updateStore({
+      id: 'm9',
+      evaluationId: 'e2',
+      moveNumber: 5,
+    });
     TestBed.inject(ActionDataService).updateStore({
-      id: 'a9', evaluationId: 'e2', teamId: 't9', moveNumber: 5, description: 'Other evaluation action',
+      id: 'a9',
+      evaluationId: 'e2',
+      teamId: 't9',
+      moveNumber: 5,
+      description: 'Other evaluation action',
     });
     fixture.detectChanges();
 
-    expect(within(screen.getByRole('table')).queryByText('Other evaluation action')).not.toBeInTheDocument();
+    expect(
+      within(screen.getByRole('table')).queryByText('Other evaluation action'),
+    ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Add Action' }));
-    expect(editDialog.config()?.data.teamList.map((t: { id: string }) => t.id)).toEqual(['t1', 't2']);
+    expect(
+      editDialog.config()?.data.teamList.map((t: { id: string }) => t.id),
+    ).toEqual(['t1', 't2']);
     editDialog.complete({
       saveChanges: true,
-      action: { evaluationId: 'e1', description: 'Brief the board', moveNumber: -999, teamId: '' },
+      action: {
+        evaluationId: 'e1',
+        description: 'Brief the board',
+        moveNumber: -999,
+        teamId: '',
+      },
     });
 
     expect(created.map((a) => [a.moveNumber, a.teamId])).toEqual([
-      [0, 't1'], [0, 't2'], [1, 't1'], [1, 't2'],
+      [0, 't1'],
+      [0, 't2'],
+      [1, 't1'],
+      [1, 't2'],
     ]);
   });
 

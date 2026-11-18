@@ -184,10 +184,11 @@ describe('TeamDataService', () => {
       const { service, query, store, api } = setup();
       store.set([makeTeam()]);
       service.updateTeam(makeTeam({ name: 'Renamed' }));
-      expect(api.updateTeam).toHaveBeenCalledWith(
-        't1',
-        { name: 'Renamed', shortName: 'RED', teamTypeId: 'tt1' },
-      );
+      expect(api.updateTeam).toHaveBeenCalledWith('t1', {
+        name: 'Renamed',
+        shortName: 'RED',
+        teamTypeId: 'tt1',
+      });
       expect(query.getEntity('t1')?.name).toBe('Renamed');
     });
 

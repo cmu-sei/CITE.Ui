@@ -3,27 +3,36 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { Component, OnChanges, OnInit, SimpleChanges, inject, input, output } from '@angular/core';
+import {
+  Component,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { combineLatest, forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TeamMembershipDataService } from 'src/app/data/team/team-membership-data.service';
 import { TeamRoleDataService } from 'src/app/data/team/team-role-data.service';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
-import {
-  TeamMembership,
-  Team,
-} from 'src/app/generated/cite.api';
+import { TeamMembership, Team } from 'src/app/generated/cite.api';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { AdminTeamMembershipListComponent } from '../admin-team-membership-list/admin-team-membership-list.component';
 import { AdminTeamMemberListComponent } from '../admin-team-member-list/admin-team-member-list.component';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-admin-team-memberships',
-    templateUrl: './admin-team-memberships.component.html',
-    styleUrls: ['./admin-team-memberships.component.scss'],
-    imports: [AdminTeamMembershipListComponent, AdminTeamMemberListComponent, AsyncPipe]
+  selector: 'app-admin-team-memberships',
+  templateUrl: './admin-team-memberships.component.html',
+  styleUrls: ['./admin-team-memberships.component.scss'],
+  imports: [
+    AdminTeamMembershipListComponent,
+    AdminTeamMemberListComponent,
+    AsyncPipe,
+  ],
 })
 export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
   private teamMembershipDataService = inject(TeamMembershipDataService);
@@ -75,7 +84,7 @@ export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
             );
           }
         });
-      })
+      }),
     );
   }
 
@@ -91,8 +100,6 @@ export class AdminTeamMembershipsComponent implements OnInit, OnChanges {
   }
 
   editMembership(teamMembership: TeamMembership) {
-    this.teamMembershipDataService
-      .editMembership(teamMembership)
-      .subscribe();
+    this.teamMembershipDataService.editMembership(teamMembership).subscribe();
   }
 }

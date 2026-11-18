@@ -26,7 +26,14 @@ describe('severity levels', () => {
       'Level 1 - Low',
       'Level 0 - Baseline',
     ]);
-    expect(levels.map(severityLevelRange)).toEqual(['90+', '75-89.99', '65-74.99', '50-64.99', '35-49.99', '<35']);
+    expect(levels.map(severityLevelRange)).toEqual([
+      '90+',
+      '75-89.99',
+      '65-74.99',
+      '50-64.99',
+      '35-49.99',
+      '<35',
+    ]);
   });
 
   /**
@@ -42,8 +49,16 @@ describe('severity levels', () => {
       ],
     });
 
-    expect(levels.map(severityLevelLabel)).toEqual(['Level 2 - Top', 'Level 1 - Mid', 'Level 0 - Floor']);
-    expect(levels.map((level) => level.textColor)).toEqual(['#FFFFFF', '#000000', '#000000']);
+    expect(levels.map(severityLevelLabel)).toEqual([
+      'Level 2 - Top',
+      'Level 1 - Mid',
+      'Level 0 - Floor',
+    ]);
+    expect(levels.map((level) => level.textColor)).toEqual([
+      '#FFFFFF',
+      '#000000',
+      '#000000',
+    ]);
   });
 
   /**
@@ -53,9 +68,15 @@ describe('severity levels', () => {
    */
   it('places a score in its level', () => {
     const defaults = severityLevels(null);
-    const nameFor = (score: number) => severityLevelForScore(defaults, score).name;
+    const nameFor = (score: number) =>
+      severityLevelForScore(defaults, score).name;
 
-    expect([nameFor(34.99), nameFor(34.996), nameFor(100), nameFor(120)]).toEqual(['Baseline', 'Low', 'Emergency', 'Emergency']);
+    expect([
+      nameFor(34.99),
+      nameFor(34.996),
+      nameFor(100),
+      nameFor(120),
+    ]).toEqual(['Baseline', 'Low', 'Emergency', 'Emergency']);
     const raised = severityLevels({
       severityLevels: [
         { name: 'Some', minimumScore: 10, color: '#FFFFFF' },
@@ -72,7 +93,9 @@ describe('severity levels', () => {
    * Data: one level starting at 20.
    */
   it('labels a single level as any score', () => {
-    const only = severityLevels({ severityLevels: [{ name: 'Only', minimumScore: 20, color: '#FFFFFF' }] });
+    const only = severityLevels({
+      severityLevels: [{ name: 'Only', minimumScore: 20, color: '#FFFFFF' }],
+    });
 
     expect(only.map(severityLevelRange)).toEqual(['Any score']);
     expect(severityLevelForScore(only, -5).name).toBe('Only');
@@ -83,8 +106,10 @@ describe('severity levels', () => {
    * Data: yellow, dark orange, dark red, black and an unparseable color.
    */
   it('picks a readable text color', () => {
-    expect(['#FFFF00', '#FF8C00', '#8B0000', '#000000', 'red'].map(readableTextColor)).toEqual([
-      '#000000', '#000000', '#FFFFFF', '#FFFFFF', '#000000',
-    ]);
+    expect(
+      ['#FFFF00', '#FF8C00', '#8B0000', '#000000', 'red'].map(
+        readableTextColor,
+      ),
+    ).toEqual(['#000000', '#000000', '#FFFFFF', '#FFFFFF', '#000000']);
   });
 });

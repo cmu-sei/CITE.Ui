@@ -19,7 +19,6 @@ export class UserDataService {
   private userService = inject(UserService);
   private authService = inject(ComnAuthService);
 
-
   load(): Observable<User[]> {
     this.userStore.setLoading(true);
     return this.userService.getUsers().pipe(
@@ -28,7 +27,7 @@ export class UserDataService {
       }),
       tap(() => {
         this.userStore.setLoading(false);
-      })
+      }),
     );
   }
 
@@ -40,7 +39,7 @@ export class UserDataService {
       }),
       tap(() => {
         this.userStore.setLoading(false);
-      })
+      }),
     );
   }
 
@@ -52,7 +51,7 @@ export class UserDataService {
       }),
       tap(() => {
         this.userStore.setLoading(false);
-      })
+      }),
     );
   }
 
@@ -60,7 +59,7 @@ export class UserDataService {
     return this.userService.createUser(user).pipe(
       tap((u) => {
         this.updateStore(u);
-      })
+      }),
     );
   }
 
@@ -70,7 +69,7 @@ export class UserDataService {
       .pipe(
         tap((u) => {
           this.updateStore(u);
-        })
+        }),
       )
       .subscribe();
   }
@@ -79,7 +78,7 @@ export class UserDataService {
     return this.userService.deleteUser(userId).pipe(
       tap(() => {
         this.deleteFromStore(userId);
-      })
+      }),
     );
   }
 

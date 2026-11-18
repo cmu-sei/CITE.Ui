@@ -5,7 +5,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Observable, Subject, defer, firstValueFrom, of, throwError } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  defer,
+  firstValueFrom,
+  of,
+  throwError,
+} from 'rxjs';
 import {
   ItemStatus,
   Submission,
@@ -325,7 +332,10 @@ describe('SubmissionDataService', () => {
       {
         method: 'changeSubmissionComment',
         run: (service) =>
-          service.changeSubmissionComment('s1', { id: 'c1', comment: 'Edited' }),
+          service.changeSubmissionComment('s1', {
+            id: 'c1',
+            comment: 'Edited',
+          }),
       },
       {
         method: 'removeSubmissionComment',
@@ -345,7 +355,11 @@ describe('SubmissionDataService', () => {
       return {
         response,
         requests: () => requests,
-        api: endpointStub(SubmissionService, method, vi.fn(() => request)),
+        api: endpointStub(
+          SubmissionService,
+          method,
+          vi.fn(() => request),
+        ),
       };
     }
 

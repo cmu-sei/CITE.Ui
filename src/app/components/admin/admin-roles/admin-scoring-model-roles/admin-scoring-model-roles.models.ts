@@ -7,10 +7,7 @@ import { ScoringModelPermission } from 'src/app/generated/cite.api';
 
 export class ScoringModelRolesModel {
   public static ScoringModelPermissions = new Map<string, string>([
-    [
-      'All',
-      'Gives permission to perform any action within the ScoringModel',
-    ],
+    ['All', 'Gives permission to perform any action within the ScoringModel'],
     [
       ScoringModelPermission.EditScoringModel,
       'Allows performing most actions in the ScoringModel. Can make changes to the contents of the ScoringModel, including creating and editing Files, Directories, and Workspaces. Can Plan and Apply Workspace Runs.',

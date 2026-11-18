@@ -4,10 +4,7 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
 */
 
 import { inject, Injectable } from '@angular/core';
-import {
-  SystemRole,
-  SystemRolesService,
-} from 'src/app/generated/cite.api';
+import { SystemRole, SystemRolesService } from 'src/app/generated/cite.api';
 import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -30,7 +27,7 @@ export class RoleDataService {
     return this.roleService.updateSystemRole(role.id, role).pipe(
       tap((x) => {
         this.upsert(role.id, x);
-      })
+      }),
     );
   }
 
@@ -38,7 +35,7 @@ export class RoleDataService {
     return this.roleService.createSystemRole(role).pipe(
       tap((x) => {
         this.upsert(x.id, x);
-      })
+      }),
     );
   }
 
@@ -46,7 +43,7 @@ export class RoleDataService {
     return this.roleService.deleteSystemRole(id).pipe(
       tap(() => {
         this.remove(id);
-      })
+      }),
     );
   }
 

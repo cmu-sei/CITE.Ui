@@ -9,22 +9,37 @@ project root for license information or contact permission@sei.cmu.edu for full 
       <span class="report-kind">Aggregate Report</span>
       <h2>
         @if (displaying === 'team') {
-        <span>Team </span>
+          <span>Team </span>
         } @else {
-        <span>User </span>
+          <span>User </span>
         }
         Submissions Report for {{ selectedEvaluation().description }}
       </h2>
-      <span class="report-generated">Generated {{ generatedOn | date: 'medium' }}</span>
+      <span class="report-generated"
+        >Generated {{ generatedOn | date: 'medium' }}</span
+      >
     </div>
     <div class="report-actions no-print">
-      <span class="view-buttons" role="group" aria-label="Displayed submissions">
-        <button matButton="outlined" [class.selected]="displaying !== 'team'"
-          [attr.aria-pressed]="displaying !== 'team'" (click)="setDisplaying('user')" [disabled]="observing()">
+      <span
+        class="view-buttons"
+        role="group"
+        aria-label="Displayed submissions"
+      >
+        <button
+          matButton="outlined"
+          [class.selected]="displaying !== 'team'"
+          [attr.aria-pressed]="displaying !== 'team'"
+          (click)="setDisplaying('user')"
+          [disabled]="observing()"
+        >
           User
         </button>
-        <button matButton="outlined" [class.selected]="displaying === 'team'"
-          [attr.aria-pressed]="displaying === 'team'" (click)="setDisplaying('team')">
+        <button
+          matButton="outlined"
+          [class.selected]="displaying === 'team'"
+          [attr.aria-pressed]="displaying === 'team'"
+          (click)="setDisplaying('team')"
+        >
           Team
         </button>
       </span>
@@ -36,96 +51,148 @@ project root for license information or contact permission@sei.cmu.edu for full 
   </header>
 
   @for (move of getSortedMoveList(); track move.moveNumber) {
-  @let moveSubmissions = getMoveSubmissions(move);
-  <section class="report-move">
-    <div class="move-header">
-      <h3 class="move-title">Move {{ move.moveNumber }}</h3>
-      <div class="move-meta">
-        <span class="chip">
-          <strong>{{ moveSubmissions.length }}</strong>
-          {{ displaying === 'team' ? 'team' : 'user' }}{{ moveSubmissions.length === 1 ? '' : 's' }}
-        </span>
+    @let moveSubmissions = getMoveSubmissions(move);
+    <section class="report-move">
+      <div class="move-header">
+        <h3 class="move-title">Move {{ move.moveNumber }}</h3>
+        <div class="move-meta">
+          <span class="chip">
+            <strong>{{ moveSubmissions.length }}</strong>
+            {{ displaying === 'team' ? 'team' : 'user'
+            }}{{ moveSubmissions.length === 1 ? '' : 's' }}
+          </span>
+        </div>
       </div>
-    </div>
-    @for (scoringCategory of getDisplayedScoringCategories(move.moveNumber) | displayOrder; track scoringCategory.id) {
-    @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
-    @let showValues = canSelect && !selectedScoringModel()?.hideScoresOnScoreSheet && scoringCategory.isScored;
-    <div class="category">
-      <div class="category-header">
-        <h4 class="category-title">
-          <span class="category-number">{{ scoringCategory.displayOrder }}</span>
-          <span class="category-text">{{ scoringCategory.description }}</span>
-        </h4>
-      </div>
-      <ul class="option-list">
-        @let scoringOptions = scoringCategory.scoringOptions | displayOrder;
-        @for (scoringOption of scoringOptions; track scoringOption.id; let optionIndex = $index) {
-        @if (scoringOption.isModifier && !scoringOptions[optionIndex - 1]?.isModifier) {
-        <li class="modifier-heading">Modifiers</li>
-        }
-        @let selectors = canSelect ? optionSelectors(moveSubmissions, scoringCategory.id, scoringOption.id) : [];
-        <li class="option" [class.selected]="selectors.length > 0">
-          <div class="option-row">
-            @if (canSelect) {
-            <span class="selected-count" aria-hidden="true">{{ selectors.length }}</span>
-            <span class="visually-hidden">{{ selectors.length }} of {{ moveSubmissions.length }} selected:</span>
-            }
-            <span class="option-text">
-              @if (selectedScoringModel().displayCommentTextBoxes) {
-              <span class="question-number">{{ optionIndex + 1 }}.</span>
-              }
-              {{ scoringOption.description }}
-            </span>
-            @if (showValues && !scoringOption.isModifier) {
-            <span class="option-value">{{ scoringOption.value }}</span>
-            }
+      @for (
+        scoringCategory of getDisplayedScoringCategories(move.moveNumber)
+          | displayOrder;
+        track scoringCategory.id
+      ) {
+        @let canSelect = scoringCategory.scoringOptionSelection !== 'None';
+        @let showValues =
+          canSelect &&
+          !selectedScoringModel()?.hideScoresOnScoreSheet &&
+          scoringCategory.isScored;
+        <div class="category">
+          <div class="category-header">
+            <h4 class="category-title">
+              <span class="category-number">{{
+                scoringCategory.displayOrder
+              }}</span>
+              <span class="category-text">{{
+                scoringCategory.description
+              }}</span>
+            </h4>
           </div>
-          @if (selectors.length) {
-          <div class="selected-by">
-            <span class="selected-by-label">Selected by</span>
-            @for (name of selectors; track $index) {
-            <span class="name-chip">{{ name }}</span>
-            }
-          </div>
-          }
-          @if (selectedScoringModel().displayCommentTextBoxes) {
-          @if (moveSubmissions.length) {
-          <ul class="response-list">
-            @for (submission of moveSubmissions; track submission.id) {
-            @let answer = optionComments(submission, scoringCategory.id, scoringOption.id)[0]?.comment;
-            <li class="response">
-              <span class="response-name">{{ submissionName(submission) }}</span>
-              @if (answer) {
-              <span class="response-text">{{ answer }}</span>
-              } @else {
-              <span class="response-text no-response">No response</span>
+          <ul class="option-list">
+            @let scoringOptions = scoringCategory.scoringOptions | displayOrder;
+            @for (
+              scoringOption of scoringOptions;
+              track scoringOption.id;
+              let optionIndex = $index
+            ) {
+              @if (
+                scoringOption.isModifier &&
+                !scoringOptions[optionIndex - 1]?.isModifier
+              ) {
+                <li class="modifier-heading">Modifiers</li>
               }
-            </li>
+              @let selectors =
+                canSelect
+                  ? optionSelectors(
+                      moveSubmissions,
+                      scoringCategory.id,
+                      scoringOption.id
+                    )
+                  : [];
+              <li class="option" [class.selected]="selectors.length > 0">
+                <div class="option-row">
+                  @if (canSelect) {
+                    <span class="selected-count" aria-hidden="true">{{
+                      selectors.length
+                    }}</span>
+                    <span class="visually-hidden"
+                      >{{ selectors.length }} of
+                      {{ moveSubmissions.length }} selected:</span
+                    >
+                  }
+                  <span class="option-text">
+                    @if (selectedScoringModel().displayCommentTextBoxes) {
+                      <span class="question-number"
+                        >{{ optionIndex + 1 }}.</span
+                      >
+                    }
+                    {{ scoringOption.description }}
+                  </span>
+                  @if (showValues && !scoringOption.isModifier) {
+                    <span class="option-value">{{ scoringOption.value }}</span>
+                  }
+                </div>
+                @if (selectors.length) {
+                  <div class="selected-by">
+                    <span class="selected-by-label">Selected by</span>
+                    @for (name of selectors; track $index) {
+                      <span class="name-chip">{{ name }}</span>
+                    }
+                  </div>
+                }
+                @if (selectedScoringModel().displayCommentTextBoxes) {
+                  @if (moveSubmissions.length) {
+                    <ul class="response-list">
+                      @for (
+                        submission of moveSubmissions;
+                        track submission.id
+                      ) {
+                        @let answer =
+                          optionComments(
+                            submission,
+                            scoringCategory.id,
+                            scoringOption.id
+                          )[0]?.comment;
+                        <li class="response">
+                          <span class="response-name">{{
+                            submissionName(submission)
+                          }}</span>
+                          @if (answer) {
+                            <span class="response-text">{{ answer }}</span>
+                          } @else {
+                            <span class="response-text no-response"
+                              >No response</span
+                            >
+                          }
+                        </li>
+                      }
+                    </ul>
+                  }
+                } @else {
+                  @let comments =
+                    moveOptionComments(
+                      moveSubmissions,
+                      scoringCategory.id,
+                      scoringOption.id
+                    );
+                  @if (comments.length) {
+                    <ul class="comment-list">
+                      @for (comment of comments; track comment.id) {
+                        <li class="comment">
+                          {{ comment.comment }}
+                          @if (displaying === 'team') {
+                            <span>
+                              - {{ getCommentAuthor(comment.createdBy) }}</span
+                            >
+                          }
+                        </li>
+                      }
+                    </ul>
+                  }
+                }
+              </li>
             }
           </ul>
-          }
-          } @else {
-          @let comments = moveOptionComments(moveSubmissions, scoringCategory.id, scoringOption.id);
-          @if (comments.length) {
-          <ul class="comment-list">
-            @for (comment of comments; track comment.id) {
-            <li class="comment">
-              {{ comment.comment }}
-              @if (displaying === 'team') {
-              <span> - {{ getCommentAuthor(comment.createdBy) }}</span>
-              }
-            </li>
-            }
-          </ul>
-          }
-          }
-        </li>
-        }
-      </ul>
-    </div>
-    }
-  </section>
+        </div>
+      }
+    </section>
   } @empty {
-  <div class="empty-state">There are no submissions to report yet.</div>
+    <div class="empty-state">There are no submissions to report yet.</div>
   }
 </div>

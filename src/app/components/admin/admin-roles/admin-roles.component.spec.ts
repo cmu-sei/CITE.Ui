@@ -40,6 +40,11 @@ describe('AdminRolesComponent', () => {
     expect(fixture.componentInstance).toBeInstanceOf(AdminRolesComponent);
     expect(
       screen.getAllByRole('tab').map((tab) => tab.textContent?.trim()),
-    ).toEqual(['Roles', 'Scoring Model Roles', 'Evaluation Roles', 'Team Roles']);
+    ).toEqual([
+      'Roles',
+      'Scoring Model Roles',
+      'Evaluation Roles',
+      'Team Roles',
+    ]);
   });
 });

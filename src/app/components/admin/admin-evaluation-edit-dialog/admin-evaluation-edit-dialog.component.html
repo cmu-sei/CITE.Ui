@@ -13,86 +13,120 @@ project root for license information or contact permission@sei.cmu.edu for full 
   (cancel)="handleEditComplete(false)"
   (submit)="handleEditComplete(true)"
 >
-@if (data && data.evaluation) {
-  <div crucibleDialogContent [formGroup]="form">
-    <div class="add-margin">
-      <div>
-        <mat-form-field class="description-field full-width">
-          <mat-label>Evaluation Description</mat-label>
-          <input matInput formControlName="description" />
-        </mat-form-field>
+  @if (data && data.evaluation) {
+    <div crucibleDialogContent [formGroup]="form">
+      <div class="add-margin">
+        <div>
+          <mat-form-field class="description-field full-width">
+            <mat-label>Evaluation Description</mat-label>
+            <input matInput formControlName="description" />
+          </mat-form-field>
+        </div>
       </div>
-    </div>
-    <div class="add-margin">
-      <div>
-        <mat-form-field class="description-field full-width">
-          <mat-label>Scoring Model</mat-label>
-          <mat-select placeholder="Please select a scoring model" formControlName="scoringModelId"
-            (click)="$event.stopPropagation()">
-            @for (scoringModel of data.scoringModels; track scoringModel) {
-              <mat-option [value]="scoringModel.id">
-                {{ scoringModel.description }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+      <div class="add-margin">
+        <div>
+          <mat-form-field class="description-field full-width">
+            <mat-label>Scoring Model</mat-label>
+            <mat-select
+              placeholder="Please select a scoring model"
+              formControlName="scoringModelId"
+              (click)="$event.stopPropagation()"
+            >
+              @for (scoringModel of data.scoringModels; track scoringModel) {
+                <mat-option [value]="scoringModel.id">
+                  {{ scoringModel.description }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-    </div>
-    <div class="add-margin">
-      <div>
-        <mat-form-field class="description-field full-width">
-          <mat-label>Evaluation Status</mat-label>
-          <mat-select placeholder="Select a Status" formControlName="status" (click)="$event.stopPropagation()">
-            @for (status of data.itemStatuses; track status) {
-              <mat-option [value]="status">
-                {{ status }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+      <div class="add-margin">
+        <div>
+          <mat-form-field class="description-field full-width">
+            <mat-label>Evaluation Status</mat-label>
+            <mat-select
+              placeholder="Select a Status"
+              formControlName="status"
+              (click)="$event.stopPropagation()"
+            >
+              @for (status of data.itemStatuses; track status) {
+                <mat-option [value]="status">
+                  {{ status }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-    </div>
-    <div class="add-margin">
-      <div>
-        <mat-form-field class="description-field full-width">
-          <mat-label>Gallery Exhibit ID</mat-label>
-          <input matInput formControlName="galleryExhibitId" />
-        </mat-form-field>
+      <div class="add-margin">
+        <div>
+          <mat-form-field class="description-field full-width">
+            <mat-label>Gallery Exhibit ID</mat-label>
+            <input matInput formControlName="galleryExhibitId" />
+          </mat-form-field>
+        </div>
       </div>
-    </div>
-    <div class="add-margin">
-      <div>
-        <mat-form-field class="description-field">
-          <mat-label>Current Move</mat-label>
-          <input matInput formControlName="currentMoveNumber" />
-        </mat-form-field>
+      <div class="add-margin">
+        <div>
+          <mat-form-field class="description-field">
+            <mat-label>Current Move</mat-label>
+            <input matInput formControlName="currentMoveNumber" />
+          </mat-form-field>
+        </div>
       </div>
-    </div>
-    <div class="add-margin">
-      <div>
-        <mat-form-field class="datetime-field">
-          <mat-label>Situation Date / Time</mat-label>
-          <input matInput [ngxMatDatetimePicker]="picker"
-            [formControl]="situationDateFormControl" (inputChange)="saveEvaluation('situationDate')"
-            (dateChange)="saveEvaluation('situationDate')" style="display: none;">
-          <span (click)="data.canEdit && picker.open()">
-            {{situationDateFormControl.value | date: 'dd MMM yyyy HH:mm'}} {{ getTimezoneAbbr(situationDateFormControl.value) }}
-          </span>
-          <mat-datepicker-toggle matSuffix title="Choose Date/Time" [for]="$any(picker)" [disabled]="!data.canEdit" />
-          <ngx-mat-datetime-picker #picker [showSpinners]=true [showSeconds]=false [stepHour]=1 [stepMinute]=5
-            [stepSecond]=1 [touchUi]=false [enableMeridian]=true [disableMinute]=false [hideTime]=false [color]="'warn'">
-            <ngx-mat-datepicker-actions>
-              <button mat-stroked-button ngxMatDatepickerApply>Save</button>
-              <button mat-stroked-button ngxMatDatepickerCancel>Cancel</button>
-            </ngx-mat-datepicker-actions>
-          </ngx-mat-datetime-picker>
-        </mat-form-field>
+      <div class="add-margin">
+        <div>
+          <mat-form-field class="datetime-field">
+            <mat-label>Situation Date / Time</mat-label>
+            <input
+              matInput
+              [ngxMatDatetimePicker]="picker"
+              [formControl]="situationDateFormControl"
+              (inputChange)="saveEvaluation('situationDate')"
+              (dateChange)="saveEvaluation('situationDate')"
+              style="display: none"
+            />
+            <span (click)="data.canEdit && picker.open()">
+              {{ situationDateFormControl.value | date: 'dd MMM yyyy HH:mm' }}
+              {{ getTimezoneAbbr(situationDateFormControl.value) }}
+            </span>
+            <mat-datepicker-toggle
+              matSuffix
+              title="Choose Date/Time"
+              [for]="$any(picker)"
+              [disabled]="!data.canEdit"
+            />
+            <ngx-mat-datetime-picker
+              #picker
+              [showSpinners]="true"
+              [showSeconds]="false"
+              [stepHour]="1"
+              [stepMinute]="5"
+              [stepSecond]="1"
+              [touchUi]="false"
+              [enableMeridian]="true"
+              [disableMinute]="false"
+              [hideTime]="false"
+              [color]="'warn'"
+            >
+              <ngx-mat-datepicker-actions>
+                <button mat-stroked-button ngxMatDatepickerApply>Save</button>
+                <button mat-stroked-button ngxMatDatepickerCancel>
+                  Cancel
+                </button>
+              </ngx-mat-datepicker-actions>
+            </ngx-mat-datetime-picker>
+          </mat-form-field>
         </div>
       </div>
       <div class="add-margin">
         <mat-label class="gray">Situation Description</mat-label>
-        <angular-editor [placeholder]="'Enter situation description here...'"
-        formControlName="situationDescription" [config]="editorConfig" />
+        <angular-editor
+          [placeholder]="'Enter situation description here...'"
+          formControlName="situationDescription"
+          [config]="editorConfig"
+        />
       </div>
       <div class="add-margin">
         <mat-checkbox formControlName="showAdvanceButton">
@@ -100,8 +134,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
         </mat-checkbox>
       </div>
       <div class="add-margin">
-        <mat-checkbox formControlName="hideNamesFromObservers"
-          title="This evaluation's Observers and Facilitators see a team they are not on without who answered, commented or checked an action. The team's members, the evaluation's owners, and system roles that can view all evaluations (including the default system Observer role) still see the names.">
+        <mat-checkbox
+          formControlName="hideNamesFromObservers"
+          title="This evaluation's Observers and Facilitators see a team they are not on without who answered, commented or checked an action. The team's members, the evaluation's owners, and system roles that can view all evaluations (including the default system Observer role) still see the names."
+        >
           Hide individual names from observers
         </mat-checkbox>
       </div>

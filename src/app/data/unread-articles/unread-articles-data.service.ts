@@ -28,10 +28,10 @@ export class UnreadArticlesDataService {
         tap(() => {
           this.unreadArticlesStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((ua) => {
-        const unreadArticles = { ...ua} as UnreadArticles;
+        const unreadArticles = { ...ua } as UnreadArticles;
         unreadArticles.id = evaluationId;
         this.unreadArticlesStore.upsert(evaluationId, unreadArticles);
         this.setActive(evaluationId);
@@ -43,8 +43,10 @@ export class UnreadArticlesDataService {
   }
 
   updateStore(unreadArticles: UnreadArticles) {
-    const evaluationList = this.evaluationQuery.getAll().filter(e => e.galleryExhibitId === unreadArticles.exhibitId);
-    evaluationList.forEach(e => {
+    const evaluationList = this.evaluationQuery
+      .getAll()
+      .filter((e) => e.galleryExhibitId === unreadArticles.exhibitId);
+    evaluationList.forEach((e) => {
       const updatedUnreadArticles = { ...unreadArticles };
       updatedUnreadArticles.id = e.id;
       this.unreadArticlesStore.upsert(e.id, updatedUnreadArticles);

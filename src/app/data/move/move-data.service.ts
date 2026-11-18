@@ -12,7 +12,7 @@ import {
   Move,
   MoveService,
   ItemStatus,
-  UpdateMoveRequest
+  UpdateMoveRequest,
 } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
@@ -29,7 +29,7 @@ export class MoveDataService {
 
   private _requestedMoveId: string;
   private _requestedMoveId$ = this.activatedRoute.queryParamMap.pipe(
-    map((params) => params.get('moveId') || '')
+    map((params) => params.get('moveId') || ''),
   );
   readonly MoveList: Observable<Move[]>;
   readonly filterControl = new UntypedFormControl();
@@ -45,7 +45,7 @@ export class MoveDataService {
     const activatedRoute = this.activatedRoute;
 
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('movemask') || '')
+      map((params) => params.get('movemask') || ''),
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
@@ -54,16 +54,16 @@ export class MoveDataService {
       });
     });
     this.sortColumn = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('sorton') || 'name')
+      map((params) => params.get('sorton') || 'name'),
     );
     this.sortIsAscending = activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('sortdir') || 'asc') === 'asc')
+      map((params) => (params.get('sortdir') || 'asc') === 'asc'),
     );
     this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
+      map((params) => parseInt(params.get('pagesize') || '20', 10)),
     );
     this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
+      map((params) => parseInt(params.get('pageindex') || '0', 10)),
     );
     this.MoveList = combineLatest([
       this.moveQuery.selectAll(),
@@ -84,29 +84,22 @@ export class MoveDataService {
         ]) =>
           items
             ? (items as Move[])
-              .sort((a: Move, b: Move) =>
-                this.sortMoves(a, b, sortColumn, sortIsAscending)
-              )
-              .filter(
-                (move) =>
-                  ('' + move.description)
-                    .toLowerCase()
-                    .includes(filterTerm.toLowerCase()) ||
-                    move.id
+                .sort((a: Move, b: Move) =>
+                  this.sortMoves(a, b, sortColumn, sortIsAscending),
+                )
+                .filter(
+                  (move) =>
+                    ('' + move.description)
                       .toLowerCase()
-                      .includes(filterTerm.toLowerCase())
-              )
-            : []
-      )
+                      .includes(filterTerm.toLowerCase()) ||
+                    move.id.toLowerCase().includes(filterTerm.toLowerCase()),
+                )
+            : [],
+      ),
     );
   }
 
-  private sortMoves(
-    a: Move,
-    b: Move,
-    column: string,
-    isAsc: boolean
-  ) {
+  private sortMoves(a: Move, b: Move, column: string, isAsc: boolean) {
     switch (column) {
       case 'description':
         return (
@@ -131,18 +124,18 @@ export class MoveDataService {
         tap(() => {
           this.moveStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (moves) => {
-          moves.forEach(m => {
+          moves.forEach((m) => {
             this.setAsDates(m);
           });
           this.moveStore.set(moves);
         },
         (error) => {
           this.moveStore.set([]);
-        }
+        },
       );
   }
 
@@ -154,7 +147,7 @@ export class MoveDataService {
         tap(() => {
           this.moveStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.setAsDates(s);
@@ -174,7 +167,7 @@ export class MoveDataService {
         tap(() => {
           this.moveStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.moveStore.add(s);
@@ -194,7 +187,7 @@ export class MoveDataService {
         tap(() => {
           this.moveStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -233,5 +226,4 @@ export class MoveDataService {
     move.dateModified = new Date(move.dateModified);
     move.situationTime = new Date(move.situationTime);
   }
-
 }

@@ -28,7 +28,7 @@ export class ActionDataService {
 
   private _requestedActionId: string;
   private _requestedActionId$ = this.activatedRoute.queryParamMap.pipe(
-    map((params) => params.get('actionId') || '')
+    map((params) => params.get('actionId') || ''),
   );
   readonly ActionList: Observable<Action[]>;
   readonly filterControl = new UntypedFormControl();
@@ -44,7 +44,7 @@ export class ActionDataService {
     const activatedRoute = this.activatedRoute;
 
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('actionmask') || '')
+      map((params) => params.get('actionmask') || ''),
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
@@ -53,16 +53,16 @@ export class ActionDataService {
       });
     });
     this.sortColumn = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('sorton') || 'name')
+      map((params) => params.get('sorton') || 'name'),
     );
     this.sortIsAscending = activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('sortdir') || 'asc') === 'asc')
+      map((params) => (params.get('sortdir') || 'asc') === 'asc'),
     );
     this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
+      map((params) => parseInt(params.get('pagesize') || '20', 10)),
     );
     this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
+      map((params) => parseInt(params.get('pageindex') || '0', 10)),
     );
     this.ActionList = combineLatest([
       this.actionQuery.selectAll(),
@@ -83,29 +83,22 @@ export class ActionDataService {
         ]) =>
           items
             ? (items as Action[])
-              .sort((a: Action, b: Action) =>
-                this.sortActions(a, b, sortColumn, sortIsAscending)
-              )
-              .filter(
-                (action) =>
-                  ('' + action.description)
-                    .toLowerCase()
-                    .includes(filterTerm.toLowerCase()) ||
-                    action.id
+                .sort((a: Action, b: Action) =>
+                  this.sortActions(a, b, sortColumn, sortIsAscending),
+                )
+                .filter(
+                  (action) =>
+                    ('' + action.description)
                       .toLowerCase()
-                      .includes(filterTerm.toLowerCase())
-              )
-            : []
-      )
+                      .includes(filterTerm.toLowerCase()) ||
+                    action.id.toLowerCase().includes(filterTerm.toLowerCase()),
+                )
+            : [],
+      ),
     );
   }
 
-  private sortActions(
-    a: Action,
-    b: Action,
-    column: string,
-    isAsc: boolean
-  ) {
+  private sortActions(a: Action, b: Action, column: string, isAsc: boolean) {
     switch (column) {
       case 'description':
         return (
@@ -130,18 +123,18 @@ export class ActionDataService {
         tap(() => {
           this.actionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (actions) => {
-          actions.forEach(e => {
+          actions.forEach((e) => {
             this.setAsDates(e);
           });
           this.actionStore.set(actions);
         },
         (error) => {
           this.actionStore.set([]);
-        }
+        },
       );
   }
 
@@ -153,18 +146,18 @@ export class ActionDataService {
         tap(() => {
           this.actionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (actions) => {
-          actions.forEach(e => {
+          actions.forEach((e) => {
             this.setAsDates(e);
           });
           this.actionStore.set(actions);
         },
         (error) => {
           this.actionStore.set([]);
-        }
+        },
       );
   }
 
@@ -176,22 +169,26 @@ export class ActionDataService {
         tap(() => {
           this.actionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (actions) => {
-          actions.forEach(e => {
+          actions.forEach((e) => {
             this.setAsDates(e);
           });
           this.actionStore.set(actions);
         },
         (error) => {
           this.actionStore.set([]);
-        }
+        },
       );
   }
 
-  loadByEvaluationMoveTeam(evaluationId: string, moveNumber: number, teamId: string) {
+  loadByEvaluationMoveTeam(
+    evaluationId: string,
+    moveNumber: number,
+    teamId: string,
+  ) {
     this.actionStore.setLoading(true);
     this.actionService
       .getActionsByEvaluationMoveTeam(evaluationId, moveNumber, teamId)
@@ -199,18 +196,18 @@ export class ActionDataService {
         tap(() => {
           this.actionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (actions) => {
-          actions.forEach(e => {
+          actions.forEach((e) => {
             this.setAsDates(e);
           });
           this.actionStore.set(actions);
         },
         (error) => {
           this.actionStore.set([]);
-        }
+        },
       );
   }
 
@@ -222,7 +219,7 @@ export class ActionDataService {
         tap(() => {
           this.actionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.actionStore.upsert(s.id, { ...s });
@@ -242,7 +239,7 @@ export class ActionDataService {
         tap(() => {
           this.actionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.setAsDates(s);
@@ -263,7 +260,7 @@ export class ActionDataService {
         tap(() => {
           this.actionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -278,7 +275,7 @@ export class ActionDataService {
         tap(() => {
           this.actionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -293,7 +290,7 @@ export class ActionDataService {
         tap(() => {
           this.actionStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);
@@ -334,5 +331,4 @@ export class ActionDataService {
     action.dateCreated = new Date(action.dateCreated);
     action.dateModified = new Date(action.dateModified);
   }
-
 }

@@ -26,7 +26,7 @@ export class ScoringCategoryQuery extends QueryEntity<ScoringCategoryState> {
     const store = inject(ScoringCategoryStore);
 
     super(store);
-  
+
     this.store = store;
   }
 

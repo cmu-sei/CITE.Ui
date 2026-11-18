@@ -337,9 +337,29 @@ describe('ScoresheetComponent', () => {
             ...category('q', first, last, 1),
             scoringOptionSelection: ScoringOptionSelection.Single,
             scoringOptions: [
-              { id: 'opt', scoringCategoryId: 'q', description: 'Isolate the host', displayOrder: 1, value: 1 },
-              { id: 'mod-1', scoringCategoryId: 'q', description: 'Low', displayOrder: 2, value: 1, isModifier: true },
-              { id: 'mod-2', scoringCategoryId: 'q', description: 'High', displayOrder: 3, value: 2, isModifier: true },
+              {
+                id: 'opt',
+                scoringCategoryId: 'q',
+                description: 'Isolate the host',
+                displayOrder: 1,
+                value: 1,
+              },
+              {
+                id: 'mod-1',
+                scoringCategoryId: 'q',
+                description: 'Low',
+                displayOrder: 2,
+                value: 1,
+                isModifier: true,
+              },
+              {
+                id: 'mod-2',
+                scoringCategoryId: 'q',
+                description: 'High',
+                displayOrder: 3,
+                value: 2,
+                isModifier: true,
+              },
             ],
           },
         ],
@@ -403,7 +423,10 @@ describe('ScoresheetComponent', () => {
         displaying: 'user',
         model: {
           ...model,
-          scoringCategories: [...model.scoringCategories!, category('now', 2, 2, 2)],
+          scoringCategories: [
+            ...model.scoringCategories!,
+            category('now', 2, 2, 2),
+          ],
         },
         activeSubmission: unansweredSubmission,
       });
@@ -587,7 +610,8 @@ describe('ScoresheetComponent', () => {
 
       expect(confirm).toHaveBeenCalledWith({
         title: 'Clear all selections?',
-        message: 'This removes every selection on this scoresheet. Are you sure?',
+        message:
+          'This removes every selection on this scoresheet. Are you sure?',
       });
       expect(submissionApi.clearSubmission).not.toHaveBeenCalled();
     });
@@ -619,7 +643,9 @@ describe('ScoresheetComponent', () => {
       },
       {
         label: 'a team submission, SubmitTeamScore t1',
-        claims: [{ teamId: 't1', permissions: [TeamPermission.SubmitTeamScore] }],
+        claims: [
+          { teamId: 't1', permissions: [TeamPermission.SubmitTeamScore] },
+        ],
         shown: ['Submit'],
         hidden: ['Clear', 'Preset'],
       },
@@ -663,20 +689,27 @@ describe('ScoresheetComponent', () => {
     }>([
       {
         label: 'EditOfficialScore on the active team',
-        claims: [{ teamId: 't1', permissions: [TeamPermission.EditOfficialScore] }],
+        claims: [
+          { teamId: 't1', permissions: [TeamPermission.EditOfficialScore] },
+        ],
         shown: ['Submit', 'Clear', 'Preset'],
         hidden: [],
       },
       {
-        label: "EditOfficialScore on another of the user's teams in the evaluation",
-        claims: [{ teamId: 't2', permissions: [TeamPermission.EditOfficialScore] }],
+        label:
+          "EditOfficialScore on another of the user's teams in the evaluation",
+        claims: [
+          { teamId: 't2', permissions: [TeamPermission.EditOfficialScore] },
+        ],
         otherTeams: [{ id: 't2', name: 'White Cell', memberships: [] }],
         shown: ['Submit', 'Clear', 'Preset'],
         hidden: [],
       },
       {
         label: 'EditOfficialScore on a team outside the evaluation',
-        claims: [{ teamId: 't9', permissions: [TeamPermission.EditOfficialScore] }],
+        claims: [
+          { teamId: 't9', permissions: [TeamPermission.EditOfficialScore] },
+        ],
         shown: [],
         hidden: ['Submit', 'Clear', 'Preset'],
       },
@@ -685,7 +718,10 @@ describe('ScoresheetComponent', () => {
         claims: [
           {
             teamId: 't1',
-            permissions: [TeamPermission.EditTeamScore, TeamPermission.SubmitTeamScore],
+            permissions: [
+              TeamPermission.EditTeamScore,
+              TeamPermission.SubmitTeamScore,
+            ],
           },
         ],
         shown: [],
@@ -693,7 +729,12 @@ describe('ScoresheetComponent', () => {
       },
       {
         label: 'ViewCurrentOfficialScore on the active team',
-        claims: [{ teamId: 't1', permissions: [TeamPermission.ViewCurrentOfficialScore] }],
+        claims: [
+          {
+            teamId: 't1',
+            permissions: [TeamPermission.ViewCurrentOfficialScore],
+          },
+        ],
         shown: [],
         hidden: ['Submit', 'Clear', 'Preset'],
       },
@@ -730,7 +771,8 @@ describe('ScoresheetComponent', () => {
       hidden: string[];
     }>([
       {
-        label: "saved Official over the user's own submission, EditTeamScore t1",
+        label:
+          "saved Official over the user's own submission, EditTeamScore t1",
         displaying: 'official',
         activeSubmission: { userId: 'u1', teamId: 't1' },
         claims: [{ teamId: 't1', permissions: [TeamPermission.EditTeamScore] }],
@@ -748,7 +790,11 @@ describe('ScoresheetComponent', () => {
     ])(
       '$label shows $shown',
       async ({ displaying, activeSubmission, claims, shown, hidden }) => {
-        await renderScoresheet({ displaying, activeSubmission, teamClaims: claims });
+        await renderScoresheet({
+          displaying,
+          activeSubmission,
+          teamClaims: claims,
+        });
         for (const name of shown) {
           expect(toolbarButton(name)).toBeVisible();
         }
@@ -772,17 +818,42 @@ describe('ScoresheetComponent', () => {
       pressed: string;
       unpressed: string;
     }>([
-      { label: 'saved Team', displaying: 'team', userId: 'u1', pressed: 'Team', unpressed: 'User' },
-      { label: 'saved User', displaying: 'user', pressed: 'User', unpressed: 'Team' },
-      { label: 'no saved view and a team submission', displaying: null, pressed: 'Team', unpressed: 'User' },
-      { label: 'no saved view and a user submission', displaying: null, userId: 'u1', pressed: 'User', unpressed: 'Team' },
+      {
+        label: 'saved Team',
+        displaying: 'team',
+        userId: 'u1',
+        pressed: 'Team',
+        unpressed: 'User',
+      },
+      {
+        label: 'saved User',
+        displaying: 'user',
+        pressed: 'User',
+        unpressed: 'Team',
+      },
+      {
+        label: 'no saved view and a team submission',
+        displaying: null,
+        pressed: 'Team',
+        unpressed: 'User',
+      },
+      {
+        label: 'no saved view and a user submission',
+        displaying: null,
+        userId: 'u1',
+        pressed: 'User',
+        unpressed: 'Team',
+      },
     ])(
       'presses $pressed for $label',
       async ({ displaying, userId, pressed, unpressed }) => {
         await renderScoresheet({ displaying, activeSubmission: { userId } });
 
         expect(toolbarButton(pressed)).toHaveAttribute('aria-pressed', 'true');
-        expect(toolbarButton(unpressed)).toHaveAttribute('aria-pressed', 'false');
+        expect(toolbarButton(unpressed)).toHaveAttribute(
+          'aria-pressed',
+          'false',
+        );
       },
     );
 
@@ -823,8 +894,16 @@ describe('ScoresheetComponent', () => {
      * Data: displaying 'team'; one Single category with options 'Isolate the host' (comment c1) and 'Reset passwords'; per row, one claim on t1.
      */
     it.each<{ label: string; permission: TeamPermission; editable: boolean }>([
-      { label: 'EditTeamScore', permission: TeamPermission.EditTeamScore, editable: true },
-      { label: 'SubmitTeamScore', permission: TeamPermission.SubmitTeamScore, editable: false },
+      {
+        label: 'EditTeamScore',
+        permission: TeamPermission.EditTeamScore,
+        editable: true,
+      },
+      {
+        label: 'SubmitTeamScore',
+        permission: TeamPermission.SubmitTeamScore,
+        editable: false,
+      },
     ])(
       'option controls editable=$editable with $label on t1',
       async ({ permission, editable }) => {
@@ -835,8 +914,18 @@ describe('ScoresheetComponent', () => {
                 ...category('cat-1', 0, 9, 1),
                 scoringOptionSelection: ScoringOptionSelection.Single,
                 scoringOptions: [
-                  { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
-                  { id: 'opt-2', scoringCategoryId: 'cat-1', description: 'Reset passwords', displayOrder: 2 },
+                  {
+                    id: 'opt-1',
+                    scoringCategoryId: 'cat-1',
+                    description: 'Isolate the host',
+                    displayOrder: 1,
+                  },
+                  {
+                    id: 'opt-2',
+                    scoringCategoryId: 'cat-1',
+                    description: 'Reset passwords',
+                    displayOrder: 2,
+                  },
                 ],
               },
             ],
@@ -852,7 +941,12 @@ describe('ScoresheetComponent', () => {
                     isSelected: false,
                     submissionComments: [{ id: 'c1', comment: 'Done at noon' }],
                   },
-                  { id: 'so-2', scoringOptionId: 'opt-2', isSelected: false, submissionComments: [] },
+                  {
+                    id: 'so-2',
+                    scoringOptionId: 'opt-2',
+                    isSelected: false,
+                    submissionComments: [],
+                  },
                 ],
               },
             ],
@@ -862,9 +956,15 @@ describe('ScoresheetComponent', () => {
 
         expect(screen.getByText('Done at noon')).toBeVisible();
         // The checkbox's own input, since mat-checkbox carries the state.
-        const checkbox = screen.getByLabelText('Isolate the host') as HTMLInputElement;
+        const checkbox = screen.getByLabelText(
+          'Isolate the host',
+        ) as HTMLInputElement;
         expect(checkbox.disabled).toBe(!editable);
-        const commentButtons = ['Add Comment', 'Edit Comment', 'Delete Comment'];
+        const commentButtons = [
+          'Add Comment',
+          'Edit Comment',
+          'Delete Comment',
+        ];
         for (const name of commentButtons) {
           if (editable) {
             expect(screen.getAllByLabelText(name)[0]).toBeVisible();
@@ -889,7 +989,12 @@ describe('ScoresheetComponent', () => {
               ...category('cat-1', 0, 9, 1),
               scoringOptionSelection: ScoringOptionSelection.Single,
               scoringOptions: [
-                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+                {
+                  id: 'opt-1',
+                  scoringCategoryId: 'cat-1',
+                  description: 'Isolate the host',
+                  displayOrder: 1,
+                },
               ],
             },
           ],
@@ -909,7 +1014,9 @@ describe('ScoresheetComponent', () => {
             },
           ],
         },
-        teamClaims: [{ teamId: 't1', permissions: [TeamPermission.EditTeamScore] }],
+        teamClaims: [
+          { teamId: 't1', permissions: [TeamPermission.EditTeamScore] },
+        ],
       });
 
       await user.click(screen.getAllByLabelText('Delete Comment')[0]);
@@ -938,7 +1045,12 @@ describe('ScoresheetComponent', () => {
                 ...category('cat-1', 0, 9, 1),
                 scoringOptionSelection: ScoringOptionSelection.Single,
                 scoringOptions: [
-                  { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+                  {
+                    id: 'opt-1',
+                    scoringCategoryId: 'cat-1',
+                    description: 'Isolate the host',
+                    displayOrder: 1,
+                  },
                 ],
               },
             ],
@@ -958,7 +1070,9 @@ describe('ScoresheetComponent', () => {
               },
             ],
           },
-          teamClaims: [{ teamId: 't1', permissions: [TeamPermission.EditTeamScore] }],
+          teamClaims: [
+            { teamId: 't1', permissions: [TeamPermission.EditTeamScore] },
+          ],
         });
 
         await user.click(screen.getAllByLabelText(button)[0]);
@@ -985,7 +1099,12 @@ describe('ScoresheetComponent', () => {
               ...category('cat-1', 0, 9, 1),
               scoringOptionSelection: ScoringOptionSelection.Single,
               scoringOptions: [
-                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+                {
+                  id: 'opt-1',
+                  scoringCategoryId: 'cat-1',
+                  description: 'Isolate the host',
+                  displayOrder: 1,
+                },
               ],
             },
           ],
@@ -1001,7 +1120,11 @@ describe('ScoresheetComponent', () => {
                   isSelected: false,
                   submissionComments: [
                     { id: 'c1', comment: 'Done at noon', createdBy: 'u1' },
-                    { id: 'c2', comment: 'Host reimaged', createdBy: '00000000-0000-0000-0000-000000000000' },
+                    {
+                      id: 'c2',
+                      comment: 'Host reimaged',
+                      createdBy: '00000000-0000-0000-0000-000000000000',
+                    },
                   ],
                 },
               ],
@@ -1010,9 +1133,9 @@ describe('ScoresheetComponent', () => {
         },
       });
 
-      const authors = Array.from(document.querySelectorAll('.comment-author')).map(
-        (el) => el.textContent?.trim(),
-      );
+      const authors = Array.from(
+        document.querySelectorAll('.comment-author'),
+      ).map((el) => el.textContent?.trim());
       expect(authors).toEqual(['- Alice', '- Team member']);
     });
   });
@@ -1024,7 +1147,11 @@ describe('ScoresheetComponent', () => {
      * Data: per row, hideScoresOnScoreSheet; category Scored (isScored, score 30) with options worth 10 and 20; category Unscored (not isScored) with an option worth 5; category Discussion (isScored, selection None) with an option worth 0.
      */
     it.each([
-      { hideScores: false, scoredScore: 'Score 30', scoredValues: ['10', '20'] },
+      {
+        hideScores: false,
+        scoredScore: 'Score 30',
+        scoredValues: ['10', '20'],
+      },
       { hideScores: true, scoredScore: null, scoredValues: [] },
     ])(
       'shows the score and values only for scored categories (scores hidden: $hideScores)',
@@ -1038,8 +1165,20 @@ describe('ScoresheetComponent', () => {
                 isScored: true,
                 scoringOptionSelection: ScoringOptionSelection.Multiple,
                 scoringOptions: [
-                  { id: 'opt-1', scoringCategoryId: 'scored', description: 'Isolate the host', displayOrder: 1, value: 10 },
-                  { id: 'opt-2', scoringCategoryId: 'scored', description: 'Reset passwords', displayOrder: 2, value: 20 },
+                  {
+                    id: 'opt-1',
+                    scoringCategoryId: 'scored',
+                    description: 'Isolate the host',
+                    displayOrder: 1,
+                    value: 10,
+                  },
+                  {
+                    id: 'opt-2',
+                    scoringCategoryId: 'scored',
+                    description: 'Reset passwords',
+                    displayOrder: 2,
+                    value: 20,
+                  },
                 ],
               },
               {
@@ -1047,7 +1186,13 @@ describe('ScoresheetComponent', () => {
                 isScored: false,
                 scoringOptionSelection: ScoringOptionSelection.Single,
                 scoringOptions: [
-                  { id: 'opt-3', scoringCategoryId: 'unscored', description: 'Notify legal', displayOrder: 1, value: 5 },
+                  {
+                    id: 'opt-3',
+                    scoringCategoryId: 'unscored',
+                    description: 'Notify legal',
+                    displayOrder: 1,
+                    value: 5,
+                  },
                 ],
               },
               {
@@ -1055,7 +1200,13 @@ describe('ScoresheetComponent', () => {
                 isScored: true,
                 scoringOptionSelection: ScoringOptionSelection.None,
                 scoringOptions: [
-                  { id: 'opt-4', scoringCategoryId: 'discussion', description: 'Discuss the situation report', displayOrder: 1, value: 0 },
+                  {
+                    id: 'opt-4',
+                    scoringCategoryId: 'discussion',
+                    description: 'Discuss the situation report',
+                    displayOrder: 1,
+                    value: 0,
+                  },
                 ],
               },
             ],
@@ -1073,17 +1224,26 @@ describe('ScoresheetComponent', () => {
               {
                 scoringCategoryId: 'unscored',
                 score: 0,
-                submissionOptions: [{ id: 'so-3', scoringOptionId: 'opt-3', isSelected: false }],
+                submissionOptions: [
+                  { id: 'so-3', scoringOptionId: 'opt-3', isSelected: false },
+                ],
               },
             ],
           },
         });
 
-        const [scored, unscored, discussion] = Array.from(document.querySelectorAll('.category-card'));
+        const [scored, unscored, discussion] = Array.from(
+          document.querySelectorAll('.category-card'),
+        );
         const score = (card: Element) =>
-          card.querySelector('.category-score')?.textContent?.replace(/\s+/g, ' ').trim() ?? null;
+          card
+            .querySelector('.category-score')
+            ?.textContent?.replace(/\s+/g, ' ')
+            .trim() ?? null;
         const values = (card: Element) =>
-          Array.from(card.querySelectorAll('.option-value')).map((v) => v.textContent?.trim());
+          Array.from(card.querySelectorAll('.option-value')).map((v) =>
+            v.textContent?.trim(),
+          );
         expect(score(scored)).toBe(scoredScore);
         expect(values(scored)).toEqual(scoredValues);
         expect(score(unscored)).toBeNull();
@@ -1108,7 +1268,12 @@ describe('ScoresheetComponent', () => {
               ...category('cat-1', 0, 9, 1),
               scoringOptionSelection: ScoringOptionSelection.Multiple,
               scoringOptions: [
-                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'Isolate the host', displayOrder: 1 },
+                {
+                  id: 'opt-1',
+                  scoringCategoryId: 'cat-1',
+                  description: 'Isolate the host',
+                  displayOrder: 1,
+                },
               ],
             },
           ],
@@ -1118,7 +1283,9 @@ describe('ScoresheetComponent', () => {
           submissionCategories: [
             {
               scoringCategoryId: 'cat-1',
-              submissionOptions: [{ id: 'so-1', scoringOptionId: 'opt-1', selectedCount: 2 }],
+              submissionOptions: [
+                { id: 'so-1', scoringOptionId: 'opt-1', selectedCount: 2 },
+              ],
             },
           ],
         },
@@ -1139,8 +1306,18 @@ describe('ScoresheetComponent', () => {
           ...category('cat-1', 0, 9, 1),
           scoringOptionSelection: ScoringOptionSelection.None,
           scoringOptions: [
-            { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'What happened?', displayOrder: 1 },
-            { id: 'opt-2', scoringCategoryId: 'cat-1', description: 'Who is affected?', displayOrder: 2 },
+            {
+              id: 'opt-1',
+              scoringCategoryId: 'cat-1',
+              description: 'What happened?',
+              displayOrder: 1,
+            },
+            {
+              id: 'opt-2',
+              scoringCategoryId: 'cat-1',
+              description: 'Who is affected?',
+              displayOrder: 2,
+            },
           ],
         },
       ],
@@ -1163,8 +1340,16 @@ describe('ScoresheetComponent', () => {
      * Data: displayCommentTextBoxes with useSubmit; displaying 'team'; per row, one claim on t1.
      */
     it.each<{ label: string; permission: TeamPermission; editable: boolean }>([
-      { label: 'SubmitTeamScore', permission: TeamPermission.SubmitTeamScore, editable: true },
-      { label: 'EditTeamScore', permission: TeamPermission.EditTeamScore, editable: false },
+      {
+        label: 'SubmitTeamScore',
+        permission: TeamPermission.SubmitTeamScore,
+        editable: true,
+      },
+      {
+        label: 'EditTeamScore',
+        permission: TeamPermission.EditTeamScore,
+        editable: false,
+      },
     ])(
       'comment boxes editable=$editable with $label',
       async ({ permission, editable }) => {
@@ -1260,7 +1445,11 @@ describe('ScoresheetComponent', () => {
                     scoringOptionId: 'opt-1',
                     submissionComments: [{ id: 'c1', comment: 'Phishing' }],
                   },
-                  { id: 'so-2', scoringOptionId: 'opt-2', submissionComments: [] },
+                  {
+                    id: 'so-2',
+                    scoringOptionId: 'opt-2',
+                    submissionComments: [],
+                  },
                 ],
               },
             ],
@@ -1403,9 +1592,22 @@ describe('ScoresheetComponent', () => {
             {
               ...category('cat-1', 0, 9, 1),
               scoringOptions: [
-                { id: 'opt-1', scoringCategoryId: 'cat-1', description: 'What happened?' },
-                { id: 'opt-2', scoringCategoryId: 'cat-1', description: 'Who is affected?' },
-                { id: 'mod-1', scoringCategoryId: 'cat-1', description: 'Modifier', isModifier: true },
+                {
+                  id: 'opt-1',
+                  scoringCategoryId: 'cat-1',
+                  description: 'What happened?',
+                },
+                {
+                  id: 'opt-2',
+                  scoringCategoryId: 'cat-1',
+                  description: 'Who is affected?',
+                },
+                {
+                  id: 'mod-1',
+                  scoringCategoryId: 'cat-1',
+                  description: 'Modifier',
+                  isModifier: true,
+                },
               ],
             },
           ],
@@ -1420,7 +1622,11 @@ describe('ScoresheetComponent', () => {
                   scoringOptionId: 'opt-1',
                   submissionComments: [{ id: 'c1', comment: 'an answer' }],
                 },
-                { id: 'so-2', scoringOptionId: 'opt-2', submissionComments: [] },
+                {
+                  id: 'so-2',
+                  scoringOptionId: 'opt-2',
+                  submissionComments: [],
+                },
               ],
             },
           ],
@@ -1439,7 +1645,13 @@ describe('ScoresheetComponent', () => {
       const single = (id: string, option: string, order: number) => ({
         ...category(id, 0, 9, order),
         scoringOptionSelection: ScoringOptionSelection.Single,
-        scoringOptions: [{ id: option, scoringCategoryId: id, description: `Option ${option}` }],
+        scoringOptions: [
+          {
+            id: option,
+            scoringCategoryId: id,
+            description: `Option ${option}`,
+          },
+        ],
       });
       await renderScoresheet({
         model: {
@@ -1457,13 +1669,23 @@ describe('ScoresheetComponent', () => {
             {
               scoringCategoryId: 'cat-1',
               submissionOptions: [
-                { id: 'so-1', scoringOptionId: 'opt-1', isSelected: true, submissionComments: [] },
+                {
+                  id: 'so-1',
+                  scoringOptionId: 'opt-1',
+                  isSelected: true,
+                  submissionComments: [],
+                },
               ],
             },
             {
               scoringCategoryId: 'cat-2',
               submissionOptions: [
-                { id: 'so-2', scoringOptionId: 'opt-2', isSelected: false, submissionComments: [] },
+                {
+                  id: 'so-2',
+                  scoringOptionId: 'opt-2',
+                  isSelected: false,
+                  submissionComments: [],
+                },
               ],
             },
           ],
@@ -1481,11 +1703,19 @@ describe('ScoresheetComponent', () => {
      * Data: the active submission scores 77; scores shown; the model has no severity levels.
      */
     it('uses the default severity levels', async () => {
-      await renderScoresheet({ activeSubmission: { score: 77 }, model: { hideScoresOnScoreSheet: false } });
+      await renderScoresheet({
+        activeSubmission: { score: 77 },
+        model: { hideScoresOnScoreSheet: false },
+      });
 
-      const score = screen.getByText(', Level 4 - Severe').closest('.score-badge');
+      const score = screen
+        .getByText(', Level 4 - Severe')
+        .closest('.score-badge');
       expect(score).toHaveTextContent('77.00');
-      expect(score).toHaveStyle({ backgroundColor: '#8B0000', color: '#FFFFFF' });
+      expect(score).toHaveStyle({
+        backgroundColor: '#8B0000',
+        color: '#FFFFFF',
+      });
     });
 
     /**
@@ -1505,7 +1735,9 @@ describe('ScoresheetComponent', () => {
         },
       });
 
-      expect(screen.getByText(', Level 0 - Calm').closest('.score-badge')).toHaveStyle({ backgroundColor: '#90EE90', color: '#000000' });
+      expect(
+        screen.getByText(', Level 0 - Calm').closest('.score-badge'),
+      ).toHaveStyle({ backgroundColor: '#90EE90', color: '#000000' });
     });
   });
 
@@ -1528,8 +1760,12 @@ describe('ScoresheetComponent', () => {
     });
 
     expect(shownCategories()).toEqual([]);
-    expect(screen.getByText('No responses required for this move.')).toBeVisible();
-    expect(screen.getByText('Questions open in Move 3: Escalation.')).toBeVisible();
+    expect(
+      screen.getByText('No responses required for this move.'),
+    ).toBeVisible();
+    expect(
+      screen.getByText('Questions open in Move 3: Escalation.'),
+    ).toBeVisible();
   });
 
   /**
@@ -1537,18 +1773,32 @@ describe('ScoresheetComponent', () => {
    * Interacts with: getNextQuestionMove(), real MoveStore.
    * Data: submission on move 1; per row, the categories' moves and the stored moves.
    */
-  it.each<{ label: string; first: number; moves: Move[]; note: string | null }>([
-    { label: 'a later move without a description', first: 3, moves: [{ id: 'mv3', moveNumber: 3 }], note: 'Questions open in Move 3.' },
-    { label: 'a later move not loaded', first: 4, moves: [], note: 'Questions open in Move 4.' },
-    { label: 'no later move', first: 0, moves: [], note: null },
-  ])('names the next move for $label', async ({ first, moves, note }) => {
+  it.each<{ label: string; first: number; moves: Move[]; note: string | null }>(
+    [
+      {
+        label: 'a later move without a description',
+        first: 3,
+        moves: [{ id: 'mv3', moveNumber: 3 }],
+        note: 'Questions open in Move 3.',
+      },
+      {
+        label: 'a later move not loaded',
+        first: 4,
+        moves: [],
+        note: 'Questions open in Move 4.',
+      },
+      { label: 'no later move', first: 0, moves: [], note: null },
+    ],
+  )('names the next move for $label', async ({ first, moves, note }) => {
     await renderScoresheet({
       model: { scoringCategories: [category('cat-1', first, first, 1)] },
       activeSubmission: { moveNumber: 1 },
       moves,
     });
 
-    expect(screen.getByText('No responses required for this move.')).toBeVisible();
+    expect(
+      screen.getByText('No responses required for this move.'),
+    ).toBeVisible();
     if (note) {
       expect(screen.getByText(note)).toBeVisible();
     } else {
