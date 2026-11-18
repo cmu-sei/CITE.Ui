@@ -8,13 +8,12 @@ import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
-import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-right-side-iframe',
     templateUrl: './right-side-iframe.component.html',
     styleUrls: ['./right-side-iframe.component.scss'],
-    imports: [NgClass]
+    imports: []
 })
 export class RightSideIframeComponent implements OnDestroy {
   private sanitizer = inject(DomSanitizer);

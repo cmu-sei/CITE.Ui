@@ -27,6 +27,7 @@ import {
   Submission,
   SubmissionComment,
   SubmissionService,
+  Team,
   TeamPermission,
   TeamPermissionClaim,
 } from '../../generated/cite.api';
@@ -109,7 +110,9 @@ async function renderScoresheet(
     activeSubmission?: Partial<Submission> | null;
     teamClaims?: TeamPermissionClaim[];
     // null: no view saved yet (the user never picked User or Team).
-    displaying?: 'user' | 'team' | null;
+    displaying?: 'user' | 'team' | 'official' | null;
+    // more of the user's teams in the evaluation, besides the active t1
+    otherTeams?: Team[];
     myTeamId?: string;
     activeTeam?: boolean;
     // the evaluation's users, whom comment authors are looked up among
@@ -204,7 +207,10 @@ async function renderScoresheet(
       seededStore(MoveStore, (s) => s.set(overrides.moves ?? [])),
       seededStore(UserStore, (s) => s.set(overrides.users ?? [])),
       seededStore(TeamStore, (s) => {
-        s.set([{ id: 't1', name: 'Red', memberships: [] }]);
+        s.set([
+          { id: 't1', name: 'Red', memberships: [] },
+          ...(overrides.otherTeams ?? []),
+        ]);
         if (overrides.activeTeam !== false) s.setActive('t1');
       }),
       seededStore(SubmissionStore, (s) => {
@@ -631,6 +637,118 @@ describe('ScoresheetComponent', () => {
           activeSubmission: { userId },
           teamClaims: claims,
         });
+        for (const name of shown) {
+          expect(toolbarButton(name)).toBeVisible();
+        }
+        for (const name of hidden) {
+          expect(toolbarButton(name)).not.toBeInTheDocument();
+        }
+      },
+    );
+  });
+
+  describe('official score permission gates', () => {
+    /**
+     * Verifies: the official submission's Submit, Clear and Preset controls follow EditOfficialScore on any of the user's teams in the evaluation, as the API decides; the team score permissions, which the API refuses on it, show none of them.
+     * Interacts with: setFormatting() for the 'official' view, real PermissionDataService.hasTeamPermission, real TeamStore.
+     * Data: saved view 'official'; an official submission (no team, no user) on the current move; per row, the team claims and the user's other teams in the evaluation.
+     * Why: regression for the official view, which checked EditTeamScore and SubmitTeamScore on the active team.
+     */
+    it.each<{
+      label: string;
+      claims: TeamPermissionClaim[];
+      otherTeams?: Team[];
+      shown: string[];
+      hidden: string[];
+    }>([
+      {
+        label: 'EditOfficialScore on the active team',
+        claims: [{ teamId: 't1', permissions: [TeamPermission.EditOfficialScore] }],
+        shown: ['Submit', 'Clear', 'Preset'],
+        hidden: [],
+      },
+      {
+        label: "EditOfficialScore on another of the user's teams in the evaluation",
+        claims: [{ teamId: 't2', permissions: [TeamPermission.EditOfficialScore] }],
+        otherTeams: [{ id: 't2', name: 'White Cell', memberships: [] }],
+        shown: ['Submit', 'Clear', 'Preset'],
+        hidden: [],
+      },
+      {
+        label: 'EditOfficialScore on a team outside the evaluation',
+        claims: [{ teamId: 't9', permissions: [TeamPermission.EditOfficialScore] }],
+        shown: [],
+        hidden: ['Submit', 'Clear', 'Preset'],
+      },
+      {
+        label: 'EditTeamScore and SubmitTeamScore on the active team',
+        claims: [
+          {
+            teamId: 't1',
+            permissions: [TeamPermission.EditTeamScore, TeamPermission.SubmitTeamScore],
+          },
+        ],
+        shown: [],
+        hidden: ['Submit', 'Clear', 'Preset'],
+      },
+      {
+        label: 'ViewCurrentOfficialScore on the active team',
+        claims: [{ teamId: 't1', permissions: [TeamPermission.ViewCurrentOfficialScore] }],
+        shown: [],
+        hidden: ['Submit', 'Clear', 'Preset'],
+      },
+    ])(
+      'the official view with $label shows $shown',
+      async ({ claims, otherTeams, shown, hidden }) => {
+        await renderScoresheet({
+          displaying: 'official',
+          activeSubmission: { teamId: null, userId: null, groupId: null },
+          teamClaims: claims,
+          otherTeams,
+        });
+        for (const name of shown) {
+          expect(toolbarButton(name)).toBeVisible();
+        }
+        for (const name of hidden) {
+          expect(toolbarButton(name)).not.toBeInTheDocument();
+        }
+      },
+    );
+
+    /**
+     * Verifies: the official score rules apply to the submission with no user, team or group, whatever the saved view says.
+     * Interacts with: setFormatting() with a saved view that does not match the shown submission, real PermissionDataService.hasTeamPermission.
+     * Data: per row, the saved view, the shown submission and the team claims. The first row is a Contributor (EditTeamScore, no SubmitTeamScore) who picked Official on a past move and moved to the current move, whose official score they cannot see, so their own submission is shown.
+     * Why: regression for the official score rules taking away Preset, Clear and the options on the user's own submission.
+     */
+    it.each<{
+      label: string;
+      displaying: 'user' | 'official';
+      activeSubmission: Partial<Submission>;
+      claims: TeamPermissionClaim[];
+      shown: string[];
+      hidden: string[];
+    }>([
+      {
+        label: "saved Official over the user's own submission, EditTeamScore t1",
+        displaying: 'official',
+        activeSubmission: { userId: 'u1', teamId: 't1' },
+        claims: [{ teamId: 't1', permissions: [TeamPermission.EditTeamScore] }],
+        shown: ['Clear', 'Preset'],
+        hidden: ['Submit'],
+      },
+      {
+        label: 'saved User over the official submission, no team claims',
+        displaying: 'user',
+        activeSubmission: { userId: null, teamId: null, groupId: null },
+        claims: [],
+        shown: [],
+        hidden: ['Submit', 'Clear', 'Preset'],
+      },
+    ])(
+      '$label shows $shown',
+      async ({ displaying, activeSubmission, claims, shown, hidden }) => {
+        await renderScoresheet({ displaying, activeSubmission, teamClaims: claims });
         for (const name of shown) {
           expect(toolbarButton(name)).toBeVisible();
         }

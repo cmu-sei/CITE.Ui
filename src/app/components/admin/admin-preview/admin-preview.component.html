@@ -54,7 +54,7 @@ project root for license information or contact permission@sei.cmu.edu for full 
           <mat-table [dataSource]="scoringCategory.scoringOptions | displayOrder" class="full-width">
             <ng-container matColumnDef="scoringOptionDescription" class="description-cell">
               <mat-cell *matCellDef="let scoringOption" class="description-container">
-                <div [ngClass]="scoringOption.isModifier ? 'indent-div' : 'no-indent-div'">
+                <div [class]="scoringOption.isModifier ? 'indent-div' : 'no-indent-div'">
                   <div class="score-option">
                     @if (scoringCategory.scoringOptionSelection !== 'None') {
                       <div class="checkbox-div">
