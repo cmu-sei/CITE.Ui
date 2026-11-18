@@ -24,7 +24,9 @@ describe('ScoreSummaryComponent', () => {
       screen.getByRole('heading', { name: 'Score Summary' }),
     ).toBeInTheDocument();
     expect(
-      screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
+      screen
+        .getAllByRole('heading', { level: 2 })
+        .map((h) => h.textContent?.trim()),
     ).toEqual([
       'Level 5 - Emergency',
       'Level 4 - Severe',
@@ -149,7 +151,9 @@ describe('ScoreSummaryComponent', () => {
     fixture.detectChanges();
 
     expect(
-      screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
+      screen
+        .getAllByRole('heading', { level: 2 })
+        .map((h) => h.textContent?.trim()),
     ).toEqual(['Level 1 - Storm', 'Level 0 - Calm']);
     expect(screen.getByText('60+')).toBeInTheDocument();
     expect(screen.getByText('<60')).toBeInTheDocument();
