@@ -96,6 +96,14 @@ import { RightSideHtmlComponent } from '../right-side-html/right-side-html.compo
 import { RightSideIframeComponent } from '../right-side-iframe/right-side-iframe.component';
 import { Section } from './section';
 
+// the text of a caught error, which may not be an Error
+function errorText(err: unknown): string {
+  if (err instanceof Error) {
+    return err.message;
+  }
+  return typeof err === 'string' ? err : 'unknown error';
+}
+
 @Component({
     selector: 'app-home-app',
     templateUrl: './home-app.component.html',
@@ -209,7 +217,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   unreadArticles$ =
     this.unreadArticlesQuery.selectActive() as Observable<UnreadArticles>;
   evaluationForLoadedSubmissions: Evaluation;
-  moveList$ = this.moveQuery.selectAll() as Observable<Move[]>;
+  moveList$ = this.moveQuery.selectAll();
   sortedMoveList: Move[] = [];
   teamList$ = this.teamQuery.selectAll();
   myTeamId = '';
@@ -494,10 +502,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
                 ? this.userDataService
                     .loadByEvaluation(this.selectedEvaluationId)
                     .pipe(
-                      catchError((err) => {
+                      catchError((err: unknown) => {
                         console.warn(
                           'CITE could not reload the evaluation users: ' +
-                            (err?.message ?? err),
+                            errorText(err),
                         );
                         return EMPTY;
                       }),
@@ -842,7 +850,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       return EMPTY;
     }
     const moveNumber = (
-      this.evaluationQuery.getEntity(evaluationId) as Evaluation
+      this.evaluationQuery.getEntity(evaluationId)
     )?.currentMoveNumber;
     return this.evaluationDataService.refreshById(evaluationId).pipe(
       switchMap((evaluation) => {
@@ -851,10 +859,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
           ? this.refreshSubmissions()
           : EMPTY;
       }),
-      catchError((err) => {
+      catchError((err: unknown) => {
         console.warn(
           'CITE could not catch up after reconnecting: ' +
-            (err?.message ?? err),
+            errorText(err),
         );
         return of(null);
       }),
@@ -872,10 +880,10 @@ export class HomeAppComponent implements OnDestroy, OnInit {
     return this.submissionDataService
       .refreshByEvaluationTeam(this.loadedEvaluationId, this.loadedTeamId)
       .pipe(
-        catchError((err) => {
+        catchError((err: unknown) => {
           console.warn(
             'CITE could not refetch the submissions after a move change: ' +
-              (err?.message ?? err),
+              errorText(err),
           );
           return of(null);
         }),

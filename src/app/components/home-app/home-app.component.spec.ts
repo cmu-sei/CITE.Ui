@@ -216,7 +216,7 @@ async function renderHome(
       of(
         (teams
           .flatMap((t) => submissions(t.id))
-          .find((s) => s.id === id) ?? { id }) as Submission,
+          .find((s) => s.id === id) ?? { id }),
       ),
     ),
   } satisfies ApiStub<SubmissionService>;
@@ -430,7 +430,7 @@ describe('HomeAppComponent', () => {
       );
 
       expect(FakeImage.last?.src).toBe('/assets/local/landing-background.jpg');
-      FakeImage.last!.onload!();
+      FakeImage.last.onload();
       fixture.detectChanges();
 
       const page = container.querySelector('.app-events-container') as HTMLElement;
@@ -451,7 +451,7 @@ describe('HomeAppComponent', () => {
         { background: '/assets/local/landing-background-dark.jpg', dark: true },
       );
 
-      FakeImage.last!.onload!();
+      FakeImage.last.onload();
       fixture.detectChanges();
 
       const page = container.querySelector('.app-events-container') as HTMLElement;
@@ -470,7 +470,7 @@ describe('HomeAppComponent', () => {
         { background: '/assets/local/missing.jpg' },
       );
 
-      FakeImage.last!.onerror?.();
+      FakeImage.last.onerror?.();
       fixture.detectChanges();
 
       const page = container.querySelector('.app-events-container') as HTMLElement;
@@ -502,7 +502,7 @@ describe('HomeAppComponent', () => {
         { evaluation: 'e1', background: '/assets/local/landing-background-evaluation.jpg' },
       );
 
-      FakeImage.last!.onload!();
+      FakeImage.last.onload();
       fixture.detectChanges();
 
       const page = container.querySelector('.app-events-container') as HTMLElement;
