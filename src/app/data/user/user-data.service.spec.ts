@@ -176,11 +176,6 @@ describe('UserDataService', () => {
         run: (s) => s.load(),
       },
       {
-        method: 'loadByEvaluation',
-        api: () => ({ getEvaluationUsers: failing() }),
-        run: (s) => s.loadByEvaluation('e1'),
-      },
-      {
         method: 'loadById',
         api: () => ({ getUser: failing() }),
         run: (s) => s.loadById('u1'),
@@ -188,7 +183,7 @@ describe('UserDataService', () => {
     ];
 
     /**
-     * Verifies: when load, loadByEvaluation or loadById fails, the caller gets the error but loading stays true.
+     * Verifies: when load or loadById fails, the caller gets the error but loading stays true.
      * Interacts with: the failing UserService endpoint for each method, UserQuery.isLoading$.
      * Data: empty store; each endpoint answers 500; the test subscribes with an error callback, as a caller would.
      */
@@ -201,6 +196,47 @@ describe('UserDataService', () => {
         expect(query.getAll()).toEqual([]);
       },
     );
+
+    /**
+     * Verifies: when loadByEvaluation fails, the caller gets the error and the store stops loading, so a failed reload cannot leave the page waiting.
+     * Interacts with: the failing UserService.getEvaluationUsers, UserQuery.isLoading$.
+     * Data: empty store; the endpoint answers 500.
+     */
+    it("'loadByEvaluation' clears loading when the request fails", async () => {
+      const { service, query } = setup({
+        api: { getEvaluationUsers: failing() },
+      });
+      await expect(
+        firstValueFrom(service.loadByEvaluation('e1')),
+      ).rejects.toBe(failure);
+      expect(await firstValueFrom(query.isLoading$)).toBe(false);
+      expect(query.getAll()).toEqual([]);
+    });
+
+    /**
+     * Verifies: when evaluations' users load at once, the store ends with the evaluation requested last, whichever response comes last.
+     * Interacts with: UserService.getEvaluationUsers stub with controlled responses, UserQuery.
+     * Data: evaluation e1 requested first, e2 second; e2 answers first, e1 last.
+     */
+    it('loadByEvaluation keeps the users of the evaluation requested last', async () => {
+      const first = new Subject<User[]>();
+      const second = new Subject<User[]>();
+      const getEvaluationUsers = vi
+        .fn()
+        .mockReturnValueOnce(first)
+        .mockReturnValueOnce(second);
+      const { service, query } = setup({ api: { getEvaluationUsers } });
+      service.loadByEvaluation('e1').subscribe();
+      service.loadByEvaluation('e2').subscribe();
+
+      second.next([{ id: 'u2', name: 'Bob' }]);
+      second.complete();
+      first.next([{ id: 'u1', name: 'Alice' }]);
+      first.complete();
+
+      expect(query.getAll().map((u) => u.id)).toEqual(['u2']);
+      expect(await firstValueFrom(query.isLoading$)).toBe(false);
+    });
 
     /**
      * Verifies: when update() fails, the stored user is unchanged and the error escapes to the app's ErrorHandler.

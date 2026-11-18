@@ -108,6 +108,8 @@ export class SignalRService implements OnDestroy {
             setTimeout(() => this.reconnect(), 500);
           } else {
             this.onConnected();
+            // messages sent while the hub was stopped were missed
+            this.reconnected$.next();
           }
         }).catch((err) => this.onStartFailed(err));
       });

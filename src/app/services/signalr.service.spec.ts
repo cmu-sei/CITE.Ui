@@ -258,6 +258,27 @@ describe('SignalRService', () => {
     });
 
     /**
+     * Verifies: the restart after a token renewal is announced on reconnected$ too, so the page can catch up on messages sent while the hub was stopped.
+     * Interacts with: ComnAuthService.user$ (Subject), FakeHubConnection.stop/start, SignalRService.reconnected$.
+     * Data: token changes from 'tok-1' to 'tok-2'; the first start announces nothing.
+     */
+    it('announces the restart after a token renewal', async () => {
+      let token = 'tok-1';
+      const { service, authUser$ } = setup({ token: () => token });
+      const reconnected = vi.fn();
+      service.reconnected$.subscribe(reconnected);
+      await service.startConnection(ApplicationArea.home);
+      await flush();
+      expect(reconnected).not.toHaveBeenCalled();
+
+      token = 'tok-2';
+      authUser$.next({});
+      await flush();
+
+      expect(reconnected).toHaveBeenCalledOnce();
+    });
+
+    /**
      * Verifies: a user$ emission before any connection exists does nothing.
      * Interacts with: ComnAuthService.user$, mocked builder.
      * Data: no startConnection() call.

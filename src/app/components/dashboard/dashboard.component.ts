@@ -3,8 +3,8 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { ChangeDetectorRef, Component, Input, OnDestroy, inject, input } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject, timer } from 'rxjs';
+import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 import {
   Action,
   Evaluation,
@@ -47,6 +47,12 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatFormField, MatLabel } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { SignalRService } from 'src/app/services/signalr.service';
+import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
+import {
+  MOVE_CHANGE_DEBOUNCE_MS,
+  MOVE_CHANGE_JITTER,
+} from 'src/app/services/move-change-refresh';
 
 interface SituationMove {
   moveNumber?: number;
@@ -87,6 +93,9 @@ export class DashboardComponent implements OnDestroy {
   private permissionDataService = inject(PermissionDataService);
   private settingsService = inject(ComnSettingsService);
   private changeDetectorRef = inject(ChangeDetectorRef);
+  private signalRService = inject(SignalRService);
+  private gallerySignalRService = inject(GallerySignalRService);
+  private moveChangeJitter = inject(MOVE_CHANGE_JITTER);
 
   @Input() unreadArticles: UnreadArticles;
   readonly myTeamId = input<string>(undefined);
@@ -121,6 +130,7 @@ export class DashboardComponent implements OnDestroy {
   canContributeToTeamScore = false;
   // the evaluation and team whose actions, duties and memberships are loaded
   private teamDataLoadedFor = '';
+  private allDuties: Duty[] = [];
 
   constructor() {
     this.titleService.setTitle('CITE Dashboard');
@@ -137,6 +147,8 @@ export class DashboardComponent implements OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(users => {
         this.evaluationUsers = users;
+        // the duties name their users from this list
+        this.buildDutyList();
       });
     // observe the selected evaluation
     (this.evaluationQuery.selectActive() as Observable<Evaluation>)
@@ -211,19 +223,8 @@ export class DashboardComponent implements OnDestroy {
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((duties) => {
-        this.dutyList = [];
-        duties.forEach((duty) => {
-          const newDuty = { ...duty };
-          const newUsers: User[] = [];
-          newDuty.users.forEach((user) => {
-            const addUser = this.evaluationUsers?.find(
-              (tu) => tu.id === user.id
-            );
-            newUsers.push(addUser);
-          });
-          newDuty.users = newUsers;
-          this.dutyList.push(newDuty);
-        });
+        this.allDuties = duties;
+        this.buildDutyList();
       });
     // observe the scoring model
     (this.scoringModelQuery.selectActive() as Observable<ScoringModel>)
@@ -246,6 +247,43 @@ export class DashboardComponent implements OnDestroy {
       .subscribe((m) => {
         this.teamRoles = m;
       });
+    // After a CITE hub reconnect, actions, duties and memberships sent during
+    // the outage were missed, so load them again. Spread out like a move
+    // change, since every page reconnects at once after an API restart.
+    this.signalRService.reconnected$
+      .pipe(
+        debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+        switchMap(() => timer(this.moveChangeJitter())),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(() => {
+        this.teamDataLoadedFor = '';
+        this.loadTeamData();
+      });
+    // Same for the Gallery unread count after a Gallery hub reconnect.
+    this.gallerySignalRService.reconnected$
+      .pipe(
+        debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+        switchMap(() => timer(this.moveChangeJitter())),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(() => {
+        if (this.selectedEvaluation?.id) {
+          this.unreadArticlesDataService.loadById(this.selectedEvaluation.id);
+        }
+      });
+  }
+
+  // Duties carry user ids; the names come from the evaluation's users, which
+  // can arrive after the duties (a deep link) or be replaced by another
+  // evaluation's list, so a user not listed yet is left out until it is.
+  private buildDutyList() {
+    this.dutyList = this.allDuties.map((duty) => ({
+      ...duty,
+      users: (duty.users ?? [])
+        .map((user) => this.evaluationUsers?.find((tu) => tu.id === user.id))
+        .filter((user) => !!user),
+    }));
   }
 
   setCompleteSituationDescription() {
@@ -416,8 +454,8 @@ export class DashboardComponent implements OnDestroy {
 
   getUserNames(userList: User[]) {
     let nameList = '';
-    userList.forEach((u) => {
-      nameList = u.name ? nameList + u.name + ', ' : nameList;
+    (userList ?? []).forEach((u) => {
+      nameList = u?.name ? nameList + u.name + ', ' : nameList;
     });
 
     return nameList.length > 2

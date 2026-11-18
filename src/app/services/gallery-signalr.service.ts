@@ -26,6 +26,8 @@ export class GallerySignalRService implements OnDestroy {
   private token = '';
   private unreachableReported = false;
   private unsubscribe$ = new Subject();
+  // emits after the hub reconnects, so pushes missed meanwhile can be caught up
+  readonly reconnected$ = new Subject<void>();
 
   constructor() {
     this.authService.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
@@ -47,6 +49,7 @@ export class GallerySignalRService implements OnDestroy {
 
     this.hubConnection.onreconnected(() => {
       this.onConnected();
+      this.reconnected$.next();
     });
 
     this.addHandlers();
@@ -77,6 +80,7 @@ export class GallerySignalRService implements OnDestroy {
             setTimeout(() => this.reconnect(), 500);
           } else {
             this.onConnected();
+            this.reconnected$.next();
           }
         }).catch((err) => this.onStartFailed(err));
       });

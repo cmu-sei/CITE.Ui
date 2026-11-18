@@ -240,8 +240,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   private loadedEvaluationId = '';
   private loadedTeamId = '';
   private currentMoveChanged$ = new Subject<void>();
-  // set by a hub reconnect: the next refetch reloads the evaluation first
-  private catchUpPending = false;
   private teamChanged$ = new Subject<void>();
   private evaluationIdsWithUsers = new Set<string>();
 
@@ -375,6 +373,9 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       } else {
         this.evaluationDataService.setActive('');
         this.selectedEvaluationId = '';
+        // opening an evaluation again loads its team data again
+        this.loadedEvaluationId = '';
+        this.loadedTeamId = '';
       }
       // get the requested section or set the saved section
       const section = params.get('section');
@@ -470,11 +471,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
             debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
             switchMap(() =>
               timer(this.moveChangeJitter()).pipe(
-                switchMap(() =>
-                  this.catchUpPending
-                    ? this.catchUpAfterReconnect()
-                    : this.refreshSubmissions(),
-                ),
+                switchMap(() => this.refreshSubmissions()),
               ),
             ),
           ),
@@ -483,13 +480,19 @@ export class HomeAppComponent implements OnDestroy, OnInit {
       )
       .subscribe(() => this.reselectDisplayedSubmission());
     // catch up after a hub reconnect, spread out like a move change, since
-    // every page reconnects at once after an API restart
+    // every page reconnects at once after an API restart. A team switch does
+    // not cancel it: the switch loads the submissions, not the evaluation.
     this.signalRService.reconnected$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(() => {
-        this.catchUpPending = true;
-        this.currentMoveChanged$.next();
-      });
+      .pipe(
+        debounceTime(MOVE_CHANGE_DEBOUNCE_MS),
+        switchMap(() =>
+          timer(this.moveChangeJitter()).pipe(
+            switchMap(() => this.catchUpAfterReconnect()),
+          ),
+        ),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe(() => this.reselectDisplayedSubmission());
     // a team membership event can add or drop a user of the evaluation, so
     // reload its users once the events stop, spread out like a move change
     this.signalRService.teamMembershipChanged$
@@ -534,16 +537,22 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         });
       this.setDataSources();
       // Load users for each evaluation (for displaying creator names), once:
-      // every evaluation update re-runs this
-      evaluations.forEach((evaluation) => {
-        if (evaluation.id && !this.evaluationIdsWithUsers.has(evaluation.id)) {
-          this.evaluationIdsWithUsers.add(evaluation.id);
-          this.userDataService
-            .loadByEvaluation(evaluation.id)
-            .pipe(take(1))
-            .subscribe();
-        }
+      // every evaluation update re-runs this. The user store holds one
+      // evaluation's users, the last one loaded, so the selected evaluation
+      // is loaded again last when others were loaded.
+      const newIds = evaluations
+        .map((evaluation) => evaluation.id)
+        .filter((id) => id && !this.evaluationIdsWithUsers.has(id));
+      newIds.forEach((id) => {
+        this.evaluationIdsWithUsers.add(id);
+        this.userDataService.loadByEvaluation(id).pipe(take(1)).subscribe();
       });
+      if (newIds.length > 0 && this.selectedEvaluationId) {
+        this.userDataService
+          .loadByEvaluation(this.selectedEvaluationId)
+          .pipe(take(1))
+          .subscribe();
+      }
     });
     // load the user's evaluations
     this.evaluationDataService.loadMine();
@@ -706,7 +715,7 @@ export class HomeAppComponent implements OnDestroy, OnInit {
         this.selectedEvaluationId !== this.loadedEvaluationId)
     ) {
       this.changeTeam(activeTeamId);
-      this.teamMembershipDataService.loadMemberships(activeTeamId);
+      this.teamMembershipDataService.loadMemberships(activeTeamId).subscribe();
     }
   }
 
@@ -844,7 +853,6 @@ export class HomeAppComponent implements OnDestroy, OnInit {
   // its moves. A changed move refetches the submissions through the move
   // change; otherwise they are refetched here.
   private catchUpAfterReconnect(): Observable<unknown> {
-    this.catchUpPending = false;
     const evaluationId = this.selectedEvaluationId;
     if (!evaluationId) {
       return EMPTY;

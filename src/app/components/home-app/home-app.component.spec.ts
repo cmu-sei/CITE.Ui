@@ -276,7 +276,9 @@ async function renderHome(
       }),
     ),
   };
-  const { route } = activatedRouteStub(evaluation ? { evaluation } : {});
+  const { route, setQueryParams } = activatedRouteStub(
+    evaluation ? { evaluation } : {},
+  );
 
   const rendered = await renderComponent(HomeAppComponent, {
     imports: [
@@ -331,6 +333,8 @@ async function renderHome(
     evaluationApi,
     moveApi,
     userApi,
+    membershipApi,
+    setQueryParams,
     submissionApi,
     signalR,
     gallerySignalR,
@@ -965,6 +969,52 @@ describe('HomeAppComponent', () => {
       vi.runAllTimers();
       expect(evaluationApi.getEvaluation).toHaveBeenCalledOnce();
       expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+    });
+
+    /**
+     * Verifies: a team switch during the debounce or the jitter of a reconnect catch-up does not drop it: the evaluation and moves still reload, once, and no extra refetch follows.
+     * Interacts with: SignalRService.reconnected$ (stub Subject), changeTeam(), EvaluationService.getEvaluation and SubmissionService stubs, fake timers.
+     * Data: ?evaluation=e1 on move 0; Alice on t1; the hub reconnects, then she observes t2 inside the jitter; the evaluation stays on move 0.
+     */
+    it('keeps the reconnect catch-up through a team switch', async () => {
+      const { fixture, signalR, evaluationApi, submissionApi } =
+        await renderTeamPage();
+
+      signalR.reconnected$.next();
+      vi.advanceTimersByTime(MOVE_CHANGE_DEBOUNCE_MS + 1);
+      fixture.componentInstance.changeTeam('t2');
+      vi.runAllTimers();
+
+      expect(evaluationApi.getEvaluation).toHaveBeenCalledExactlyOnceWith('e1');
+      // t1 at load, t2 at the switch, then t2 again for the catch-up
+      expect(submissionApi.getByEvaluationTeam.mock.calls).toEqual([
+        ['e1', 't1'],
+        ['e1', 't2'],
+        ['e1', 't2'],
+      ]);
+      // and the next move change refetches once, with no catch-up left over
+      submissionApi.getByEvaluationTeam.mockClear();
+      changeCurrentMove(1);
+      vi.runAllTimers();
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledOnce();
+    });
+
+    /**
+     * Verifies: opening the same evaluation again after the list loads its team data again, rather than showing what the first visit left, and loads the team's memberships.
+     * Interacts with: the route's query params, TeamService/SubmissionService/TeamMemberships stubs.
+     * Data: ?evaluation=e1 on t1; the route drops the evaluation, then opens e1 again.
+     */
+    it('loads the team data again when the evaluation is reopened', async () => {
+      const { setQueryParams, submissionApi, membershipApi } =
+        await renderTeamPage();
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledOnce();
+      expect(membershipApi.getAllTeamMemberships).toHaveBeenCalledOnce();
+
+      setQueryParams({});
+      setQueryParams({ evaluation: 'e1' });
+
+      expect(submissionApi.getByEvaluationTeam).toHaveBeenCalledTimes(2);
+      expect(membershipApi.getAllTeamMemberships).toHaveBeenCalledTimes(2);
     });
 
     /**

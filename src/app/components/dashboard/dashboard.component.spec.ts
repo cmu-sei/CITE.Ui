@@ -19,7 +19,13 @@ import { screen, within } from '@testing-library/angular';
 import userEvent, {
   PointerEventsCheckLevel,
 } from '@testing-library/user-event';
-import { of } from 'rxjs';
+import { Subject, asyncScheduler, of } from 'rxjs';
+import { SignalRService } from 'src/app/services/signalr.service';
+import { GallerySignalRService } from 'src/app/services/gallery-signalr.service';
+import {
+  MOVE_CHANGE_DEBOUNCE_MS,
+  MOVE_CHANGE_JITTER,
+} from 'src/app/services/move-change-refresh';
 import {
   ComnSettingsService,
   CrucibleDialogService,
@@ -80,6 +86,22 @@ const ACTION: Action = {
   description: 'Isolate the mail server',
   isChecked: false,
 };
+
+// Date stays real: the stores freeze the dates they hold, and a date made by
+// the fake Date class cannot be frozen. rxjs reads the time from its
+// scheduler, pointed at the fake performance clock instead.
+function useFakeClock() {
+  vi.useFakeTimers({
+    toFake: [
+      'setTimeout',
+      'clearTimeout',
+      'setInterval',
+      'clearInterval',
+      'performance',
+    ],
+  });
+  vi.spyOn(asyncScheduler, 'now').mockImplementation(() => performance.now());
+}
 
 type PanelName = 'Actions' | 'Duties' | 'Roles';
 
@@ -154,6 +176,8 @@ async function renderDashboard(
     settings: { GalleryUiUrl: 'https://gallery.test/' },
   } as Pick<ComnSettingsService, 'settings'> as ComnSettingsService;
   const editDialog = matDialogStub();
+  const hubReconnected$ = new Subject<void>();
+  const galleryReconnected$ = new Subject<void>();
 
   const rendered = await renderComponent(DashboardComponent, {
     declarations: [DashboardComponent],
@@ -182,6 +206,12 @@ async function renderDashboard(
       { provide: CrucibleDialogService, useValue: dialogService },
       { provide: ComnSettingsService, useValue: settingsService },
       { provide: MatDialog, useValue: editDialog.dialog },
+      { provide: SignalRService, useValue: { reconnected$: hubReconnected$ } },
+      {
+        provide: GallerySignalRService,
+        useValue: { reconnected$: galleryReconnected$ },
+      },
+      { provide: MOVE_CHANGE_JITTER, useValue: () => 1000 },
     ],
     configureTestBed: (testBed) => {
       // The home page loads and activates these before the dashboard shows.
@@ -253,6 +283,8 @@ async function renderDashboard(
     dutyApi,
     membershipApi,
     galleryApi,
+    hubReconnected$,
+    galleryReconnected$,
     editDialog,
     user,
     loader,
@@ -314,6 +346,80 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
 
     expect(loads()).toEqual([1, 1, 1, 1]);
+  });
+
+  /**
+   * Verifies: after a CITE hub reconnect the team's actions, duties and memberships load again once, after the debounce and the jitter, not at the reconnect itself.
+   * Interacts with: SignalRService.reconnected$ stub, MOVE_CHANGE_JITTER stub (1 s), Action/Duty/TeamMemberships service stubs, fake timers.
+   * Data: evaluation e1, team t1 loaded once; two reconnects in a burst.
+   */
+  it('loads the team data again after a hub reconnect', async () => {
+    const { actionApi, dutyApi, membershipApi, hubReconnected$ } =
+      await renderDashboard(onTeam('t1', TeamPermission.EditTeamScore));
+    useFakeClock();
+    try {
+      hubReconnected$.next();
+      hubReconnected$.next();
+      await vi.advanceTimersByTimeAsync(MOVE_CHANGE_DEBOUNCE_MS + 999);
+      expect(actionApi.getActionsByEvaluationTeam).toHaveBeenCalledOnce();
+
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(actionApi.getActionsByEvaluationTeam).toHaveBeenCalledTimes(2);
+      expect(dutyApi.getDutiesByEvaluationTeam).toHaveBeenCalledTimes(2);
+      expect(membershipApi.getAllTeamMemberships).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+      vi.mocked(asyncScheduler.now).mockRestore();
+    }
+  });
+
+  /**
+   * Verifies: after a Gallery hub reconnect the unread count is fetched again, after the debounce and the jitter.
+   * Interacts with: GallerySignalRService.reconnected$ stub, MOVE_CHANGE_JITTER stub (1 s), Gallery service stub, fake timers.
+   * Data: evaluation e1 with exhibit x1; one Gallery reconnect.
+   */
+  it('fetches the unread count again after a Gallery reconnect', async () => {
+    const { actionApi, galleryApi, galleryReconnected$ } =
+      await renderDashboard(onTeam('t1', TeamPermission.EditTeamScore), {
+        evaluation: { galleryExhibitId: 'x1' },
+      });
+    useFakeClock();
+    try {
+      galleryReconnected$.next();
+      await vi.advanceTimersByTimeAsync(MOVE_CHANGE_DEBOUNCE_MS + 1000);
+
+      expect(galleryApi.getEvaluationUnreadArticleCount).toHaveBeenCalledTimes(
+        2,
+      );
+      expect(actionApi.getActionsByEvaluationTeam).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+      vi.mocked(asyncScheduler.now).mockRestore();
+    }
+  });
+
+  /**
+   * Verifies: a duty names its users once the evaluation's users arrive after the duties, and never holds an undefined user.
+   * Interacts with: real UserStore/DutyStore, DutyService stub, the Duties panel.
+   * Data: duty d1 holds u1; the store first lists Bob only, then Alice and Carol.
+   */
+  it('names duty users from the evaluation users whenever they arrive', async () => {
+    const { fixture } = await renderDashboard(
+      onTeam('t1', TeamPermission.EditTeamScore),
+    );
+    const component = fixture.componentInstance;
+    const users = fixture.debugElement.injector.get(UserStore);
+
+    users.set([{ id: 'u2', name: 'Bob' }]);
+    expect(component.dutyList[0].users).toEqual([]);
+    expect(component.getUserNames(component.dutyList[0].users)).toBe('');
+
+    users.set([
+      { id: 'u1', name: 'Alice' },
+      { id: 'u3', name: 'Carol' },
+    ]);
+    expect(component.getUserNames(component.dutyList[0].users)).toBe('Alice');
   });
 
   /**
