@@ -12,10 +12,10 @@ import { FormsModule } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-right-side-html',
-    templateUrl: './right-side-html.component.html',
-    styleUrls: ['./right-side-html.component.scss'],
-    imports: [AngularEditorModule, FormsModule, AsyncPipe]
+  selector: 'app-right-side-html',
+  templateUrl: './right-side-html.component.html',
+  styleUrls: ['./right-side-html.component.scss'],
+  imports: [AngularEditorModule, FormsModule, AsyncPipe],
 })
 export class RightSideHtmlComponent implements OnDestroy {
   private submissionQuery = inject(SubmissionQuery);
@@ -28,9 +28,9 @@ export class RightSideHtmlComponent implements OnDestroy {
 
   getTopClass() {
     if (this.hideTopbar()) {
-      return 'top-level-container in-player'
+      return 'top-level-container in-player';
     } else {
-      return 'top-level-container out-of-player'
+      return 'top-level-container out-of-player';
     }
   }
 

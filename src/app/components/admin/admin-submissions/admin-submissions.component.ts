@@ -14,10 +14,26 @@ import { EvaluationQuery } from 'src/app/data/evaluation/evaluation.query';
 import { SubmissionDataService } from 'src/app/data/submission/submission-data.service';
 import { SubmissionQuery } from 'src/app/data/submission/submission.query';
 import { TeamDataService } from 'src/app/data/team/team-data.service';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource,
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+  MatNoDataRow,
+} from '@angular/material/table';
 import {
   PopulatedSubmission,
   SubmissionType,
@@ -36,10 +52,36 @@ import { MatCard } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-    selector: 'app-admin-submissions',
-    templateUrl: './admin-submissions.component.html',
-    styleUrls: ['./admin-submissions.component.scss'],
-    imports: [MatIcon, MatFormField, MatLabel, MatSelect, MatOption, FormsModule, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatIconButton, ClipboardModule, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatCard, MatProgressSpinner, DecimalPipe]
+  selector: 'app-admin-submissions',
+  templateUrl: './admin-submissions.component.html',
+  styleUrls: ['./admin-submissions.component.scss'],
+  imports: [
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    FormsModule,
+    MatPaginator,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatIconButton,
+    ClipboardModule,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatCard,
+    MatProgressSpinner,
+    DecimalPipe,
+  ],
 })
 export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   private settingsService = inject(ComnSettingsService);
@@ -85,7 +127,6 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject();
 
   constructor() {
-
     this.evaluationQuery
       .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
@@ -150,7 +191,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
   sortChanged(sort: Sort) {
     this.sort = sort;
     this.filteredSubmission.sort((a, b) =>
-      this.sortSubmissions(a, b, sort.active, sort.direction)
+      this.sortSubmissions(a, b, sort.active, sort.direction),
     );
     this.applyPagination();
   }
@@ -159,7 +200,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
     a: PopulatedSubmission,
     b: PopulatedSubmission,
     column: string,
-    direction: string
+    direction: string,
   ) {
     const isAsc = direction !== 'desc';
     switch (column) {
@@ -193,7 +234,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
       (submission) =>
         this.selectedSubmissionTypes.includes(submission.submissionType) &&
         (this.selectedMove === -1 ||
-          +submission.moveNumber === this.selectedMove)
+          +submission.moveNumber === this.selectedMove),
     );
     this.applyPagination();
   }
@@ -208,7 +249,7 @@ export class AdminSubmissionsComponent implements OnInit, OnDestroy {
     const startIndex = this.pageIndex * this.pageSize;
     this.displayedSubmissions = this.filteredSubmission.slice(
       startIndex,
-      startIndex + this.pageSize
+      startIndex + this.pageSize,
     );
   }
 

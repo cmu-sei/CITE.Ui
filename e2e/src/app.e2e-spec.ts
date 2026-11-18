@@ -15,4 +15,3 @@ describe('workspace-project App', () => {
     expect(page.getTitleText()).toEqual('Welcome to cite-ui!');
   });
 });
-

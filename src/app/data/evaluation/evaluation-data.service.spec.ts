@@ -270,15 +270,12 @@ describe('EvaluationDataService', () => {
       const { service, query, store, api } = setup();
       store.set([makeEvaluation()]);
       service.updateEvaluation(makeEvaluation({ description: 'Renamed' }));
-      expect(api.updateEvaluation).toHaveBeenCalledWith(
-        'e1',
-        {
-          description: 'Renamed',
-          status: ItemStatus.Active,
-          currentMoveNumber: 1,
-          situationTime: iso('2026-01-03T00:00:00Z'),
-        },
-      );
+      expect(api.updateEvaluation).toHaveBeenCalledWith('e1', {
+        description: 'Renamed',
+        status: ItemStatus.Active,
+        currentMoveNumber: 1,
+        situationTime: iso('2026-01-03T00:00:00Z'),
+      });
       expect(query.getEntity('e1')?.description).toBe('Renamed');
     });
 

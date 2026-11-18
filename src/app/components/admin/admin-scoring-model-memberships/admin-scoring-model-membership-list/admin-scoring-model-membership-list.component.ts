@@ -3,11 +3,34 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnChanges, OnInit, inject, input, output, viewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  OnChanges,
+  OnInit,
+  inject,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource,
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+  MatNoDataRow,
+} from '@angular/material/table';
 import {
   ScoringModelMembership,
   Group,
@@ -23,11 +46,36 @@ import { ClipboardModule } from 'ngx-clipboard';
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-    selector: 'app-admin-scoring-model-membership-list',
-    templateUrl: './admin-scoring-model-membership-list.component.html',
-    styleUrls: ['./admin-scoring-model-membership-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbar, MatToolbarRow, MatIcon, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatPaginator, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, ClipboardModule, MatTooltip, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow]
+  selector: 'app-admin-scoring-model-membership-list',
+  templateUrl: './admin-scoring-model-membership-list.component.html',
+  styleUrls: ['./admin-scoring-model-membership-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatToolbar,
+    MatToolbarRow,
+    MatIcon,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    MatIconButton,
+    MatSuffix,
+    MatPaginator,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    ClipboardModule,
+    MatTooltip,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+  ],
 })
 export class AdminScoringModelMembershipListComponent
   implements OnInit, OnChanges, AfterViewInit
@@ -64,7 +112,7 @@ export class AdminScoringModelMembershipListComponent
     this.dataSource.data = this.buildModel();
 
     this.displayedColumns = this.viewColumns.concat(
-      this.canEdit() ? this.editColumns : []
+      this.canEdit() ? this.editColumns : [],
     );
   }
 

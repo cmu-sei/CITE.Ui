@@ -12,13 +12,13 @@ CITE uses a monochrome gray Material 3 SCSS palette (`src/styles/_theme-colors.s
 
 ### Changing the top bar and primary colors
 
-| File | Field / Value | Purpose |
-|------|---------------|---------|
-| `src/assets/config/settings.json` | `"AppTopBarHexColor": "#E81717"` | Runtime config -- top bar background color |
-| `src/assets/config/settings.json` | `"AppTopBarHexTextColor": "#FFFFFF"` | Runtime config -- top bar text color |
-| `src/assets/config/settings.json` | `"AppLightModePrimaryHexColor": "#E81717"` / `"AppLightModePrimaryHexTextColor": "#FFFFFF"` | Runtime config -- primary color and its text color in light mode |
-| `src/assets/config/settings.json` | `"AppDarkModePrimaryHexColor": "#F48B8B"` / `"AppDarkModePrimaryHexTextColor": "#000000"` | Runtime config -- primary color and its text color in dark mode (falls back to the light-mode value) |
-| `src/app/app.module.ts` | `provideCrucibleTheme({ brand: { color: '#E81717', text: '#FFFFFF' } })` | Fallbacks when a top bar or light-mode key is not set |
+| File                              | Field / Value                                                                               | Purpose                                                                                              |
+| --------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `src/assets/config/settings.json` | `"AppTopBarHexColor": "#E81717"`                                                            | Runtime config -- top bar background color                                                           |
+| `src/assets/config/settings.json` | `"AppTopBarHexTextColor": "#FFFFFF"`                                                        | Runtime config -- top bar text color                                                                 |
+| `src/assets/config/settings.json` | `"AppLightModePrimaryHexColor": "#E81717"` / `"AppLightModePrimaryHexTextColor": "#FFFFFF"` | Runtime config -- primary color and its text color in light mode                                     |
+| `src/assets/config/settings.json` | `"AppDarkModePrimaryHexColor": "#F48B8B"` / `"AppDarkModePrimaryHexTextColor": "#000000"`   | Runtime config -- primary color and its text color in dark mode (falls back to the light-mode value) |
+| `src/app/app.module.ts`           | `provideCrucibleTheme({ brand: { color: '#E81717', text: '#FFFFFF' } })`                    | Fallbacks when a top bar or light-mode key is not set                                                |
 
 The app loads `settings.json`, then `settings.shared.json` and `settings.env.json` from `src/assets/config/` when they exist, and merges them in that order, so later files override earlier ones. To change the colors for a deployment, set these keys in `settings.env.json`. Overriding colors moves accessibility responsibility to the operator, and rebranding usually means setting the top bar, light-mode and dark-mode keys together.
 

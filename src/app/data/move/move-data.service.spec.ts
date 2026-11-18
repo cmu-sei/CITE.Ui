@@ -226,14 +226,11 @@ describe('MoveDataService', () => {
       const { service, query, store, api } = setup();
       store.set([makeMove()]);
       service.updateMove(makeMove({ description: 'Renamed' }));
-      expect(api.updateMove).toHaveBeenCalledWith(
-        'm1',
-        {
-          description: 'Renamed',
-          moveNumber: 1,
-          situationTime: iso('2026-01-03T00:00:00Z'),
-        },
-      );
+      expect(api.updateMove).toHaveBeenCalledWith('m1', {
+        description: 'Renamed',
+        moveNumber: 1,
+        situationTime: iso('2026-01-03T00:00:00Z'),
+      });
       expect(query.getEntity('m1')?.description).toBe('Renamed');
     });
 

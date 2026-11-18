@@ -3,10 +3,22 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, inject, output } from '@angular/core';
-import { FormBuilder, FormGroup, UntypedFormControl, FormGroupDirective, NgForm, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  UntypedFormControl,
+  FormGroupDirective,
+  NgForm,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CrucibleDialogComponent, CrucibleDialogContentDirective } from '@cmusei/crucible-common';
+import {
+  CrucibleDialogComponent,
+  CrucibleDialogContentDirective,
+} from '@cmusei/crucible-common';
 import { MatFormField, MatLabel, MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
@@ -15,7 +27,7 @@ import { MatOption } from '@angular/material/autocomplete';
 export class UserErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(
     control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
+    form: FormGroupDirective | NgForm | null,
   ): boolean {
     const isSubmitted = form && form.submitted;
     return !!(control && control.invalid && (control.dirty || isSubmitted));
@@ -23,12 +35,21 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-    selector: 'app-admin-duty-edit-dialog',
-    templateUrl: './admin-duty-edit-dialog.component.html',
-    styleUrls: ['./admin-duty-edit-dialog.component.scss'],
-    imports: [CrucibleDialogComponent, CrucibleDialogContentDirective, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatSelect, MatOption]
+  selector: 'app-admin-duty-edit-dialog',
+  templateUrl: './admin-duty-edit-dialog.component.html',
+  styleUrls: ['./admin-duty-edit-dialog.component.scss'],
+  imports: [
+    CrucibleDialogComponent,
+    CrucibleDialogContentDirective,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatSelect,
+    MatOption,
+  ],
 })
-
 export class AdminDutyEditDialogComponent {
   data = inject(MAT_DIALOG_DATA);
   private formBuilder = inject(FormBuilder);
@@ -40,9 +61,14 @@ export class AdminDutyEditDialogComponent {
     const data = this.data;
 
     this.form = this.formBuilder.group({
-      name: [{ value: data.duty.name, disabled: !data.canEdit }, Validators.required],
+      name: [
+        { value: data.duty.name, disabled: !data.canEdit },
+        Validators.required,
+      ],
       // The API cannot move an existing duty to another team.
-      teamId: [{ value: data.duty.teamId, disabled: !data.canEdit || !!data.duty.id }],
+      teamId: [
+        { value: data.duty.teamId, disabled: !data.canEdit || !!data.duty.id },
+      ],
     });
   }
 
@@ -68,7 +94,6 @@ export class AdminDutyEditDialogComponent {
   }
 
   getUserName(userId: string) {
-    return this.data.userList.find(u => u.id === userId).name;
+    return this.data.userList.find((u) => u.id === userId).name;
   }
-
 }

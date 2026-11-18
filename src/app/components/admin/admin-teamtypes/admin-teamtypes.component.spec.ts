@@ -113,7 +113,9 @@ describe('AdminTeamTypesComponent', () => {
   it('enables editing with ManageTeamTypes', async () => {
     await renderTeamTypes([SystemPermission.ManageTeamTypes]);
 
-    expect(screen.getByRole('columnheader', { name: 'Team Type' })).toBeVisible();
+    expect(
+      screen.getByRole('columnheader', { name: 'Team Type' }),
+    ).toBeVisible();
     expect(screen.getByTitle('Add Team Type')).toBeEnabled();
     const agency = row('Agency');
     expect(within(agency).getByTitle('Edit Team Type')).toBeEnabled();

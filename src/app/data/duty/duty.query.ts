@@ -3,10 +3,7 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Order, Query, QueryConfig, QueryEntity } from '@datorama/akita';
-import {
-  DutyState,
-  DutyStore,
-} from './duty.store';
+import { DutyState, DutyStore } from './duty.store';
 import { Duty } from 'src/app/generated/cite.api';
 import { Injectable, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
@@ -26,7 +23,7 @@ export class DutyQuery extends QueryEntity<DutyState> {
     const store = inject(DutyStore);
 
     super(store);
-  
+
     this.store = store;
   }
 

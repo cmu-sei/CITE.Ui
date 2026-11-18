@@ -1,9 +1,9 @@
 // Copyright 2022 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the project root for license information or contact permission@sei.cmu.edu for full terms.
 
-@use "@angular/material" as mat;
-@use "./theme-colors" as theme;
-@use "./dark-theme-colors" as dark-theme;
+@use '@angular/material' as mat;
+@use './theme-colors' as theme;
+@use './dark-theme-colors' as dark-theme;
 @use '@mdi/font/scss/materialdesignicons.scss';
 // Declares the Open Sans family the theme typography and the classification banner use.
 @use '@cmusei/crucible-common/fonts';
@@ -26,28 +26,42 @@
 @include mat.app-background();
 
 html {
-  @include mat.theme((color: theme.$primary-palette,
+  @include mat.theme(
+    (
+      color: theme.$primary-palette,
       typography: '"Open Sans", sans-serif',
-    ));
-  @include mat.icon-button-overrides((icon-color: var(--mat-sys-primary),
-    ));
+    )
+  );
+  @include mat.icon-button-overrides(
+    (
+      icon-color: var(--mat-sys-primary),
+    )
+  );
   // Light mode keeps the brand primary exactly (colors design spec §1), and
   // #E81717 only reaches 4.5:1 as text on white: it measures 4.37:1 on the
   // palette's #F9F9F9 surface. A white surface keeps primary text buttons and
   // links on dialogs and pages compliant with WCAG 1.4.3.
-  @include mat.theme-overrides((surface: #ffffff));
+  @include mat.theme-overrides(
+    (
+      surface: #ffffff,
+    )
+  );
 }
 
 .darkMode {
-  @include mat.theme((color: (primary: dark-theme.$dark-primary-palette,
+  @include mat.theme(
+    (
+      color: (
+        primary: dark-theme.$dark-primary-palette,
         typography: '"Open Sans", sans-serif',
         theme-type: dark,
       ),
-    ));
+    )
+  );
 }
 
 body {
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
   margin: 0;
   overflow: hidden;
 }

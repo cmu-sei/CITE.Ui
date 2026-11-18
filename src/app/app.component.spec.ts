@@ -145,6 +145,8 @@ describe('AppComponent', () => {
     localStorage.removeItem('uiState');
     const { fixture } = await renderApp({ queryTheme: Theme.DARK });
 
-    expect(fixture.debugElement.injector.get(UIDataService).getTheme()).toBe(Theme.DARK);
+    expect(fixture.debugElement.injector.get(UIDataService).getTheme()).toBe(
+      Theme.DARK,
+    );
   });
 });

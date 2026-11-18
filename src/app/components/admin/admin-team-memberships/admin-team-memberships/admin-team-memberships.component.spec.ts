@@ -124,8 +124,16 @@ describe('AdminTeamMembershipsComponent', () => {
     expect(membershipApi.getAllTeamMemberships).toHaveBeenCalledWith('t1');
     expect(names(members().users())).toEqual(['Alice']);
     expect(names(nonMembers().users())).toEqual(['Bob', 'Carol']);
-    expect(members().memberships().map((m) => m.id)).toEqual(['tm1']);
-    expect(members().roles().map((r) => r.name)).toEqual(['Member']);
+    expect(
+      members()
+        .memberships()
+        .map((m) => m.id),
+    ).toEqual(['tm1']);
+    expect(
+      members()
+        .roles()
+        .map((r) => r.name),
+    ).toEqual(['Member']);
   });
 
   /**
@@ -179,9 +187,11 @@ describe('AdminTeamMembershipsComponent', () => {
       'tm1',
       expect.objectContaining({ roleId: 'lead' }),
     );
-    expect(members().memberships().map((m) => [m.id, m.roleId])).toEqual([
-      ['tm1', 'lead'],
-    ]);
+    expect(
+      members()
+        .memberships()
+        .map((m) => [m.id, m.roleId]),
+    ).toEqual([['tm1', 'lead']]);
   });
 
   describe('canEdit gate', () => {

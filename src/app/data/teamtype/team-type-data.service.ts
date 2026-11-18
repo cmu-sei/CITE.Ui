@@ -8,10 +8,7 @@ import { Injectable, inject } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
-import {
-  TeamType,
-  TeamTypeService
-} from 'src/app/generated/cite.api';
+import { TeamType, TeamTypeService } from 'src/app/generated/cite.api';
 import { map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 
@@ -44,7 +41,7 @@ export class TeamTypeDataService {
     const activatedRoute = this.activatedRoute;
 
     this.filterTerm = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('modelterm') || '')
+      map((params) => params.get('modelterm') || ''),
     );
     this.filterControl.valueChanges.subscribe((term) => {
       this.router.navigate([], {
@@ -53,16 +50,16 @@ export class TeamTypeDataService {
       });
     });
     this.sortColumn = activatedRoute.queryParamMap.pipe(
-      map((params) => params.get('sorton') || 'description')
+      map((params) => params.get('sorton') || 'description'),
     );
     this.sortIsAscending = activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('sortdir') || 'asc') === 'asc')
+      map((params) => (params.get('sortdir') || 'asc') === 'asc'),
     );
     this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
+      map((params) => parseInt(params.get('pagesize') || '20', 10)),
     );
     this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
+      map((params) => parseInt(params.get('pageindex') || '0', 10)),
     );
     this.teamTypeList = combineLatest([
       this.teamTypeQuery.selectAll(),
@@ -83,17 +80,16 @@ export class TeamTypeDataService {
         ]) =>
           items
             ? (items as TeamType[])
-              .sort((a: TeamType, b: TeamType) =>
-                this.sortTeamTypes(a, b, sortColumn, sortIsAscending)
-              )
-              .filter(
-                (teamType) =>
+                .sort((a: TeamType, b: TeamType) =>
+                  this.sortTeamTypes(a, b, sortColumn, sortIsAscending),
+                )
+                .filter((teamType) =>
                   ('' + teamType.name)
                     .toLowerCase()
-                    .includes(filterTerm.toLowerCase())
-              )
-            : []
-      )
+                    .includes(filterTerm.toLowerCase()),
+                )
+            : [],
+      ),
     );
   }
 
@@ -101,11 +97,10 @@ export class TeamTypeDataService {
     a: TeamType,
     b: TeamType,
     column: string,
-    isAsc: boolean
+    isAsc: boolean,
   ) {
     return (
-      (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) *
-      (isAsc ? 1 : -1)
+      (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1)
     );
   }
 
@@ -117,7 +112,7 @@ export class TeamTypeDataService {
         tap(() => {
           this.teamTypeStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         (teamTypes) => {
@@ -125,7 +120,7 @@ export class TeamTypeDataService {
         },
         (error) => {
           this.teamTypeStore.set([]);
-        }
+        },
       );
   }
 
@@ -137,7 +132,7 @@ export class TeamTypeDataService {
         tap(() => {
           this.teamTypeStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.teamTypeStore.upsert(s.id, { ...s });
@@ -158,7 +153,7 @@ export class TeamTypeDataService {
         tap(() => {
           this.teamTypeStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((s) => {
         this.teamTypeStore.add(s);
@@ -174,7 +169,7 @@ export class TeamTypeDataService {
         tap(() => {
           this.teamTypeStore.setLoading(false);
         }),
-        take(1)
+        take(1),
       )
       .subscribe((n) => {
         this.updateStore(n);

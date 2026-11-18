@@ -2,7 +2,16 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { ComnAuthQuery, ComnAuthService, Theme } from '@cmusei/crucible-common';
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -20,11 +29,23 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-topbar',
-    templateUrl: './topbar.component.html',
-    styleUrls: ['./topbar.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbar, MatToolbarRow, MatIconButton, RouterLink, MatIcon, MatButton, MatMenuTrigger, MatMenu, MatMenuItem, MatSlideToggle, AsyncPipe]
+  selector: 'app-topbar',
+  templateUrl: './topbar.component.html',
+  styleUrls: ['./topbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatToolbar,
+    MatToolbarRow,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    MatButton,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    MatSlideToggle,
+    AsyncPipe,
+  ],
 })
 export class TopbarComponent implements OnInit, OnDestroy {
   private authService = inject(ComnAuthService);
@@ -57,15 +78,17 @@ export class TopbarComponent implements OnInit, OnDestroy {
       .subscribe(
         () =>
           (this.canViewAdmin =
-            this.permissionDataService.canViewAdministration())
+            this.permissionDataService.canViewAdministration()),
       );
 
     this.currentUser$ = this.currentUserQuery.select().pipe(
       filter((user) => user !== null),
-      takeUntil(this.unsubscribe$)
+      takeUntil(this.unsubscribe$),
     );
     this.theme$ = this.authQuery.userTheme$;
-    this.authService.setUserTheme(<Theme>this.uiDataService.getTheme() || Theme.LIGHT);
+    this.authService.setUserTheme(
+      <Theme>this.uiDataService.getTheme() || Theme.LIGHT,
+    );
   }
 
   setTeamFn(id: string) {

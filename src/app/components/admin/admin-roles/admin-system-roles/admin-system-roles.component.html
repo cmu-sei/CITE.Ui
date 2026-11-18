@@ -8,18 +8,32 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
     <ng-container matColumnDef="permissions">
       <th mat-header-cell *matHeaderCellDef>
         Permissions
-        <button mat-icon-button color="primary" (click)="addRole()" [disabled]="!canEdit" matTooltip="Add New Role">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="addRole()"
+          [disabled]="!canEdit"
+          matTooltip="Add New Role"
+        >
           <mat-icon class="mdi-24px" fontIcon="mdi-plus-circle" />
         </button>
-        <button mat-icon-button color="primary"
+        <button
+          mat-icon-button
+          color="primary"
           matTooltip="Roles can be set on Users or, if enabled in your environment, can be matched to Role Names from the token of the Identity Provider in use."
-          matTooltipShowDelay="0">
+          matTooltipShowDelay="0"
+        >
           <mat-icon class="mdi-24px" fontIcon="mdi-information" />
         </button>
       </th>
       <th mat-header-cell *matHeaderCellDef>All</th>
       <td mat-cell *matCellDef="let permission">
-        <button mat-icon-button color="primary" [matTooltip]="permissionMap.get(permission)" [matTooltipShowDelay]="0">
+        <button
+          mat-icon-button
+          color="primary"
+          [matTooltip]="permissionMap.get(permission)"
+          [matTooltipShowDelay]="0"
+        >
           <mat-icon class="mdi-24px" fontIcon="mdi-information" />
         </button>
         {{ permission }}
@@ -33,14 +47,25 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
             <p>{{ role.name }}</p>
             @if (canEdit) {
               @if (!role.immutable) {
-                <button mat-icon-button color="primary" (click)="renameRole(role)"
-                  title="Rename Role">
-                  <mat-icon class="mdi-24px" fontIcon="mdi-square-edit-outline" />
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="renameRole(role)"
+                  title="Rename Role"
+                >
+                  <mat-icon
+                    class="mdi-24px"
+                    fontIcon="mdi-square-edit-outline"
+                  />
                 </button>
               }
               @if (!role.immutable) {
-                <button mat-icon-button color="primary" (click)="deleteRole(role)"
-                  title="Delete Role">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="deleteRole(role)"
+                  title="Delete Role"
+                >
                   <mat-icon class="mdi-24px" fontIcon="mdi-trash-can-outline" />
                 </button>
               }
@@ -49,15 +74,21 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
         </th>
         <td mat-cell *matCellDef="let permission">
           @if (permission == allPermission || !role.allPermissions) {
-            <mat-checkbox color="primary"
-              [checked]="hasPermission(permission, role)" (change)="setPermission(permission, role, $event)"
-            [disabled]="role.immutable || !canEdit" />
+            <mat-checkbox
+              color="primary"
+              [checked]="hasPermission(permission, role)"
+              (change)="setPermission(permission, role, $event)"
+              [disabled]="role.immutable || !canEdit"
+            />
           }
         </td>
       </ng-container>
     }
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns$ | async; sticky: true"></tr>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="displayedColumns$ | async; sticky: true"
+    ></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns$ | async"></tr>
   </table>
 </div>

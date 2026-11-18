@@ -3,17 +3,38 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, OnDestroy, OnInit, inject, output } from '@angular/core';
-import { FormBuilder, FormGroup, FormGroupDirective, NgForm, UntypedFormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
 import {
-  MAT_DIALOG_DATA as MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+  FormBuilder,
+  FormGroup,
+  FormGroupDirective,
+  NgForm,
+  UntypedFormControl,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EDITOR_CONFIG } from 'src/app/utilities/editor-config';
-import { CrucibleDialogComponent, CrucibleDialogContentDirective } from '@cmusei/crucible-common';
-import { MatFormField, MatLabel, MatInput, MatSuffix } from '@angular/material/input';
+import {
+  CrucibleDialogComponent,
+  CrucibleDialogContentDirective,
+} from '@cmusei/crucible-common';
+import {
+  MatFormField,
+  MatLabel,
+  MatInput,
+  MatSuffix,
+} from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { NgxMatDatepickerInput, NgxMatDatetimepicker, NgxMatDatepickerActions, NgxMatDatepickerApply, NgxMatDatepickerCancel } from '@ngxmc/datetime-picker';
+import {
+  NgxMatDatepickerInput,
+  NgxMatDatetimepicker,
+  NgxMatDatepickerActions,
+  NgxMatDatepickerApply,
+  NgxMatDatepickerCancel,
+} from '@ngxmc/datetime-picker';
 import { MatDatepickerToggle } from '@angular/material/datepicker';
 import { MatButton } from '@angular/material/button';
 import { AngularEditorModule } from '@kolkov/angular-editor';
@@ -24,7 +45,7 @@ import { DatePipe } from '@angular/common';
 export class UserErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(
     control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
+    form: FormGroupDirective | NgForm | null,
   ): boolean {
     const isSubmitted = form && form.submitted;
     return !!(control && control.invalid && (control.dirty || isSubmitted));
@@ -32,31 +53,31 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-    selector: 'app-admin-evaluation-edit-dialog',
-    templateUrl: './admin-evaluation-edit-dialog.component.html',
-    styleUrls: ['./admin-evaluation-edit-dialog.component.scss'],
-    imports: [
-        CrucibleDialogComponent,
-        CrucibleDialogContentDirective,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        MatSelect,
-        MatOption,
-        NgxMatDatepickerInput,
-        MatDatepickerToggle,
-        MatSuffix,
-        NgxMatDatetimepicker,
-        NgxMatDatepickerActions,
-        MatButton,
-        NgxMatDatepickerApply,
-        NgxMatDatepickerCancel,
-        AngularEditorModule,
-        MatCheckbox,
-        DatePipe,
-    ],
+  selector: 'app-admin-evaluation-edit-dialog',
+  templateUrl: './admin-evaluation-edit-dialog.component.html',
+  styleUrls: ['./admin-evaluation-edit-dialog.component.scss'],
+  imports: [
+    CrucibleDialogComponent,
+    CrucibleDialogContentDirective,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatSelect,
+    MatOption,
+    NgxMatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix,
+    NgxMatDatetimepicker,
+    NgxMatDatepickerActions,
+    MatButton,
+    NgxMatDatepickerApply,
+    NgxMatDatepickerCancel,
+    AngularEditorModule,
+    MatCheckbox,
+    DatePipe,
+  ],
 })
 export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
   data = inject(MAT_DIALOG_DATA);
@@ -72,20 +93,32 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
     const evaluation = data.evaluation;
     const disabled = !data.canEdit;
     this.form = this.formBuilder.group({
-      description: [{ value: evaluation.description, disabled }, Validators.required],
+      description: [
+        { value: evaluation.description, disabled },
+        Validators.required,
+      ],
       scoringModelId: [
-        { value: evaluation.scoringModelId, disabled: data.isExisting || disabled },
+        {
+          value: evaluation.scoringModelId,
+          disabled: data.isExisting || disabled,
+        },
         data.isExisting ? [] : Validators.required,
       ],
       status: [{ value: evaluation.status, disabled }],
       galleryExhibitId: [{ value: evaluation.galleryExhibitId, disabled }],
       currentMoveNumber: [{ value: evaluation.currentMoveNumber, disabled }],
       // the API requires a situation time, and an empty one fails the save
-      situationTime: [{ value: evaluation.situationTime || new Date(), disabled }],
-      situationDescription: [{ value: evaluation.situationDescription, disabled }],
+      situationTime: [
+        { value: evaluation.situationTime || new Date(), disabled },
+      ],
+      situationDescription: [
+        { value: evaluation.situationDescription, disabled },
+      ],
       showAdvanceButton: [{ value: evaluation.showAdvanceButton, disabled }],
       // off unless set; a new evaluation has no value, and the API needs a boolean
-      hideNamesFromObservers: [{ value: !!evaluation.hideNamesFromObservers, disabled }],
+      hideNamesFromObservers: [
+        { value: !!evaluation.hideNamesFromObservers, disabled },
+      ],
     });
   }
 
@@ -110,7 +143,7 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
         Object.assign(this.data.evaluation, this.form.getRawValue());
         if (this.data.evaluation.situationTime) {
           this.data.evaluation.situationTime = new Date(
-            this.data.evaluation.situationTime
+            this.data.evaluation.situationTime,
           );
         }
         this.editComplete.emit({
@@ -130,7 +163,7 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
         if (this.situationDateFormControl.value) {
           this.situationDateFormControl.setValue(
             new Date(this.situationDateFormControl.value),
-            { emitEvent: false }
+            { emitEvent: false },
           );
         }
         break;
@@ -162,7 +195,7 @@ export class AdminEvaluationEditDialogComponent implements OnInit, OnDestroy {
       const timeZone = this.getUserTimezone();
       const formatted = date.toLocaleTimeString('en-US', {
         timeZoneName: 'short',
-        timeZone
+        timeZone,
       });
       const parts = formatted.split(' ');
       return parts[parts.length - 1] || 'UTC';

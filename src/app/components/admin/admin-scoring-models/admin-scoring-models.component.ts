@@ -2,9 +2,26 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit, OnDestroy, ElementRef, inject, viewChild } from '@angular/core';
-import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ElementRef,
+  inject,
+  viewChild,
+} from '@angular/core';
+import {
+  UntypedFormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Sort, MatSort, MatSortHeader } from '@angular/material/sort';
 import {
@@ -15,7 +32,10 @@ import {
 } from 'src/app/generated/cite.api/model/models';
 import { ScoringModelDataService } from 'src/app/data/scoring-model/scoring-model-data.service';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,13 +45,32 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { MatIcon } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
-import { MatFormField, MatInput, MatSuffix, MatLabel } from '@angular/material/input';
+import {
+  MatFormField,
+  MatInput,
+  MatSuffix,
+  MatLabel,
+} from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
-import { MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import {
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+} from '@angular/material/table';
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+} from '@angular/material/expansion';
 import { AdminScoringCategoriesComponent } from '../admin-scoring-categories/admin-scoring-categories.component';
 import { AdminScoringModelMembershipsComponent } from '../admin-scoring-model-memberships/admin-scoring-model-memberships/admin-scoring-model-memberships.component';
 import { MatCard } from '@angular/material/card';
@@ -39,17 +78,20 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { AdminPreviewComponent } from '../admin-preview/admin-preview.component';
 
 @Component({
-    selector: 'app-admin-scoring-models',
-    templateUrl: './admin-scoring-models.component.html',
-    styleUrls: ['./admin-scoring-models.component.scss'],
-    animations: [
-        trigger('detailExpand', [
-            state('collapsed', style({ height: '0px', minHeight: '0' })),
-            state('expanded', style({ height: '*' })),
-            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-        ]),
-    ],
-    imports: [
+  selector: 'app-admin-scoring-models',
+  templateUrl: './admin-scoring-models.component.html',
+  styleUrls: ['./admin-scoring-models.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition(
+        'expanded <=> collapsed',
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'),
+      ),
+    ]),
+  ],
+  imports: [
     MatIcon,
     MatFormField,
     MatInput,
@@ -81,8 +123,8 @@ import { AdminPreviewComponent } from '../admin-preview/admin-preview.component'
     MatCard,
     MatProgressSpinner,
     AdminPreviewComponent,
-    DatePipe
-],
+    DatePipe,
+  ],
 })
 export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   private settingsService = inject(ComnSettingsService);
@@ -110,7 +152,13 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   addingNewScoringModel = false;
   newScoringModelDescription = '';
   editScoringModel: ScoringModel = {};
-  displayedColumns = ['actions', 'description', 'createdBy', 'dateCreated', 'status'];
+  displayedColumns = [
+    'actions',
+    'description',
+    'createdBy',
+    'dateCreated',
+    'status',
+  ];
   previewScoringModelId = '';
   scoringCategoryId = '';
   itemStatuses = [
@@ -118,18 +166,18 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     ItemStatus.Active,
     ItemStatus.Cancelled,
     ItemStatus.Complete,
-    ItemStatus.Archived
+    ItemStatus.Archived,
   ];
-  selectedStatuses = [ ItemStatus.Pending, ItemStatus.Active ];
+  selectedStatuses = [ItemStatus.Pending, ItemStatus.Active];
   rightSideDisplays = [
     RightSideDisplay.ScoreSummary,
     RightSideDisplay.HtmlBlock,
     RightSideDisplay.EmbeddedUrl,
     RightSideDisplay.Scoresheet,
-    RightSideDisplay.None
+    RightSideDisplay.None,
   ];
   private unsubscribe$ = new Subject();
-  sort: Sort = {active: 'description', direction: 'asc'};
+  sort: Sort = { active: 'description', direction: 'asc' };
   isBusy = false;
   uploadProgress = 0;
   readonly jsonInput = viewChild<ElementRef<HTMLInputElement>>('jsonInput');
@@ -139,22 +187,29 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   constructor() {
     this.scoringModelDataService.load();
     // observe the scoring models
-    this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringModels => {
-      this.scoringModelList = scoringModels;
-    });
+    this.scoringModelQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((scoringModels) => {
+        this.scoringModelList = scoringModels;
+      });
     // oberve the users
-    this.userQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(users => {
-      this.userList = users;
-    });
+    this.userQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((users) => {
+        this.userList = users;
+      });
     // subscribe to scoring models loading
-    this.scoringModelQuery.selectLoading().pipe(takeUntil(this.unsubscribe$)).subscribe((isLoading) => {
-      this.isBusy = isLoading;
-    });
+    this.scoringModelQuery
+      .selectLoading()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((isLoading) => {
+        this.isBusy = isLoading;
+      });
 
     this.filterControl.valueChanges
-      .pipe(
-        takeUntil(this.unsubscribe$)
-      )
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((term) => {
         this.filterString = term.trim().toLowerCase();
         this.applyFilter();
@@ -171,10 +226,13 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   }
 
   loadInitialData() {
-    this.scoringModelQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(models => {
-      this.scoringModelList = Array.from(models);
-      this.applyFilter();
-    })
+    this.scoringModelQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((models) => {
+        this.scoringModelList = Array.from(models);
+        this.applyFilter();
+      });
   }
 
   addOrEditScoringModel(scoringModel: ScoringModel) {
@@ -183,12 +241,14 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
       scoringModel = {
         description: '',
         calculationEquation: '{average}',
-        status: ItemStatus.Pending
+        status: ItemStatus.Pending,
       };
       hasPermission = this.permissionDataService.canCreateScoringModels();
     } else {
-      scoringModel = {... scoringModel};
-      hasPermission = this.permissionDataService.canEditScoringModel(scoringModel.id);
+      scoringModel = { ...scoringModel };
+      hasPermission = this.permissionDataService.canEditScoringModel(
+        scoringModel.id,
+      );
     }
     const dialogRef = this.dialog.open(AdminScoringModelEditDialogComponent, {
       maxWidth: '90vw',
@@ -198,7 +258,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
         scoringModel: scoringModel,
         itemStatuses: this.itemStatuses,
         rightSideDisplays: this.rightSideDisplays,
-        canEdit: !scoringModel.evaluationId && hasPermission
+        canEdit: !scoringModel.evaluationId && hasPermission,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -211,7 +271,9 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
 
   togglePanel(scoringModel: ScoringModel) {
     this.editScoringModel =
-      this.editScoringModel.id === scoringModel.id ? this.editScoringModel = {} : this.editScoringModel = { ...scoringModel};
+      this.editScoringModel.id === scoringModel.id
+        ? (this.editScoringModel = {})
+        : (this.editScoringModel = { ...scoringModel });
   }
 
   canEdit(id: string): boolean {
@@ -234,7 +296,10 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     this.dialogService
       .confirm({
         title: 'Delete Scoring Model',
-        message: 'Are you sure that you want to delete ' + scoringModel.description + '?',
+        message:
+          'Are you sure that you want to delete ' +
+          scoringModel.description +
+          '?',
         confirmText: 'Delete',
         cancelText: 'Cancel',
       })
@@ -247,11 +312,12 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
-    this.filteredScoringModelList = this.scoringModelList.filter(model =>
+    this.filteredScoringModelList = this.scoringModelList.filter(
+      (model) =>
         (!this.filterString ||
-        model.description.toLowerCase().includes(this.filterString)) &&
-        ((this.showAll) || (!model.evaluationId && !this.showAll)) &&
-        this.selectedStatuses.some(status => status === model.status)
+          model.description.toLowerCase().includes(this.filterString)) &&
+        (this.showAll || (!model.evaluationId && !this.showAll)) &&
+        this.selectedStatuses.some((status) => status === model.status),
     );
     this.sortChanged(this.sort);
   }
@@ -262,7 +328,9 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
 
   sortChanged(sort: Sort) {
     this.sort = sort;
-    this.filteredScoringModelList.sort((a, b) => this.sortScoringModels(a, b, sort.active, sort.direction));
+    this.filteredScoringModelList.sort((a, b) =>
+      this.sortScoringModels(a, b, sort.active, sort.direction),
+    );
     this.applyPagination();
   }
 
@@ -270,30 +338,35 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     a: ScoringModel,
     b: ScoringModel,
     column: string,
-    direction: string
+    direction: string,
   ) {
     let returnValue = 0;
     const isAsc = direction !== 'desc';
     switch (column) {
       case 'dateCreated':
-        returnValue = ( (a.dateCreated < b.dateCreated ? -1 : 1) * (isAsc ? 1 : -1) );
+        returnValue =
+          (a.dateCreated < b.dateCreated ? -1 : 1) * (isAsc ? 1 : -1);
         break;
       case 'status':
-        returnValue = ( (a.status < b.status ? -1 : 1) * (isAsc ? 1 : -1) );
+        returnValue = (a.status < b.status ? -1 : 1) * (isAsc ? 1 : -1);
         break;
       case 'createdBy':
-        returnValue = ( (a.createdBy.toLowerCase() < b.createdBy.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        returnValue =
+          (a.createdBy.toLowerCase() < b.createdBy.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1);
         break;
       case 'description':
       default:
-        returnValue = ( (a.description.toLowerCase() < b.description.toLowerCase() ? -1 : 1) * (isAsc ? 1 : -1) );
+        returnValue =
+          (a.description.toLowerCase() < b.description.toLowerCase() ? -1 : 1) *
+          (isAsc ? 1 : -1);
         break;
     }
     return returnValue;
   }
 
   getUserName(id: string) {
-    const user = this.userList.find(u => u.id === id);
+    const user = this.userList.find((u) => u.id === id);
     return user ? user.name : '?';
   }
 
@@ -328,7 +401,7 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
       },
       () => {
         this.isBusy = false;
-      }
+      },
     );
   }
 
@@ -359,7 +432,10 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
 
   applyPagination() {
     const startIndex = this.pageIndex * this.pageSize;
-    this.displayedScoringModels = this.filteredScoringModelList.slice(startIndex, startIndex + this.pageSize);
+    this.displayedScoringModels = this.filteredScoringModelList.slice(
+      startIndex,
+      startIndex + this.pageSize,
+    );
   }
 
   trackById = (_: number, row: ScoringModel) => row.id;
@@ -368,5 +444,4 @@ export class AdminScoringModelsComponent implements OnInit, OnDestroy {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

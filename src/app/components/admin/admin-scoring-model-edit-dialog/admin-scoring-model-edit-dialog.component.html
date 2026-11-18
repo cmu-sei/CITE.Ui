@@ -5,7 +5,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <crucible-dialog
-  [dialogTitle]="data.scoringModel.id ? 'Edit Scoring Model' : 'Add Scoring Model'"
+  [dialogTitle]="
+    data.scoringModel.id ? 'Edit Scoring Model' : 'Add Scoring Model'
+  "
   [form]="form"
   submitLabel="Save"
   [submitDisabled]="!data.canEdit || !form.valid || !form.dirty"
@@ -13,263 +15,427 @@ project root for license information or contact permission@sei.cmu.edu for full 
   (cancel)="handleEditComplete(false)"
   (submit)="handleEditComplete(true)"
 >
-@if (data && data.scoringModel) {
-  <div crucibleDialogContent [formGroup]="form">
-    <div class="add-margin">
-      <div class="field-row">
-        <mat-form-field class="description-field full-width">
-          <mat-label>Scoring Model Description</mat-label>
-          <input matInput formControlName="description" />
-        </mat-form-field>
-        <button mat-icon-button type="button" class="info-button" tabindex="-1"
-          matTooltip="A name or description for this scoring model. Shown in the admin scoring-model list and when selecting a model for an evaluation."
-          #descTip="matTooltip" (click)="descTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-        </button>
-      </div>
-    </div>
-    <div class="add-margin">
-      <div class="field-row">
-        <mat-form-field class="description-field full-width">
-          <mat-label>Scoring Model Status</mat-label>
-          <mat-select placeholder="Select a Status" formControlName="status">
-            @for (status of data.itemStatuses; track status) {
-              <mat-option [value]="status">
-                {{ status }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <button mat-icon-button type="button" class="info-button" tabindex="-1"
-          matTooltip="Lifecycle state of this scoring model. Used for filtering in the admin list and to mark whether a model is still in use."
-          #statusTip="matTooltip" (click)="statusTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-        </button>
-      </div>
-    </div>
-    <div class="add-margin">
-      <div class="field-row">
-        <mat-form-field class="description-field full-width">
-          <mat-label>Calculation Equation</mat-label>
-          <input matInput formControlName="calculationEquation" />
-        </mat-form-field>
-        <button mat-icon-button type="button" class="info-button" tabindex="-1"
-          matTooltip="Formula that computes the overall score from the weighted category scores. Supports the following placeholders: {count} (number of scoring categories), {minPossible} (weighted minimum possible score), {maxPossible} (weighted maximum possible score), {sum} (weighted actual score), and {average} (average of weighted category scores). May optionally be prefixed with a clamp range in the form 'MAX > equation' or 'MAX > equation > MIN' to cap the result."
-          #modelEqTip="matTooltip" (click)="modelEqTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-        </button>
-      </div>
-    </div>
-    <div>
-      <b>Scoring Options</b>
-      <div class="scoring-option">
-        <div class="field-row">
-          <mat-checkbox formControlName="useUserScore">Use Individual User Scoring</mat-checkbox>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="When enabled, each participant can submit their own individual score for the evaluation."
-            #useUserTip="matTooltip" (click)="useUserTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-          </button>
-        </div>
-      </div>
-      <div class="scoring-option">
-        <div class="field-row">
-          <mat-checkbox formControlName="useTeamScore">Use Team Scoring</mat-checkbox>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="When enabled, a team can submit a single team-wide score for the evaluation."
-            #useTeamTip="matTooltip" (click)="useTeamTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-          </button>
-        </div>
-      </div>
-      <div class="scoring-option">
-        <div class="field-row">
-          <mat-checkbox formControlName="useOfficialScore">Use Official Scoring</mat-checkbox>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="When enabled, an official score can be submitted for the evaluation by authorized teams or users."
-            #useOfficialTip="matTooltip" (click)="useOfficialTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-          </button>
-        </div>
-      </div>
-      <div class="scoring-option">
-        <div class="field-row">
-          <mat-checkbox formControlName="useTeamAverageScore">Use Team Average Scoring</mat-checkbox>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="When enabled, a team's score is computed as the average of its members' individual user scores. Requires Use Individual User Scoring."
-            #useTeamAvgTip="matTooltip" (click)="useTeamAvgTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-          </button>
-        </div>
-      </div>
-      <div class="scoring-option">
-        <div class="field-row">
-          <mat-checkbox formControlName="useTypeAverageScore">Use Type Average Scoring</mat-checkbox>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="When enabled, a score is computed as the average across all teams of the same team type. Requires Use Team Scoring."
-            #useTypeAvgTip="matTooltip" (click)="useTypeAvgTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="add-margin">
-      <b>Display Options</b>
-      <div class="scoring-option">
-        <div class="field-row">
-          <mat-checkbox formControlName="useSubmit">Use Submit Button for Submissions</mat-checkbox>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="When enabled, participants must click Submit to finalize their response for each move. When disabled, selections are saved automatically."
-            #useSubmitTip="matTooltip" (click)="useSubmitTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-          </button>
-        </div>
-      </div>
-      <div class="scoring-option">
-        <div class="field-row">
-          <mat-checkbox formControlName="hideScoresOnScoreSheet">Hide Option Values On Scoresheet</mat-checkbox>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="When enabled, the numeric value of each scoring option is hidden from participants on the scoresheet. The computed scores are still displayed."
-            #hideScoresTip="matTooltip" (click)="hideScoresTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-          </button>
-        </div>
-      </div>
-      <div class="scoring-option">
-        <div class="field-row">
-          <mat-checkbox formControlName="displayCommentTextBoxes">Display Comments as Textboxes</mat-checkbox>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="When enabled, comments on scoring options are shown as always-visible textboxes instead of collapsible indicators."
-            #commentsTip="matTooltip" (click)="commentsTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-          </button>
-        </div>
-      </div>
-      <div class="scoring-option">
-        <div class="field-row">
-          <mat-checkbox formControlName="displayScoringModelByMoveNumber">Use Different Scoring Categories by Move Number</mat-checkbox>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="When enabled, each scoring category can be restricted to a specific range of moves using its First Move to Display and Last Move to Display fields."
-            #byMoveTip="matTooltip" (click)="byMoveTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-          </button>
-        </div>
-      </div>
-      <div class="scoring-option">
-        <div class="field-row">
-          <mat-checkbox formControlName="showPastSituationDescriptions">Show Past Situation Descriptions on Dashboard</mat-checkbox>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="When enabled, the dashboard displays situation descriptions from previous moves in addition to the current one."
-            #pastSitTip="matTooltip" (click)="pastSitTip.toggle()">
-            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-          </button>
-        </div>
-      </div>
-      <div class="add-margin"> &nbsp;</div>
-      <div class="scoring-option">
+  @if (data && data.scoringModel) {
+    <div crucibleDialogContent [formGroup]="form">
+      <div class="add-margin">
         <div class="field-row">
           <mat-form-field class="description-field full-width">
-            <mat-label>Right Side Display</mat-label>
-            <mat-select placeholder="Select a Right Side Display Option" formControlName="rightSideDisplay">
-              @for (item of data.rightSideDisplays; track item) {
-                <mat-option [value]="item">
-                  {{ item }}
+            <mat-label>Scoring Model Description</mat-label>
+            <input matInput formControlName="description" />
+          </mat-form-field>
+          <button
+            mat-icon-button
+            type="button"
+            class="info-button"
+            tabindex="-1"
+            matTooltip="A name or description for this scoring model. Shown in the admin scoring-model list and when selecting a model for an evaluation."
+            #descTip="matTooltip"
+            (click)="descTip.toggle()"
+          >
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+          </button>
+        </div>
+      </div>
+      <div class="add-margin">
+        <div class="field-row">
+          <mat-form-field class="description-field full-width">
+            <mat-label>Scoring Model Status</mat-label>
+            <mat-select placeholder="Select a Status" formControlName="status">
+              @for (status of data.itemStatuses; track status) {
+                <mat-option [value]="status">
+                  {{ status }}
                 </mat-option>
               }
             </mat-select>
           </mat-form-field>
-          <button mat-icon-button type="button" class="info-button" tabindex="-1"
-            matTooltip="Chooses what appears in the right-hand pane of the dashboard: a Score Summary, an HTML Block, an Embedded URL, the Scoresheet, or nothing."
-            #rsdTip="matTooltip" (click)="rsdTip.toggle()">
+          <button
+            mat-icon-button
+            type="button"
+            class="info-button"
+            tabindex="-1"
+            matTooltip="Lifecycle state of this scoring model. Used for filtering in the admin list and to mark whether a model is still in use."
+            #statusTip="matTooltip"
+            (click)="statusTip.toggle()"
+          >
             <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
       </div>
-      @if (form.controls['rightSideDisplay'].value === 'HtmlBlock') {
+      <div class="add-margin">
+        <div class="field-row">
+          <mat-form-field class="description-field full-width">
+            <mat-label>Calculation Equation</mat-label>
+            <input matInput formControlName="calculationEquation" />
+          </mat-form-field>
+          <button
+            mat-icon-button
+            type="button"
+            class="info-button"
+            tabindex="-1"
+            matTooltip="Formula that computes the overall score from the weighted category scores. Supports the following placeholders: {count} (number of scoring categories), {minPossible} (weighted minimum possible score), {maxPossible} (weighted maximum possible score), {sum} (weighted actual score), and {average} (average of weighted category scores). May optionally be prefixed with a clamp range in the form 'MAX > equation' or 'MAX > equation > MIN' to cap the result."
+            #modelEqTip="matTooltip"
+            (click)="modelEqTip.toggle()"
+          >
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+          </button>
+        </div>
+      </div>
+      <div>
+        <b>Scoring Options</b>
         <div class="scoring-option">
           <div class="field-row">
-            <mat-label class="gray">Right Side HTML Block</mat-label>
-            <button mat-icon-button type="button" class="info-button" tabindex="-1"
-              matTooltip="Rich-text content shown in the right-hand pane when Right Side Display is set to HtmlBlock."
-              #htmlTip="matTooltip" (click)="htmlTip.toggle()">
+            <mat-checkbox formControlName="useUserScore"
+              >Use Individual User Scoring</mat-checkbox
+            >
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="When enabled, each participant can submit their own individual score for the evaluation."
+              #useUserTip="matTooltip"
+              (click)="useUserTip.toggle()"
+            >
               <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
             </button>
           </div>
-          <angular-editor [placeholder]="'Enter content here...'" formControlName="rightSideHtmlBlock" [config]="editorConfig" />
         </div>
-      }
-      @if (form.controls['rightSideDisplay'].value === 'EmbeddedUrl') {
+        <div class="scoring-option">
+          <div class="field-row">
+            <mat-checkbox formControlName="useTeamScore"
+              >Use Team Scoring</mat-checkbox
+            >
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="When enabled, a team can submit a single team-wide score for the evaluation."
+              #useTeamTip="matTooltip"
+              (click)="useTeamTip.toggle()"
+            >
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+            </button>
+          </div>
+        </div>
+        <div class="scoring-option">
+          <div class="field-row">
+            <mat-checkbox formControlName="useOfficialScore"
+              >Use Official Scoring</mat-checkbox
+            >
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="When enabled, an official score can be submitted for the evaluation by authorized teams or users."
+              #useOfficialTip="matTooltip"
+              (click)="useOfficialTip.toggle()"
+            >
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+            </button>
+          </div>
+        </div>
+        <div class="scoring-option">
+          <div class="field-row">
+            <mat-checkbox formControlName="useTeamAverageScore"
+              >Use Team Average Scoring</mat-checkbox
+            >
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="When enabled, a team's score is computed as the average of its members' individual user scores. Requires Use Individual User Scoring."
+              #useTeamAvgTip="matTooltip"
+              (click)="useTeamAvgTip.toggle()"
+            >
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+            </button>
+          </div>
+        </div>
+        <div class="scoring-option">
+          <div class="field-row">
+            <mat-checkbox formControlName="useTypeAverageScore"
+              >Use Type Average Scoring</mat-checkbox
+            >
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="When enabled, a score is computed as the average across all teams of the same team type. Requires Use Team Scoring."
+              #useTypeAvgTip="matTooltip"
+              (click)="useTypeAvgTip.toggle()"
+            >
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="add-margin">
+        <b>Display Options</b>
+        <div class="scoring-option">
+          <div class="field-row">
+            <mat-checkbox formControlName="useSubmit"
+              >Use Submit Button for Submissions</mat-checkbox
+            >
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="When enabled, participants must click Submit to finalize their response for each move. When disabled, selections are saved automatically."
+              #useSubmitTip="matTooltip"
+              (click)="useSubmitTip.toggle()"
+            >
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+            </button>
+          </div>
+        </div>
+        <div class="scoring-option">
+          <div class="field-row">
+            <mat-checkbox formControlName="hideScoresOnScoreSheet"
+              >Hide Option Values On Scoresheet</mat-checkbox
+            >
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="When enabled, the numeric value of each scoring option is hidden from participants on the scoresheet. The computed scores are still displayed."
+              #hideScoresTip="matTooltip"
+              (click)="hideScoresTip.toggle()"
+            >
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+            </button>
+          </div>
+        </div>
+        <div class="scoring-option">
+          <div class="field-row">
+            <mat-checkbox formControlName="displayCommentTextBoxes"
+              >Display Comments as Textboxes</mat-checkbox
+            >
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="When enabled, comments on scoring options are shown as always-visible textboxes instead of collapsible indicators."
+              #commentsTip="matTooltip"
+              (click)="commentsTip.toggle()"
+            >
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+            </button>
+          </div>
+        </div>
+        <div class="scoring-option">
+          <div class="field-row">
+            <mat-checkbox formControlName="displayScoringModelByMoveNumber"
+              >Use Different Scoring Categories by Move Number</mat-checkbox
+            >
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="When enabled, each scoring category can be restricted to a specific range of moves using its First Move to Display and Last Move to Display fields."
+              #byMoveTip="matTooltip"
+              (click)="byMoveTip.toggle()"
+            >
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+            </button>
+          </div>
+        </div>
+        <div class="scoring-option">
+          <div class="field-row">
+            <mat-checkbox formControlName="showPastSituationDescriptions"
+              >Show Past Situation Descriptions on Dashboard</mat-checkbox
+            >
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="When enabled, the dashboard displays situation descriptions from previous moves in addition to the current one."
+              #pastSitTip="matTooltip"
+              (click)="pastSitTip.toggle()"
+            >
+              <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+            </button>
+          </div>
+        </div>
+        <div class="add-margin">&nbsp;</div>
         <div class="scoring-option">
           <div class="field-row">
             <mat-form-field class="description-field full-width">
-              <mat-label>Right Side URL</mat-label>
-              <input matInput formControlName="rightSideEmbeddedUrl" />
+              <mat-label>Right Side Display</mat-label>
+              <mat-select
+                placeholder="Select a Right Side Display Option"
+                formControlName="rightSideDisplay"
+              >
+                @for (item of data.rightSideDisplays; track item) {
+                  <mat-option [value]="item">
+                    {{ item }}
+                  </mat-option>
+                }
+              </mat-select>
             </mat-form-field>
-            <button mat-icon-button type="button" class="info-button" tabindex="-1"
-              matTooltip="URL to embed in the right-hand pane when Right Side Display is set to EmbeddedUrl. The URL must allow being framed."
-              #urlTip="matTooltip" (click)="urlTip.toggle()">
+            <button
+              mat-icon-button
+              type="button"
+              class="info-button"
+              tabindex="-1"
+              matTooltip="Chooses what appears in the right-hand pane of the dashboard: a Score Summary, an HTML Block, an Embedded URL, the Scoresheet, or nothing."
+              #rsdTip="matTooltip"
+              (click)="rsdTip.toggle()"
+            >
               <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
             </button>
           </div>
         </div>
-      }
-    </div>
-    <div class="add-margin severity-levels" formArrayName="severityLevels">
-      <div class="field-row">
-        <h3 class="section-title">Severity Levels</h3>
-        <button mat-icon-button type="button" class="info-button" tabindex="-1"
-          matTooltip="The levels the Score Summary and scoresheet place scores in. A score falls in the level with the highest Minimum Score at or below it; a score below every minimum falls in the lowest level. Without levels of its own, a scoring model uses the default CISA levels."
-          #levelsTip="matTooltip" (click)="levelsTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-        </button>
+        @if (form.controls['rightSideDisplay'].value === 'HtmlBlock') {
+          <div class="scoring-option">
+            <div class="field-row">
+              <mat-label class="gray">Right Side HTML Block</mat-label>
+              <button
+                mat-icon-button
+                type="button"
+                class="info-button"
+                tabindex="-1"
+                matTooltip="Rich-text content shown in the right-hand pane when Right Side Display is set to HtmlBlock."
+                #htmlTip="matTooltip"
+                (click)="htmlTip.toggle()"
+              >
+                <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+              </button>
+            </div>
+            <angular-editor
+              [placeholder]="'Enter content here...'"
+              formControlName="rightSideHtmlBlock"
+              [config]="editorConfig"
+            />
+          </div>
+        }
+        @if (form.controls['rightSideDisplay'].value === 'EmbeddedUrl') {
+          <div class="scoring-option">
+            <div class="field-row">
+              <mat-form-field class="description-field full-width">
+                <mat-label>Right Side URL</mat-label>
+                <input matInput formControlName="rightSideEmbeddedUrl" />
+              </mat-form-field>
+              <button
+                mat-icon-button
+                type="button"
+                class="info-button"
+                tabindex="-1"
+                matTooltip="URL to embed in the right-hand pane when Right Side Display is set to EmbeddedUrl. The URL must allow being framed."
+                #urlTip="matTooltip"
+                (click)="urlTip.toggle()"
+              >
+                <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+              </button>
+            </div>
+          </div>
+        }
       </div>
-      @if (severityLevels.length === 0) {
-      <div class="field-row">
-        <span class="default-levels">Using the default CISA levels.</span>
-        <button matButton="outlined" type="button" (click)="customizeSeverityLevels()" [disabled]="!data.canEdit">
-          Customize Levels
-        </button>
-      </div>
-      } @else {
-      @for (level of severityLevels.controls; track level; let i = $index) {
-      <div class="severity-level" [formGroupName]="i">
+      <div class="add-margin severity-levels" formArrayName="severityLevels">
         <div class="field-row">
-          <mat-form-field class="level-name">
-            <mat-label>Name</mat-label>
-            <input matInput formControlName="name" />
-          </mat-form-field>
-          <mat-form-field class="level-minimum">
-            <mat-label>Minimum Score</mat-label>
-            <input matInput type="number" formControlName="minimumScore" />
-          </mat-form-field>
-          <label class="level-color">
-            <span>Color</span>
-            <input type="color" formControlName="color" [attr.aria-label]="'Color of ' + (level.value.name || 'this level')" />
-          </label>
-          <button mat-icon-button type="button" (click)="removeSeverityLevel(i)" [disabled]="!data.canEdit"
-            [attr.aria-label]="'Remove ' + (level.value.name || 'this level')" matTooltip="Remove Level">
-            <mat-icon fontIcon="mdi-trash-can-outline" />
+          <h3 class="section-title">Severity Levels</h3>
+          <button
+            mat-icon-button
+            type="button"
+            class="info-button"
+            tabindex="-1"
+            matTooltip="The levels the Score Summary and scoresheet place scores in. A score falls in the level with the highest Minimum Score at or below it; a score below every minimum falls in the lowest level. Without levels of its own, a scoring model uses the default CISA levels."
+            #levelsTip="matTooltip"
+            (click)="levelsTip.toggle()"
+          >
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
           </button>
         </div>
-        <mat-form-field class="full-width">
-          <mat-label>Description</mat-label>
-          <input matInput formControlName="description" />
-        </mat-form-field>
+        @if (severityLevels.length === 0) {
+          <div class="field-row">
+            <span class="default-levels">Using the default CISA levels.</span>
+            <button
+              matButton="outlined"
+              type="button"
+              (click)="customizeSeverityLevels()"
+              [disabled]="!data.canEdit"
+            >
+              Customize Levels
+            </button>
+          </div>
+        } @else {
+          @for (level of severityLevels.controls; track level; let i = $index) {
+            <div class="severity-level" [formGroupName]="i">
+              <div class="field-row">
+                <mat-form-field class="level-name">
+                  <mat-label>Name</mat-label>
+                  <input matInput formControlName="name" />
+                </mat-form-field>
+                <mat-form-field class="level-minimum">
+                  <mat-label>Minimum Score</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="minimumScore"
+                  />
+                </mat-form-field>
+                <label class="level-color">
+                  <span>Color</span>
+                  <input
+                    type="color"
+                    formControlName="color"
+                    [attr.aria-label]="
+                      'Color of ' + (level.value.name || 'this level')
+                    "
+                  />
+                </label>
+                <button
+                  mat-icon-button
+                  type="button"
+                  (click)="removeSeverityLevel(i)"
+                  [disabled]="!data.canEdit"
+                  [attr.aria-label]="
+                    'Remove ' + (level.value.name || 'this level')
+                  "
+                  matTooltip="Remove Level"
+                >
+                  <mat-icon fontIcon="mdi-trash-can-outline" />
+                </button>
+              </div>
+              <mat-form-field class="full-width">
+                <mat-label>Description</mat-label>
+                <input matInput formControlName="description" />
+              </mat-form-field>
+            </div>
+          }
+          @if (severityLevels.hasError('duplicateMinimumScore')) {
+            <div class="level-error" role="alert">
+              Each level needs a different Minimum Score.
+            </div>
+          }
+          <div class="field-row">
+            <button
+              matButton="outlined"
+              type="button"
+              (click)="addSeverityLevel()"
+              [disabled]="!data.canEdit"
+            >
+              Add Level
+            </button>
+            <button
+              matButton
+              type="button"
+              (click)="useDefaultSeverityLevels()"
+              [disabled]="!data.canEdit"
+            >
+              Use Default Levels
+            </button>
+          </div>
+        }
       </div>
-      }
-      @if (severityLevels.hasError('duplicateMinimumScore')) {
-      <div class="level-error" role="alert">Each level needs a different Minimum Score.</div>
-      }
-      <div class="field-row">
-        <button matButton="outlined" type="button" (click)="addSeverityLevel()" [disabled]="!data.canEdit">
-          Add Level
-        </button>
-        <button matButton type="button" (click)="useDefaultSeverityLevels()" [disabled]="!data.canEdit">
-          Use Default Levels
-        </button>
-      </div>
-      }
     </div>
-  </div>
-}
+  }
 </crucible-dialog>

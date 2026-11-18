@@ -1,10 +1,31 @@
 // Copyright 2024 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import { Component, OnInit, OnChanges, SimpleChanges, inject, input, output, viewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  inject,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import {
+  MatTableDataSource,
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+} from '@angular/material/table';
 import { User } from 'src/app/generated/cite.api';
 import { RoleDataService } from 'src/app/data/role/role-data.service';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
@@ -27,10 +48,37 @@ export interface Action {
 }
 
 @Component({
-    selector: 'app-admin-user-list',
-    templateUrl: './admin-user-list.component.html',
-    styleUrls: ['./admin-user-list.component.scss'],
-    imports: [MatIcon, MatFormField, MatInput, FormsModule, MatIconButton, MatSuffix, MatPaginator, MatTooltip, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, ClipboardModule, MatSelect, MatOption, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatCard, MatProgressSpinner, AsyncPipe]
+  selector: 'app-admin-user-list',
+  templateUrl: './admin-user-list.component.html',
+  styleUrls: ['./admin-user-list.component.scss'],
+  imports: [
+    MatIcon,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    MatIconButton,
+    MatSuffix,
+    MatPaginator,
+    MatTooltip,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    ClipboardModule,
+    MatSelect,
+    MatOption,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatCard,
+    MatProgressSpinner,
+    AsyncPipe,
+  ],
 })
 export class AdminUserListComponent implements OnInit, OnChanges {
   private confirmService = inject(CrucibleDialogService);

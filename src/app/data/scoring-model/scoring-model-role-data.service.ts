@@ -15,9 +15,10 @@ import {
 export class ScoringModelRoleDataService {
   private scoringModelRolesService = inject(ScoringModelRolesService);
 
-  private scoringModelRolesSubject = new BehaviorSubject<ScoringModelRole[]>([]);
-  public scoringModelRoles$ =
-    this.scoringModelRolesSubject.asObservable();
+  private scoringModelRolesSubject = new BehaviorSubject<ScoringModelRole[]>(
+    [],
+  );
+  public scoringModelRoles$ = this.scoringModelRolesSubject.asObservable();
 
   loadRoles(): Observable<ScoringModelRole[]> {
     return this.scoringModelRolesService

@@ -29,7 +29,11 @@ import {
 } from 'src/app/services/signalr.service';
 import { environment } from 'src/environments/environment';
 import { HealthCheckService } from 'src/app/generated/cite.api/api/api';
-import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+import {
+  MatSidenavContainer,
+  MatSidenav,
+  MatSidenavContent,
+} from '@angular/material/sidenav';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatList, MatListItem, MatListItemIcon } from '@angular/material/list';
@@ -45,29 +49,29 @@ import { AdminRolesComponent } from '../admin-roles/admin-roles.component';
 import { AdminGroupsComponent } from '../admin-groups/admin-groups.component';
 
 @Component({
-    selector: 'app-admin-container',
-    templateUrl: './admin-container.component.html',
-    styleUrls: ['./admin-container.component.scss'],
-    imports: [
-        MatSidenavContainer,
-        MatSidenav,
-        MatToolbar,
-        MatIcon,
-        MatList,
-        MatListItem,
-        MatListItemIcon,
-        MatIconButton,
-        MatSidenavContent,
-        TopbarComponent,
-        AdminScoringModelsComponent,
-        AdminEvaluationsComponent,
-        AdminSubmissionsComponent,
-        AdminTeamTypesComponent,
-        AdminUsersComponent,
-        AdminRolesComponent,
-        AdminGroupsComponent,
-        AsyncPipe,
-    ],
+  selector: 'app-admin-container',
+  templateUrl: './admin-container.component.html',
+  styleUrls: ['./admin-container.component.scss'],
+  imports: [
+    MatSidenavContainer,
+    MatSidenav,
+    MatToolbar,
+    MatIcon,
+    MatList,
+    MatListItem,
+    MatListItemIcon,
+    MatIconButton,
+    MatSidenavContent,
+    TopbarComponent,
+    AdminScoringModelsComponent,
+    AdminEvaluationsComponent,
+    AdminSubmissionsComponent,
+    AdminTeamTypesComponent,
+    AdminUsersComponent,
+    AdminRolesComponent,
+    AdminGroupsComponent,
+    AsyncPipe,
+  ],
 })
 export class AdminContainerComponent implements OnDestroy, OnInit {
   private router = inject(Router);
@@ -134,18 +138,18 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.theme$ = this.authQuery.userTheme$;
     this.hideTopbar = this.inIframe();
     this.pageSize = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pagesize') || '20', 10))
+      map((params) => parseInt(params.get('pagesize') || '20', 10)),
     );
     this.pageIndex = activatedRoute.queryParamMap.pipe(
-      map((params) => parseInt(params.get('pageindex') || '0', 10))
+      map((params) => parseInt(params.get('pageindex') || '0', 10)),
     );
     this.showSection$ = activatedRoute.queryParamMap.pipe(
       tap(
         (params) =>
-        (this.displayedSection =
-          params.get('section') || this.evaluationsText)
+          (this.displayedSection =
+            params.get('section') || this.evaluationsText),
       ),
-      map((params) => params.get('section') || this.evaluationsText)
+      map((params) => params.get('section') || this.evaluationsText),
     );
     this.showSection$
       .pipe(takeUntil(this.unsubscribe$))
@@ -168,14 +172,30 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
     this.userList = this.userQuery.selectAll();
     this.permissionDataService.load().subscribe((x) => {
       this.permissions = this.permissionDataService.permissions;
-      this.canViewScoringModels = this.permissionDataService.hasPermission(SystemPermission.ViewScoringModels);
-      this.canCreateScoringModels = this.permissionDataService.hasPermission(SystemPermission.CreateScoringModels);
-      this.canViewEvaluations = this.permissionDataService.hasPermission(SystemPermission.ViewEvaluations);
-      this.canCreateEvaluations = this.permissionDataService.hasPermission(SystemPermission.CreateEvaluations);
-      this.canViewGroups = this.permissionDataService.hasPermission(SystemPermission.ViewGroups);
-      this.canViewRoles = this.permissionDataService.hasPermission(SystemPermission.ViewRoles);
-      this.canViewTeamTypes = this.permissionDataService.hasPermission(SystemPermission.ViewTeamTypes);
-      this.canViewUsers = this.permissionDataService.hasPermission(SystemPermission.ViewUsers);
+      this.canViewScoringModels = this.permissionDataService.hasPermission(
+        SystemPermission.ViewScoringModels,
+      );
+      this.canCreateScoringModels = this.permissionDataService.hasPermission(
+        SystemPermission.CreateScoringModels,
+      );
+      this.canViewEvaluations = this.permissionDataService.hasPermission(
+        SystemPermission.ViewEvaluations,
+      );
+      this.canCreateEvaluations = this.permissionDataService.hasPermission(
+        SystemPermission.CreateEvaluations,
+      );
+      this.canViewGroups = this.permissionDataService.hasPermission(
+        SystemPermission.ViewGroups,
+      );
+      this.canViewRoles = this.permissionDataService.hasPermission(
+        SystemPermission.ViewRoles,
+      );
+      this.canViewTeamTypes = this.permissionDataService.hasPermission(
+        SystemPermission.ViewTeamTypes,
+      );
+      this.canViewUsers = this.permissionDataService.hasPermission(
+        SystemPermission.ViewUsers,
+      );
       // Load evaluations based on user permissions (must be inside load callback so permissions are available)
       if (this.canViewEvaluations) {
         this.evaluationDataService.load();
@@ -246,7 +266,7 @@ export class AdminContainerComponent implements OnDestroy, OnInit {
         },
         (error) => {
           this.apiVersion = 'API ERROR!';
-        }
+        },
       );
   }
 

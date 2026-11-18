@@ -60,7 +60,11 @@ describe('AdminUsersComponent', () => {
   it('lets the list edit with ManageUsers', async () => {
     const { list } = await renderUsers([SystemPermission.ManageUsers]);
 
-    expect(list().users().map((u) => u.name)).toEqual(['Alice']);
+    expect(
+      list()
+        .users()
+        .map((u) => u.name),
+    ).toEqual(['Alice']);
     expect(list().canEdit()).toBe(true);
   });
 
@@ -90,6 +94,10 @@ describe('AdminUsersComponent', () => {
 
     expect(userApi.createUser).toHaveBeenCalledWith({ id: 'u2', name: 'Bob' });
     expect(userApi.deleteUser).toHaveBeenCalledWith('u1');
-    expect(list().users().map((u) => u.name)).toEqual(['Bob']);
+    expect(
+      list()
+        .users()
+        .map((u) => u.name),
+    ).toEqual(['Bob']);
   });
 });

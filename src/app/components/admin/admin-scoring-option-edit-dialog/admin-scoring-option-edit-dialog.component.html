@@ -5,7 +5,9 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <crucible-dialog
-  [dialogTitle]="data.scoringOption.id ? 'Edit Scoring Option' : 'Add Scoring Option'"
+  [dialogTitle]="
+    data.scoringOption.id ? 'Edit Scoring Option' : 'Add Scoring Option'
+  "
   [form]="form"
   submitLabel="Save"
   [submitDisabled]="!form.valid || !form.dirty"
@@ -13,57 +15,83 @@ project root for license information or contact permission@sei.cmu.edu for full 
   (cancel)="handleEditComplete(false)"
   (submit)="handleEditComplete(true)"
 >
-@if (data && data.scoringOption) {
-  <div crucibleDialogContent [formGroup]="form">
-    <div class="add-margin">
-      <div class="field-row">
-        <mat-form-field class="description-field full-width">
-          <mat-label>Scoring Option Description</mat-label>
-          <textarea matInput formControlName="description"></textarea>
-        </mat-form-field>
-        <button mat-icon-button type="button" class="info-button" tabindex="-1"
-          matTooltip="A name or description of this scoring option as it appears to participants on the scoresheet."
-          #descTip="matTooltip" (click)="descTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-        </button>
+  @if (data && data.scoringOption) {
+    <div crucibleDialogContent [formGroup]="form">
+      <div class="add-margin">
+        <div class="field-row">
+          <mat-form-field class="description-field full-width">
+            <mat-label>Scoring Option Description</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+          </mat-form-field>
+          <button
+            mat-icon-button
+            type="button"
+            class="info-button"
+            tabindex="-1"
+            matTooltip="A name or description of this scoring option as it appears to participants on the scoresheet."
+            #descTip="matTooltip"
+            (click)="descTip.toggle()"
+          >
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+          </button>
+        </div>
+      </div>
+      <div class="add-margin">
+        <div class="field-row">
+          <mat-form-field class="description-field">
+            <mat-label>Display Order</mat-label>
+            <input matInput formControlName="displayOrder" />
+          </mat-form-field>
+          <button
+            mat-icon-button
+            type="button"
+            class="info-button"
+            tabindex="-1"
+            matTooltip="Numeric order in which this option appears within its category. Lower numbers appear first."
+            #orderTip="matTooltip"
+            (click)="orderTip.toggle()"
+          >
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+          </button>
+        </div>
+      </div>
+      <div class="add-margin">
+        <div class="field-row">
+          <mat-form-field class="description-field">
+            <mat-label>Value</mat-label>
+            <input matInput formControlName="value" />
+          </mat-form-field>
+          <button
+            mat-icon-button
+            type="button"
+            class="info-button"
+            tabindex="-1"
+            matTooltip="Numeric score awarded when this option is selected. Used by the category's calculation equation."
+            #valueTip="matTooltip"
+            (click)="valueTip.toggle()"
+          >
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+          </button>
+        </div>
+      </div>
+      <div class="add-margin">
+        <div class="field-row">
+          <mat-checkbox formControlName="isModifier"
+            >Is a Modifier</mat-checkbox
+          >
+          <button
+            mat-icon-button
+            type="button"
+            class="info-button"
+            tabindex="-1"
+            matTooltip="Marks this option as a modifier rather than a primary scoring option. Modifiers are selected separately and can adjust the category's score via the calculation equation."
+            #modTip="matTooltip"
+            (click)="modTip.toggle()"
+          >
+            <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
+          </button>
+        </div>
       </div>
     </div>
-    <div class="add-margin">
-      <div class="field-row">
-        <mat-form-field class="description-field">
-          <mat-label>Display Order</mat-label>
-          <input matInput formControlName="displayOrder" />
-        </mat-form-field>
-        <button mat-icon-button type="button" class="info-button" tabindex="-1"
-          matTooltip="Numeric order in which this option appears within its category. Lower numbers appear first."
-          #orderTip="matTooltip" (click)="orderTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-        </button>
-      </div>
-    </div>
-    <div class="add-margin">
-      <div class="field-row">
-        <mat-form-field class="description-field">
-          <mat-label>Value</mat-label>
-          <input matInput formControlName="value" />
-        </mat-form-field>
-        <button mat-icon-button type="button" class="info-button" tabindex="-1"
-          matTooltip="Numeric score awarded when this option is selected. Used by the category's calculation equation."
-          #valueTip="matTooltip" (click)="valueTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-        </button>
-      </div>
-    </div>
-    <div class="add-margin">
-      <div class="field-row">
-        <mat-checkbox formControlName="isModifier">Is a Modifier</mat-checkbox>
-        <button mat-icon-button type="button" class="info-button" tabindex="-1"
-          matTooltip="Marks this option as a modifier rather than a primary scoring option. Modifiers are selected separately and can adjust the category's score via the calculation equation."
-          #modTip="matTooltip" (click)="modTip.toggle()">
-          <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
-        </button>
-      </div>
-    </div>
-  </div>
-}
+  }
 </crucible-dialog>

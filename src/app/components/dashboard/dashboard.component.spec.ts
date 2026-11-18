@@ -561,7 +561,12 @@ describe('DashboardComponent', () => {
             situationTime: iso('2026-11-12T16:00:00Z'),
             situationDescription: '<p>Phishing email</p>',
           },
-          { id: 'm2', evaluationId: 'e1', moveNumber: 2, description: 'Escalation' },
+          {
+            id: 'm2',
+            evaluationId: 'e1',
+            moveNumber: 2,
+            description: 'Escalation',
+          },
         ],
         activeMoveId: 'm1',
       });
@@ -599,7 +604,12 @@ describe('DashboardComponent', () => {
               situationTime: iso('2026-11-12T16:00:00Z'),
               situationDescription: '<p>Phishing email</p>',
             },
-            { id: 'm2', evaluationId: 'e1', moveNumber: 2, description: 'Escalation' },
+            {
+              id: 'm2',
+              evaluationId: 'e1',
+              moveNumber: 2,
+              description: 'Escalation',
+            },
           ],
           activeMoveId: 'm2',
         });
@@ -637,7 +647,9 @@ describe('DashboardComponent', () => {
       expect(screen.getByText('Escalation')).toBeVisible();
       // The shape of every situation time (see the tests above).
       expect(
-        screen.queryByText(/^\w+day, \w+ \d{1,2}, \d{4} at \d{1,2}:\d{2}\s[AP]M \w+$/),
+        screen.queryByText(
+          /^\w+day, \w+ \d{1,2}, \d{4} at \d{1,2}:\d{2}\s[AP]M \w+$/,
+        ),
       ).not.toBeInTheDocument();
       expect(screen.queryByText(/Invalid Date/)).not.toBeInTheDocument();
     });
@@ -671,7 +683,9 @@ describe('DashboardComponent', () => {
       });
 
       expect(screen.getByText('3 unread in Gallery')).toBeVisible();
-      expect(screen.getByRole('link', { name: 'Open Gallery' })).toHaveAttribute(
+      expect(
+        screen.getByRole('link', { name: 'Open Gallery' }),
+      ).toHaveAttribute(
         'href',
         'https://gallery.test/?exhibit=ex1&section=wall',
       );
@@ -703,7 +717,9 @@ describe('DashboardComponent', () => {
       });
 
       expect(screen.queryByText('3 unread in Gallery')).not.toBeInTheDocument();
-      expect(screen.queryByText('All Gallery items read')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('All Gallery items read'),
+      ).not.toBeInTheDocument();
       expect(screen.queryByText('Open Gallery')).not.toBeInTheDocument();
     });
   });
@@ -779,8 +795,11 @@ describe('DashboardComponent', () => {
       const roles = await expand('Roles');
 
       expect(
-        (within(actions.element).getByTitle('Edit Actions') as HTMLButtonElement)
-          .disabled,
+        (
+          within(actions.element).getByTitle(
+            'Edit Actions',
+          ) as HTMLButtonElement
+        ).disabled,
       ).toBe(!editActions);
       const actionCheck = await actions.content.getHarness(MatCheckboxHarness);
       expect(await actionCheck.isDisabled()).toBe(!tickActions);

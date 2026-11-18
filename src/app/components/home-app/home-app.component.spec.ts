@@ -214,9 +214,9 @@ async function renderHome(
     getSubmission: vi.fn((id: string) =>
       // making a submission active loads it; the store keeps the seeded fields
       of(
-        (teams
-          .flatMap((t) => submissions(t.id))
-          .find((s) => s.id === id) ?? { id }),
+        teams.flatMap((t) => submissions(t.id)).find((s) => s.id === id) ?? {
+          id,
+        },
       ),
     ),
   } satisfies ApiStub<SubmissionService>;
@@ -437,7 +437,9 @@ describe('HomeAppComponent', () => {
       FakeImage.last.onload();
       fixture.detectChanges();
 
-      const page = container.querySelector('.app-events-container') as HTMLElement;
+      const page = container.querySelector(
+        '.app-events-container',
+      ) as HTMLElement;
       expect(page.style.getPropertyValue('--crucible-landing-background')).toBe(
         'url("/assets/local/landing-background.jpg")',
       );
@@ -458,9 +460,13 @@ describe('HomeAppComponent', () => {
       FakeImage.last.onload();
       fixture.detectChanges();
 
-      const page = container.querySelector('.app-events-container') as HTMLElement;
+      const page = container.querySelector(
+        '.app-events-container',
+      ) as HTMLElement;
       expect(page.style.backgroundImage).toContain('linear-gradient');
-      expect(page.style.backgroundImage).toContain('/assets/local/landing-background-dark.jpg');
+      expect(page.style.backgroundImage).toContain(
+        '/assets/local/landing-background-dark.jpg',
+      );
     });
 
     /**
@@ -477,9 +483,15 @@ describe('HomeAppComponent', () => {
       FakeImage.last.onerror?.();
       fixture.detectChanges();
 
-      const page = container.querySelector('.app-events-container') as HTMLElement;
-      expect(page.style.getPropertyValue('--crucible-landing-background')).toBe('');
-      expect(page.classList.contains('crucible-landing-background')).toBe(false);
+      const page = container.querySelector(
+        '.app-events-container',
+      ) as HTMLElement;
+      expect(page.style.getPropertyValue('--crucible-landing-background')).toBe(
+        '',
+      );
+      expect(page.classList.contains('crucible-landing-background')).toBe(
+        false,
+      );
     });
 
     /**
@@ -491,8 +503,12 @@ describe('HomeAppComponent', () => {
       const { container } = await renderHome({});
 
       expect(FakeImage.last).toBeUndefined();
-      const page = container.querySelector('.app-events-container') as HTMLElement;
-      expect(page.classList.contains('crucible-landing-background')).toBe(false);
+      const page = container.querySelector(
+        '.app-events-container',
+      ) as HTMLElement;
+      expect(page.classList.contains('crucible-landing-background')).toBe(
+        false,
+      );
     });
 
     /**
@@ -503,15 +519,24 @@ describe('HomeAppComponent', () => {
     it('hides the landing background inside an evaluation', async () => {
       const { fixture, container } = await renderHome(
         {},
-        { evaluation: 'e1', background: '/assets/local/landing-background-evaluation.jpg' },
+        {
+          evaluation: 'e1',
+          background: '/assets/local/landing-background-evaluation.jpg',
+        },
       );
 
       FakeImage.last.onload();
       fixture.detectChanges();
 
-      const page = container.querySelector('.app-events-container') as HTMLElement;
-      expect(page.style.getPropertyValue('--crucible-landing-background')).toBe('');
-      expect(page.classList.contains('crucible-landing-background')).toBe(false);
+      const page = container.querySelector(
+        '.app-events-container',
+      ) as HTMLElement;
+      expect(page.style.getPropertyValue('--crucible-landing-background')).toBe(
+        '',
+      );
+      expect(page.classList.contains('crucible-landing-background')).toBe(
+        false,
+      );
     });
   });
 
@@ -652,12 +677,54 @@ describe('HomeAppComponent', () => {
      * Why: regression for the saved view staying Official over another submission, which highlighted Official, hid Submit on the user's own submission and left the User button doing nothing, and for moving back keeping the last move's submission.
      */
     it.each([
-      { direction: 'next', label: 'on their own team', myTeamId: 't1', userScore: true, moveNumber: 2, view: 'user' },
-      { direction: 'next', label: 'observing another team', myTeamId: 't2', userScore: true, moveNumber: 2, view: 'team' },
-      { direction: 'next', label: 'on their own team without a user score', myTeamId: 't1', userScore: false, moveNumber: 2, view: 'team' },
-      { direction: 'previous', label: 'on their own team', myTeamId: 't1', userScore: true, moveNumber: 0, view: 'user' },
-      { direction: 'previous', label: 'observing another team', myTeamId: 't2', userScore: true, moveNumber: 0, view: 'team' },
-      { direction: 'previous', label: 'on their own team without a user score', myTeamId: 't1', userScore: false, moveNumber: 0, view: 'team' },
+      {
+        direction: 'next',
+        label: 'on their own team',
+        myTeamId: 't1',
+        userScore: true,
+        moveNumber: 2,
+        view: 'user',
+      },
+      {
+        direction: 'next',
+        label: 'observing another team',
+        myTeamId: 't2',
+        userScore: true,
+        moveNumber: 2,
+        view: 'team',
+      },
+      {
+        direction: 'next',
+        label: 'on their own team without a user score',
+        myTeamId: 't1',
+        userScore: false,
+        moveNumber: 2,
+        view: 'team',
+      },
+      {
+        direction: 'previous',
+        label: 'on their own team',
+        myTeamId: 't1',
+        userScore: true,
+        moveNumber: 0,
+        view: 'user',
+      },
+      {
+        direction: 'previous',
+        label: 'observing another team',
+        myTeamId: 't2',
+        userScore: true,
+        moveNumber: 0,
+        view: 'team',
+      },
+      {
+        direction: 'previous',
+        label: 'on their own team without a user score',
+        myTeamId: 't1',
+        userScore: false,
+        moveNumber: 0,
+        view: 'team',
+      },
     ] as const)(
       'moving $direction $label shows and saves the $view view',
       async ({ direction, myTeamId, userScore, moveNumber, view }) => {
@@ -671,13 +738,26 @@ describe('HomeAppComponent', () => {
         ]);
         teams.setActive('t1');
         home.myTeamId = myTeamId;
-        home.sortedMoveList = [0, 1, 2].map((n) => ({ id: `m${n}`, evaluationId: 'e1', moveNumber: n }));
+        home.sortedMoveList = [0, 1, 2].map((n) => ({
+          id: `m${n}`,
+          evaluationId: 'e1',
+          moveNumber: n,
+        }));
         const submissions = TestBed.inject(SubmissionStore);
         submissions.set([
           submission({ id: 's1-official', moveNumber: 1 }),
           ...[0, 2].flatMap((n) => [
             submission({ id: `s${n}-team`, moveNumber: n, teamId: 't1' }),
-            ...(userScore ? [submission({ id: `s${n}-user`, moveNumber: n, userId: 'u1', teamId: 't1' })] : []),
+            ...(userScore
+              ? [
+                  submission({
+                    id: `s${n}-user`,
+                    moveNumber: n,
+                    userId: 'u1',
+                    teamId: 't1',
+                  }),
+                ]
+              : []),
           ]),
         ]);
         submissions.setActive('s1-official');
@@ -710,12 +790,21 @@ describe('HomeAppComponent', () => {
         teams.set([{ id: 't1', memberships: [] }]);
         teams.setActive('t1');
         home.myTeamId = 't1';
-        home.sortedMoveList = [0, 1, 2].map((n) => ({ id: `m${n}`, evaluationId: 'e1', moveNumber: n }));
+        home.sortedMoveList = [0, 1, 2].map((n) => ({
+          id: `m${n}`,
+          evaluationId: 'e1',
+          moveNumber: n,
+        }));
         const submissions = TestBed.inject(SubmissionStore);
         submissions.set(
           [0, 1, 2].flatMap((n) => [
             submission({ id: `s${n}-official`, moveNumber: n }),
-            submission({ id: `s${n}-user`, moveNumber: n, userId: 'u1', teamId: 't1' }),
+            submission({
+              id: `s${n}-user`,
+              moveNumber: n,
+              userId: 'u1',
+              teamId: 't1',
+            }),
           ]),
         );
         submissions.setActive('s1-official');
@@ -730,7 +819,9 @@ describe('HomeAppComponent', () => {
         }
 
         expect(submissions.getValue().active).toBe(`s${moveNumber}-official`);
-        expect(uiData.getSubmissionType(home.selectedEvaluationId)).toBe('official');
+        expect(uiData.getSubmissionType(home.selectedEvaluationId)).toBe(
+          'official',
+        );
       },
     );
   });

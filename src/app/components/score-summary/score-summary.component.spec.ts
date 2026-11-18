@@ -24,7 +24,9 @@ describe('ScoreSummaryComponent', () => {
       screen.getByRole('heading', { name: 'Score Summary' }),
     ).toBeInTheDocument();
     expect(
-      screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
+      screen
+        .getAllByRole('heading', { level: 2 })
+        .map((h) => h.textContent?.replace(/\s+/g, ' ').trim()),
     ).toEqual([
       'Level 5 - Emergency',
       'Level 4 - Severe',
@@ -90,7 +92,13 @@ describe('ScoreSummaryComponent', () => {
     const store = TestBed.inject(SubmissionStore);
     store.set([
       { id: 't', moveNumber: 2, score: 80, teamId: 't1' },
-      { id: 'g', moveNumber: 2, score: 80, groupId: 'g1', scoreIsAnAverage: true },
+      {
+        id: 'g',
+        moveNumber: 2,
+        score: 80,
+        groupId: 'g1',
+        scoreIsAnAverage: true,
+      },
       { id: 'u', moveNumber: 2, score: 20, userId: 'u1' },
     ]);
     store.setActive('t');
@@ -121,8 +129,18 @@ describe('ScoreSummaryComponent', () => {
       inputs: {
         selectedScoringModel: {
           severityLevels: [
-            { name: 'Calm', minimumScore: 0, color: '#FFFFFF', description: 'Nothing happening' },
-            { name: 'Storm', minimumScore: 60, color: '#8B0000', description: '' },
+            {
+              name: 'Calm',
+              minimumScore: 0,
+              color: '#FFFFFF',
+              description: 'Nothing happening',
+            },
+            {
+              name: 'Storm',
+              minimumScore: 60,
+              color: '#8B0000',
+              description: '',
+            },
           ],
         },
       },
@@ -133,13 +151,20 @@ describe('ScoreSummaryComponent', () => {
     fixture.detectChanges();
 
     expect(
-      screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
+      screen
+        .getAllByRole('heading', { level: 2 })
+        .map((h) => h.textContent?.replace(/\s+/g, ' ').trim()),
     ).toEqual(['Level 1 - Storm', 'Level 0 - Calm']);
     expect(screen.getByText('60+')).toBeInTheDocument();
     expect(screen.getByText('<60')).toBeInTheDocument();
     expect(screen.getByText('Nothing happening')).toBeInTheDocument();
-    const storm = screen.getByRole('heading', { name: 'Level 1 - Storm' }).closest('li') as HTMLElement;
+    const storm = screen
+      .getByRole('heading', { name: 'Level 1 - Storm' })
+      .closest('li') as HTMLElement;
     expect(storm).toHaveClass('current');
-    expect(storm.querySelector('.level-swatch')).toHaveStyle({ backgroundColor: '#8B0000', color: '#FFFFFF' });
+    expect(storm.querySelector('.level-swatch')).toHaveStyle({
+      backgroundColor: '#8B0000',
+      color: '#FFFFFF',
+    });
   });
 });

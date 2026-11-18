@@ -3,10 +3,22 @@
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
 import { Component, inject, output } from '@angular/core';
-import { FormBuilder, FormGroup, UntypedFormControl, FormGroupDirective, NgForm, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  UntypedFormControl,
+  FormGroupDirective,
+  NgForm,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CrucibleDialogComponent, CrucibleDialogContentDirective } from '@cmusei/crucible-common';
+import {
+  CrucibleDialogComponent,
+  CrucibleDialogContentDirective,
+} from '@cmusei/crucible-common';
 import { MatFormField, MatLabel, MatInput } from '@angular/material/input';
 import { MatCheckbox } from '@angular/material/checkbox';
 
@@ -14,7 +26,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 export class UserErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(
     control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
+    form: FormGroupDirective | NgForm | null,
   ): boolean {
     const isSubmitted = form && form.submitted;
     return !!(control && control.invalid && (control.dirty || isSubmitted));
@@ -22,12 +34,20 @@ export class UserErrorStateMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-    selector: 'app-admin-teamtype-edit-dialog',
-    templateUrl: './admin-teamtype-edit-dialog.component.html',
-    styleUrls: ['./admin-teamtype-edit-dialog.component.scss'],
-    imports: [CrucibleDialogComponent, CrucibleDialogContentDirective, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatCheckbox]
+  selector: 'app-admin-teamtype-edit-dialog',
+  templateUrl: './admin-teamtype-edit-dialog.component.html',
+  styleUrls: ['./admin-teamtype-edit-dialog.component.scss'],
+  imports: [
+    CrucibleDialogComponent,
+    CrucibleDialogContentDirective,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatCheckbox,
+  ],
 })
-
 export class AdminTeamTypeEditDialogComponent {
   data = inject(MAT_DIALOG_DATA);
   private formBuilder = inject(FormBuilder);
@@ -44,7 +64,10 @@ export class AdminTeamTypeEditDialogComponent {
         Validators.required,
       ],
       isOfficialScoreContributor: [
-        { value: data.teamType.isOfficialScoreContributor, disabled: !data.canEdit },
+        {
+          value: data.teamType.isOfficialScoreContributor,
+          disabled: !data.canEdit,
+        },
       ],
       showTeamTypeAverage: [
         { value: data.teamType.showTeamTypeAverage, disabled: !data.canEdit },
@@ -74,7 +97,6 @@ export class AdminTeamTypeEditDialogComponent {
   }
 
   getUserName(userId: string) {
-    return this.data.userList.find(u => u.id === userId).name;
+    return this.data.userList.find((u) => u.id === userId).name;
   }
-
 }

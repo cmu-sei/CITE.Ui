@@ -13,7 +13,7 @@ export enum SubmissionType {
   team = 'Team',
   teamAvg = 'Team Average',
   groupAvg = 'Group Average',
-  official = 'Official'
+  official = 'Official',
 }
 
 export class PopulatedSubmission implements Submission {

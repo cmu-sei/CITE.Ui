@@ -14,10 +14,14 @@ import { AdminGroupsMemberListComponent } from '../admin-groups-member-list/admi
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-admin-groups-detail',
-    templateUrl: './admin-groups-detail.component.html',
-    styleUrls: ['./admin-groups-detail.component.scss'],
-    imports: [AdminGroupsMembershipListComponent, AdminGroupsMemberListComponent, AsyncPipe]
+  selector: 'app-admin-groups-detail',
+  templateUrl: './admin-groups-detail.component.html',
+  styleUrls: ['./admin-groups-detail.component.scss'],
+  imports: [
+    AdminGroupsMembershipListComponent,
+    AdminGroupsMemberListComponent,
+    AsyncPipe,
+  ],
 })
 export class AdminGroupsDetailComponent implements OnInit, OnChanges {
   private userQuery = inject(UserQuery);
@@ -38,7 +42,7 @@ export class AdminGroupsDetailComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.memberships$ = this.groupMembershipDataService.selectMemberships(
-      this.groupId()
+      this.groupId(),
     );
 
     this.nonMembers$ = this.selectUsers(false);
@@ -61,13 +65,16 @@ export class AdminGroupsDetailComponent implements OnInit, OnChanges {
             );
           }
         });
-      })
+      }),
     );
   }
 
   createMembership(userId) {
     this.groupMembershipDataService
-      .createMembership(this.groupId(), { groupId: this.groupId(), userId: userId })
+      .createMembership(this.groupId(), {
+        groupId: this.groupId(),
+        userId: userId,
+      })
       .subscribe();
   }
 

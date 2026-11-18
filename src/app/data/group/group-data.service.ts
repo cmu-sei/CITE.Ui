@@ -27,7 +27,7 @@ export class GroupDataService {
         const groups = this.groupSubject.getValue();
         groups.push(x);
         this.groupSubject.next(groups);
-      })
+      }),
     );
   }
 
@@ -41,7 +41,7 @@ export class GroupDataService {
           groups[index] = x;
           this.groupSubject.next(groups);
         }
-      })
+      }),
     );
   }
 
@@ -51,7 +51,7 @@ export class GroupDataService {
         let groups = this.groupSubject.getValue();
         groups = groups.filter((x) => !(x.id === id));
         this.groupSubject.next(groups);
-      })
+      }),
     );
   }
 }

@@ -2,7 +2,14 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { ChangeDetectorRef, Component, Input, OnDestroy, inject, input } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  inject,
+  input,
+} from '@angular/core';
 import { Observable, Subject, timer } from 'rxjs';
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 import {
@@ -14,7 +21,7 @@ import {
   Team,
   TeamMembership,
   TeamRole,
-  User
+  User,
 } from 'src/app/generated/cite.api/model/models';
 import { ActionDataService } from 'src/app/data/action/action-data.service';
 import { ActionQuery } from 'src/app/data/action/action.query';
@@ -33,13 +40,21 @@ import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminActionEditDialogComponent } from '../admin/admin-action-edit-dialog/admin-action-edit-dialog.component';
 import { AdminDutyEditDialogComponent } from '../admin/admin-duty-edit-dialog/admin-duty-edit-dialog.component';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { UserDataService } from 'src/app/data/user/user-data.service';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { MatCard } from '@angular/material/card';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import {
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -67,10 +82,26 @@ interface Situation extends SituationMove {
 }
 
 @Component({
-    selector: 'app-dashboard',
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.scss'],
-    imports: [MatCard, MatButton, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatIconButton, MatIcon, MatCheckbox, MatTooltip, MatSelect, MatOption, MatFormField, MatLabel, FormsModule]
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss'],
+  imports: [
+    MatCard,
+    MatButton,
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatIconButton,
+    MatIcon,
+    MatCheckbox,
+    MatTooltip,
+    MatSelect,
+    MatOption,
+    MatFormField,
+    MatLabel,
+    FormsModule,
+  ],
 })
 export class DashboardComponent implements OnDestroy {
   private actionDataService = inject(ActionDataService);
@@ -143,9 +174,10 @@ export class DashboardComponent implements OnDestroy {
       });
     this.userDataService.setCurrentUser();
     // observe the evaluation users
-    this.userQuery.selectAll()
+    this.userQuery
+      .selectAll()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(users => {
+      .subscribe((users) => {
         this.evaluationUsers = users;
         // the duties name their users from this list
         this.buildDutyList();
@@ -234,15 +266,13 @@ export class DashboardComponent implements OnDestroy {
         this.setCompleteSituationDescription();
       });
     // observe the TeamMemberships
-    this.teamMembershipDataService
-      .teamMemberships$
+    this.teamMembershipDataService.teamMemberships$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((m) => {
         this.teamMemberships = m;
       });
     // observe the TeamRoles
-    this.teamRoleDataService
-      .teamRoles$
+    this.teamRoleDataService.teamRoles$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((m) => {
         this.teamRoles = m;
@@ -290,9 +320,10 @@ export class DashboardComponent implements OnDestroy {
     if (!this.selectedEvaluation) {
       return;
     }
-    const isDisplayedMoveCurrent = +this.displayedMoveNumber === +this.currentMoveNumber;
+    const isDisplayedMoveCurrent =
+      +this.displayedMoveNumber === +this.currentMoveNumber;
     const displayedMove = this.moveList?.find(
-      (m) => +m.moveNumber === +this.displayedMoveNumber
+      (m) => +m.moveNumber === +this.displayedMoveNumber,
     );
     if (!displayedMove) {
       this.situation = null;
@@ -303,7 +334,9 @@ export class DashboardComponent implements OnDestroy {
       isCurrent: isDisplayedMoveCurrent,
       title: displayedMove.description,
       time: this.formatSituationTime(
-        isDisplayedMoveCurrent ? this.selectedEvaluation.situationTime : displayedMove.situationTime
+        isDisplayedMoveCurrent
+          ? this.selectedEvaluation.situationTime
+          : displayedMove.situationTime,
       ),
       description: isDisplayedMoveCurrent
         ? this.selectedEvaluation.situationDescription
@@ -351,13 +384,15 @@ export class DashboardComponent implements OnDestroy {
       this.teamDataLoadedFor = teamDataFor;
       this.actionDataService.loadByEvaluationTeam(
         this.selectedEvaluation.id,
-        this.activeTeamId
+        this.activeTeamId,
       );
       this.dutyDataService.loadByEvaluationTeam(
         this.selectedEvaluation.id,
-        this.activeTeamId
+        this.activeTeamId,
       );
-      this.teamMembershipDataService.loadMemberships(this.activeTeamId).subscribe();
+      this.teamMembershipDataService
+        .loadMemberships(this.activeTeamId)
+        .subscribe();
     }
   }
 
@@ -391,7 +426,7 @@ export class DashboardComponent implements OnDestroy {
         action: action,
         teamList: [],
         moveList: [],
-        allMovesValue: -999
+        allMovesValue: -999,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -414,7 +449,8 @@ export class DashboardComponent implements OnDestroy {
     this.dialogService
       .confirm({
         title: 'Delete Action',
-        message: 'Are you sure that you want to delete ' + action.description + '?',
+        message:
+          'Are you sure that you want to delete ' + action.description + '?',
         confirmText: 'Delete',
         cancelText: 'Cancel',
       })
@@ -478,7 +514,7 @@ export class DashboardComponent implements OnDestroy {
       width: 'auto',
       data: {
         duty: duty,
-        canEdit: this.canSubmitTeamScore
+        canEdit: this.canSubmitTeamScore,
       },
     });
     dialogRef.componentInstance.editComplete.subscribe((result) => {
@@ -521,12 +557,12 @@ export class DashboardComponent implements OnDestroy {
   updateDutyUsers(dutyId: string, event: any) {
     if (dutyId !== this.originalDuty.id || dutyId !== this.modifiedDuty.id) {
       alert(
-        'There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.'
+        'There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.',
       );
     }
     this.modifiedDuty.users = [];
-    event.value.forEach(m => {
-      var user = this.evaluationUsers.find(u => u.id === m.id);
+    event.value.forEach((m) => {
+      var user = this.evaluationUsers.find((u) => u.id === m.id);
       if (user) {
         this.modifiedDuty.users.push(user);
       }
@@ -536,7 +572,7 @@ export class DashboardComponent implements OnDestroy {
   closeDutyUsers(dutyId: string) {
     if (dutyId !== this.originalDuty.id || dutyId !== this.modifiedDuty.id) {
       alert(
-        'There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.'
+        'There has been an error on this page.  Please refresh your browser and try again.  If the problem persists, please contact your system administrator.',
       );
     }
     const newUserIds = this.modifiedDuty.users.map(({ id }) => id);
@@ -560,9 +596,15 @@ export class DashboardComponent implements OnDestroy {
   }
 
   updatePermissions() {
-    this.canManageTeam = this.permissionDataService.canManageTeam(this.activeTeamId);
-    this.canSubmitTeamScore = this.canManageTeam || this.permissionDataService.canSubmitTeamScore(this.activeTeamId);
-    this.canContributeToTeamScore = this.canSubmitTeamScore || this.permissionDataService.canEditTeamScore(this.activeTeamId);
+    this.canManageTeam = this.permissionDataService.canManageTeam(
+      this.activeTeamId,
+    );
+    this.canSubmitTeamScore =
+      this.canManageTeam ||
+      this.permissionDataService.canSubmitTeamScore(this.activeTeamId);
+    this.canContributeToTeamScore =
+      this.canSubmitTeamScore ||
+      this.permissionDataService.canEditTeamScore(this.activeTeamId);
     this.changeDetectorRef.detectChanges();
   }
 

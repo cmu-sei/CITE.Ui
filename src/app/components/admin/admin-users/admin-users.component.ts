@@ -15,10 +15,10 @@ import { AdminUserListComponent } from './admin-user-list/admin-user-list.compon
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-admin-users',
-    templateUrl: './admin-users.component.html',
-    styleUrls: ['./admin-users.component.scss'],
-    imports: [AdminUserListComponent, AsyncPipe]
+  selector: 'app-admin-users',
+  templateUrl: './admin-users.component.html',
+  styleUrls: ['./admin-users.component.scss'],
+  imports: [AdminUserListComponent, AsyncPipe],
 })
 export class AdminUsersComponent implements OnInit {
   private userDataService = inject(UserDataService);
@@ -31,7 +31,7 @@ export class AdminUsersComponent implements OnInit {
   users$: Observable<User[]>;
   isLoading$: Observable<boolean>;
   canEdit = this.permissionDataService.hasPermission(
-    SystemPermission.ManageUsers
+    SystemPermission.ManageUsers,
   );
 
   /**
@@ -55,7 +55,7 @@ export class AdminUsersComponent implements OnInit {
 export class UserErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(
     control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
+    form: FormGroupDirective | NgForm | null,
   ): boolean {
     const isSubmitted = form && form.submitted;
     return !!(control && control.invalid && (control.dirty || isSubmitted));

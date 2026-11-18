@@ -3,17 +3,22 @@ Copyright 2025 Carnegie Mellon University. All Rights Reserved.
  Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 */
 
-import { Component, OnChanges, OnInit, SimpleChanges, inject, input, output } from '@angular/core';
+import {
+  Component,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { combineLatest, forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EvaluationMembershipDataService } from 'src/app/data/evaluation/evaluation-membership-data.service';
 import { EvaluationRoleDataService } from 'src/app/data/evaluation/evaluation-role-data.service';
 import { UserQuery } from 'src/app/data/user/user.query';
 import { UserDataService } from 'src/app/data/user/user-data.service';
-import {
-  EvaluationMembership,
-  Evaluation,
-} from 'src/app/generated/cite.api';
+import { EvaluationMembership, Evaluation } from 'src/app/generated/cite.api';
 import { GroupDataService } from 'src/app/data/group/group-data.service';
 import { PermissionDataService } from 'src/app/data/permission/permission-data.service';
 import { AdminEvaluationMembershipListComponent } from '../admin-evaluation-membership-list/admin-evaluation-membership-list.component';
@@ -21,13 +26,19 @@ import { AdminEvaluationMemberListComponent } from '../admin-evaluation-member-l
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-admin-evaluation-memberships',
-    templateUrl: './admin-evaluation-memberships.component.html',
-    styleUrls: ['./admin-evaluation-memberships.component.scss'],
-    imports: [AdminEvaluationMembershipListComponent, AdminEvaluationMemberListComponent, AsyncPipe]
+  selector: 'app-admin-evaluation-memberships',
+  templateUrl: './admin-evaluation-memberships.component.html',
+  styleUrls: ['./admin-evaluation-memberships.component.scss'],
+  imports: [
+    AdminEvaluationMembershipListComponent,
+    AdminEvaluationMemberListComponent,
+    AsyncPipe,
+  ],
 })
 export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
-  private evaluationMembershipDataService = inject(EvaluationMembershipDataService);
+  private evaluationMembershipDataService = inject(
+    EvaluationMembershipDataService,
+  );
   private evaluationRolesDataService = inject(EvaluationRoleDataService);
   private userDataService = inject(UserDataService);
   private userQuery = inject(UserQuery);
@@ -62,7 +73,9 @@ export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.canEdit = this.permissionDataService.canEditEvaluation(this.evaluationId());
+    this.canEdit = this.permissionDataService.canEditEvaluation(
+      this.evaluationId(),
+    );
   }
 
   selectUsers(members: boolean) {
@@ -81,7 +94,7 @@ export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
             );
           }
         });
-      })
+      }),
     );
   }
 
@@ -104,7 +117,7 @@ export class AdminEvaluationMembershipsComponent implements OnInit, OnChanges {
             );
           }
         });
-      })
+      }),
     );
   }
 

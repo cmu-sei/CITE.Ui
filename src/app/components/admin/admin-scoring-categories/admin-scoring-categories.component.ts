@@ -2,18 +2,36 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, Input, OnDestroy, OnInit, inject, input, output } from '@angular/core';
-import { ScoringCategory, ItemStatus, ScoringOptionSelection, ScoringModel} from 'src/app/generated/cite.api/model/models';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  inject,
+  input,
+  output,
+} from '@angular/core';
+import {
+  ScoringCategory,
+  ItemStatus,
+  ScoringOptionSelection,
+  ScoringModel,
+} from 'src/app/generated/cite.api/model/models';
 import { ScoringCategoryDataService } from 'src/app/data/scoring-category/scoring-category-data.service';
 import { ScoringCategoryQuery } from 'src/app/data/scoring-category/scoring-category.query';
-import { ComnSettingsService, CrucibleDialogService } from '@cmusei/crucible-common';
+import {
+  ComnSettingsService,
+  CrucibleDialogService,
+} from '@cmusei/crucible-common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
+import { AdminScoringCategoryEditDialogComponent } from '../admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
 import {
-  AdminScoringCategoryEditDialogComponent
-} from '../admin-scoring-category-edit-dialog/admin-scoring-category-edit-dialog.component';
-import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+} from '@angular/material/expansion';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { AdminScoringOptionsComponent } from '../admin-scoring-options/admin-scoring-options.component';
@@ -21,10 +39,19 @@ import { MatCard } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-    selector: 'app-admin-scoring-categories',
-    templateUrl: './admin-scoring-categories.component.html',
-    styleUrls: ['./admin-scoring-categories.component.scss'],
-    imports: [MatAccordion, MatIconButton, MatIcon, MatExpansionPanel, MatExpansionPanelHeader, AdminScoringOptionsComponent, MatCard, MatProgressSpinner]
+  selector: 'app-admin-scoring-categories',
+  templateUrl: './admin-scoring-categories.component.html',
+  styleUrls: ['./admin-scoring-categories.component.scss'],
+  imports: [
+    MatAccordion,
+    MatIconButton,
+    MatIcon,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    AdminScoringOptionsComponent,
+    MatCard,
+    MatProgressSpinner,
+  ],
 })
 export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
   private settingsService = inject(ComnSettingsService);
@@ -50,22 +77,27 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
     ItemStatus.Pending,
     ItemStatus.Active,
     ItemStatus.Cancelled,
-    ItemStatus.Complete
+    ItemStatus.Complete,
   ];
   scoringOptionSelections = [
     ScoringOptionSelection.Single,
     ScoringOptionSelection.Multiple,
-    ScoringOptionSelection.None
+    ScoringOptionSelection.None,
   ];
   private unsubscribe$ = new Subject();
 
   constructor() {
-    this.scoringCategoryQuery.selectAll().pipe(takeUntil(this.unsubscribe$)).subscribe(scoringCategories => {
-      this.scoringCategoryList = [];
-      scoringCategories.sort((a, b) => +a.displayOrder < +b.displayOrder ? -1 : 1).forEach(scoringCategory => {
-        this.scoringCategoryList.push({ ...scoringCategory });
+    this.scoringCategoryQuery
+      .selectAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((scoringCategories) => {
+        this.scoringCategoryList = [];
+        scoringCategories
+          .sort((a, b) => (+a.displayOrder < +b.displayOrder ? -1 : 1))
+          .forEach((scoringCategory) => {
+            this.scoringCategoryList.push({ ...scoringCategory });
+          });
       });
-    });
   }
 
   ngOnInit() {
@@ -81,22 +113,26 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
         calculationEquation: '{max}',
         scoringWeight: 1.0,
         scoringOptionSelection: ScoringOptionSelection.Single,
-        isModifierRequired: false
+        isModifierRequired: false,
       };
     } else {
-      scoringCategory = {... scoringCategory};
+      scoringCategory = { ...scoringCategory };
     }
-    const dialogRef = this.dialog.open(AdminScoringCategoryEditDialogComponent, {
-      minWidth: '400px',
-      maxWidth: '90vw',
-      width: 'auto',
-      data: {
-        scoringCategory: scoringCategory,
-        displayScoringModelbyMoveNumber: this.displayScoringModelbyMoveNumber(),
-        scoringOptionSelections: this.scoringOptionSelections,
-        canEdit: this.canEdit()
+    const dialogRef = this.dialog.open(
+      AdminScoringCategoryEditDialogComponent,
+      {
+        minWidth: '400px',
+        maxWidth: '90vw',
+        width: 'auto',
+        data: {
+          scoringCategory: scoringCategory,
+          displayScoringModelbyMoveNumber:
+            this.displayScoringModelbyMoveNumber(),
+          scoringOptionSelections: this.scoringOptionSelections,
+          canEdit: this.canEdit(),
+        },
       },
-    });
+    );
     dialogRef.componentInstance.editComplete.subscribe((result) => {
       if (result.saveChanges && result.scoringCategory) {
         this.saveScoringCategory(result.scoringCategory);
@@ -107,7 +143,9 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
 
   togglePanel(scoringCategoryId: string) {
     this.editScoringCategoryId =
-      this.editScoringCategoryId === scoringCategoryId ? this.editScoringCategoryId = '' : this.editScoringCategoryId = scoringCategoryId;
+      this.editScoringCategoryId === scoringCategoryId
+        ? (this.editScoringCategoryId = '')
+        : (this.editScoringCategoryId = scoringCategoryId);
     this.scoringCategoryClick.emit(this.editScoringCategoryId);
   }
 
@@ -123,7 +161,10 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
     this.dialogService
       .confirm({
         title: 'Delete Scoring Category',
-        message: 'Are you sure that you want to delete ' + scoringCategory.description + '?',
+        message:
+          'Are you sure that you want to delete ' +
+          scoringCategory.description +
+          '?',
         confirmText: 'Delete',
         cancelText: 'Cancel',
       })
@@ -139,5 +180,4 @@ export class AdminScoringCategoriesComponent implements OnInit, OnDestroy {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
   }
-
 }

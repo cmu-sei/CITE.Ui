@@ -136,7 +136,9 @@ describe('AdminEvaluationEditDialogComponent', () => {
    */
   it('saves Hide individual names from observers on an active evaluation', async () => {
     const { editComplete, user } = await renderEvaluationDialog(true);
-    const checkbox = screen.getByLabelText('Hide individual names from observers');
+    const checkbox = screen.getByLabelText(
+      'Hide individual names from observers',
+    );
     expect(checkbox).toBeEnabled();
     expect(checkbox).not.toBeChecked();
     expect(checkbox.closest('mat-checkbox')).toHaveAttribute(

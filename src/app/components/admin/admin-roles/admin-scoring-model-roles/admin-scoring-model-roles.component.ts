@@ -4,7 +4,19 @@ Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 */
 
 import { Component, inject, OnInit } from '@angular/core';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import {
+  MatTableDataSource,
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+} from '@angular/material/table';
 import {
   ScoringModelPermission,
   ScoringModelRole,
@@ -19,10 +31,26 @@ import { AsyncPipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
-    selector: 'app-admin-scoring-model-roles',
-    templateUrl: './admin-scoring-model-roles.component.html',
-    styleUrls: ['./admin-scoring-model-roles.component.scss'],
-    imports: [MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatIconButton, MatTooltip, MatIcon, MatCheckbox, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe]
+  selector: 'app-admin-scoring-model-roles',
+  templateUrl: './admin-scoring-model-roles.component.html',
+  styleUrls: ['./admin-scoring-model-roles.component.scss'],
+  imports: [
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    MatCheckbox,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    AsyncPipe,
+  ],
 })
 export class AdminScoringModelRolesComponent implements OnInit {
   private scoringModelRoleService = inject(ScoringModelRoleDataService);
@@ -40,15 +68,15 @@ export class AdminScoringModelRolesComponent implements OnInit {
     map((roles) =>
       roles.sort((a, b) => {
         return a.name.localeCompare(b.name);
-      })
-    )
+      }),
+    ),
   );
 
   public displayedColumns$ = this.roles$.pipe(
     map((x) => {
       const columnNames = x.map((y) => y.name);
       return ['permissions', ...columnNames];
-    })
+    }),
   );
 
   ngOnInit(): void {
