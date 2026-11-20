@@ -110,7 +110,8 @@
   }
 }
 
-.level-error {
+.level-error,
+.url-error {
   margin-bottom: 8px;
   color: var(--mat-sys-error);
 }

@@ -5,9 +5,21 @@ project root for license information or contact permission@sei.cmu.edu for full 
 -->
 
 <div [class]="getTopClass()">
+  @if (refusedUrl) {
+    <p class="refused-url" role="status">
+      The scoring model's embedded URL is not an http or https URL, so it is not
+      shown.
+    </p>
+  }
+  <!--
+    The frame keeps its own origin and may run scripts, so an embedded dashboard
+    or document can sign in and work. Served from another origin, as they are, it
+    still can't reach CITE; and it can't navigate the CITE page or open alerts.
+  -->
   <iframe
     title="focused app"
     allow="fullscreen"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
     class="focused-app-iframe"
     [src]="safeUrl"
     aria-label="Focused Application"

@@ -33,6 +33,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { SeverityLevel } from 'src/app/generated/cite.api/model/models';
 import { DEFAULT_SEVERITY_LEVELS } from 'src/app/utilities/severity-levels';
+import { embeddedUrl } from 'src/app/utilities/embedded-url';
 
 // no two severity levels may start at the same score
 export function distinctMinimumScores(
@@ -119,7 +120,10 @@ export class AdminScoringModelEditDialogComponent {
       ],
       rightSideDisplay: [{ value: model.rightSideDisplay, disabled }],
       rightSideHtmlBlock: [{ value: model.rightSideHtmlBlock, disabled }],
-      rightSideEmbeddedUrl: [{ value: model.rightSideEmbeddedUrl, disabled }],
+      rightSideEmbeddedUrl: [
+        { value: model.rightSideEmbeddedUrl, disabled },
+        embeddedUrl,
+      ],
       // empty means the default CISA levels
       severityLevels: this.formBuilder.array(
         (model.severityLevels ?? []).map((level: SeverityLevel) =>

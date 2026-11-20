@@ -8,6 +8,7 @@ import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
+import { isEmbeddableUrl } from 'src/app/utilities/embedded-url';
 
 @Component({
   selector: 'app-right-side-iframe',
@@ -21,6 +22,8 @@ export class RightSideIframeComponent implements OnDestroy {
 
   readonly hideTopbar = input<boolean>(undefined);
   safeUrl: SafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
+  // the active model names a URL that isn't an absolute http(s) URL
+  refusedUrl = false;
   private unsubscribe$ = new Subject();
 
   constructor() {
@@ -29,8 +32,13 @@ export class RightSideIframeComponent implements OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((active) => {
         if (active) {
+          // only an absolute http(s) URL is trusted: any other scheme could run
+          // script in the frame, and the bypass turns off Angular's own check
+          const url = active.rightSideEmbeddedUrl;
+          const embeddable = isEmbeddableUrl(url);
+          this.refusedUrl = !!url && !embeddable;
           this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-            active.rightSideEmbeddedUrl,
+            embeddable ? url : '',
           );
         }
       });

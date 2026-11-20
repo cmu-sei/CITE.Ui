@@ -151,6 +151,48 @@ describe('AdminScoringModelEditDialogComponent', () => {
   });
 
   /**
+   * Verifies: a URL that isn't an absolute http(s) URL is flagged and can't be saved; emptying the field can.
+   * Interacts with: the Right Side URL field and the crucible-dialog Save button.
+   * Data: canEdit true; the URL replaced with a javascript: URL, then cleared.
+   */
+  it('refuses a right side URL that is not http or https', async () => {
+    const { editComplete, user } = await renderModelDialog(true);
+    const url = screen.getByLabelText('Right Side URL');
+
+    await user.clear(url);
+    await user.type(url, 'javascript:alert(1)');
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'The URL must start with http:// or https://.',
+    );
+    expect(save()).toBeDisabled();
+
+    await user.clear(url);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    await user.click(save());
+    expect(editComplete).toHaveBeenCalledWith({
+      saveChanges: true,
+      scoringModel: expect.objectContaining({ rightSideEmbeddedUrl: '' }),
+    });
+  });
+
+  /**
+   * Verifies: a saved URL the API would now refuse is shown, flagged, even when another right-side display hides the field.
+   * Interacts with: the rightSideDisplay form value and the Right Side URL field.
+   * Data: canEdit true; rightSideDisplay ScoreSummary with a data: URL.
+   */
+  it('shows a refused right side URL for other right-side displays', async () => {
+    await renderModelDialog(true, {
+      rightSideDisplay: RightSideDisplay.ScoreSummary,
+      rightSideEmbeddedUrl: 'data:text/html,<script>alert(1)</script>',
+    });
+
+    expect(screen.getByLabelText('Right Side URL')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'The URL must start with http:// or https://.',
+    );
+  });
+
+  /**
    * Verifies: a model without severity levels says it uses the defaults, and saving it keeps none.
    * Interacts with: the Severity Levels section and the crucible-dialog Save button.
    * Data: canEdit true; no severity levels; the description is edited so Save is enabled.

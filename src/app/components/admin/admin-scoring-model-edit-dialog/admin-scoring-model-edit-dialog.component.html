@@ -317,7 +317,11 @@ project root for license information or contact permission@sei.cmu.edu for full 
             />
           </div>
         }
-        @if (form.controls['rightSideDisplay'].value === 'EmbeddedUrl') {
+        <!-- an invalid URL is shown whatever the display, so it can be fixed -->
+        @if (
+          form.controls['rightSideDisplay'].value === 'EmbeddedUrl' ||
+          form.controls['rightSideEmbeddedUrl'].invalid
+        ) {
           <div class="scoring-option">
             <div class="field-row">
               <mat-form-field class="description-field full-width">
@@ -336,6 +340,13 @@ project root for license information or contact permission@sei.cmu.edu for full 
                 <mat-icon class="mdi-20px" fontIcon="mdi-information-outline" />
               </button>
             </div>
+            @if (
+              form.controls['rightSideEmbeddedUrl'].hasError('embeddedUrl')
+            ) {
+              <div class="url-error" role="alert">
+                The URL must start with http:// or https://.
+              </div>
+            }
           </div>
         }
       </div>
