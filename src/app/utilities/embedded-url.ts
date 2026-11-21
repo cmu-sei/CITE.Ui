@@ -14,8 +14,9 @@ export function embeddableUrl(url: string | null | undefined): URL | null {
   const trimmed = url?.trim();
   // the URL parser accepts https:host, http:/host and https:\\host, and a frame
   // given one of those resolves it against CITE's own address; so the scheme
-  // must be followed by //
-  if (!trimmed || !/^https?:\/\//i.test(trimmed)) {
+  // must be followed by // and then the host, not by more slashes or a
+  // backslash, which the parser would also skip
+  if (!trimmed || !/^https?:\/\/[^/\\]/i.test(trimmed)) {
     return null;
   }
   try {

@@ -90,9 +90,9 @@ export class AdminScoringModelEditDialogComponent {
   readonly editComplete = output<any>();
   public form: FormGroup;
   editorConfig = EDITOR_CONFIG;
-  // the model opened with a URL that is now refused: its field stays shown,
-  // whatever the display, so it can be fixed or cleared
-  readonly openedWithRefusedUrl: boolean;
+  // the URL has been refused, either as the model was saved or since: its
+  // field stays shown, whatever the display, so it can be fixed or cleared
+  showRefusedUrl: boolean;
 
   constructor() {
     const data = this.data;
@@ -100,7 +100,7 @@ export class AdminScoringModelEditDialogComponent {
     const model = data.scoringModel;
     const disabled = !data.canEdit;
     const savedUrl = (model as ScoringModel).rightSideEmbeddedUrl;
-    this.openedWithRefusedUrl = !!savedUrl && !isEmbeddableUrl(savedUrl);
+    this.showRefusedUrl = !!savedUrl && !isEmbeddableUrl(savedUrl);
     this.form = this.formBuilder.group({
       description: [
         { value: model.description, disabled },
@@ -168,6 +168,16 @@ export class AdminScoringModelEditDialogComponent {
       syncDependentControls,
     );
     syncDependentControls();
+
+    // once refused, the URL keeps its field, so switching the display away
+    // can't hide an invalid URL that still keeps Save disabled
+    this.form.controls['rightSideEmbeddedUrl'].statusChanges.subscribe(
+      (status) => {
+        if (status === 'INVALID') {
+          this.showRefusedUrl = true;
+        }
+      },
+    );
   }
 
   get severityLevels() {

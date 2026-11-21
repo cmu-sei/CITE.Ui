@@ -317,10 +317,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
             />
           </div>
         }
-        <!-- a refused saved URL is shown whatever the display, so it can be fixed -->
+        <!-- a refused URL is shown whatever the display, so it can be fixed -->
         @if (
           form.controls['rightSideDisplay'].value === 'EmbeddedUrl' ||
-          openedWithRefusedUrl
+          showRefusedUrl
         ) {
           <div class="scoring-option">
             <div class="field-row">

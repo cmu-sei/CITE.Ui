@@ -220,6 +220,27 @@ describe('AdminScoringModelEditDialogComponent', () => {
   });
 
   /**
+   * Verifies: a URL refused while editing keeps its field and error after the display is switched away from EmbeddedUrl, so Save isn't left disabled with no visible reason.
+   * Interacts with: the Right Side URL field and the rightSideDisplay form value.
+   * Data: canEdit true; rightSideDisplay EmbeddedUrl with a valid URL, replaced with example.com/dash, then the display set to ScoreSummary.
+   */
+  it('keeps a URL refused while editing shown when the display changes', async () => {
+    const { fixture, user } = await renderModelDialog(true);
+    const url = screen.getByLabelText('Right Side URL');
+
+    await user.clear(url);
+    await user.type(url, 'example.com/dash');
+    fixture.componentInstance.form.controls['rightSideDisplay'].setValue(
+      RightSideDisplay.ScoreSummary,
+    );
+    fixture.detectChanges();
+
+    expect(screen.getByLabelText('Right Side URL')).toBe(url);
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(save()).toBeDisabled();
+  });
+
+  /**
    * Verifies: a model without severity levels says it uses the defaults, and saving it keeps none.
    * Interacts with: the Severity Levels section and the crucible-dialog Save button.
    * Data: canEdit true; no severity levels; the description is edited so Save is enabled.

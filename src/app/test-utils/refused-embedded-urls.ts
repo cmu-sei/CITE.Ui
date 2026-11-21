@@ -22,6 +22,8 @@ export const REFUSED_EMBEDDED_URLS = [
   'http:/dashboard.example.com',
   'https:\\dashboard.example.com',
   'http://',
+  'https:///dashboard.example.com',
+  'https://\\dashboard.example.com',
   'https:// ',
   ' ',
 ];
