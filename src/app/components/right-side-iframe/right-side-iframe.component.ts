@@ -2,13 +2,13 @@
 // Released under a MIT (SEI)-style license, please see LICENSE.md in the
 // project root for license information or contact permission@sei.cmu.edu for full terms.
 
-import { Component, OnDestroy, inject, input } from '@angular/core';
+import { Component, DOCUMENT, OnDestroy, inject, input } from '@angular/core';
 import { ScoringModel } from 'src/app/generated/cite.api';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { ScoringModelQuery } from 'src/app/data/scoring-model/scoring-model.query';
-import { isEmbeddableUrl } from 'src/app/utilities/embedded-url';
+import { embeddableUrl } from 'src/app/utilities/embedded-url';
 
 @Component({
   selector: 'app-right-side-iframe',
@@ -19,11 +19,15 @@ import { isEmbeddableUrl } from 'src/app/utilities/embedded-url';
 export class RightSideIframeComponent implements OnDestroy {
   private sanitizer = inject(DomSanitizer);
   private scoringModelQuery = inject(ScoringModelQuery);
+  private document = inject(DOCUMENT);
 
   readonly hideTopbar = input<boolean>(undefined);
   safeUrl: SafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
-  // the active model names a URL that isn't an absolute http(s) URL
+  // the active model names a URL that isn't a full http(s) address
   refusedUrl = false;
+  // safeUrl is on CITE's own origin, so the frame gets the stricter sandbox;
+  // it changes only with safeUrl, which is kept when there is no active model
+  sameOrigin = false;
   private unsubscribe$ = new Subject();
 
   constructor() {
@@ -32,14 +36,18 @@ export class RightSideIframeComponent implements OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((active) => {
         if (active) {
-          // only an absolute http(s) URL is trusted: any other scheme could run
-          // script in the frame, and the bypass turns off Angular's own check
+          // only a full http(s) address is trusted: any other scheme could run
+          // script in the frame, and the bypass turns off Angular's own check;
+          // the frame loads the parsed href, not the string as saved
           const url = active.rightSideEmbeddedUrl;
-          const embeddable = isEmbeddableUrl(url);
-          this.refusedUrl = !!url && !embeddable;
+          const parsed = embeddableUrl(url);
+          this.refusedUrl = !!url && !parsed;
+          this.sameOrigin = parsed?.origin === this.document.location.origin;
           this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-            embeddable ? url : '',
+            parsed ? parsed.href : '',
           );
+        } else {
+          this.refusedUrl = false;
         }
       });
   }

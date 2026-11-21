@@ -317,10 +317,10 @@ project root for license information or contact permission@sei.cmu.edu for full 
             />
           </div>
         }
-        <!-- an invalid URL is shown whatever the display, so it can be fixed -->
+        <!-- a refused saved URL is shown whatever the display, so it can be fixed -->
         @if (
           form.controls['rightSideDisplay'].value === 'EmbeddedUrl' ||
-          form.controls['rightSideEmbeddedUrl'].invalid
+          openedWithRefusedUrl
         ) {
           <div class="scoring-option">
             <div class="field-row">
@@ -344,7 +344,8 @@ project root for license information or contact permission@sei.cmu.edu for full 
               form.controls['rightSideEmbeddedUrl'].hasError('embeddedUrl')
             ) {
               <div class="url-error" role="alert">
-                The URL must start with http:// or https://.
+                The URL must be a full address starting with http:// or
+                https://.
               </div>
             }
           </div>

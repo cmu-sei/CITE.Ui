@@ -162,7 +162,7 @@ describe('AdminScoringModelEditDialogComponent', () => {
     await user.clear(url);
     await user.type(url, 'javascript:alert(1)');
     expect(screen.getByRole('alert')).toHaveTextContent(
-      'The URL must start with http:// or https://.',
+      'The URL must be a full address starting with http:// or https://.',
     );
     expect(save()).toBeDisabled();
 
@@ -188,8 +188,35 @@ describe('AdminScoringModelEditDialogComponent', () => {
 
     expect(screen.getByLabelText('Right Side URL')).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent(
-      'The URL must start with http:// or https://.',
+      'The URL must be a full address starting with http:// or https://.',
     );
+  });
+
+  /**
+   * Verifies: the field of a refused saved URL stays shown while it is fixed, and once it is valid, so the fix can be saved.
+   * Interacts with: the Right Side URL field and the crucible-dialog Save button.
+   * Data: canEdit true; rightSideDisplay ScoreSummary with https:dashboard.example.com/panel, replaced with a full https address.
+   */
+  it('keeps a refused right side URL shown while it is fixed', async () => {
+    const { editComplete, user } = await renderModelDialog(true, {
+      rightSideDisplay: RightSideDisplay.ScoreSummary,
+      rightSideEmbeddedUrl: 'https:dashboard.example.com/panel',
+    });
+    const url = screen.getByLabelText('Right Side URL');
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+
+    await user.clear(url);
+    await user.type(url, 'https://dashboard.example.com/panel');
+
+    expect(screen.getByLabelText('Right Side URL')).toBe(url);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    await user.click(save());
+    expect(editComplete).toHaveBeenCalledWith({
+      saveChanges: true,
+      scoringModel: expect.objectContaining({
+        rightSideEmbeddedUrl: 'https://dashboard.example.com/panel',
+      }),
+    });
   });
 
   /**

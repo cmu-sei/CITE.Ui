@@ -3,22 +3,35 @@
 
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
-// A scoring model's right side embedded URL is loaded in an iframe, so only an
-// absolute http or https URL is trusted: a javascript:, data: or other scheme,
+// A scoring model's right side embedded URL is loaded in an iframe, so only a
+// full http or https address is trusted: a javascript:, data: or other scheme,
 // or a relative URL that frames CITE itself, could run script for whoever views
-// the scoring model. The API refuses the same URLs.
-export function isEmbeddableUrl(url: string | null | undefined): boolean {
-  if (!url) {
-    return false;
+// the scoring model. The API refuses the same schemes.
+//
+// Returns the parsed URL, whose href is what the frame should load, or null
+// when the URL isn't embeddable.
+export function embeddableUrl(url: string | null | undefined): URL | null {
+  const trimmed = url?.trim();
+  // the URL parser accepts https:host, http:/host and https:\\host, and a frame
+  // given one of those resolves it against CITE's own address; so the scheme
+  // must be followed by //
+  if (!trimmed || !/^https?:\/\//i.test(trimmed)) {
+    return null;
   }
   try {
-    // no base, so a relative URL throws; the parser normalizes the scheme the
-    // way the browser will when it loads the frame
-    const { protocol } = new URL(url);
-    return protocol === 'http:' || protocol === 'https:';
+    const parsed = new URL(trimmed);
+    return (parsed.protocol === 'http:' || parsed.protocol === 'https:') &&
+      parsed.hostname
+      ? parsed
+      : null;
   } catch {
-    return false;
+    // http:// alone, or a malformed host
+    return null;
   }
+}
+
+export function isEmbeddableUrl(url: string | null | undefined): boolean {
+  return embeddableUrl(url) !== null;
 }
 
 // an empty URL is allowed: it clears the field

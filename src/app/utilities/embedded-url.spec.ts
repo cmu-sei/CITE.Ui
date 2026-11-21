@@ -4,7 +4,7 @@
 import { describe, it, expect } from 'vitest';
 import { FormControl } from '@angular/forms';
 import { REFUSED_EMBEDDED_URLS } from '../test-utils/refused-embedded-urls';
-import { embeddedUrl, isEmbeddableUrl } from './embedded-url';
+import { embeddableUrl, embeddedUrl, isEmbeddableUrl } from './embedded-url';
 
 describe('embedded URL', () => {
   /**
@@ -25,6 +25,17 @@ describe('embedded URL', () => {
    */
   it.each([...REFUSED_EMBEDDED_URLS, null, ''])('refuses %j', (url) => {
     expect(isEmbeddableUrl(url)).toBe(false);
+    expect(embeddableUrl(url)).toBeNull();
+  });
+
+  /**
+   * Verifies: the parsed URL, which the frame loads, is the normalized address, not the string as saved.
+   * Data: an https URL with surrounding spaces and an upper-case scheme and host.
+   */
+  it('parses the URL the frame loads', () => {
+    expect(embeddableUrl('  HTTPS://Gallery.Test/exhibit?id=1  ')?.href).toBe(
+      'https://gallery.test/exhibit?id=1',
+    );
   });
 
   /**

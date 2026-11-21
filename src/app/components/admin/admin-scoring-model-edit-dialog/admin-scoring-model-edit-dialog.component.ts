@@ -31,9 +31,12 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { AngularEditorModule } from '@kolkov/angular-editor';
-import { SeverityLevel } from 'src/app/generated/cite.api/model/models';
+import {
+  ScoringModel,
+  SeverityLevel,
+} from 'src/app/generated/cite.api/model/models';
 import { DEFAULT_SEVERITY_LEVELS } from 'src/app/utilities/severity-levels';
-import { embeddedUrl } from 'src/app/utilities/embedded-url';
+import { embeddedUrl, isEmbeddableUrl } from 'src/app/utilities/embedded-url';
 
 // no two severity levels may start at the same score
 export function distinctMinimumScores(
@@ -87,12 +90,17 @@ export class AdminScoringModelEditDialogComponent {
   readonly editComplete = output<any>();
   public form: FormGroup;
   editorConfig = EDITOR_CONFIG;
+  // the model opened with a URL that is now refused: its field stays shown,
+  // whatever the display, so it can be fixed or cleared
+  readonly openedWithRefusedUrl: boolean;
 
   constructor() {
     const data = this.data;
 
     const model = data.scoringModel;
     const disabled = !data.canEdit;
+    const savedUrl = (model as ScoringModel).rightSideEmbeddedUrl;
+    this.openedWithRefusedUrl = !!savedUrl && !isEmbeddableUrl(savedUrl);
     this.form = this.formBuilder.group({
       description: [
         { value: model.description, disabled },

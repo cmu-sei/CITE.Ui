@@ -2,7 +2,8 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 // URLs a scoring model's embedded frame must never load: script-bearing
-// schemes, other schemes, and relative URLs, which would frame CITE itself
+// schemes, other schemes, relative URLs, and http(s) URLs without // or a host,
+// which a frame resolves against CITE's own address, so it frames CITE itself
 export const REFUSED_EMBEDDED_URLS = [
   'javascript:alert(document.domain)',
   'JavaScript:alert(1)',
@@ -17,5 +18,10 @@ export const REFUSED_EMBEDDED_URLS = [
   '/api/scoringModels',
   '//evil.example.com/',
   'example.com/dashboard',
+  'https:dashboard.example.com/panel',
+  'http:/dashboard.example.com',
+  'https:\\dashboard.example.com',
+  'http://',
+  'https:// ',
   ' ',
 ];
