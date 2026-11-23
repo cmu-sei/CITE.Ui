@@ -171,7 +171,9 @@ describe('AdminScoringModelEditDialogComponent', () => {
     await user.click(save());
     expect(editComplete).toHaveBeenCalledWith({
       saveChanges: true,
-      scoringModel: expect.objectContaining({ rightSideEmbeddedUrl: '' }),
+      scoringModel: expect.objectContaining({
+        rightSideEmbeddedUrl: '',
+      }) as ScoringModel,
     });
   });
 
@@ -215,7 +217,7 @@ describe('AdminScoringModelEditDialogComponent', () => {
       saveChanges: true,
       scoringModel: expect.objectContaining({
         rightSideEmbeddedUrl: 'https://dashboard.example.com/panel',
-      }),
+      }) as ScoringModel,
     });
   });
 
@@ -230,7 +232,7 @@ describe('AdminScoringModelEditDialogComponent', () => {
 
     await user.clear(url);
     await user.type(url, 'example.com/dash');
-    fixture.componentInstance.form.controls['rightSideDisplay'].setValue(
+    fixture.componentInstance.form.controls.rightSideDisplay.setValue(
       RightSideDisplay.ScoreSummary,
     );
     fixture.detectChanges();

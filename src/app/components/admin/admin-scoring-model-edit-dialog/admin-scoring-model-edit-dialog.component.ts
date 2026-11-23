@@ -171,7 +171,7 @@ export class AdminScoringModelEditDialogComponent {
 
     // once refused, the URL keeps its field, so switching the display away
     // can't hide an invalid URL that still keeps Save disabled
-    this.form.controls['rightSideEmbeddedUrl'].statusChanges.subscribe(
+    this.form.controls.rightSideEmbeddedUrl.statusChanges.subscribe(
       (status) => {
         if (status === 'INVALID') {
           this.showRefusedUrl = true;
