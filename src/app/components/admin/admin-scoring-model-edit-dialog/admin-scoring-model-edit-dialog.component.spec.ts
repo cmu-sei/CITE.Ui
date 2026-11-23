@@ -151,6 +151,98 @@ describe('AdminScoringModelEditDialogComponent', () => {
   });
 
   /**
+   * Verifies: a URL that isn't an absolute http(s) URL is flagged and can't be saved; emptying the field can.
+   * Interacts with: the Right Side URL field and the crucible-dialog Save button.
+   * Data: canEdit true; the URL replaced with a javascript: URL, then cleared.
+   */
+  it('refuses a right side URL that is not http or https', async () => {
+    const { editComplete, user } = await renderModelDialog(true);
+    const url = screen.getByLabelText('Right Side URL');
+
+    await user.clear(url);
+    await user.type(url, 'javascript:alert(1)');
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'The URL must be a full address starting with http:// or https://.',
+    );
+    expect(save()).toBeDisabled();
+
+    await user.clear(url);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    await user.click(save());
+    expect(editComplete).toHaveBeenCalledWith({
+      saveChanges: true,
+      scoringModel: expect.objectContaining({
+        rightSideEmbeddedUrl: '',
+      }) as ScoringModel,
+    });
+  });
+
+  /**
+   * Verifies: a saved URL the API would now refuse is shown, flagged, even when another right-side display hides the field.
+   * Interacts with: the rightSideDisplay form value and the Right Side URL field.
+   * Data: canEdit true; rightSideDisplay ScoreSummary with a data: URL.
+   */
+  it('shows a refused right side URL for other right-side displays', async () => {
+    await renderModelDialog(true, {
+      rightSideDisplay: RightSideDisplay.ScoreSummary,
+      rightSideEmbeddedUrl: 'data:text/html,<script>alert(1)</script>',
+    });
+
+    expect(screen.getByLabelText('Right Side URL')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'The URL must be a full address starting with http:// or https://.',
+    );
+  });
+
+  /**
+   * Verifies: the field of a refused saved URL stays shown while it is fixed, and once it is valid, so the fix can be saved.
+   * Interacts with: the Right Side URL field and the crucible-dialog Save button.
+   * Data: canEdit true; rightSideDisplay ScoreSummary with https:dashboard.example.com/panel, replaced with a full https address.
+   */
+  it('keeps a refused right side URL shown while it is fixed', async () => {
+    const { editComplete, user } = await renderModelDialog(true, {
+      rightSideDisplay: RightSideDisplay.ScoreSummary,
+      rightSideEmbeddedUrl: 'https:dashboard.example.com/panel',
+    });
+    const url = screen.getByLabelText('Right Side URL');
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+
+    await user.clear(url);
+    await user.type(url, 'https://dashboard.example.com/panel');
+
+    expect(screen.getByLabelText('Right Side URL')).toBe(url);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    await user.click(save());
+    expect(editComplete).toHaveBeenCalledWith({
+      saveChanges: true,
+      scoringModel: expect.objectContaining({
+        rightSideEmbeddedUrl: 'https://dashboard.example.com/panel',
+      }) as ScoringModel,
+    });
+  });
+
+  /**
+   * Verifies: a URL refused while editing keeps its field and error after the display is switched away from EmbeddedUrl, so Save isn't left disabled with no visible reason.
+   * Interacts with: the Right Side URL field and the rightSideDisplay form value.
+   * Data: canEdit true; rightSideDisplay EmbeddedUrl with a valid URL, replaced with example.com/dash, then the display set to ScoreSummary.
+   */
+  it('keeps a URL refused while editing shown when the display changes', async () => {
+    const { fixture, user } = await renderModelDialog(true);
+    const url = screen.getByLabelText('Right Side URL');
+
+    await user.clear(url);
+    await user.type(url, 'example.com/dash');
+    fixture.componentInstance.form.controls.rightSideDisplay.setValue(
+      RightSideDisplay.ScoreSummary,
+    );
+    fixture.detectChanges();
+
+    expect(screen.getByLabelText('Right Side URL')).toBe(url);
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(save()).toBeDisabled();
+  });
+
+  /**
    * Verifies: a model without severity levels says it uses the defaults, and saving it keeps none.
    * Interacts with: the Severity Levels section and the crucible-dialog Save button.
    * Data: canEdit true; no severity levels; the description is edited so Save is enabled.

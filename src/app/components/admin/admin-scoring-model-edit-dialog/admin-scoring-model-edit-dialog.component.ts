@@ -31,8 +31,12 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { AngularEditorModule } from '@kolkov/angular-editor';
-import { SeverityLevel } from 'src/app/generated/cite.api/model/models';
+import {
+  ScoringModel,
+  SeverityLevel,
+} from 'src/app/generated/cite.api/model/models';
 import { DEFAULT_SEVERITY_LEVELS } from 'src/app/utilities/severity-levels';
+import { embeddedUrl, isEmbeddableUrl } from 'src/app/utilities/embedded-url';
 
 // no two severity levels may start at the same score
 export function distinctMinimumScores(
@@ -86,12 +90,17 @@ export class AdminScoringModelEditDialogComponent {
   readonly editComplete = output<any>();
   public form: FormGroup;
   editorConfig = EDITOR_CONFIG;
+  // the URL has been refused, either as the model was saved or since: its
+  // field stays shown, whatever the display, so it can be fixed or cleared
+  showRefusedUrl: boolean;
 
   constructor() {
     const data = this.data;
 
     const model = data.scoringModel;
     const disabled = !data.canEdit;
+    const savedUrl = (model as ScoringModel).rightSideEmbeddedUrl;
+    this.showRefusedUrl = !!savedUrl && !isEmbeddableUrl(savedUrl);
     this.form = this.formBuilder.group({
       description: [
         { value: model.description, disabled },
@@ -119,7 +128,10 @@ export class AdminScoringModelEditDialogComponent {
       ],
       rightSideDisplay: [{ value: model.rightSideDisplay, disabled }],
       rightSideHtmlBlock: [{ value: model.rightSideHtmlBlock, disabled }],
-      rightSideEmbeddedUrl: [{ value: model.rightSideEmbeddedUrl, disabled }],
+      rightSideEmbeddedUrl: [
+        { value: model.rightSideEmbeddedUrl, disabled },
+        embeddedUrl,
+      ],
       // empty means the default CISA levels
       severityLevels: this.formBuilder.array(
         (model.severityLevels ?? []).map((level: SeverityLevel) =>
@@ -156,6 +168,16 @@ export class AdminScoringModelEditDialogComponent {
       syncDependentControls,
     );
     syncDependentControls();
+
+    // once refused, the URL keeps its field, so switching the display away
+    // can't hide an invalid URL that still keeps Save disabled
+    this.form.controls.rightSideEmbeddedUrl.statusChanges.subscribe(
+      (status) => {
+        if (status === 'INVALID') {
+          this.showRefusedUrl = true;
+        }
+      },
+    );
   }
 
   get severityLevels() {
