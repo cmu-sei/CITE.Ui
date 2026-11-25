@@ -800,17 +800,15 @@ describe('SignalRService', () => {
     });
 
     /**
-     * Verifies: UserUpdated for a known user leaves it unchanged.
+     * Verifies: UserUpdated for a known user merges into it, so a changed role shows.
      * Interacts with: FakeHubConnection.trigger, real UserDataService/UserQuery.
-     * Data: user u1 created as Alice, then pushed as Alicia with modifiedProperties ['name'].
+     * Data: user u1 created as Alice, then pushed as Alicia.
      */
-    it('UserUpdated does not change a known user', async () => {
+    it('UserUpdated merges into a known user', async () => {
       const { hub } = await connect();
       hub.trigger('UserCreated', { id: 'u1', name: 'Alice' }, null);
       hub.trigger('UserUpdated', { id: 'u1', name: 'Alicia' }, ['name']);
-      // UserUpdated goes through UserDataService.updateStore(), whose add()
-      // skips ids already in the store.
-      expect(TestBed.inject(UserQuery).getEntity('u1')?.name).toBe('Alice');
+      expect(TestBed.inject(UserQuery).getEntity('u1')?.name).toBe('Alicia');
     });
   });
 

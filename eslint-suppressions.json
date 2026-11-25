@@ -1651,11 +1651,6 @@
       "count": 1
     }
   },
-  "src/app/data/user/user-data.service.spec.ts": {
-    "@typescript-eslint/consistent-type-definitions": {
-      "count": 1
-    }
-  },
   "src/app/data/user/user-data.service.ts": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
