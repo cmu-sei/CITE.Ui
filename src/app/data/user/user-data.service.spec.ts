@@ -19,7 +19,9 @@ import {
 
 type UserApi = ApiStub<UserService>;
 // The OIDC user as setCurrentUser() reads it.
-type AuthUser = { profile: { name: string; sub: string } };
+interface AuthUser {
+  profile: { name: string; sub: string };
+}
 
 function setup(overrides: { api?: UserApi } = {}) {
   const api = {
@@ -131,35 +133,54 @@ describe('UserDataService', () => {
   });
 
   /**
-   * Verifies: updateStore() (UserCreated/UserUpdated) adds an unknown user but drops changes to a known one.
+   * Verifies: updateStore() (UserCreated/UserUpdated) adds an unknown user and merges a pushed change into a known one.
    * Interacts with: UserDataService.updateStore, UserQuery.
    * Data: Alice loaded; a pushed rename of Alice and a pushed new user Dan.
    */
-  it('updateStore() ignores updates to users already in the store', async () => {
+  it('updateStore() adds an unknown user and merges a known one', async () => {
     const { service, query } = setup();
     await firstValueFrom(service.load());
     service.updateStore({ id: 'u1', name: 'Alice Renamed' });
     service.updateStore({ id: 'u4', name: 'Dan' });
     expect(query.getEntity('u4')?.name).toBe('Dan');
-    expect(query.getEntity('u1')?.name).toBe('Alice');
+    expect(query.getEntity('u1')?.name).toBe('Alice Renamed');
+    expect(query.ui.getEntity('u4')).toEqual({
+      id: 'u4',
+      ...initialUserUiState,
+    });
   });
 
   /**
-   * Verifies: update() sends the user to the API but, through updateStore(), leaves the stored copy unchanged.
+   * Verifies: update() sends the user to the API and the stored user takes the API's answer, including a new role.
    * Interacts with: UserService.updateUser stub, UserQuery.
-   * Data: Alice loaded; update renames her.
+   * Data: Alice loaded with no role; update gives her role r1.
    */
-  it('update() calls the API without refreshing the stored user', async () => {
+  it('update() merges the saved user into the stored one', async () => {
     const { service, query, api } = setup();
     await firstValueFrom(service.load());
-    service.update({ id: 'u1', name: 'Alice Renamed' });
+    service.update({ id: 'u1', name: 'Alice', roleId: 'r1' });
     expect(api.updateUser).toHaveBeenCalledWith('u1', {
       id: 'u1',
-      name: 'Alice Renamed',
+      name: 'Alice',
+      roleId: 'r1',
     });
-    // update() stores the response through updateStore(), whose add() skips
-    // ids already in the store.
-    expect(query.getEntity('u1')?.name).toBe('Alice');
+    expect(query.getEntity('u1')?.roleId).toBe('r1');
+  });
+
+  /**
+   * Verifies: a user saved without a role has no role in the store: the API answers a removed role as an explicit null.
+   * Interacts with: UserService.updateUser stub, UserQuery.
+   * Data: Alice stored with role r1; the answer has roleId null.
+   */
+  it('update() removes the stored role when the answer has roleId null', () => {
+    const { service, query, store } = setup({
+      api: {
+        updateUser: vi.fn(() => of({ id: 'u1', name: 'Alice', roleId: null })),
+      },
+    });
+    store.add({ id: 'u1', name: 'Alice', roleId: 'r1' });
+    service.update({ id: 'u1', name: 'Alice', roleId: null });
+    expect(query.getEntity('u1')?.roleId).toBeNull();
   });
 
   describe('failed requests', () => {

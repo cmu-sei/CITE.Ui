@@ -117,7 +117,9 @@ export class UserDataService {
   }
 
   updateStore(user: User) {
-    this.userStore.add(user);
+    // add skips a user that is already in the store, so a saved user is merged into the stored one (or added): a role
+    // that was removed comes back from the API as an explicit null, which overwrites the old role
+    this.userStore.upsert(user.id, user);
     this.userStore.ui.upsert(user.id, this.userQuery.ui.getEntity(user.id));
   }
 
