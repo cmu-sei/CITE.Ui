@@ -173,14 +173,24 @@ describe('UserDataService', () => {
    * Data: Alice stored with role r1; the answer has roleId null.
    */
   it('update() removes the stored role when the answer has roleId null', () => {
-    const { service, query, store } = setup({
-      api: {
-        updateUser: vi.fn(() => of({ id: 'u1', name: 'Alice', roleId: null })),
-      },
-    });
+    const { service, query, store } = setup();
     store.add({ id: 'u1', name: 'Alice', roleId: 'r1' });
     service.update({ id: 'u1', name: 'Alice', roleId: null });
     expect(query.getEntity('u1')?.roleId).toBeNull();
+  });
+
+  /**
+   * Verifies: saving a user keeps that user's UI state.
+   * Interacts with: UserService.updateUser stub, UserQuery.ui.
+   * Data: Alice loaded and marked selected, then given role r2.
+   */
+  it('update() keeps the stored user UI state', async () => {
+    const { service, query, store } = setup();
+    await firstValueFrom(service.load());
+    store.ui.update('u1', { isSelected: true });
+    service.update({ id: 'u1', name: 'Alice', roleId: 'r2' });
+    expect(query.getEntity('u1')?.roleId).toBe('r2');
+    expect(query.ui.getEntity('u1')?.isSelected).toBe(true);
   });
 
   describe('failed requests', () => {
